@@ -1,0 +1,3 @@
+[submodule "Libraries/rocket-api"]
+	path = Libraries/rocket-api
+	url = git@github.com:wall-of-death/rocket-api.git

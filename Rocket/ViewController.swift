@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Endpoint
 
 class ViewController: UIViewController {
 

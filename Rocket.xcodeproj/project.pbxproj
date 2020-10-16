@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,7 @@
 		F2BA71902539A36D001243D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F2BA718E2539A36D001243D0 /* LaunchScreen.storyboard */; };
 		F2BA719B2539A36D001243D0 /* RocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA719A2539A36D001243D0 /* RocketTests.swift */; };
 		F2BA71A62539A36D001243D0 /* RocketUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71A52539A36D001243D0 /* RocketUITests.swift */; };
+		F2BA71BF2539A514001243D0 /* Endpoint in Frameworks */ = {isa = PBXBuildFile; productRef = F2BA71BE2539A514001243D0 /* Endpoint */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		F2BA71A12539A36D001243D0 /* RocketUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RocketUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2BA71A52539A36D001243D0 /* RocketUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RocketUITests.swift; sourceTree = "<group>"; };
 		F2BA71A72539A36D001243D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F2BA71B92539A4F0001243D0 /* Endpoint */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Endpoint; path = "Libraries/rocket-api/Endpoint"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2BA71BF2539A514001243D0 /* Endpoint in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,10 +82,12 @@
 		F2BA71772539A36C001243D0 = {
 			isa = PBXGroup;
 			children = (
+				F2BA71B92539A4F0001243D0 /* Endpoint */,
 				F2BA71822539A36C001243D0 /* Rocket */,
 				F2BA71992539A36D001243D0 /* RocketTests */,
 				F2BA71A42539A36D001243D0 /* RocketUITests */,
 				F2BA71812539A36C001243D0 /* Products */,
+				F2BA71BD2539A514001243D0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -128,6 +133,13 @@
 			path = RocketUITests;
 			sourceTree = "<group>";
 		};
+		F2BA71BD2539A514001243D0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -144,6 +156,9 @@
 			dependencies = (
 			);
 			name = Rocket;
+			packageProductDependencies = (
+				F2BA71BE2539A514001243D0 /* Endpoint */,
+			);
 			productName = Rocket;
 			productReference = F2BA71802539A36C001243D0 /* Rocket.app */;
 			productType = "com.apple.product-type.application";
@@ -587,6 +602,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F2BA71BE2539A514001243D0 /* Endpoint */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Endpoint;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F2BA71782539A36C001243D0 /* Project object */;
 }
