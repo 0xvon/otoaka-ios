@@ -1,0 +1,22 @@
+//
+//  PreviewWrapper.swift
+//  Rocket
+//
+//  Created by Masato TSUTSUMI on 2020/10/18.
+//
+
+import SwiftUI
+
+struct ViewControllerWrapper<ViewController>: UIViewControllerRepresentable
+where ViewController: Instantiable, ViewController: UIViewController {
+    let dependencyProvider: DependencyProvider
+    let input: ViewController.Input
+
+    func makeUIViewController(context: Context) -> ViewController {
+        ViewController(dependencyProvider: dependencyProvider, input: input)
+    }
+    func updateUIViewController(_ uiViewController: ViewController, context: Context) {
+        
+    }
+}
+

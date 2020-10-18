@@ -11,28 +11,29 @@ import AWSCognitoAuth
 
 class AuthViewModel {
     enum Output {
-        case id(Endpoint)
-        case login
+        case signout
         case signin(AWSCognitoAuthUserSession?)
+        case error(Error)
     }
     
+    let auth: AWSCognitoAuth
     let outputHandler: (Output) -> Void
-    init(outputHander: @escaping (Output) -> Void) {
+    init(auth: AWSCognitoAuth, outputHander: @escaping (Output) -> Void) {
+        self.auth = auth
         self.outputHandler = outputHander
     }
     
-    func fetchAccount() {
-        let endpoint: Endpoint = Endpoint()
-        outputHandler(.id(endpoint))
+    func signout() {
+        auth.signOut { (error: Error?) in
+            if let error = error { print("signout error: \(error)"); self.outputHandler(.error(error)) }
+            self.outputHandler(.signout)
+        }
     }
     
-    func login() {
-        
-    }
-    
-    func signin(auth: AWSCognitoAuth) {
+    func signin() {
         auth.getSession { (session: AWSCognitoAuthUserSession?, error: Error?) in
-            if let error = error { print("signin error: \(error)"); self.outputHandler(.signin(nil)) }
+            print("session called")
+            if let error = error { print("signin error: \(error)"); self.outputHandler(.error(error)) }
             guard let session = session else { return }
             self.outputHandler(.signin(session))
         }

@@ -1,6 +1,7 @@
 /Pods
 xcuserdata/
 build/
+ENV.swift
 DerivedData/
 *.moved-aside
 *.pbxuser
@@ -30,3 +31,4 @@ playground.xcworkspace
 
 iOSInjectionProject/
 .DS_Store
+ENV.*

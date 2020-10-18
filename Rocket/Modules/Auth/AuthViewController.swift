@@ -8,83 +8,75 @@
 import UIKit
 import AWSCognitoAuth
 
-class AuthViewController: UIViewController, XibInstantiable, AWSCognitoAuthDelegate {
-    
-    var viewModel: AuthViewModel!
-    var input: Void!
-    var auth: AWSCognitoAuth = AWSCognitoAuth.default()
-    var session: AWSCognitoAuthUserSession?
-    
+final class AuthViewController: UIViewController, Instantiable {
     typealias Input = Void
-    static var xibName: String { "AuthViewController" }
     
-    @IBOutlet weak var label: UILabel!
-    @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var signinButton: UIButton!
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        self.auth.delegate = self
-    }
-    
-    func inject(input: Void) {
-        viewModel = AuthViewModel(outputHander: {output in
-            print("hello")
+    lazy var viewModel = AuthViewModel(
+        auth: dependencyProvider.auth,
+        outputHander: { output in
             switch output {
-            case .id(let endpoint):
-                print(endpoint)
-                self.label.text = "hello"
-            case .login:
-                print("login")
             case .signin(let session):
                 guard let session = session else { print("howwwww"); return }
                 self.session = session
                 self.label.text = session.username
-                
+            case .signout:
+                self.session = nil
+                self.label.text = "signed out"
+            case .error(let error):
+                print(error)
             }
-        })
+        }
+    )
+
+    var session: AWSCognitoAuthUserSession?
+    var dependencyProvider: DependencyProvider
+    
+    @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var signinButton: UIButton!
+    @IBOutlet weak var signoutButton: UIButton!
+    
+    init(dependencyProvider: DependencyProvider, input: Input) {
+        self.dependencyProvider = dependencyProvider
+        super.init(nibName: nil, bundle: nil)
+        
+        self.dependencyProvider.auth.delegate = self
     }
     
-    func getViewController() -> UIViewController {
-        return self
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-    
-    @IBAction func loginButtonTapped(_ sender: Any) {
-        viewModel.login()
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        self.label.text = session?.username ?? "signed out"
     }
     
     @IBAction func signInButtonTapped(_ sender: Any) {
-        viewModel.signin(auth: self.auth)
+        viewModel.signin()
+    }
+    
+    @IBAction func signOutButtontapped(_ sender: Any) {
+    }
+    
+    
+}
+
+extension AuthViewController: AWSCognitoAuthDelegate {
+    func getViewController() -> UIViewController {
+        return self
     }
 }
 
 #if DEBUG && canImport(SwiftUI)
 import SwiftUI
 
-struct AuthViewControllerWrapper: UIViewControllerRepresentable {
-    
-    typealias UIViewControllerType = AuthViewController
-    let input: AuthViewController.Input
-    
-    init(input: AuthViewController.Input) {
-        self.input = input
-    }
-    
-    func makeUIViewController(context: Context) -> AuthViewController {
-        let vc = AuthViewController.init(input: ())
-        return vc
-    }
-    
-    func updateUIViewController(_ uiViewController: AuthViewController, context: Context) {
-        uiViewController.inject(input: ())
-    }
-    
-}
-
 struct AuthViewController_Previews: PreviewProvider {
     static var previews: some View {
-        AuthViewControllerWrapper(input: ())
+        ViewControllerWrapper<AuthViewController>(
+            dependencyProvider: .make(),
+            input: ()
+        )
     }
 }
 
