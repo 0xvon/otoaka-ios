@@ -11,6 +11,8 @@ import Endpoint
 class AuthViewModel {
     enum Output {
         case id(Endpoint)
+        case login
+        case signin
     }
     
     let outputHandler: (Output) -> Void
@@ -19,8 +21,15 @@ class AuthViewModel {
     }
     
     func fetchAccount() {
-        print("hello")
         let endpoint: Endpoint = Endpoint()
         outputHandler(.id(endpoint))
+    }
+    
+    func login() {
+        
+    }
+    
+    func signin() {
+        
     }
 }
