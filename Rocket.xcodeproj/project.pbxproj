@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D90B5F2A253BDF9600E9B655 /* AuthViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D90B5F29253BDF9600E9B655 /* AuthViewController.xib */; };
+		D90B5F30253BE12B00E9B655 /* Instantiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F2F253BE12B00E9B655 /* Instantiable.swift */; };
+		D90B5F35253BE1D800E9B655 /* ReusableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F34253BE1D800E9B655 /* ReusableCell.swift */; };
+		D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */; };
+		D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */; };
 		F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71832539A36C001243D0 /* AppDelegate.swift */; };
 		F2BA71862539A36C001243D0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71852539A36C001243D0 /* SceneDelegate.swift */; };
 		F2BA71882539A36C001243D0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71872539A36C001243D0 /* ViewController.swift */; };
@@ -36,6 +41,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D90B5F29253BDF9600E9B655 /* AuthViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthViewController.xib; sourceTree = "<group>"; };
+		D90B5F2F253BE12B00E9B655 /* Instantiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instantiable.swift; sourceTree = "<group>"; };
+		D90B5F34253BE1D800E9B655 /* ReusableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReusableCell.swift; sourceTree = "<group>"; };
+		D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
+		D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		F2BA71802539A36C001243D0 /* Rocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2BA71832539A36C001243D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F2BA71852539A36C001243D0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -79,6 +89,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D90B5F2E253BE0EF00E9B655 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				D90B5F2F253BE12B00E9B655 /* Instantiable.swift */,
+				D90B5F34253BE1D800E9B655 /* ReusableCell.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		D9CC5295253B2C8A0081ECF0 /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				D9CC5296253B2C990081ECF0 /* Auth */,
+			);
+			path = Modules;
+			sourceTree = "<group>";
+		};
+		D9CC5296253B2C990081ECF0 /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */,
+				D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */,
+				D90B5F29253BDF9600E9B655 /* AuthViewController.xib */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
 		F2BA71772539A36C001243D0 = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +141,8 @@
 		F2BA71822539A36C001243D0 /* Rocket */ = {
 			isa = PBXGroup;
 			children = (
+				D90B5F2E253BE0EF00E9B655 /* Common */,
+				D9CC5295253B2C8A0081ECF0 /* Modules */,
 				F2BA71832539A36C001243D0 /* AppDelegate.swift */,
 				F2BA71852539A36C001243D0 /* SceneDelegate.swift */,
 				F2BA71872539A36C001243D0 /* ViewController.swift */,
@@ -246,6 +285,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D90B5F2A253BDF9600E9B655 /* AuthViewController.xib in Resources */,
 				F2BA71902539A36D001243D0 /* LaunchScreen.storyboard in Resources */,
 				F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */,
 				F2BA718B2539A36C001243D0 /* Main.storyboard in Resources */,
@@ -273,8 +313,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */,
+				D90B5F30253BE12B00E9B655 /* Instantiable.swift in Sources */,
+				D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */,
 				F2BA71882539A36C001243D0 /* ViewController.swift in Sources */,
 				F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */,
+				D90B5F35253BE1D800E9B655 /* ReusableCell.swift in Sources */,
 				F2BA71862539A36C001243D0 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -452,6 +496,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6WL9GUCS6V;
 				INFOPLIST_FILE = Rocket/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -470,6 +515,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6WL9GUCS6V;
 				INFOPLIST_FILE = Rocket/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
