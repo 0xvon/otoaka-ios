@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import AWSCognitoAuth
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+            return AWSCognitoAuth.default().application(app, open: url, options: options)
+        }
 
     // MARK: UISceneSession Lifecycle
 
