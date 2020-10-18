@@ -16,7 +16,7 @@ final class AuthViewController: UIViewController, Instantiable {
         outputHander: { output in
             switch output {
             case .signin(let session):
-                guard let session = session else { print("howwwww"); return }
+                guard let session = session else { return }
                 self.session = session
                 self.label.text = session.username
             case .signout:
@@ -24,6 +24,7 @@ final class AuthViewController: UIViewController, Instantiable {
                 self.label.text = "signed out"
             case .error(let error):
                 print(error)
+                self.label.text = error.localizedDescription
             }
         }
     )
@@ -48,8 +49,6 @@ final class AuthViewController: UIViewController, Instantiable {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-        self.label.text = session?.username ?? "signed out"
     }
     
     @IBAction func signInButtonTapped(_ sender: Any) {
@@ -57,6 +56,7 @@ final class AuthViewController: UIViewController, Instantiable {
     }
     
     @IBAction func signOutButtontapped(_ sender: Any) {
+        viewModel.signout()
     }
     
     

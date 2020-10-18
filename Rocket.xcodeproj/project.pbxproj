@@ -17,10 +17,10 @@
 		D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D90B5F60253C6BE500E9B655 /* LaunchScreen.storyboard */; };
 		D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */; };
 		D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F76253C822300E9B655 /* PreviewWrapper.swift */; };
+		D90B5F7F253C83D300E9B655 /* ENV.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F7E253C83D300E9B655 /* ENV.swift */; };
 		D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */; };
 		D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */; };
 		F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71832539A36C001243D0 /* AppDelegate.swift */; };
-		F2BA71862539A36C001243D0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71852539A36C001243D0 /* SceneDelegate.swift */; };
 		F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2BA718C2539A36D001243D0 /* Assets.xcassets */; };
 		F2BA719B2539A36D001243D0 /* RocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA719A2539A36D001243D0 /* RocketTests.swift */; };
 		F2BA71A62539A36D001243D0 /* RocketUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71A52539A36D001243D0 /* RocketUITests.swift */; };
@@ -59,13 +59,13 @@
 		D90B5F60253C6BE500E9B655 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyProvider.swift; sourceTree = "<group>"; };
 		D90B5F76253C822300E9B655 /* PreviewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewWrapper.swift; sourceTree = "<group>"; };
+		D90B5F7E253C83D300E9B655 /* ENV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ENV.swift; sourceTree = "<group>"; };
 		D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E285B46102C9D0E64E152F80 /* Pods_Rocket_RocketUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rocket_RocketUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFF14A939688807DDE6A2620 /* Pods-RocketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RocketTests.debug.xcconfig"; path = "Target Support Files/Pods-RocketTests/Pods-RocketTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F2BA71802539A36C001243D0 /* Rocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2BA71832539A36C001243D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		F2BA71852539A36C001243D0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		F2BA718C2539A36D001243D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F2BA71912539A36D001243D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F2BA71962539A36D001243D0 /* RocketTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RocketTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,6 +114,7 @@
 				D90B5F53253C365A00E9B655 /* Config.swift */,
 				D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */,
 				D90B5F76253C822300E9B655 /* PreviewWrapper.swift */,
+				D90B5F7E253C83D300E9B655 /* ENV.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -178,7 +179,6 @@
 				D90B5F2E253BE0EF00E9B655 /* Common */,
 				D9CC5295253B2C8A0081ECF0 /* Modules */,
 				F2BA71832539A36C001243D0 /* AppDelegate.swift */,
-				F2BA71852539A36C001243D0 /* SceneDelegate.swift */,
 				D90B5F60253C6BE500E9B655 /* LaunchScreen.storyboard */,
 				F2BA718C2539A36D001243D0 /* Assets.xcassets */,
 				F2BA71912539A36D001243D0 /* Info.plist */,
@@ -456,6 +456,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */,
+				D90B5F7F253C83D300E9B655 /* ENV.swift in Sources */,
 				D90B5F30253BE12B00E9B655 /* Instantiable.swift in Sources */,
 				D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */,
 				D90B5F54253C365A00E9B655 /* Config.swift in Sources */,
@@ -463,7 +464,6 @@
 				D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */,
 				D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */,
 				D90B5F35253BE1D800E9B655 /* ReusableCell.swift in Sources */,
-				F2BA71862539A36C001243D0 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
