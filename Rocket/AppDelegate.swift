@@ -18,19 +18,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-//        let credentialsProvider = AWSCognitoCredentialsProvider(regionType: .APNortheast1, identityPoolId: config.poolId)
-//        let serviceConfiguration = AWSServiceConfiguration(region: .APNortheast1, credentialsProvider: credentialsProvider)
-//        AWSServiceManager.default()?.defaultServiceConfiguration = serviceConfiguration
-    
-        
         window = UIWindow(frame: UIScreen.main.bounds)
         let viewController = AuthViewController(dependencyProvider: dependencyProvider, input: ())
-        window?.rootViewController = viewController
+        
+        window?.rootViewController = UINavigationController(rootViewController: viewController)
+        
         window?.makeKeyAndVisible()
         return true
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        print(url.absoluteURL)
         return dependencyProvider.auth.application(app, open: url, options: options)
     }
 

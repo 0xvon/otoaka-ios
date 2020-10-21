@@ -16,31 +16,34 @@ final class AuthViewController: UIViewController, Instantiable {
         outputHander: { output in
             switch output {
             case .signin(let session):
-                guard let session = session else { return }
-                self.session = session
-                self.label.text = session.username
-            case .signout:
-                self.session = nil
-                self.label.text = "signed out"
+                if let session = session {
+                    print("signed in")
+                    let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: ())
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
             case .error(let error):
                 print(error)
                 self.label.text = error.localizedDescription
             }
         }
     )
-
-    var session: AWSCognitoAuthUserSession?
+    
     var dependencyProvider: DependencyProvider
     
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var signinButton: UIButton!
-    @IBOutlet weak var signoutButton: UIButton!
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         super.init(nibName: nil, bundle: nil)
         
         self.dependencyProvider.auth.delegate = self
+        viewModel.signin()
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     required init?(coder: NSCoder) {
@@ -54,12 +57,6 @@ final class AuthViewController: UIViewController, Instantiable {
     @IBAction func signInButtonTapped(_ sender: Any) {
         viewModel.signin()
     }
-    
-    @IBAction func signOutButtontapped(_ sender: Any) {
-        viewModel.signout()
-    }
-    
-    
 }
 
 extension AuthViewController: AWSCognitoAuthDelegate {

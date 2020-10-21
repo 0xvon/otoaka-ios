@@ -20,3 +20,17 @@ where ViewController: Instantiable, ViewController: UIViewController {
     }
 }
 
+struct ViewWrapper<View>: UIViewRepresentable
+where View: ViewInstantiable, View: UIView {
+    typealias UIViewType = View
+    
+    let input: View.Input
+    
+    func makeUIView(context: Context) -> View {
+        View(input: input)
+    }
+    
+    func updateUIView(_ uiView: View, context: Context) {
+        
+    }
+}

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,6 +18,21 @@
 		D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */; };
 		D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F76253C822300E9B655 /* PreviewWrapper.swift */; };
 		D90B5F7F253C83D300E9B655 /* ENV.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F7E253C83D300E9B655 /* ENV.swift */; };
+		D90B5F88253C85C300E9B655 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F87253C85C300E9B655 /* HomeViewController.swift */; };
+		D90B5FC9253ECB8900E9B655 /* TicketViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FC8253ECB8900E9B655 /* TicketViewController.swift */; };
+		D90B5FCE253ECD1C00E9B655 /* TicketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FCD253ECD1C00E9B655 /* TicketViewModel.swift */; };
+		D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D90B5FD2253ECD3100E9B655 /* TicketViewController.xib */; };
+		D90B5FD8253ECDB900E9B655 /* LiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FD7253ECDB900E9B655 /* LiveViewController.swift */; };
+		D90B5FDD253ECDD700E9B655 /* LiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FDC253ECDD700E9B655 /* LiveViewModel.swift */; };
+		D90B5FE2253ECE0900E9B655 /* LiveViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D90B5FE1253ECE0900E9B655 /* LiveViewController.xib */; };
+		D90B5FE7253F08D700E9B655 /* BandViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FE6253F08D700E9B655 /* BandViewController.swift */; };
+		D90B5FEC253F08F100E9B655 /* BandViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FEB253F08F100E9B655 /* BandViewModel.swift */; };
+		D90B5FF1253F090800E9B655 /* BandViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D90B5FF0253F090800E9B655 /* BandViewController.xib */; };
+		D90B5FF6253F0F2000E9B655 /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FF5253F0F2000E9B655 /* Style.swift */; };
+		D90B5FFF253F37F400E9B655 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FFE253F37F400E9B655 /* Button.swift */; };
+		D90B6004253F37FA00E9B655 /* Button.xib in Resources */ = {isa = PBXBuildFile; fileRef = D90B6003253F37FA00E9B655 /* Button.xib */; };
+		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
+		D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */; };
 		D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */; };
 		D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */; };
 		F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71832539A36C001243D0 /* AppDelegate.swift */; };
@@ -60,6 +75,21 @@
 		D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyProvider.swift; sourceTree = "<group>"; };
 		D90B5F76253C822300E9B655 /* PreviewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewWrapper.swift; sourceTree = "<group>"; };
 		D90B5F7E253C83D300E9B655 /* ENV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ENV.swift; sourceTree = "<group>"; };
+		D90B5F87253C85C300E9B655 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		D90B5FC8253ECB8900E9B655 /* TicketViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketViewController.swift; sourceTree = "<group>"; };
+		D90B5FCD253ECD1C00E9B655 /* TicketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketViewModel.swift; sourceTree = "<group>"; };
+		D90B5FD2253ECD3100E9B655 /* TicketViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TicketViewController.xib; sourceTree = "<group>"; };
+		D90B5FD7253ECDB900E9B655 /* LiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveViewController.swift; sourceTree = "<group>"; };
+		D90B5FDC253ECDD700E9B655 /* LiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveViewModel.swift; sourceTree = "<group>"; };
+		D90B5FE1253ECE0900E9B655 /* LiveViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveViewController.xib; sourceTree = "<group>"; };
+		D90B5FE6253F08D700E9B655 /* BandViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandViewController.swift; sourceTree = "<group>"; };
+		D90B5FEB253F08F100E9B655 /* BandViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandViewModel.swift; sourceTree = "<group>"; };
+		D90B5FF0253F090800E9B655 /* BandViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BandViewController.xib; sourceTree = "<group>"; };
+		D90B5FF5253F0F2000E9B655 /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
+		D90B5FFE253F37F400E9B655 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
+		D90B6003253F37FA00E9B655 /* Button.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Button.xib; sourceTree = "<group>"; };
+		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
+		D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleLabelView.xib; sourceTree = "<group>"; };
 		D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E285B46102C9D0E64E152F80 /* Pods_Rocket_RocketUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rocket_RocketUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -109,19 +139,82 @@
 		D90B5F2E253BE0EF00E9B655 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D96C7DC02540052F00A9B2C6 /* TitleLabel */,
+				D90B5FFD253F37D500E9B655 /* Button */,
 				D90B5F2F253BE12B00E9B655 /* Instantiable.swift */,
 				D90B5F34253BE1D800E9B655 /* ReusableCell.swift */,
 				D90B5F53253C365A00E9B655 /* Config.swift */,
 				D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */,
 				D90B5F76253C822300E9B655 /* PreviewWrapper.swift */,
 				D90B5F7E253C83D300E9B655 /* ENV.swift */,
+				D90B5FF5253F0F2000E9B655 /* Style.swift */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		D90B5F86253C85B500E9B655 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				D90B5F87253C85C300E9B655 /* HomeViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		D90B5FC5253ECB6000E9B655 /* Live */ = {
+			isa = PBXGroup;
+			children = (
+				D90B5FD7253ECDB900E9B655 /* LiveViewController.swift */,
+				D90B5FDC253ECDD700E9B655 /* LiveViewModel.swift */,
+				D90B5FE1253ECE0900E9B655 /* LiveViewController.xib */,
+			);
+			path = Live;
+			sourceTree = "<group>";
+		};
+		D90B5FC6253ECB6A00E9B655 /* Band */ = {
+			isa = PBXGroup;
+			children = (
+				D90B5FE6253F08D700E9B655 /* BandViewController.swift */,
+				D90B5FEB253F08F100E9B655 /* BandViewModel.swift */,
+				D90B5FF0253F090800E9B655 /* BandViewController.xib */,
+			);
+			path = Band;
+			sourceTree = "<group>";
+		};
+		D90B5FC7253ECB7200E9B655 /* Ticket */ = {
+			isa = PBXGroup;
+			children = (
+				D90B5FC8253ECB8900E9B655 /* TicketViewController.swift */,
+				D90B5FCD253ECD1C00E9B655 /* TicketViewModel.swift */,
+				D90B5FD2253ECD3100E9B655 /* TicketViewController.xib */,
+			);
+			path = Ticket;
+			sourceTree = "<group>";
+		};
+		D90B5FFD253F37D500E9B655 /* Button */ = {
+			isa = PBXGroup;
+			children = (
+				D90B5FFE253F37F400E9B655 /* Button.swift */,
+				D90B6003253F37FA00E9B655 /* Button.xib */,
+			);
+			path = Button;
+			sourceTree = "<group>";
+		};
+		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
+			isa = PBXGroup;
+			children = (
+				D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */,
+				D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */,
+			);
+			path = TitleLabel;
 			sourceTree = "<group>";
 		};
 		D9CC5295253B2C8A0081ECF0 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				D90B5FC7253ECB7200E9B655 /* Ticket */,
+				D90B5FC6253ECB6A00E9B655 /* Band */,
+				D90B5FC5253ECB6000E9B655 /* Live */,
+				D90B5F86253C85B500E9B655 /* Home */,
 				D9CC5296253B2C990081ECF0 /* Auth */,
 			);
 			path = Modules;
@@ -301,7 +394,7 @@
 				};
 			};
 			buildConfigurationList = F2BA717B2539A36C001243D0 /* Build configuration list for PBXProject "Rocket" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -325,8 +418,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */,
+				D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */,
 				D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */,
 				D90B5F2A253BDF9600E9B655 /* AuthViewController.xib in Resources */,
+				D90B6004253F37FA00E9B655 /* Button.xib in Resources */,
+				D90B5FF1253F090800E9B655 /* BandViewController.xib in Resources */,
+				D90B5FE2253ECE0900E9B655 /* LiveViewController.xib in Resources */,
 				F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,12 +554,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */,
+				D90B5FD8253ECDB900E9B655 /* LiveViewController.swift in Sources */,
 				D90B5F7F253C83D300E9B655 /* ENV.swift in Sources */,
+				D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */,
 				D90B5F30253BE12B00E9B655 /* Instantiable.swift in Sources */,
 				D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */,
+				D90B5FEC253F08F100E9B655 /* BandViewModel.swift in Sources */,
+				D90B5FF6253F0F2000E9B655 /* Style.swift in Sources */,
+				D90B5FFF253F37F400E9B655 /* Button.swift in Sources */,
 				D90B5F54253C365A00E9B655 /* Config.swift in Sources */,
+				D90B5FE7253F08D700E9B655 /* BandViewController.swift in Sources */,
+				D90B5F88253C85C300E9B655 /* HomeViewController.swift in Sources */,
 				F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */,
+				D90B5FC9253ECB8900E9B655 /* TicketViewController.swift in Sources */,
 				D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */,
+				D90B5FCE253ECD1C00E9B655 /* TicketViewModel.swift in Sources */,
+				D90B5FDD253ECDD700E9B655 /* LiveViewModel.swift in Sources */,
 				D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */,
 				D90B5F35253BE1D800E9B655 /* ReusableCell.swift in Sources */,
 			);
@@ -550,13 +658,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -605,12 +714,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
