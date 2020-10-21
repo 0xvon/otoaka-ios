@@ -33,6 +33,7 @@ final class Button: UIView, ViewInstantiable {
     }
     
     func layout() {
+        self.frame = CGRect(x: 0, y: 0, width: 180, height: 48)
         self.layer.cornerRadius = 16
         self.backgroundColor = style.color.background.get()
         self.layer.cornerRadius = 16
@@ -61,9 +62,6 @@ final class Button: UIView, ViewInstantiable {
         default:
             print("hoa")
         }
-    }
-    
-    @IBAction func button(_ sender: Any) {
     }
 }
 

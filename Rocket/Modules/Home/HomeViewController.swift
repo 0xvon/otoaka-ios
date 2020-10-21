@@ -22,25 +22,33 @@ final class HomeViewController: UITabBarController, Instantiable {
         tab()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-    }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     func tab() {
         let liveViewController = LiveViewController(dependencyProvider: dependencyProvider, input: ())
-        liveViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 0)
+        let vc1 = UINavigationController(rootViewController: liveViewController)
+        vc1.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 0)
+        vc1.navigationBar.tintColor = style.color.main.get()
+        vc1.navigationBar.barTintColor = .clear
         
         let bandViewController = BandViewController(dependencyProvider: dependencyProvider, input: ())
-        bandViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 1)
+        let vc2 = UINavigationController(rootViewController: bandViewController)
+        vc2.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 1)
+        vc2.navigationBar.tintColor = style.color.main.get()
+        vc2.navigationBar.barTintColor = .clear
         
         let ticketViewController = TicketViewController(dependencyProvider: dependencyProvider, input: ())
-        ticketViewController.tabBarItem = UITabBarItem(tabBarSystemItem: .featured, tag: 2)
+        let vc3 = UINavigationController(rootViewController: ticketViewController)
+        vc3.tabBarItem = UITabBarItem(tabBarSystemItem: .featured, tag: 2)
+        vc3.navigationBar.tintColor = style.color.main.get()
+        vc3.navigationBar.barTintColor = .clear
         
-        let tabBarList = [liveViewController, bandViewController, ticketViewController]
+        let tabBarList = [vc1, vc2, vc3]
         viewControllers = tabBarList
+        UITabBar.appearance().tintColor = .white
+        UITabBar.appearance().barTintColor = .black
+        
     }
 }

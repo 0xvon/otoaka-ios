@@ -11,6 +11,7 @@ final class LiveViewController: UIViewController, Instantiable {
     
     typealias Input = Void
     var dependencyProvider: DependencyProvider!
+    @IBOutlet weak var sampleButtonView: Button!
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -22,8 +23,23 @@ final class LiveViewController: UIViewController, Instantiable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print("viewdidload")
+        setup()
+    }
+    
+    func setup() {
+        self.view.backgroundColor = style.color.background.get()
+        self.view.tintColor = style.color.main.get()
+        let buttonView = Button(input: .buyTicket)
+        buttonView.button.addTarget(self, action: #selector(tappedButton), for: .touchUpInside)
+        self.sampleButtonView.addSubview(buttonView)
+    }
+    
+    @objc func tappedButton(sender: UIButton!) {
+        let vc = BandViewController(dependencyProvider: dependencyProvider, input: ())
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 

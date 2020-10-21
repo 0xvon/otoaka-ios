@@ -30,9 +30,6 @@
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4P0-Fq-Yfq">
                     <rect key="frame" x="0.0" y="0.0" width="207" height="48"/>
-                    <connections>
-                        <action selector="button:" destination="iN0-l3-epB" eventType="touchUpInside" id="75t-nK-04v"/>
-                    </connections>
                 </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>

@@ -20,9 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow(frame: UIScreen.main.bounds)
         let viewController = AuthViewController(dependencyProvider: dependencyProvider, input: ())
-        
         window?.rootViewController = UINavigationController(rootViewController: viewController)
-        
         window?.makeKeyAndVisible()
         return true
     }
