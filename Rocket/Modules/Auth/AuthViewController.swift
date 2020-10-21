@@ -23,15 +23,14 @@ final class AuthViewController: UIViewController, Instantiable {
                 }
             case .error(let error):
                 print(error)
-                self.label.text = error.localizedDescription
             }
         }
     )
     
-    var dependencyProvider: DependencyProvider
+    @IBOutlet weak var backgroundImageView: UIImageView!
+    @IBOutlet weak var signInButtonView: UIView!
     
-    @IBOutlet weak var label: UILabel!
-    @IBOutlet weak var signinButton: UIButton!
+    var dependencyProvider: DependencyProvider
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -39,7 +38,6 @@ final class AuthViewController: UIViewController, Instantiable {
         
         self.dependencyProvider.auth.delegate = self
         viewModel.signin()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -49,12 +47,24 @@ final class AuthViewController: UIViewController, Instantiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
     }
     
-    @IBAction func signInButtonTapped(_ sender: Any) {
+    func setup() {
+        backgroundImageView.layer.opacity = 0.6
+        backgroundImageView.image = UIImage(named: "live")
+        backgroundImageView.contentMode = .scaleAspectFill
+        
+        signInButtonView.backgroundColor = .clear
+        let buttonView = Button(input: .signin)
+        buttonView.button.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
+        self.signInButtonView.addSubview(buttonView)
+    }
+    
+    @objc func signInButtonTapped(sender: UIButton!) {
         viewModel.signin()
     }
 }

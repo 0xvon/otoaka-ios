@@ -17,6 +17,7 @@ final class Button: UIView, ViewInstantiable {
         case listen
         case play
         case buyTicket
+        case signin
     }
     
     @IBOutlet weak var buttonImageView: UIImageView!
@@ -36,6 +37,7 @@ final class Button: UIView, ViewInstantiable {
         self.frame = CGRect(x: 0, y: 0, width: 180, height: 48)
         self.layer.cornerRadius = 16
         self.backgroundColor = style.color.background.get()
+        self.layer.opacity = 0.8
         self.layer.cornerRadius = 16
         self.layer.borderWidth = 1
         self.layer.borderColor = style.color.main.get().cgColor
@@ -59,6 +61,10 @@ final class Button: UIView, ViewInstantiable {
         case .play:
             self.buttonImageView.image = UIImage(systemName: "play")
             self.buttonTitleLabel.text = "再生"
+        case .signin:
+            self.buttonImageView.image = nil
+            self.buttonTitleLabel.text = "サインイン"
+            self.frame = CGRect(x: 0, y: 0, width: 300, height: 60)
         default:
             print("hoa")
         }
