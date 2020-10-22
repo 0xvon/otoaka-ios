@@ -33,6 +33,8 @@
 		D90B6004253F37FA00E9B655 /* Button.xib in Resources */ = {isa = PBXBuildFile; fileRef = D90B6003253F37FA00E9B655 /* Button.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */; };
+		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
+		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
 		D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */; };
 		D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */; };
 		F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71832539A36C001243D0 /* AppDelegate.swift */; };
@@ -90,6 +92,8 @@
 		D90B6003253F37FA00E9B655 /* Button.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Button.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleLabelView.xib; sourceTree = "<group>"; };
+		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
+		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
 		D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E285B46102C9D0E64E152F80 /* Pods_Rocket_RocketUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rocket_RocketUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -139,6 +143,7 @@
 		D90B5F2E253BE0EF00E9B655 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D96C7DF025415BA800A9B2C6 /* LiveCell */,
 				D96C7DC02540052F00A9B2C6 /* TitleLabel */,
 				D90B5FFD253F37D500E9B655 /* Button */,
 				D90B5F2F253BE12B00E9B655 /* Instantiable.swift */,
@@ -206,6 +211,15 @@
 				D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */,
 			);
 			path = TitleLabel;
+			sourceTree = "<group>";
+		};
+		D96C7DF025415BA800A9B2C6 /* LiveCell */ = {
+			isa = PBXGroup;
+			children = (
+				D96C7DF125415BB900A9B2C6 /* LiveCell.swift */,
+				D96C7DF625415E4100A9B2C6 /* LiveCell.xib */,
+			);
+			path = LiveCell;
 			sourceTree = "<group>";
 		};
 		D9CC5295253B2C8A0081ECF0 /* Modules */ = {
@@ -419,6 +433,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */,
+				D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */,
 				D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */,
 				D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */,
 				D90B5F2A253BDF9600E9B655 /* AuthViewController.xib in Resources */,
@@ -570,6 +585,7 @@
 				D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */,
 				D90B5FCE253ECD1C00E9B655 /* TicketViewModel.swift in Sources */,
 				D90B5FDD253ECDD700E9B655 /* LiveViewModel.swift in Sources */,
+				D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */,
 				D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */,
 				D90B5F35253BE1D800E9B655 /* ReusableCell.swift in Sources */,
 			);

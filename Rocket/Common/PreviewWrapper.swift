@@ -34,3 +34,18 @@ where View: ViewInstantiable, View: UIView {
         
     }
 }
+
+struct TableCellWrapper<View>: UIViewRepresentable
+where View: ReusableCell, View: UITableViewCell {
+    typealias UIViewType = View
+    
+    let input: View.Input
+    
+    func makeUIView(context: Context) -> View {
+        View(style: .default, reuseIdentifier: View.reusableIdentifier)
+    }
+    
+    func updateUIView(_ cell: View, context: Context) {
+        cell.inject(input: input)
+    }
+}
