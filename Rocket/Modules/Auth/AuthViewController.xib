@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AuthViewController" customModule="Rocket" customModuleProvider="target">
+            <connections>
+                <outlet property="backgroundImageView" destination="YMo-KT-2tl" id="jfu-A1-My4"/>
+                <outlet property="signInButtonView" destination="r8Q-Ea-AYh" id="K0w-eU-NdO"/>
+                <outlet property="view" destination="qy2-Ib-wCX" id="ClS-IR-ipD"/>
+            </connections>
+        </placeholder>
+        <view contentMode="scaleToFill" id="qy2-Ib-wCX">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YMo-KT-2tl">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r8Q-Ea-AYh">
+                    <rect key="frame" x="57" y="748" width="300" height="60"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="300" id="Epu-Ha-o1p"/>
+                        <constraint firstAttribute="height" constant="60" id="OKh-ia-NSu"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="9cN-LU-Lp2"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="YMo-KT-2tl" secondAttribute="bottom" id="Koj-eV-9v9"/>
+                <constraint firstItem="YMo-KT-2tl" firstAttribute="leading" secondItem="9cN-LU-Lp2" secondAttribute="leading" id="MkL-3b-pK9"/>
+                <constraint firstItem="r8Q-Ea-AYh" firstAttribute="centerX" secondItem="qy2-Ib-wCX" secondAttribute="centerX" id="PA5-ZO-V5R"/>
+                <constraint firstItem="9cN-LU-Lp2" firstAttribute="trailing" secondItem="YMo-KT-2tl" secondAttribute="trailing" id="TQ3-ta-5Q6"/>
+                <constraint firstItem="YMo-KT-2tl" firstAttribute="top" secondItem="qy2-Ib-wCX" secondAttribute="top" id="bOC-Sw-rgH"/>
+                <constraint firstItem="9cN-LU-Lp2" firstAttribute="bottom" secondItem="r8Q-Ea-AYh" secondAttribute="bottom" constant="54" id="rxq-Yi-ll8"/>
+            </constraints>
+            <point key="canvasLocation" x="-359.4202898550725" y="-540.40178571428567"/>
+        </view>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
