@@ -24,7 +24,7 @@ final class TitleLabelView: UIView, ViewInstantiable {
     }
     
     func setup() {
-        self.backgroundColor = style.color.background.get()
+        self.backgroundColor = .clear
         titleLabel.text = self.input
         titleLabel.textColor = style.color.main.get()
         titleLabel.font = style.font.xlarge.get()
@@ -44,6 +44,7 @@ struct TitleLabelView_Previews: PreviewProvider {
             ViewWrapper<TitleLabelView>(input: "吾輩は猫である").previewDisplayName("Japanese")
         }
         .previewLayout(.fixed(width: 300, height: 70))
+        .preferredColorScheme(.dark)
     }
 }
 #endif

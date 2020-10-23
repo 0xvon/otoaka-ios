@@ -55,16 +55,16 @@ struct style {
 }
 
 extension UIView {
-    func shadow() {
-        let shadowView = UIView(frame: self.frame)
-        shadowView.backgroundColor = style.color.background.get()
-        self.addSubview(shadowView)
-        self.sendSubviewToBack(shadowView)
-        shadowView.layer.cornerRadius = self.layer.cornerRadius
-        shadowView.layer.shadowOffset = CGSize(width: 2.0, height: 4.0)
-        shadowView.layer.shadowColor = style.color.main.get().cgColor
-        shadowView.layer.shadowOpacity = 0.6
-        shadowView.layer.shadowRadius = self.layer.cornerRadius
+    func makeShadow() {
+//        let shadowView = UIView(frame: frame)
+//        shadowView.backgroundColor = self.backgroundColor
+//        self.addSubview(shadowView)
+//        self.sendSubviewToBack(shadowView)
+//        shadowView.layer.cornerRadius = self.layer.cornerRadius
+        self.layer.shadowOffset = CGSize(width: 10.0, height: 4.0)
+        self.layer.shadowColor = style.color.main.get().cgColor
+        self.layer.shadowOpacity = 0.6
+        self.layer.shadowRadius = self.layer.cornerRadius
     }
 }
 

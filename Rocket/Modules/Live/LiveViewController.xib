@@ -11,7 +11,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LiveViewController" customModule="Rocket" customModuleProvider="target">
             <connections>
-                <outlet property="sampleButtonView" destination="vLq-nc-3fu" id="oX5-od-JZE"/>
+                <outlet property="liveSearchBar" destination="zlZ-T9-upx" id="g0b-DJ-C1g"/>
+                <outlet property="liveTableView" destination="VDk-qR-cKm" id="LRA-um-ltT"/>
                 <outlet property="view" destination="iN0-l3-epB" id="H43-PS-EL5"/>
             </connections>
         </placeholder>
@@ -20,29 +21,27 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Live" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A9S-RZ-qi2">
-                    <rect key="frame" x="191.5" y="437.5" width="31" height="21"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vLq-nc-3fu">
-                    <rect key="frame" x="34" y="104" width="180" height="48"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="48" id="FCq-7k-rzK"/>
-                        <constraint firstAttribute="width" constant="180" id="vYI-NK-V5W"/>
-                    </constraints>
-                </view>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="VDk-qR-cKm">
+                    <rect key="frame" x="16" y="100" width="382" height="746"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                </tableView>
+                <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="zlZ-T9-upx">
+                    <rect key="frame" x="0.0" y="44" width="414" height="56"/>
+                    <textInputTraits key="textInputTraits"/>
+                </searchBar>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="A9S-RZ-qi2" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="CVY-YS-VbJ"/>
-                <constraint firstItem="vLq-nc-3fu" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="34" id="LQM-Ib-09V"/>
-                <constraint firstItem="A9S-RZ-qi2" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="ZaG-Uu-Wz8"/>
-                <constraint firstItem="vLq-nc-3fu" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="60" id="sNn-2e-eV6"/>
+                <constraint firstItem="zlZ-T9-upx" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="2in-h2-Lfa"/>
+                <constraint firstItem="VDk-qR-cKm" firstAttribute="top" secondItem="zlZ-T9-upx" secondAttribute="bottom" id="4fq-GX-GLV"/>
+                <constraint firstItem="zlZ-T9-upx" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="V9i-Sz-FaR"/>
+                <constraint firstItem="VDk-qR-cKm" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" constant="-16" id="YdI-pj-Wid"/>
+                <constraint firstItem="VDk-qR-cKm" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="poV-Na-F92"/>
+                <constraint firstItem="zlZ-T9-upx" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="qMi-4l-dix"/>
+                <constraint firstItem="VDk-qR-cKm" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" constant="-16" id="wem-5E-SNg"/>
             </constraints>
-            <point key="canvasLocation" x="141" y="108"/>
+            <point key="canvasLocation" x="140.57971014492756" y="107.8125"/>
         </view>
     </objects>
     <resources>

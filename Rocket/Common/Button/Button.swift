@@ -24,10 +24,6 @@ final class Button: UIView, ViewInstantiable {
     @IBOutlet weak var buttonTitleLabel: UILabel!
     @IBOutlet weak var button: UIButton!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-    
     func inject(input: type) {
         self.input = input
         self.layout()
@@ -35,17 +31,16 @@ final class Button: UIView, ViewInstantiable {
     
     func layout() {
         self.frame = CGRect(x: 0, y: 0, width: 180, height: 48)
-        self.layer.cornerRadius = 16
-        self.backgroundColor = style.color.background.get()
+        self.backgroundColor = .clear
         self.layer.opacity = 0.8
-        self.layer.cornerRadius = 16
+        self.layer.cornerRadius = 24
         self.layer.borderWidth = 1
         self.layer.borderColor = style.color.main.get().cgColor
         
         self.buttonImageView.tintColor = style.color.main
             .get()
         
-        self.button.layer.cornerRadius = 16
+        self.button.layer.cornerRadius = 24
         self.button.backgroundColor = .clear
         
         self.buttonTitleLabel.textColor = style.color.main.get()
@@ -88,6 +83,7 @@ struct Button_Previews: PreviewProvider {
             ).previewDisplayName("ticketing")
         }
         .previewLayout(.fixed(width: 180, height: 48))
+        .preferredColorScheme(.dark)
     }
 }
 #endif

@@ -12,12 +12,15 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="67"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OJQ-lK-Rvp">
-                    <rect key="frame" x="12" y="12" width="390" height="43"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="xHD-cu-3TG"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="26"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
@@ -25,16 +28,16 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemPinkColor"/>
             <constraints>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="OJQ-lK-Rvp" secondAttribute="bottom" constant="12" id="35G-SI-fP8"/>
-                <constraint firstItem="OJQ-lK-Rvp" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="12" id="5bo-kf-sp9"/>
-                <constraint firstAttribute="trailing" secondItem="OJQ-lK-Rvp" secondAttribute="trailing" constant="12" id="HNY-MP-4ZF"/>
-                <constraint firstItem="OJQ-lK-Rvp" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="12" id="eZl-kK-okn"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="OJQ-lK-Rvp" secondAttribute="bottom" id="35G-SI-fP8"/>
+                <constraint firstItem="OJQ-lK-Rvp" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="5bo-kf-sp9"/>
+                <constraint firstAttribute="trailing" secondItem="OJQ-lK-Rvp" secondAttribute="trailing" id="HNY-MP-4ZF"/>
+                <constraint firstItem="OJQ-lK-Rvp" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="eZl-kK-okn"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="titleLabel" destination="OJQ-lK-Rvp" id="0AJ-Hd-HMI"/>
             </connections>
-            <point key="canvasLocation" x="115.94202898550725" y="-169.75446428571428"/>
+            <point key="canvasLocation" x="115.94202898550725" y="-178.79464285714286"/>
         </view>
     </objects>
     <resources>

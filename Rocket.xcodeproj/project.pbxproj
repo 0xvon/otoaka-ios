@@ -31,6 +31,8 @@
 		D90B5FF6253F0F2000E9B655 /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FF5253F0F2000E9B655 /* Style.swift */; };
 		D90B5FFF253F37F400E9B655 /* Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FFE253F37F400E9B655 /* Button.swift */; };
 		D90B6004253F37FA00E9B655 /* Button.xib in Resources */ = {isa = PBXBuildFile; fileRef = D90B6003253F37FA00E9B655 /* Button.xib */; };
+		D951C3632541CB0D0010DB09 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3622541CB0D0010DB09 /* BadgeView.swift */; };
+		D951C3682541CC0B0010DB09 /* BadgeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3672541CC0B0010DB09 /* BadgeView.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
@@ -90,6 +92,8 @@
 		D90B5FF5253F0F2000E9B655 /* Style.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		D90B5FFE253F37F400E9B655 /* Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Button.swift; sourceTree = "<group>"; };
 		D90B6003253F37FA00E9B655 /* Button.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Button.xib; sourceTree = "<group>"; };
+		D951C3622541CB0D0010DB09 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
+		D951C3672541CC0B0010DB09 /* BadgeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BadgeView.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleLabelView.xib; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
@@ -143,6 +147,7 @@
 		D90B5F2E253BE0EF00E9B655 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D951C3612541CADE0010DB09 /* Badge */,
 				D96C7DF025415BA800A9B2C6 /* LiveCell */,
 				D96C7DC02540052F00A9B2C6 /* TitleLabel */,
 				D90B5FFD253F37D500E9B655 /* Button */,
@@ -202,6 +207,15 @@
 				D90B6003253F37FA00E9B655 /* Button.xib */,
 			);
 			path = Button;
+			sourceTree = "<group>";
+		};
+		D951C3612541CADE0010DB09 /* Badge */ = {
+			isa = PBXGroup;
+			children = (
+				D951C3622541CB0D0010DB09 /* BadgeView.swift */,
+				D951C3672541CC0B0010DB09 /* BadgeView.xib */,
+			);
+			path = Badge;
 			sourceTree = "<group>";
 		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
@@ -432,6 +446,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D951C3682541CC0B0010DB09 /* BadgeView.xib in Resources */,
 				D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */,
 				D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */,
 				D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */,
@@ -583,6 +598,7 @@
 				F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */,
 				D90B5FC9253ECB8900E9B655 /* TicketViewController.swift in Sources */,
 				D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */,
+				D951C3632541CB0D0010DB09 /* BadgeView.swift in Sources */,
 				D90B5FCE253ECD1C00E9B655 /* TicketViewModel.swift in Sources */,
 				D90B5FDD253ECDD700E9B655 /* LiveViewModel.swift in Sources */,
 				D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */,
