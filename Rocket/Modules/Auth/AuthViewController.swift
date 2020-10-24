@@ -63,6 +63,16 @@ final class AuthViewController: UIViewController, Instantiable {
             self?.signInButtonTapped()
         }
         self.signInButtonView.addSubview(buttonView)
+        buttonView.translatesAutoresizingMaskIntoConstraints = false
+        self.signInButtonView.translatesAutoresizingMaskIntoConstraints = false
+        let constraints = [
+            signInButtonView.topAnchor.constraint(equalTo: buttonView.topAnchor),
+            signInButtonView.bottomAnchor.constraint(equalTo: buttonView.bottomAnchor),
+            signInButtonView.leftAnchor.constraint(equalTo: buttonView.leftAnchor),
+            signInButtonView.rightAnchor.constraint(equalTo: buttonView.rightAnchor),
+        ]
+        NSLayoutConstraint.activate(constraints)
+
     }
     
     func signInButtonTapped() {
