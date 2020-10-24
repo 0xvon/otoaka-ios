@@ -15,20 +15,15 @@ class LiveCell: UITableViewCell, ReusableCell {
     
     @IBOutlet weak var liveTitleLabel: UILabel!
     @IBOutlet weak var bandsLabel: UILabel!
-    @IBOutlet weak var placeView: UIView!
-    @IBOutlet weak var dateView: UIView!
+    @IBOutlet weak var placeView: BadgeView!
+    @IBOutlet weak var dateView: BadgeView!
     @IBOutlet weak var listenButtonView: Button!
     @IBOutlet weak var buyTicketButtonView: Button!
     @IBOutlet weak var thumbnailView: UIImageView!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        setup()
-    }
-    
     func inject(input: Live) {
         self.input = input
+        setup()
     }
     
     func setup() {
@@ -36,8 +31,7 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.backgroundColor = UIColor(patternImage: UIImage(named: "live")!)
         self.layer.borderWidth = 1
         self.layer.borderColor = style.color.main.get().cgColor
-        self.layer.cornerRadius = 10
-        print(self.bounds)
+        self.layer.cornerRadius = 10        
         
         self.liveTitleLabel.text = "BANGOHAN TOUR 2020 ~今日の夜はなまたまごとライスと米~"
         self.liveTitleLabel.font = style.font.xlarge.get()
@@ -67,7 +61,6 @@ class LiveCell: UITableViewCell, ReusableCell {
         let listenView = Button(input: .listen)
         listenButtonView.addSubview(listenView)
         listenButtonView.backgroundColor = .clear
-        
         let dateBadge = BadgeView(input: .date("明日18時"))
         dateBadge.frame = dateView.bounds
         dateView.addSubview(dateBadge)
@@ -79,5 +72,3 @@ class LiveCell: UITableViewCell, ReusableCell {
         placeView.backgroundColor = .clear
     }
 }
-
-struct Live {}

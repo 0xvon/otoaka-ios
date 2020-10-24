@@ -33,6 +33,9 @@
 		D90B6004253F37FA00E9B655 /* Button.xib in Resources */ = {isa = PBXBuildFile; fileRef = D90B6003253F37FA00E9B655 /* Button.xib */; };
 		D951C3632541CB0D0010DB09 /* BadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3622541CB0D0010DB09 /* BadgeView.swift */; };
 		D951C3682541CC0B0010DB09 /* BadgeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3672541CC0B0010DB09 /* BadgeView.xib */; };
+		D951C37725432C640010DB09 /* LiveDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C37625432C640010DB09 /* LiveDetailViewController.swift */; };
+		D951C37C25432CCA0010DB09 /* LiveDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C37B25432CCA0010DB09 /* LiveDetailViewModel.swift */; };
+		D951C38125432CE30010DB09 /* LiveDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C38025432CE30010DB09 /* LiveDetailViewController.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
@@ -94,6 +97,9 @@
 		D90B6003253F37FA00E9B655 /* Button.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = Button.xib; sourceTree = "<group>"; };
 		D951C3622541CB0D0010DB09 /* BadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BadgeView.swift; sourceTree = "<group>"; };
 		D951C3672541CC0B0010DB09 /* BadgeView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BadgeView.xib; sourceTree = "<group>"; };
+		D951C37625432C640010DB09 /* LiveDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDetailViewController.swift; sourceTree = "<group>"; };
+		D951C37B25432CCA0010DB09 /* LiveDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDetailViewModel.swift; sourceTree = "<group>"; };
+		D951C38025432CE30010DB09 /* LiveDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveDetailViewController.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleLabelView.xib; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
@@ -147,8 +153,8 @@
 		D90B5F2E253BE0EF00E9B655 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				D951C3612541CADE0010DB09 /* Badge */,
 				D96C7DF025415BA800A9B2C6 /* LiveCell */,
+				D951C3612541CADE0010DB09 /* Badge */,
 				D96C7DC02540052F00A9B2C6 /* TitleLabel */,
 				D90B5FFD253F37D500E9B655 /* Button */,
 				D90B5F2F253BE12B00E9B655 /* Instantiable.swift */,
@@ -218,6 +224,16 @@
 			path = Badge;
 			sourceTree = "<group>";
 		};
+		D951C37525432C4D0010DB09 /* LiveDetail */ = {
+			isa = PBXGroup;
+			children = (
+				D951C37625432C640010DB09 /* LiveDetailViewController.swift */,
+				D951C37B25432CCA0010DB09 /* LiveDetailViewModel.swift */,
+				D951C38025432CE30010DB09 /* LiveDetailViewController.xib */,
+			);
+			path = LiveDetail;
+			sourceTree = "<group>";
+		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
 			isa = PBXGroup;
 			children = (
@@ -240,6 +256,7 @@
 			isa = PBXGroup;
 			children = (
 				D90B5FC5253ECB6000E9B655 /* Live */,
+				D951C37525432C4D0010DB09 /* LiveDetail */,
 				D90B5FC6253ECB6A00E9B655 /* Band */,
 				D90B5FC7253ECB7200E9B655 /* Ticket */,
 				D90B5F86253C85B500E9B655 /* Home */,
@@ -456,6 +473,7 @@
 				D90B5FF1253F090800E9B655 /* BandViewController.xib in Resources */,
 				D90B5FE2253ECE0900E9B655 /* LiveViewController.xib in Resources */,
 				F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */,
+				D951C38125432CE30010DB09 /* LiveDetailViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -584,7 +602,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */,
+				D951C37725432C640010DB09 /* LiveDetailViewController.swift in Sources */,
 				D90B5FD8253ECDB900E9B655 /* LiveViewController.swift in Sources */,
+				D951C37C25432CCA0010DB09 /* LiveDetailViewModel.swift in Sources */,
 				D90B5F7F253C83D300E9B655 /* ENV.swift in Sources */,
 				D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */,
 				D90B5F30253BE12B00E9B655 /* Instantiable.swift in Sources */,

@@ -10,6 +10,20 @@ import UIKit
 final class LiveViewController: UIViewController, Instantiable {
     
     typealias Input = Void
+    
+    lazy var viewModel = LiveViewModel(
+        outputHander: { output in
+            switch output {
+            case .get(let lives):
+                self.lives = lives
+                self.liveTableView.reloadData()
+            case .error(let error):
+                print(error)
+            }
+        }
+    )
+    
+    var lives: [Live] = []
     var dependencyProvider: DependencyProvider!
     @IBOutlet weak var liveTableView: UITableView!
     @IBOutlet weak var liveSearchBar: UISearchBar!
@@ -26,8 +40,8 @@ final class LiveViewController: UIViewController, Instantiable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewdidload")
         setup()
+        viewModel.get()
     }
     
     func setup() {
@@ -52,7 +66,7 @@ final class LiveViewController: UIViewController, Instantiable {
 
 extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 10
+        return self.lives.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -60,8 +74,14 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = Live()
-        return tableView.reuse(LiveCell.self, input: live, for: indexPath)
+        let live: Live = self.lives[indexPath.section]
+        let cell: LiveCell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
+        print("\(indexPath.section) cell defined")
+        let listenButtonView: Button = cell.listenButtonView.subviews.first as! Button
+//        listenButtonView.button.tag = indexPath.section
+        listenButtonView.button.addTarget(self, action: #selector(self.listenButtonTapped(_:)), for: .touchUpInside)
+        
+        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -69,13 +89,11 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
         switch section {
         case 0:
             let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 32, height: 60))
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 300, height: 40))
             let titleView = TitleLabelView(input: "LIVE")
-//            titleView.frame = view.bounds
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)
             return view
@@ -88,6 +106,17 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return .leastNonzeroMagnitude
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let live = self.lives[indexPath.section]
+        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
+        self.navigationController?.pushViewController(vc, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    @objc private func listenButtonTapped(_ sender: UIButton) {
+        print("hello \(sender.tag)")
     }
 }
 
