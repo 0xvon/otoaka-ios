@@ -77,7 +77,6 @@ final class Button: UIView {
     func listen(_ listener: @escaping () -> Void) {
         self.listener = listener
     }
-
     
     func layout() {
         self.buttonImageView.tintColor = style.color.main
