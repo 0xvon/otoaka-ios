@@ -77,10 +77,9 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
         let live: Live = self.lives[indexPath.section]
         let cell: LiveCell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
         print("\(indexPath.section) cell defined")
-        let listenButtonView: Button = cell.listenButtonView.subviews.first as! Button
-//        listenButtonView.button.tag = indexPath.section
-        listenButtonView.button.addTarget(self, action: #selector(self.listenButtonTapped(_:)), for: .touchUpInside)
-        
+        cell.listen { [weak self] in
+            self?.listenButtonTapped(cellIndex: indexPath.section)
+        }
         return cell
     }
     
@@ -115,8 +114,8 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    @objc private func listenButtonTapped(_ sender: UIButton) {
-        print("hello \(sender.tag)")
+    private func listenButtonTapped(cellIndex: Int) {
+        print("hello \(cellIndex)")
     }
 }
 

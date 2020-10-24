@@ -9,9 +9,15 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="Button" customModule="Rocket" customModuleProvider="target">
+            <connections>
+                <outlet property="button" destination="4P0-Fq-Yfq" id="Iac-G7-Vi0"/>
+                <outlet property="buttonImageView" destination="PrT-OQ-XV3" id="dgM-bd-dLf"/>
+                <outlet property="buttonTitleLabel" destination="Y46-0z-2T5" id="WIR-Cw-lLi"/>
+            </connections>
+        </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="Button" customModule="Rocket" customModuleProvider="target">
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
             <rect key="frame" x="0.0" y="0.0" width="207" height="48"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
@@ -47,11 +53,6 @@
                 <constraint firstItem="4P0-Fq-Yfq" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="xSS-BL-wU7"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <connections>
-                <outlet property="button" destination="4P0-Fq-Yfq" id="XUA-II-kSe"/>
-                <outlet property="buttonImageView" destination="PrT-OQ-XV3" id="HCD-Fi-RDE"/>
-                <outlet property="buttonTitleLabel" destination="Y46-0z-2T5" id="lY7-0w-ccT"/>
-            </connections>
             <point key="canvasLocation" x="174.63768115942031" y="-158.70535714285714"/>
         </view>
     </objects>

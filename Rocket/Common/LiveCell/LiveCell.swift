@@ -9,7 +9,7 @@ import UIKit
 
 class LiveCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "LiveCell" }
-    
+
     typealias Input = Live
     var input: Input!
     
@@ -21,11 +21,34 @@ class LiveCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var buyTicketButtonView: Button!
     @IBOutlet weak var thumbnailView: UIImageView!
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        buyTicketButtonView.inject(input: .buyTicket)
+        listenButtonView.inject(input: .listen)
+
+        let dateBadge = BadgeView(input: .date("明日18時"))
+        dateBadge.frame = dateView.bounds
+        dateView.addSubview(dateBadge)
+        dateView.backgroundColor = .clear
+
+        let placeBadge = BadgeView(input: .place("代々木公園"))
+        placeView.addSubview(placeBadge)
+        placeBadge.frame = placeView.bounds
+        placeView.backgroundColor = .clear
+    }
     func inject(input: Live) {
         self.input = input
         setup()
     }
-    
+
+    func listen(_ listener: @escaping () -> Void) {
+        listenButtonView.listen(listener)
+    }
+
     func setup() {
 //        self.backgroundColor = style.color.background.get()
         self.backgroundColor = UIColor(patternImage: UIImage(named: "live")!)
@@ -53,22 +76,6 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.thumbnailView.image = UIImage(named: "live")
         self.thumbnailView.contentMode = .scaleAspectFill
         self.thumbnailView.layer.opacity = 0.6
-        
-        let ticketView = Button(input: .buyTicket)
-        buyTicketButtonView.addSubview(ticketView)
-        buyTicketButtonView.backgroundColor = .clear
-        
-        let listenView = Button(input: .listen)
-        listenButtonView.addSubview(listenView)
-        listenButtonView.backgroundColor = .clear
-        let dateBadge = BadgeView(input: .date("明日18時"))
-        dateBadge.frame = dateView.bounds
-        dateView.addSubview(dateBadge)
-        dateView.backgroundColor = .clear
-        
-        let placeBadge = BadgeView(input: .place("代々木公園"))
-        placeView.addSubview(placeBadge)
-        placeBadge.frame = placeView.bounds
-        placeView.backgroundColor = .clear
+
     }
 }

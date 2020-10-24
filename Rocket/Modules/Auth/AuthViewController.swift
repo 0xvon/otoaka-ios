@@ -59,11 +59,13 @@ final class AuthViewController: UIViewController, Instantiable {
         
         signInButtonView.backgroundColor = .clear
         let buttonView = Button(input: .signin)
-        buttonView.button.addTarget(self, action: #selector(signInButtonTapped), for: .touchUpInside)
+        buttonView.listen { [weak self] in
+            self?.signInButtonTapped()
+        }
         self.signInButtonView.addSubview(buttonView)
     }
     
-    @objc func signInButtonTapped(sender: UIButton!) {
+    func signInButtonTapped() {
         viewModel.signin()
     }
 }

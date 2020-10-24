@@ -55,16 +55,14 @@
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="40x-Eh-8KY">
                     <rect key="frame" x="218" y="88" width="180" height="104"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bCB-XB-RMr">
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bCB-XB-RMr" customClass="Button" customModule="Rocket" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="180" height="48"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="48" id="0eo-e9-3z0"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jXW-cI-bn0">
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jXW-cI-bn0" customClass="Button" customModule="Rocket" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="56" width="180" height="48"/>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="48" id="F43-HK-B9b"/>
                             </constraints>
