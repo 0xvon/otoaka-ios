@@ -17,7 +17,6 @@
 		D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D90B5F60253C6BE500E9B655 /* LaunchScreen.storyboard */; };
 		D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */; };
 		D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F76253C822300E9B655 /* PreviewWrapper.swift */; };
-		D90B5F7F253C83D300E9B655 /* ENV.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F7E253C83D300E9B655 /* ENV.swift */; };
 		D90B5F88253C85C300E9B655 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5F87253C85C300E9B655 /* HomeViewController.swift */; };
 		D90B5FC9253ECB8900E9B655 /* TicketViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FC8253ECB8900E9B655 /* TicketViewController.swift */; };
 		D90B5FCE253ECD1C00E9B655 /* TicketViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90B5FCD253ECD1C00E9B655 /* TicketViewModel.swift */; };
@@ -42,6 +41,7 @@
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
 		D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */; };
 		D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */; };
+		F2A300EC2543D4E200857227 /* ENV.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A300EB2543D4E200857227 /* ENV.swift */; };
 		F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71832539A36C001243D0 /* AppDelegate.swift */; };
 		F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2BA718C2539A36D001243D0 /* Assets.xcassets */; };
 		F2BA719B2539A36D001243D0 /* RocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA719A2539A36D001243D0 /* RocketTests.swift */; };
@@ -81,7 +81,6 @@
 		D90B5F60253C6BE500E9B655 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyProvider.swift; sourceTree = "<group>"; };
 		D90B5F76253C822300E9B655 /* PreviewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewWrapper.swift; sourceTree = "<group>"; };
-		D90B5F7E253C83D300E9B655 /* ENV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ENV.swift; sourceTree = "<group>"; };
 		D90B5F87253C85C300E9B655 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		D90B5FC8253ECB8900E9B655 /* TicketViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketViewController.swift; sourceTree = "<group>"; };
 		D90B5FCD253ECD1C00E9B655 /* TicketViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketViewModel.swift; sourceTree = "<group>"; };
@@ -108,6 +107,7 @@
 		D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		E285B46102C9D0E64E152F80 /* Pods_Rocket_RocketUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rocket_RocketUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFF14A939688807DDE6A2620 /* Pods-RocketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RocketTests.debug.xcconfig"; path = "Target Support Files/Pods-RocketTests/Pods-RocketTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F2A300EB2543D4E200857227 /* ENV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ENV.swift; sourceTree = "<group>"; };
 		F2BA71802539A36C001243D0 /* Rocket.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rocket.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2BA71832539A36C001243D0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F2BA718C2539A36D001243D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -162,7 +162,7 @@
 				D90B5F53253C365A00E9B655 /* Config.swift */,
 				D90B5F6E253C70AC00E9B655 /* DependencyProvider.swift */,
 				D90B5F76253C822300E9B655 /* PreviewWrapper.swift */,
-				D90B5F7E253C83D300E9B655 /* ENV.swift */,
+				F2A300EB2543D4E200857227 /* ENV.swift */,
 				D90B5FF5253F0F2000E9B655 /* Style.swift */,
 			);
 			path = Common;
@@ -605,7 +605,6 @@
 				D951C37725432C640010DB09 /* LiveDetailViewController.swift in Sources */,
 				D90B5FD8253ECDB900E9B655 /* LiveViewController.swift in Sources */,
 				D951C37C25432CCA0010DB09 /* LiveDetailViewModel.swift in Sources */,
-				D90B5F7F253C83D300E9B655 /* ENV.swift in Sources */,
 				D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */,
 				D90B5F30253BE12B00E9B655 /* Instantiable.swift in Sources */,
 				D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */,
@@ -614,6 +613,7 @@
 				D90B5FFF253F37F400E9B655 /* Button.swift in Sources */,
 				D90B5F54253C365A00E9B655 /* Config.swift in Sources */,
 				D90B5FE7253F08D700E9B655 /* BandViewController.swift in Sources */,
+				F2A300EC2543D4E200857227 /* ENV.swift in Sources */,
 				D90B5F88253C85C300E9B655 /* HomeViewController.swift in Sources */,
 				F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */,
 				D90B5FC9253ECB8900E9B655 /* TicketViewController.swift in Sources */,
