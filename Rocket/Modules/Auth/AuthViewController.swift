@@ -18,7 +18,7 @@ final class AuthViewController: UIViewController, Instantiable {
             case .signin(let session):
                 if let session = session {
                     let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: ())
-                    self.navigationController?.pushViewController(vc, animated: true)
+//                    self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):
                 print(error)

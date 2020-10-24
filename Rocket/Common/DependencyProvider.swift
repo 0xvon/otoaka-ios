@@ -13,7 +13,13 @@ struct DependencyProvider {
 }
 
 extension DependencyProvider {
+
+    #if DEBUG
     static func make() -> DependencyProvider {
+        .make(config: DevelopmentConfig.self)
+    }
+    #endif
+    static func make(config: Config.Type) -> DependencyProvider {
         let cognitoConfiguration = AWSCognitoAuthConfiguration(
             appClientId: config.appClientId,
             appClientSecret: config.appClientSecret,

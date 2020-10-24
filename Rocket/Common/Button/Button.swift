@@ -48,13 +48,20 @@ final class Button: UIView {
         addSubview(contentView)
         
         button.addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
-        contentView.frame = CGRect(x: 0, y: 0, width: 180, height: 48)
+//        contentView.frame = CGRect(x: 0, y: 0, width: 180, height: 48)
         contentView.backgroundColor = .clear
         contentView.layer.opacity = 0.8
         contentView.layer.cornerRadius = 24
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = style.color.main.get().cgColor
         
+//        let constraints = [
+//            topAnchor.constraint(equalTo: contentView.topAnchor),
+//            bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+//            leftAnchor.constraint(equalTo: contentView.leftAnchor),
+//            rightAnchor.constraint(equalTo: contentView.rightAnchor),
+//        ]
+//        NSLayoutConstraint.activate(constraints)
     }
     
     @objc private func touchUpInside() {
