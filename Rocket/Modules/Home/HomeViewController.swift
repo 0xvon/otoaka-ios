@@ -29,19 +29,19 @@ final class HomeViewController: UITabBarController, Instantiable {
     func tab() {
         let liveViewController = LiveViewController(dependencyProvider: dependencyProvider, input: ())
         let vc1 = UINavigationController(rootViewController: liveViewController)
-        vc1.tabBarItem = UITabBarItem(tabBarSystemItem: .bookmarks, tag: 0)
+        vc1.tabBarItem = UITabBarItem(title: "Live", image: UIImage(named: "guitarIcon"), selectedImage: UIImage(named: "selectedGuitarIcon"))
         vc1.navigationBar.tintColor = style.color.main.get()
         vc1.navigationBar.barTintColor = .clear
         
         let bandViewController = BandViewController(dependencyProvider: dependencyProvider, input: ())
         let vc2 = UINavigationController(rootViewController: bandViewController)
-        vc2.tabBarItem = UITabBarItem(tabBarSystemItem: .contacts, tag: 1)
+        vc2.tabBarItem = UITabBarItem(title: "Band", image: UIImage(named: "musicIcon"), selectedImage: UIImage(named: "selectedMusicIcon"))
         vc2.navigationBar.tintColor = style.color.main.get()
         vc2.navigationBar.barTintColor = .clear
         
         let ticketViewController = TicketViewController(dependencyProvider: dependencyProvider, input: ())
         let vc3 = UINavigationController(rootViewController: ticketViewController)
-        vc3.tabBarItem = UITabBarItem(tabBarSystemItem: .featured, tag: 2)
+        vc3.tabBarItem = UITabBarItem(title: "Ticket", image: UIImage(named: "ticketIcon"), selectedImage: UIImage(named: "selectedTicketIcon"))
         vc3.navigationBar.tintColor = style.color.main.get()
         vc3.navigationBar.barTintColor = .clear
         

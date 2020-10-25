@@ -18,6 +18,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     @IBOutlet weak var commentButtonView: ReactionButtonView!
     @IBOutlet weak var buyTicketButtonView: Button!
     @IBOutlet weak var scrollableView: UIView!
+    @IBOutlet weak var contentsTableView: UITableView!
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -64,6 +65,12 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         liveDetailHeader.like = { [weak self] cellIndex in
             print("like \(cellIndex) band")
         }
+        
+        contentsTableView.delegate = self
+        contentsTableView.dataSource = self
+        contentsTableView.register(UINib(nibName: "BandContentsCell", bundle: nil), forCellReuseIdentifier: "BandContentsCell")
+        contentsTableView.backgroundColor = style.color.background.get()
+        
     }
     
     private func likeButtonTapped() {
@@ -76,6 +83,52 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     private func buyTicketButtonTapped() {
         print("buy ticket")
+    }
+}
+
+extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        switch section {
+        case 0:
+            let view = UIView()
+            let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
+            let titleView = TitleLabelView(input: "CONTENTS")
+            titleBaseView.addSubview(titleView)
+            view.addSubview(titleBaseView)
+            
+            let seeMoreButton = UIButton(frame: CGRect(x: UIScreen.main.bounds.width - 132, y: 16, width: 100, height: 40))
+            seeMoreButton.setTitle("もっと見る", for: .normal)
+            seeMoreButton.setTitleColor(style.color.main.get(), for: .normal)
+            seeMoreButton.titleLabel?.font = style.font.small.get()
+            seeMoreButton.addTarget(self, action: #selector(seeMoreContents(_:)), for: .touchUpInside)
+            view.addSubview(seeMoreButton)
+            
+            return view
+        default:
+            let view = UIView()
+            view.backgroundColor = .clear
+            return view
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return section == 0 ? 60 : 16
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+    }
+    
+    @objc private func seeMoreContents(_ sender: UIButton) {
+        print("see more")
     }
 }
 

@@ -38,7 +38,7 @@ class BandBannerCell: UITableViewCell, ReusableCell {
         bandImageView.clipsToBounds = true
         
         bandNameLabel.text = "MY FIRST STORY"
-        bandNameLabel.font = style.font.xlarge.get()
+        bandNameLabel.font = style.font.large.get()
         bandNameLabel.textColor = style.color.main.get()
         bandNameLabel.lineBreakMode = .byWordWrapping
         bandNameLabel.numberOfLines = 0

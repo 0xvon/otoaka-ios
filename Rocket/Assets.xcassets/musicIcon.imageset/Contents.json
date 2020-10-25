@@ -1,16 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "play.png",
+      "filename" : "musicIcon1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Polygon 2.png",
+      "filename" : "musicIcon2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "musicIcon3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

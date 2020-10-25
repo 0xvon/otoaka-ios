@@ -1,16 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "play.png",
+      "filename" : "selectedTicketIcon1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Polygon 2.png",
+      "filename" : "selectedTicketIcon2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
+      "filename" : "selectedTicketIcon3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

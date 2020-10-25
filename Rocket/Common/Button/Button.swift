@@ -88,6 +88,7 @@ final class Button: UIView, InputAppliable {
             button.bottomAnchor.constraint(equalTo: bottomAnchor),
             button.leftAnchor.constraint(equalTo: leftAnchor),
             button.rightAnchor.constraint(equalTo: rightAnchor),
+            button.heightAnchor.constraint(equalToConstant: self.bounds.height),
         ]
         NSLayoutConstraint.activate(constraints)
     }
