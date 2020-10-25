@@ -9,11 +9,15 @@ import UIKit
 
 final class LiveDetailHeaderView: UIView {
     typealias Input = (
+        dependencyProvider: DependencyProvider,
         live: Live,
         groups: [Group]
     )
     
     var input: Input!
+    var listen: ((Int) -> Void)?
+    var like: ((Int) -> Void)?
+    var pushToBandViewController: ((UIViewController) -> Void)?
     
     private var horizontalScrollView: UIScrollView!
     private var liveInformationView: UIView!
@@ -114,6 +118,16 @@ final class LiveDetailHeaderView: UIView {
         arrowButton.addTarget(self, action: #selector(nextPage), for: .touchUpInside)
         liveInformationView.addSubview(arrowButton)
         
+        bandsTableView = UITableView()
+        bandsTableView.translatesAutoresizingMaskIntoConstraints = false
+        bandInformationView.addSubview(bandsTableView)
+        bandsTableView.showsVerticalScrollIndicator = true
+        bandsTableView.separatorStyle = .none
+        bandsTableView.backgroundColor = .clear
+        bandsTableView.delegate = self
+        bandsTableView.dataSource = self
+        bandsTableView.register(UINib(nibName: "BandBannerCell", bundle: nil), forCellReuseIdentifier: "BandBannerCell")
+        
         let constraints = [
             topAnchor.constraint(equalTo: contentView.topAnchor),
             bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -152,6 +166,11 @@ final class LiveDetailHeaderView: UIView {
             arrowButton.bottomAnchor.constraint(equalTo: liveInformationView.bottomAnchor, constant: -16),
             arrowButton.widthAnchor.constraint(equalToConstant: 54),
             arrowButton.heightAnchor.constraint(equalToConstant: 28),
+            
+            bandsTableView.leftAnchor.constraint(equalTo: bandInformationView.leftAnchor, constant: 16),
+            bandsTableView.rightAnchor.constraint(equalTo: bandInformationView.rightAnchor, constant: -16),
+            bandsTableView.bottomAnchor.constraint(equalTo: bandInformationView.bottomAnchor, constant: -16),
+            bandsTableView.topAnchor.constraint(equalTo: bandInformationView.topAnchor, constant: 16),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -164,4 +183,48 @@ final class LiveDetailHeaderView: UIView {
 }
 
 extension LiveDetailHeaderView: UIScrollViewDelegate {
+}
+
+extension LiveDetailHeaderView: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 10
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 8
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return .leastNonzeroMagnitude
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = BandViewController(dependencyProvider: input.dependencyProvider, input: ())
+        self.pushToBandViewController?(vc)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let group = input.groups[indexPath.section]
+        let group = Group(id: "1223", bandName: "MY FIRST STORY", image: "band")
+        let cell = tableView.reuse(BandBannerCell.self, input: group, for: indexPath)
+        cell.like { [weak self] in
+            self?.like?(indexPath.section)
+        }
+        cell.listen { [weak self] in
+            self?.listen?(indexPath.section)
+        }
+        
+        return cell
+    }
 }

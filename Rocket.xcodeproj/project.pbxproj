@@ -35,6 +35,8 @@
 		D951C38125432CE30010DB09 /* LiveDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C38025432CE30010DB09 /* LiveDetailViewController.xib */; };
 		D951C3A225455C650010DB09 /* LiveDetailHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3A125455C650010DB09 /* LiveDetailHeaderView.swift */; };
 		D951C3A825455F330010DB09 /* ReactionButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3A725455F330010DB09 /* ReactionButtonView.swift */; };
+		D951C3B125458CAA0010DB09 /* BandBannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3B025458CAA0010DB09 /* BandBannerCell.swift */; };
+		D951C3B625458EF00010DB09 /* BandBannerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3B525458EF00010DB09 /* BandBannerCell.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -98,6 +100,8 @@
 		D951C38025432CE30010DB09 /* LiveDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveDetailViewController.xib; sourceTree = "<group>"; };
 		D951C3A125455C650010DB09 /* LiveDetailHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDetailHeaderView.swift; sourceTree = "<group>"; };
 		D951C3A725455F330010DB09 /* ReactionButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionButtonView.swift; sourceTree = "<group>"; };
+		D951C3B025458CAA0010DB09 /* BandBannerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandBannerCell.swift; sourceTree = "<group>"; };
+		D951C3B525458EF00010DB09 /* BandBannerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BandBannerCell.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -151,6 +155,7 @@
 		D90B5F2E253BE0EF00E9B655 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D951C3AF25458C9B0010DB09 /* BandBannerCell */,
 				D951C3A625455F190010DB09 /* ReactionButton */,
 				D96C7DF025415BA800A9B2C6 /* LiveCell */,
 				D951C3612541CADE0010DB09 /* Badge */,
@@ -246,6 +251,15 @@
 				D951C3A725455F330010DB09 /* ReactionButtonView.swift */,
 			);
 			path = ReactionButton;
+			sourceTree = "<group>";
+		};
+		D951C3AF25458C9B0010DB09 /* BandBannerCell */ = {
+			isa = PBXGroup;
+			children = (
+				D951C3B025458CAA0010DB09 /* BandBannerCell.swift */,
+				D951C3B525458EF00010DB09 /* BandBannerCell.xib */,
+			);
+			path = BandBannerCell;
 			sourceTree = "<group>";
 		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
@@ -483,6 +497,7 @@
 				D90B5FF1253F090800E9B655 /* BandViewController.xib in Resources */,
 				D90B5FE2253ECE0900E9B655 /* LiveViewController.xib in Resources */,
 				F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */,
+				D951C3B625458EF00010DB09 /* BandBannerCell.xib in Resources */,
 				D951C38125432CE30010DB09 /* LiveDetailViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -621,6 +636,7 @@
 				D90B5FEC253F08F100E9B655 /* BandViewModel.swift in Sources */,
 				D90B5FF6253F0F2000E9B655 /* Style.swift in Sources */,
 				D90B5FFF253F37F400E9B655 /* Button.swift in Sources */,
+				D951C3B125458CAA0010DB09 /* BandBannerCell.swift in Sources */,
 				D90B5F54253C365A00E9B655 /* Config.swift in Sources */,
 				D90B5FE7253F08D700E9B655 /* BandViewController.swift in Sources */,
 				D951C3A825455F330010DB09 /* ReactionButtonView.swift in Sources */,

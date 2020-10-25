@@ -54,7 +54,16 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             self.buyTicketButtonTapped()
         }
         
-        liveDetailHeader.inject(input: (live: self.input, groups: []))
+        liveDetailHeader.inject(input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: []))
+        liveDetailHeader.pushToBandViewController = { [weak self] vc in
+            self?.navigationController?.pushViewController(vc, animated: true)
+        }
+        liveDetailHeader.listen = { [weak self] cellIndex in
+            print("listen \(cellIndex) band")
+        }
+        liveDetailHeader.like = { [weak self] cellIndex in
+            print("like \(cellIndex) band")
+        }
     }
     
     private func likeButtonTapped() {

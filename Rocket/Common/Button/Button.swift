@@ -41,7 +41,7 @@ final class Button: UIView, InputAppliable {
         
         contentView.backgroundColor = .clear
         contentView.layer.opacity = 0.8
-        contentView.layer.cornerRadius = 24
+        contentView.layer.cornerRadius = contentView.bounds.height / 2
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = style.color.main.get().cgColor
         translatesAutoresizingMaskIntoConstraints = false
@@ -65,7 +65,7 @@ final class Button: UIView, InputAppliable {
         button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         addSubview(button)
-        button.layer.cornerRadius = 24
+        button.layer.cornerRadius = button.bounds.height / 2
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
         
@@ -88,7 +88,6 @@ final class Button: UIView, InputAppliable {
             button.bottomAnchor.constraint(equalTo: bottomAnchor),
             button.leftAnchor.constraint(equalTo: leftAnchor),
             button.rightAnchor.constraint(equalTo: rightAnchor),
-            button.heightAnchor.constraint(equalToConstant: 48)
         ]
         NSLayoutConstraint.activate(constraints)
     }

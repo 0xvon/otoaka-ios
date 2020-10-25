@@ -73,7 +73,7 @@ final class ReactionButtonView: UIView {
             reactionImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
 //            reactionImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
 //            reactionImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 8),
-            reactionImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
+            reactionImageView.leftAnchor.constraint(equalTo: leftAnchor),
             reactionImageView.widthAnchor.constraint(equalToConstant: 20),
             reactionImageView.heightAnchor.constraint(equalTo: reactionImageView.widthAnchor),
             

@@ -35,7 +35,6 @@ class LiveCell: UITableViewCell, ReusableCell {
     }
 
     func setup() {
-//        self.backgroundColor = style.color.background.get()
         self.backgroundColor = UIColor(patternImage: UIImage(named: "live")!)
         self.layer.borderWidth = 1
         self.layer.borderColor = style.color.main.get().cgColor
