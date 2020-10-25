@@ -13,6 +13,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     var dependencyProvider: DependencyProvider!
     var input: Input
+    @IBOutlet weak var liveDetailHeader: UIView!
+    @IBOutlet weak var likeButtonView: ReactionButtonView!
+    @IBOutlet weak var commentButtonView: ReactionButtonView!
+    @IBOutlet weak var buyTicketButtonView: Button!
+    @IBOutlet weak var scrollableView: UIView!
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -27,6 +32,36 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setup()
+    }
+    
+    func setup() {
+        view.backgroundColor = style.color.background.get()
+        scrollableView.backgroundColor = style.color.background.get()
+        likeButtonView.inject(input: (text: "10000", image: UIImage(named: "heart")))
+        likeButtonView.listen {
+            self.likeButtonTapped()
+        }
+        commentButtonView.inject(input: (text: "500", image: UIImage(named: "comment")))
+        commentButtonView.listen {
+            self.commentButtonTapped()
+        }
+        buyTicketButtonView.inject(input: (text: "￥1,500", image: UIImage(named: "ticket")))
+        buyTicketButtonView.listen {
+            self.buyTicketButtonTapped()
+        }
+    }
+    
+    private func likeButtonTapped() {
+        print("like")
+    }
+    
+    private func commentButtonTapped() {
+        print("comment")
+    }
+    
+    private func buyTicketButtonTapped() {
+        print("buy ticket")
     }
 }
 

@@ -21,24 +21,17 @@ class LiveCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var buyTicketButtonView: Button!
     @IBOutlet weak var thumbnailView: UIImageView!
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-    }
-    
     override func awakeFromNib() {
         super.awakeFromNib()
-        buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(systemName: "ticket")))
-        listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(systemName: "play")))
+        buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(named: "ticket")))
+        listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
         dateView.inject(input: (text: "明日18時", image: UIImage(named: "calendar")))
         placeView.inject(input: (text: "代々木公園", image: UIImage(named: "map")))
     }
+    
     func inject(input: Live) {
         self.input = input
         setup()
-    }
-
-    func listen(_ listener: @escaping () -> Void) {
-        listenButtonView.listen(listener)
     }
 
     func setup() {
@@ -68,6 +61,17 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.thumbnailView.image = UIImage(named: "live")
         self.thumbnailView.contentMode = .scaleAspectFill
         self.thumbnailView.layer.opacity = 0.6
-
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+    }
+    
+    func listen(_ listener: @escaping () -> Void) {
+        listenButtonView.listen(listener)
+    }
+    
+    func buyTicket(_ listener: @escaping () -> Void) {
+        buyTicketButtonView.listen(listener)
     }
 }

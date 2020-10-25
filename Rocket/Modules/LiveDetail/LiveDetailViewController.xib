@@ -11,6 +11,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LiveDetailViewController" customModule="Rocket" customModuleProvider="target">
             <connections>
+                <outlet property="buyTicketButtonView" destination="bhZ-nE-XHh" id="Mgm-N1-4RB"/>
+                <outlet property="commentButtonView" destination="jcN-Qi-Srz" id="R2C-O7-fUl"/>
+                <outlet property="likeButtonView" destination="Cgy-fc-UFe" id="APl-nl-rPL"/>
+                <outlet property="liveDetailHeader" destination="Juf-Iz-Eis" id="BVN-MA-ZKg"/>
+                <outlet property="scrollableView" destination="bJH-Ft-AOx" id="MhX-nW-mG8"/>
                 <outlet property="view" destination="iN0-l3-epB" id="ykn-2R-cty"/>
             </connections>
         </placeholder>
@@ -27,27 +32,27 @@
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Juf-Iz-Eis">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="225"/>
-                                    <color key="backgroundColor" systemColor="systemRedColor"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="225" id="nRb-kc-lp7"/>
                                     </constraints>
                                 </view>
-                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="7bo-7i-bZy">
-                                    <rect key="frame" x="0.0" y="237" width="414" height="48"/>
+                                <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="7bo-7i-bZy">
+                                    <rect key="frame" x="16" y="237" width="382" height="48"/>
                                     <subviews>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cgy-fc-UFe">
-                                            <rect key="frame" x="0.0" y="0.0" width="138" height="48"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cgy-fc-UFe" customClass="ReactionButtonView" customModule="Rocket" customModuleProvider="target">
+                                            <rect key="frame" x="0.0" y="0.0" width="80" height="48"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="80" id="UaU-i5-b2l"/>
+                                            </constraints>
                                         </view>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jcN-Qi-Srz">
-                                            <rect key="frame" x="138" y="0.0" width="138" height="48"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jcN-Qi-Srz" customClass="ReactionButtonView" customModule="Rocket" customModuleProvider="target">
+                                            <rect key="frame" x="88" y="0.0" width="136" height="48"/>
                                         </view>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhZ-nE-XHh">
-                                            <rect key="frame" x="276" y="0.0" width="138" height="48"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhZ-nE-XHh" customClass="Button" customModule="Rocket" customModuleProvider="target">
+                                            <rect key="frame" x="232" y="0.0" width="150" height="48"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="48" id="KmW-7R-MUZ"/>
+                                                <constraint firstAttribute="width" constant="150" id="dda-AY-0Ek"/>
                                             </constraints>
                                         </view>
                                     </subviews>
@@ -56,12 +61,12 @@
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstItem="Juf-Iz-Eis" firstAttribute="leading" secondItem="bJH-Ft-AOx" secondAttribute="leading" id="0R5-7N-hI0"/>
-                                <constraint firstAttribute="trailing" secondItem="7bo-7i-bZy" secondAttribute="trailing" id="1K5-Mz-Ah2"/>
+                                <constraint firstAttribute="trailing" secondItem="7bo-7i-bZy" secondAttribute="trailing" constant="16" id="1K5-Mz-Ah2"/>
                                 <constraint firstAttribute="height" constant="1026" id="C3W-nX-ijL"/>
                                 <constraint firstItem="7bo-7i-bZy" firstAttribute="top" secondItem="Juf-Iz-Eis" secondAttribute="bottom" constant="12" id="LJn-ED-KbU"/>
                                 <constraint firstItem="Juf-Iz-Eis" firstAttribute="top" secondItem="bJH-Ft-AOx" secondAttribute="top" id="tfR-B4-gMo"/>
                                 <constraint firstAttribute="trailing" secondItem="Juf-Iz-Eis" secondAttribute="trailing" id="xya-3M-vGR"/>
-                                <constraint firstItem="7bo-7i-bZy" firstAttribute="leading" secondItem="bJH-Ft-AOx" secondAttribute="leading" id="y89-Va-J7D"/>
+                                <constraint firstItem="7bo-7i-bZy" firstAttribute="leading" secondItem="bJH-Ft-AOx" secondAttribute="leading" constant="16" id="y89-Va-J7D"/>
                             </constraints>
                         </view>
                     </subviews>
@@ -89,9 +94,6 @@
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

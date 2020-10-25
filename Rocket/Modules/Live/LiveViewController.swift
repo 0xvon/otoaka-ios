@@ -80,6 +80,9 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
         cell.listen { [weak self] in
             self?.listenButtonTapped(cellIndex: indexPath.section)
         }
+        cell.buyTicket { [weak self] in
+            self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+        }
         return cell
     }
     
@@ -115,7 +118,11 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func listenButtonTapped(cellIndex: Int) {
-        print("hello \(cellIndex)")
+        print("listen \(cellIndex) music")
+    }
+    
+    private func buyTicketButtonTapped(cellIndex: Int) {
+        print("buy \(cellIndex) ticket")
     }
 }
 
