@@ -30,7 +30,7 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bJH-Ft-AOx">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="1026"/>
                             <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Juf-Iz-Eis">
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Juf-Iz-Eis" customClass="LiveDetailHeaderView" customModule="Rocket" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="225"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="225" id="nRb-kc-lp7"/>

@@ -76,7 +76,6 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let live: Live = self.lives[indexPath.section]
         let cell: LiveCell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
-        print("\(indexPath.section) cell defined")
         cell.listen { [weak self] in
             self?.listenButtonTapped(cellIndex: indexPath.section)
         }

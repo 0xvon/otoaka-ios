@@ -13,7 +13,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     var dependencyProvider: DependencyProvider!
     var input: Input
-    @IBOutlet weak var liveDetailHeader: UIView!
+    @IBOutlet weak var liveDetailHeader: LiveDetailHeaderView!
     @IBOutlet weak var likeButtonView: ReactionButtonView!
     @IBOutlet weak var commentButtonView: ReactionButtonView!
     @IBOutlet weak var buyTicketButtonView: Button!
@@ -38,18 +38,23 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     func setup() {
         view.backgroundColor = style.color.background.get()
         scrollableView.backgroundColor = style.color.background.get()
+        
         likeButtonView.inject(input: (text: "10000", image: UIImage(named: "heart")))
         likeButtonView.listen {
             self.likeButtonTapped()
         }
+        
         commentButtonView.inject(input: (text: "500", image: UIImage(named: "comment")))
         commentButtonView.listen {
             self.commentButtonTapped()
         }
+        
         buyTicketButtonView.inject(input: (text: "￥1,500", image: UIImage(named: "ticket")))
         buyTicketButtonView.listen {
             self.buyTicketButtonTapped()
         }
+        
+        liveDetailHeader.inject(input: (live: self.input, groups: []))
     }
     
     private func likeButtonTapped() {

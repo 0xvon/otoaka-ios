@@ -47,3 +47,9 @@ struct Live {
     let start_at: String
     let end_at: String
 }
+
+struct Group {
+    let id: String
+    let bandName: String
+    let image: String
+}
