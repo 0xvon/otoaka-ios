@@ -31,20 +31,20 @@ final class TitleLabelView: UIView, ViewInstantiable {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
-import SwiftUI
-
-struct TitleLabelView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            ViewWrapper<TitleLabelView>(input: "LIVE").previewDisplayName("LIVE")
-            ViewWrapper<TitleLabelView>(input: "CONTENTS").previewDisplayName("CONTENTS")
-            ViewWrapper<TitleLabelView>(input: "SETLIST").previewDisplayName("SETLIST")
-            ViewWrapper<TitleLabelView>(input: "BAND(100)").previewDisplayName("BAND")
-            ViewWrapper<TitleLabelView>(input: "吾輩は猫である").previewDisplayName("Japanese")
-        }
-        .previewLayout(.fixed(width: 300, height: 70))
-        .preferredColorScheme(.dark)
-    }
-}
-#endif
+//#if DEBUG && canImport(SwiftUI)
+//import SwiftUI
+//
+//struct TitleLabelView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Group {
+//            ViewWrapper<TitleLabelView>(input: "LIVE").previewDisplayName("LIVE")
+//            ViewWrapper<TitleLabelView>(input: "CONTENTS").previewDisplayName("CONTENTS")
+//            ViewWrapper<TitleLabelView>(input: "SETLIST").previewDisplayName("SETLIST")
+//            ViewWrapper<TitleLabelView>(input: "BAND(100)").previewDisplayName("BAND")
+//            ViewWrapper<TitleLabelView>(input: "吾輩は猫である").previewDisplayName("Japanese")
+//        }
+//        .previewLayout(.fixed(width: 300, height: 70))
+//        .preferredColorScheme(.dark)
+//    }
+//}
+//#endif

@@ -7,60 +7,94 @@
 
 import UIKit
 
-final class Button: UIView {
-    static var xibName: String { "Button" }
-    typealias Input = type
+final class Button: UIView, InputAppliable {
+    typealias Input = (
+        text: String,
+        image: UIImage?
+    )
     
     var input: Input!
     
-    enum type {
-        case listen
-        case play
-        case buyTicket
-        case signin
-    }
+    private var buttonImageView: UIImageView!
+    private var buttonTitleLabel: UILabel!
+    private var button: UIButton!
     
-    @IBOutlet private weak var buttonImageView: UIImageView!
-    @IBOutlet private weak var buttonTitleLabel: UILabel!
-    @IBOutlet private weak var button: UIButton!
-    
-    convenience init(input: Input) {
-        self.init()
+    init(input: Input) {
         self.input = input
+        super.init(frame: .zero)
         self.inject(input: input)
     }
-
+    
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        loadView()
-        
-    }
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        loadView()
+//        loadView()
     }
     
-    private func loadView() {
-        let xib = UINib(nibName: Self.xibName, bundle: nil)
-        guard let contentView = xib.instantiate(withOwner: self, options: nil).first as? UIView else {
-            preconditionFailure()
-        }
+//    private func loadView() {
+//        print("loadView")
+//
+//    }
+    
+    func inject(input: Input) {
+        self.input = input
+        self.setup()
+    }
+    
+    func setup() {
+        let contentView = UIView(frame: self.frame)
         addSubview(contentView)
         
-        button.addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
         contentView.backgroundColor = .clear
         contentView.layer.opacity = 0.8
         contentView.layer.cornerRadius = 24
         contentView.layer.borderWidth = 1
         contentView.layer.borderColor = style.color.main.get().cgColor
-
         translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        buttonImageView = UIImageView()
+        buttonImageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(buttonImageView)
+        buttonImageView.image = input.image
+        
+        buttonImageView.tintColor = style.color.main.get()
+        
+        buttonTitleLabel = UILabel()
+        buttonTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(buttonTitleLabel)
+        buttonTitleLabel.textColor = style.color.main.get()
+        buttonTitleLabel.font = style.font.regular.get()
+        buttonTitleLabel.text = input.text
+        buttonTitleLabel.textAlignment = .center
+        
+        button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(button)
+        button.layer.cornerRadius = 24
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
+        
         let constraints = [
             topAnchor.constraint(equalTo: contentView.topAnchor),
             bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             leftAnchor.constraint(equalTo: contentView.leftAnchor),
             rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            
+            buttonImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
+            buttonImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            buttonImageView.widthAnchor.constraint(equalToConstant: 24),
+            buttonImageView.heightAnchor.constraint(equalTo: buttonImageView.widthAnchor, multiplier: 1),
+            
+            buttonTitleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
+            buttonTitleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            buttonTitleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: 12),
+            
+            button.topAnchor.constraint(equalTo: topAnchor),
+            button.bottomAnchor.constraint(equalTo: bottomAnchor),
+            button.leftAnchor.constraint(equalTo: leftAnchor),
+            button.rightAnchor.constraint(equalTo: rightAnchor),
+            button.heightAnchor.constraint(equalToConstant: 48)
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -69,64 +103,22 @@ final class Button: UIView {
         self.listener()
     }
     
-    func inject(input: type) {
-        self.input = input
-        self.layout()
-    }
-    
     private var listener: () -> Void = {}
     func listen(_ listener: @escaping () -> Void) {
         self.listener = listener
-    }
-    
-    func layout() {
-        self.buttonImageView.tintColor = style.color.main
-            .get()
-        
-        self.button.layer.cornerRadius = 24
-        self.button.backgroundColor = .clear
-        
-        self.buttonTitleLabel.textColor = style.color.main.get()
-        self.buttonTitleLabel.font = style.font.regular.get()
-        
-        switch self.input {
-        case .buyTicket:
-            self.buttonImageView.image = UIImage(systemName: "ticket")
-            self.buttonTitleLabel.text = "チケット購入"
-        case .listen:
-            self.buttonImageView.image = UIImage(systemName: "play")
-            self.buttonTitleLabel.text = "曲を聴く"
-        case .play:
-            self.buttonImageView.image = UIImage(systemName: "play")
-            self.buttonTitleLabel.text = "再生"
-        case .signin:
-            self.buttonImageView.image = nil
-            self.buttonTitleLabel.text = "サインイン"
-            self.frame = CGRect(x: 0, y: 0, width: 300, height: 60)
-        default:
-            print("hoa")
-        }
     }
 }
 
 #if DEBUG && canImport(SwiftUI)
 import SwiftUI
-//
-//struct Button_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            ViewWrapper<Button>(
-//                input: .listen
-//            ).previewDisplayName("listening")
-//            ViewWrapper<Button>(
-//                input: .play
-//            ).previewDisplayName("playing")
-//            ViewWrapper<Button>(
-//                input: .buyTicket
-//            ).previewDisplayName("ticketing")
-//        }
-//        .previewLayout(.fixed(width: 180, height: 48))
-//        .preferredColorScheme(.dark)
-//    }
-//}
+
+struct Button_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ViewWrapper<Button>(input: (text: "チケット購入", image: UIImage(systemName: "ticket")))
+        }
+        .previewLayout(.fixed(width: 180, height: 48))
+        .preferredColorScheme(.dark)
+    }
+}
 #endif

@@ -27,8 +27,8 @@ class LiveCell: UITableViewCell, ReusableCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        buyTicketButtonView.inject(input: .buyTicket)
-        listenButtonView.inject(input: .listen)
+        buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(systemName: "ticket")))
+        listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(systemName: "play")))
 
         let dateBadge = BadgeView(input: .date("明日18時"))
         dateBadge.frame = dateView.bounds

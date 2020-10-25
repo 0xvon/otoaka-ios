@@ -20,18 +20,26 @@ where ViewController: Instantiable, ViewController: UIViewController {
     }
 }
 
+protocol InputAppliable {
+    associatedtype Input
+    func inject(input: Input)
+}
+
 struct ViewWrapper<View>: UIViewRepresentable
-where View: ViewInstantiable, View: UIView {
+where View: UIView, View: InputAppliable {
     typealias UIViewType = View
-    
     let input: View.Input
     
+    init(input: View.Input) {
+        self.input = input
+    }
+    
     func makeUIView(context: Context) -> View {
-        View(input: input)
+        View()
     }
     
     func updateUIView(_ uiView: View, context: Context) {
-        
+        uiView.inject(input: input)
     }
 }
 

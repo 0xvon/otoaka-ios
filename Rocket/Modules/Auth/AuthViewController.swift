@@ -18,7 +18,7 @@ final class AuthViewController: UIViewController, Instantiable {
             case .signin(let session):
                 if let session = session {
                     let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: ())
-//                    self.navigationController?.pushViewController(vc, animated: true)
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):
                 print(error)
@@ -58,7 +58,7 @@ final class AuthViewController: UIViewController, Instantiable {
         backgroundImageView.contentMode = .scaleAspectFill
         
         signInButtonView.backgroundColor = .clear
-        let buttonView = Button(input: .signin)
+        let buttonView = Button(input: (text: "サインイン", image: nil))
         buttonView.listen { [weak self] in
             self?.signInButtonTapped()
         }

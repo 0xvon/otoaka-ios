@@ -44,22 +44,22 @@ final class BadgeView: UIView, ViewInstantiable {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
-import SwiftUI
-
-struct BadgeView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            ViewWrapper<BadgeView>(
-                input: .date("明日12時")
-            ).previewDisplayName("date")
-            ViewWrapper<BadgeView>(
-                input: .place("代々木公園")
-            ).previewDisplayName("place")
-        }
-        .previewLayout(.fixed(width: 150, height: 48))
-        .preferredColorScheme(.dark)
-        
-    }
-}
-#endif
+//#if DEBUG && canImport(SwiftUI)
+//import SwiftUI
+//
+//struct BadgeView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Group {
+//            ViewWrapper<BadgeView>(
+//                input: .date("明日12時")
+//            ).previewDisplayName("date")
+//            ViewWrapper<BadgeView>(
+//                input: .place("代々木公園")
+//            ).previewDisplayName("place")
+//        }
+//        .previewLayout(.fixed(width: 150, height: 48))
+//        .preferredColorScheme(.dark)
+//        
+//    }
+//}
+//#endif
