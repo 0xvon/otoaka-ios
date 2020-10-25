@@ -35,7 +35,6 @@
 		D951C37C25432CCA0010DB09 /* LiveDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C37B25432CCA0010DB09 /* LiveDetailViewModel.swift */; };
 		D951C38125432CE30010DB09 /* LiveDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C38025432CE30010DB09 /* LiveDetailViewController.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
-		D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
 		D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */; };
@@ -98,7 +97,6 @@
 		D951C37B25432CCA0010DB09 /* LiveDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveDetailViewModel.swift; sourceTree = "<group>"; };
 		D951C38025432CE30010DB09 /* LiveDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveDetailViewController.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
-		D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TitleLabelView.xib; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
 		D9CC5297253B2CA70081ECF0 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
@@ -235,7 +233,6 @@
 			isa = PBXGroup;
 			children = (
 				D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */,
-				D96C7DC92540060000A9B2C6 /* TitleLabelView.xib */,
 			);
 			path = TitleLabel;
 			sourceTree = "<group>";
@@ -461,7 +458,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D951C3682541CC0B0010DB09 /* BadgeView.xib in Resources */,
-				D96C7DCA2540060000A9B2C6 /* TitleLabelView.xib in Resources */,
 				D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */,
 				D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */,
 				D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */,

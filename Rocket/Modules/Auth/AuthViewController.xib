@@ -23,7 +23,7 @@
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="YMo-KT-2tl">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                 </imageView>
-                <view contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="r8Q-Ea-AYh">
+                <view contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="r8Q-Ea-AYh" customClass="Button" customModule="Rocket" customModuleProvider="target">
                     <rect key="frame" x="77" y="748" width="260" height="60"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>

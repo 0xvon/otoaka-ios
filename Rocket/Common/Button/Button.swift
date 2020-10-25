@@ -88,7 +88,7 @@ final class Button: UIView, InputAppliable {
             
             buttonTitleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
             buttonTitleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            buttonTitleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: 12),
+            buttonTitleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -12),
             
             button.topAnchor.constraint(equalTo: topAnchor),
             button.bottomAnchor.constraint(equalTo: bottomAnchor),
@@ -109,16 +109,16 @@ final class Button: UIView, InputAppliable {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
-import SwiftUI
-
-struct Button_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            ViewWrapper<Button>(input: (text: "チケット購入", image: UIImage(systemName: "ticket")))
-        }
-        .previewLayout(.fixed(width: 180, height: 48))
-        .preferredColorScheme(.dark)
-    }
-}
-#endif
+//#if DEBUG && canImport(SwiftUI)
+//import SwiftUI
+//
+//struct Button_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Group {
+//            ViewWrapper<Button>(input: (text: "チケット購入", image: UIImage(systemName: "ticket")))
+//        }
+//        .previewLayout(.fixed(width: 180, height: 48))
+//        .preferredColorScheme(.dark)
+//    }
+//}
+//#endif

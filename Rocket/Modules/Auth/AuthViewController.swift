@@ -27,7 +27,7 @@ final class AuthViewController: UIViewController, Instantiable {
     )
     
     @IBOutlet weak var backgroundImageView: UIImageView!
-    @IBOutlet weak var signInButtonView: UIView!
+    @IBOutlet weak var signInButtonView: Button!
     
     var dependencyProvider: DependencyProvider
     
@@ -56,23 +56,12 @@ final class AuthViewController: UIViewController, Instantiable {
         backgroundImageView.layer.opacity = 0.6
         backgroundImageView.image = UIImage(named: "live")
         backgroundImageView.contentMode = .scaleAspectFill
-        
+
+        signInButtonView.inject(input: (text: "サインイン", image: nil))
         signInButtonView.backgroundColor = .clear
-        let buttonView = Button(input: (text: "サインイン", image: nil))
-        buttonView.listen { [weak self] in
+        signInButtonView.listen { [weak self] in
             self?.signInButtonTapped()
         }
-        self.signInButtonView.addSubview(buttonView)
-        buttonView.translatesAutoresizingMaskIntoConstraints = false
-        self.signInButtonView.translatesAutoresizingMaskIntoConstraints = false
-        let constraints = [
-            signInButtonView.topAnchor.constraint(equalTo: buttonView.topAnchor),
-            signInButtonView.bottomAnchor.constraint(equalTo: buttonView.bottomAnchor),
-            signInButtonView.leftAnchor.constraint(equalTo: buttonView.leftAnchor),
-            signInButtonView.rightAnchor.constraint(equalTo: buttonView.rightAnchor),
-        ]
-        NSLayoutConstraint.activate(constraints)
-
     }
     
     func signInButtonTapped() {
