@@ -23,14 +23,8 @@ final class TitleLabelView: UIView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-//        loadView()
     }
-    
-//    private func loadView() {
-//        print("loadView")
-//
-//    }
-    
+        
     func inject(input: String) {
         self.input = input
         setup()
@@ -43,9 +37,6 @@ final class TitleLabelView: UIView {
         
         contentView.backgroundColor = .clear
         contentView.layer.opacity = 0.8
-        contentView.layer.cornerRadius = 24
-        contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = style.color.main.get().cgColor
         translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -58,6 +49,11 @@ final class TitleLabelView: UIView {
         
         
         let constraints = [
+            topAnchor.constraint(equalTo: contentView.topAnchor),
+            bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            
             titleLabel.leftAnchor.constraint(equalTo: leftAnchor),
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
             titleLabel.rightAnchor.constraint(equalTo: rightAnchor),

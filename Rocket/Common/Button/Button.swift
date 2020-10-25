@@ -28,14 +28,8 @@ final class Button: UIView, InputAppliable {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-//        loadView()
     }
-    
-//    private func loadView() {
-//        print("loadView")
-//
-//    }
-    
+        
     func inject(input: Input) {
         self.input = input
         self.setup()

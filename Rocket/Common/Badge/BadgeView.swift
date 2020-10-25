@@ -7,40 +7,72 @@
 
 import UIKit
 
-final class BadgeView: UIView, ViewInstantiable {
-    typealias Input = BadgeType
-    static var xibName: String { "BadgeView" }
+final class BadgeView: UIView {
+    typealias Input = (
+        text: String,
+        image: UIImage?
+    )
     
     var input: Input!
-    enum BadgeType {
-        case place(String)
-        case date(String)
-//        case production
-//        case label
-    }
-    @IBOutlet weak var badgeImageView: UIImageView!
-    @IBOutlet weak var badgeTitle: UILabel!
     
-    func inject(input: BadgeType) {
+    private var badgeImageView: UIImageView!
+    private var badgeTitle: UILabel!
+    
+    init(input: Input) {
         self.input = input
-        setup()
+        super.init(frame: .zero)
+        self.inject(input: input)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+        
+    func inject(input: Input) {
+        self.input = input
+        self.setup()
     }
     
     func setup() {
-        self.backgroundColor = .clear
-        self.badgeTitle.textColor = style.color.main.get()
-        self.badgeTitle.font = style.font.small.get()
+        backgroundColor = .clear
+        let contentView = UIView(frame: self.frame)
+        addSubview(contentView)
         
-        switch input {
-        case .place(let placeText):
-            badgeImageView.image = UIImage(named: "map")
-            badgeTitle.text = placeText
-        case .date(let dateText):
-            badgeImageView.image = UIImage(named: "calendar")
-            badgeTitle.text = dateText
-        case .none:
-            print("nyan")
-        }
+        contentView.backgroundColor = .clear
+        contentView.layer.opacity = 0.8
+        translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        badgeTitle = UILabel()
+        badgeTitle.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(badgeTitle)
+        badgeTitle.textColor = style.color.main.get()
+        badgeTitle.font = style.font.small.get()
+        badgeTitle.text = input.text
+        
+        badgeImageView = UIImageView()
+        badgeImageView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(badgeImageView)
+        badgeImageView.image = input.image
+        
+        let constraints = [
+            topAnchor.constraint(equalTo: contentView.topAnchor),
+            bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            
+            badgeImageView.leftAnchor.constraint(equalTo: leftAnchor),
+            badgeImageView.widthAnchor.constraint(equalToConstant: 24),
+            badgeImageView.heightAnchor.constraint(equalTo: badgeImageView.widthAnchor, multiplier: 1),
+            badgeImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            badgeTitle.leftAnchor.constraint(equalTo: badgeImageView.rightAnchor, constant: 8),
+            badgeTitle.centerYAnchor.constraint(equalTo: centerYAnchor),
+            badgeTitle.rightAnchor.constraint(equalTo: rightAnchor)
+            
+        ]
+        NSLayoutConstraint.activate(constraints)
     }
 }
 

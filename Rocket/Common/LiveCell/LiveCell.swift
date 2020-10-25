@@ -29,16 +29,8 @@ class LiveCell: UITableViewCell, ReusableCell {
         super.awakeFromNib()
         buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(systemName: "ticket")))
         listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(systemName: "play")))
-
-        let dateBadge = BadgeView(input: .date("明日18時"))
-        dateBadge.frame = dateView.bounds
-        dateView.addSubview(dateBadge)
-        dateView.backgroundColor = .clear
-
-        let placeBadge = BadgeView(input: .place("代々木公園"))
-        placeView.addSubview(placeBadge)
-        placeBadge.frame = placeView.bounds
-        placeView.backgroundColor = .clear
+        dateView.inject(input: (text: "明日18時", image: UIImage(named: "calendar")))
+        placeView.inject(input: (text: "代々木公園", image: UIImage(named: "map")))
     }
     func inject(input: Live) {
         self.input = input
