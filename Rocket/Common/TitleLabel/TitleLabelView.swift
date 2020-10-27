@@ -9,7 +9,11 @@ import UIKit
 
 final class TitleLabelView: UIView {
     
-    typealias Input = String
+    typealias Input = (
+        title: String,
+        font: UIFont,
+        color: UIColor
+    )
     var input: Input!
     
     private var titleLabel: UILabel!
@@ -25,7 +29,7 @@ final class TitleLabelView: UIView {
         super.init(coder: coder)
     }
         
-    func inject(input: String) {
+    func inject(input: Input) {
         self.input = input
         setup()
     }
@@ -43,9 +47,9 @@ final class TitleLabelView: UIView {
         titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(titleLabel)
-        titleLabel.text = self.input
-        titleLabel.textColor = style.color.main.get()
-        titleLabel.font = style.font.xlarge.get()
+        titleLabel.text = self.input.title
+        titleLabel.textColor = self.input.color
+        titleLabel.font = self.input.font
         
         
         let constraints = [
@@ -61,6 +65,11 @@ final class TitleLabelView: UIView {
             titleLabel.heightAnchor.constraint(equalToConstant: 40)
         ]
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    func changeStyle(font: UIFont, color: UIColor) {
+        self.titleLabel.font = font
+        self.titleLabel.textColor = color
     }
 }
 

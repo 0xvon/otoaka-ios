@@ -2,7 +2,8 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -10,6 +11,12 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandViewController" customModule="Rocket" customModuleProvider="target">
             <connections>
+                <outlet property="bandsPageTitleView" destination="bhT-SK-B1p" id="zI8-Gp-Lhi"/>
+                <outlet property="chartsPageTitleView" destination="wKc-y9-Hme" id="jbh-Ea-nS4"/>
+                <outlet property="contentsPageTitleView" destination="ewf-WW-z1u" id="Mxh-ve-tx7"/>
+                <outlet property="horizontalScrollView" destination="lei-An-07T" id="1b8-ws-RJR"/>
+                <outlet property="pageTitleStackViewLeadingConstraint" destination="gEq-h1-Zwp" id="5cx-tO-0TX"/>
+                <outlet property="searchBar" destination="GsN-Z1-yr6" id="MOU-ZU-hJD"/>
                 <outlet property="view" destination="iN0-l3-epB" id="Snd-II-OqA"/>
             </connections>
         </placeholder>
@@ -18,20 +25,49 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Band" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ora-3Q-Qx6">
-                    <rect key="frame" x="187" y="437.5" width="40" height="21"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lei-An-07T">
+                    <rect key="frame" x="0.0" y="100" width="414" height="762"/>
+                </scrollView>
+                <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="bhE-rX-Bv6">
+                    <rect key="frame" x="16" y="116" width="376" height="40"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ewf-WW-z1u" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wKc-y9-Hme" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
+                            <rect key="frame" x="128" y="0.0" width="120" height="40"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhT-SK-B1p" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
+                            <rect key="frame" x="256" y="0.0" width="120" height="40"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </view>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="Sgc-wV-EoZ"/>
+                    </constraints>
+                </stackView>
+                <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="GsN-Z1-yr6">
+                    <rect key="frame" x="0.0" y="44" width="414" height="56"/>
+                    <textInputTraits key="textInputTraits"/>
+                </searchBar>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="Ora-3Q-Qx6" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="hyZ-Hx-kYb"/>
-                <constraint firstItem="Ora-3Q-Qx6" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="i67-aS-qk1"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="6wC-fy-qEy"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="CVc-4e-YXc"/>
+                <constraint firstItem="GsN-Z1-yr6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="EDE-ES-mxR"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="top" secondItem="GsN-Z1-yr6" secondAttribute="bottom" id="FZK-uJ-mlz"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="GV8-1q-70O"/>
+                <constraint firstItem="GsN-Z1-yr6" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="OnY-Nj-mGk"/>
+                <constraint firstItem="GsN-Z1-yr6" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="SPH-3h-Kch"/>
+                <constraint firstItem="bhE-rX-Bv6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="gEq-h1-Zwp"/>
+                <constraint firstItem="bhE-rX-Bv6" firstAttribute="top" secondItem="GsN-Z1-yr6" secondAttribute="bottom" constant="16" id="lly-FL-aeF"/>
             </constraints>
-            <point key="canvasLocation" x="141" y="108"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="28" y="106"/>
         </view>
     </objects>
     <resources>

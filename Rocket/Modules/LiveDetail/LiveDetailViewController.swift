@@ -100,7 +100,7 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
         case 0:
             let view = UIView()
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
-            let titleView = TitleLabelView(input: "CONTENTS")
+            let titleView = TitleLabelView(input: (title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get()))
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)
             
