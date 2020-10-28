@@ -23,9 +23,6 @@
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bvU-Zc-Bl4">
                     <rect key="frame" x="16" y="16" width="382" height="20.5"/>
-                    <constraints>
-                        <constraint firstAttribute="height" relation="lessThanOrEqual" constant="50" id="yRj-a9-9hn"/>
-                    </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -59,10 +56,10 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="pcy-if-26W" secondAttribute="trailing" id="3AL-4t-G6f"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="pcy-if-26W" secondAttribute="bottom" id="BGR-gr-e16"/>
+                <constraint firstAttribute="trailing" secondItem="pcy-if-26W" secondAttribute="trailing" id="3AL-4t-G6f"/>
+                <constraint firstAttribute="bottom" secondItem="pcy-if-26W" secondAttribute="bottom" id="BGR-gr-e16"/>
                 <constraint firstItem="pcy-if-26W" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="IQW-Bz-CK6"/>
-                <constraint firstItem="pcy-if-26W" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="Ifa-lo-inD"/>
+                <constraint firstItem="pcy-if-26W" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Ifa-lo-inD"/>
                 <constraint firstItem="jse-Ek-ShY" firstAttribute="top" secondItem="bvU-Zc-Bl4" secondAttribute="bottom" constant="12" id="LUh-yr-cJO"/>
                 <constraint firstItem="bvU-Zc-Bl4" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="M3l-hI-Rtu"/>
                 <constraint firstAttribute="trailing" secondItem="bvU-Zc-Bl4" secondAttribute="trailing" constant="16" id="R3f-Mb-d9C"/>

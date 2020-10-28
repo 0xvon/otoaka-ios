@@ -26,12 +26,15 @@ class BandContentsCell: UITableViewCell, ReusableCell {
     
     func setup() {
         backgroundColor = style.color.background.get()
-        layer.cornerRadius = 16
-        layer.borderWidth = 1
-        layer.borderColor = style.color.main.get().cgColor
+//        layer.cornerRadius = 16
+//        layer.borderWidth = 1
+//        layer.borderColor = style.color.main.get().cgColor
         
         thumbnailImageView.image = UIImage(named: "live")
         thumbnailImageView.layer.opacity = 0.6
+        thumbnailImageView.layer.cornerRadius = 16
+        thumbnailImageView.layer.borderWidth = 1
+        thumbnailImageView.layer.borderColor = style.color.main.get().cgColor
         
         titleLabel.text = "STORY TELLER TOUR 2020 TOKYO"
         titleLabel.font = style.font.large.get()

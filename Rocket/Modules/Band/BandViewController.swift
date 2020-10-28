@@ -12,7 +12,6 @@ final class BandViewController: UIViewController, Instantiable {
     
     typealias Input = Void
     var dependencyProvider: DependencyProvider!
-    var startPoint: CGPoint!
     
     @IBOutlet weak var pageTitleStackViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var contentsPageTitleView: TitleLabelView!
@@ -20,6 +19,13 @@ final class BandViewController: UIViewController, Instantiable {
     @IBOutlet weak var bandsPageTitleView: TitleLabelView!
     @IBOutlet weak var horizontalScrollView: UIScrollView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var contentsPageButton: UIButton!
+    @IBOutlet weak var chartsPageButton: UIButton!
+    @IBOutlet weak var bandsPageButton: UIButton!
+    
+    private var contentsTableView: UITableView!
+    private var chartsTableVIew: UITableView!
+    private var bandsTableView: UITableView!
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -36,40 +42,127 @@ final class BandViewController: UIViewController, Instantiable {
         setup()
     }
     
+    override func viewDidLayoutSubviews() {
+        horizontalScrollView.contentSize.width = UIScreen.main.bounds.width * 3
+    }
+    
     func setup() {
-        horizontalScrollView.isPagingEnabled = true
-        horizontalScrollView.translatesAutoresizingMaskIntoConstraints = false
-        horizontalScrollView.contentSize = CGSize(width: UIScreen.main.bounds.width * 3, height: UIScreen.main.bounds.height)
         horizontalScrollView.delegate = self
         
-        let contentsView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - searchBar.bounds.height))
-        contentsView.backgroundColor = .red
+        searchBar.barTintColor = style.color.background.get()
+        searchBar.searchTextField.placeholder = "バンドを探す"
+        searchBar.searchTextField.textColor = style.color.main.get()
+        
+        let contentsView = UIView()
+        contentsView.translatesAutoresizingMaskIntoConstraints = false
+        contentsView.backgroundColor = style.color.background.get()
         horizontalScrollView.addSubview(contentsView)
         
-        let chartsView = UIView(frame: CGRect(x: UIScreen.main.bounds.width, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - searchBar.bounds.height))
+        contentsTableView = UITableView()
+        contentsTableView.translatesAutoresizingMaskIntoConstraints = false
+        contentsTableView.showsVerticalScrollIndicator = false
+        contentsTableView.backgroundColor = style.color.background.get()
+        contentsTableView.delegate = self
+        contentsTableView.dataSource = self
+        contentsTableView.register(UINib(nibName: "BandContentsCell", bundle: nil), forCellReuseIdentifier: "BandContentsCell")
+        contentsView.addSubview(contentsTableView)
+        
+        let chartsView = UIView()
+        chartsView.translatesAutoresizingMaskIntoConstraints = false
         chartsView.backgroundColor = .blue
         horizontalScrollView.addSubview(chartsView)
         
-        let bandsView = UIView(frame: CGRect(x: UIScreen.main.bounds.width * 2, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - searchBar.bounds.height))
+        let bandsView = UIView()
+        bandsView.translatesAutoresizingMaskIntoConstraints = false
         bandsView.backgroundColor = .green
         horizontalScrollView.addSubview(bandsView)
         
         contentsPageTitleView.inject(input: (title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get()))
+        contentsPageTitleView.bringSubviewToFront(contentsPageButton)
         chartsPageTitleView.inject(input: (title: "CHARTS", font: style.font.regular.get(), color: style.color.main.get()))
+        chartsPageTitleView.bringSubviewToFront(chartsPageButton)
         bandsPageTitleView.inject(input: (title: "BANDS", font: style.font.regular.get(), color: style.color.main.get()))
+        bandsPageTitleView.bringSubviewToFront(bandsPageButton)
+        
+        let constraint = [
+            contentsView.leftAnchor.constraint(equalTo: horizontalScrollView.leftAnchor),
+            contentsView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
+            contentsView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
+            contentsView.centerYAnchor.constraint(equalTo: horizontalScrollView.centerYAnchor),
+            contentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+            
+            chartsView.leftAnchor.constraint(equalTo: contentsView.rightAnchor),
+            chartsView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
+            chartsView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
+            chartsView.centerYAnchor.constraint(equalTo: horizontalScrollView.centerYAnchor),
+            chartsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+            
+            bandsView.leftAnchor.constraint(equalTo: chartsView.rightAnchor),
+            bandsView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
+            bandsView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
+            bandsView.centerYAnchor.constraint(equalTo: horizontalScrollView.centerYAnchor),
+            bandsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+            
+            contentsTableView.leftAnchor.constraint(equalTo: contentsView.leftAnchor, constant: 16),
+            contentsTableView.rightAnchor.constraint(equalTo: contentsView.rightAnchor, constant: -16),
+            contentsTableView.topAnchor.constraint(equalTo: contentsView.topAnchor, constant: 56),
+            contentsTableView.bottomAnchor.constraint(equalTo: contentsView.bottomAnchor, constant: -16),
+        ]
+        NSLayoutConstraint.activate(constraint)
+    }
+    @IBAction func contentsPageButtonTapped(_ sender: Any) {
+        horizontalScrollView.contentOffset.x = 0
+    }
+    @IBAction func chartsPageButtonTapped(_ sender: Any) {
+        horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width
+    }
+    
+    @IBAction func bandsPageButtonTapped(_ sender: Any) {
+        horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width * 2
+    }
+}
+
+extension BandViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 10
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 16
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 200
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        switch tableView {
+        case self.contentsTableView:
+            let cell = tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+            return cell
+        default:
+            return tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
 extension BandViewController: UIScrollViewDelegate {
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        if scrollView == horizontalScrollView {
-            startPoint = scrollView.contentOffset
-        }
-    }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == horizontalScrollView {
-            scrollView.contentOffset.y = startPoint.y
             let pageIndex: Int = min(Int(scrollView.contentOffset.x * 1.5 / UIScreen.main.bounds.width), 2)
             var titleViews: [TitleLabelView] = [contentsPageTitleView, chartsPageTitleView, bandsPageTitleView]
             titleViews[pageIndex].changeStyle(font: style.font.xlarge.get(), color: style.color.main.get())

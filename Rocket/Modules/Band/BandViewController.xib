@@ -11,8 +11,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandViewController" customModule="Rocket" customModuleProvider="target">
             <connections>
+                <outlet property="bandsPageButton" destination="llB-oD-uP0" id="zmR-Os-U3y"/>
                 <outlet property="bandsPageTitleView" destination="bhT-SK-B1p" id="zI8-Gp-Lhi"/>
+                <outlet property="chartsPageButton" destination="spi-L9-hqt" id="gEU-YO-uRy"/>
                 <outlet property="chartsPageTitleView" destination="wKc-y9-Hme" id="jbh-Ea-nS4"/>
+                <outlet property="contentsPageButton" destination="UdS-1K-vrF" id="SHr-CW-k6q"/>
                 <outlet property="contentsPageTitleView" destination="ewf-WW-z1u" id="Mxh-ve-tx7"/>
                 <outlet property="horizontalScrollView" destination="lei-An-07T" id="1b8-ws-RJR"/>
                 <outlet property="pageTitleStackViewLeadingConstraint" destination="gEq-h1-Zwp" id="5cx-tO-0TX"/>
@@ -22,26 +25,68 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="700"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lei-An-07T">
-                    <rect key="frame" x="0.0" y="100" width="414" height="762"/>
+                    <rect key="frame" x="0.0" y="100" width="414" height="600"/>
                 </scrollView>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="bhE-rX-Bv6">
                     <rect key="frame" x="16" y="116" width="376" height="40"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ewf-WW-z1u" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UdS-1K-vrF">
+                                    <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
+                                    <connections>
+                                        <action selector="contentsPageButtonTapped:" destination="-1" eventType="touchUpInside" id="wQH-O8-UOl"/>
+                                    </connections>
+                                </button>
+                            </subviews>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstItem="UdS-1K-vrF" firstAttribute="top" secondItem="ewf-WW-z1u" secondAttribute="top" id="LvD-Lc-lAB"/>
+                                <constraint firstItem="UdS-1K-vrF" firstAttribute="leading" secondItem="ewf-WW-z1u" secondAttribute="leading" id="UBn-5W-0P6"/>
+                                <constraint firstAttribute="bottom" secondItem="UdS-1K-vrF" secondAttribute="bottom" id="irV-MJ-hOR"/>
+                                <constraint firstAttribute="trailing" secondItem="UdS-1K-vrF" secondAttribute="trailing" id="wyu-On-VNZ"/>
+                            </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wKc-y9-Hme" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
                             <rect key="frame" x="128" y="0.0" width="120" height="40"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="spi-L9-hqt">
+                                    <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
+                                    <connections>
+                                        <action selector="chartsPageButtonTapped:" destination="-1" eventType="touchUpInside" id="FeZ-wm-3Be"/>
+                                    </connections>
+                                </button>
+                            </subviews>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="bottom" secondItem="spi-L9-hqt" secondAttribute="bottom" id="64M-74-TT3"/>
+                                <constraint firstItem="spi-L9-hqt" firstAttribute="leading" secondItem="wKc-y9-Hme" secondAttribute="leading" id="Zlp-6e-fVV"/>
+                                <constraint firstItem="spi-L9-hqt" firstAttribute="top" secondItem="wKc-y9-Hme" secondAttribute="top" id="hlZ-OZ-nlR"/>
+                                <constraint firstAttribute="trailing" secondItem="spi-L9-hqt" secondAttribute="trailing" id="woX-zB-mCG"/>
+                            </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhT-SK-B1p" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
                             <rect key="frame" x="256" y="0.0" width="120" height="40"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="llB-oD-uP0">
+                                    <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
+                                    <connections>
+                                        <action selector="bandsPageButtonTapped:" destination="-1" eventType="touchUpInside" id="GAB-MG-xwR"/>
+                                    </connections>
+                                </button>
+                            </subviews>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstItem="llB-oD-uP0" firstAttribute="leading" secondItem="bhT-SK-B1p" secondAttribute="leading" id="Ws9-DJ-nht"/>
+                                <constraint firstAttribute="trailing" secondItem="llB-oD-uP0" secondAttribute="trailing" id="aKT-lC-0ei"/>
+                                <constraint firstItem="llB-oD-uP0" firstAttribute="top" secondItem="bhT-SK-B1p" secondAttribute="top" id="lxn-pg-Z8t"/>
+                                <constraint firstAttribute="bottom" secondItem="llB-oD-uP0" secondAttribute="bottom" id="yPL-0b-2QC"/>
+                            </constraints>
                         </view>
                     </subviews>
                     <constraints>
@@ -56,18 +101,18 @@
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="lei-An-07T" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="6wC-fy-qEy"/>
-                <constraint firstItem="lei-An-07T" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="CVc-4e-YXc"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="4x3-Qo-gl2"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="9zv-OF-J55"/>
                 <constraint firstItem="GsN-Z1-yr6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="EDE-ES-mxR"/>
-                <constraint firstItem="lei-An-07T" firstAttribute="top" secondItem="GsN-Z1-yr6" secondAttribute="bottom" id="FZK-uJ-mlz"/>
-                <constraint firstItem="lei-An-07T" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="GV8-1q-70O"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="Ms2-sm-UGK"/>
                 <constraint firstItem="GsN-Z1-yr6" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="OnY-Nj-mGk"/>
                 <constraint firstItem="GsN-Z1-yr6" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="SPH-3h-Kch"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="top" secondItem="GsN-Z1-yr6" secondAttribute="bottom" id="Y2L-MF-hEq"/>
                 <constraint firstItem="bhE-rX-Bv6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="gEq-h1-Zwp"/>
                 <constraint firstItem="bhE-rX-Bv6" firstAttribute="top" secondItem="GsN-Z1-yr6" secondAttribute="bottom" constant="16" id="lly-FL-aeF"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="28" y="106"/>
+            <point key="canvasLocation" x="-145" y="66"/>
         </view>
     </objects>
     <resources>
