@@ -15,6 +15,7 @@ final class BandDetailHeaderView: UIView {
     private var horizontalScrollView: UIScrollView!
     private var bandInformationView: UIView!
     private var trackInformationView: UIView!
+    private var biographyView: UIView!
     private var bandNameLabel: UILabel!
     private var mapBadgeView: BadgeView!
     private var dateBadgeView: BadgeView!
@@ -32,6 +33,7 @@ final class BandDetailHeaderView: UIView {
     private var youtubeButton: UIButton!
     private var appleMusicButton: UIButton!
     private var spotifyButton: UIButton!
+    private var biographyTextView: UITextView!
     
     init(input: Input) {
         self.input = input
@@ -73,7 +75,7 @@ final class BandDetailHeaderView: UIView {
         horizontalScrollView.isScrollEnabled = true
         horizontalScrollView.showsHorizontalScrollIndicator = false
         horizontalScrollView.showsVerticalScrollIndicator = false
-        horizontalScrollView.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: self.frame.height)
+        horizontalScrollView.contentSize = CGSize(width: UIScreen.main.bounds.width * 3, height: self.frame.height)
         horizontalScrollView.delegate = self
         
         bandInformationView = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: self.frame.height))
@@ -83,6 +85,10 @@ final class BandDetailHeaderView: UIView {
         trackInformationView = UIView(frame: CGRect(x: UIScreen.main.bounds.width, y: 0, width: UIScreen.main.bounds.width, height: self.bounds.height))
         trackInformationView.backgroundColor = .clear
         horizontalScrollView.addSubview(trackInformationView)
+        
+        biographyView = UIView(frame: CGRect(x: UIScreen.main.bounds.width * 2, y: 0, width: UIScreen.main.bounds.width, height: self.bounds.height))
+        biographyView.backgroundColor = .clear
+        horizontalScrollView.addSubview(biographyView)
         
         bandNameLabel = UILabel()
         bandNameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -197,6 +203,15 @@ final class BandDetailHeaderView: UIView {
         spotifyButton.addTarget(self, action: #selector(spotifyButtonTapped(_:)), for: .touchUpInside)
         stackView.addArrangedSubview(spotifyButton)
         
+        biographyTextView = UITextView()
+        biographyTextView.translatesAutoresizingMaskIntoConstraints = false
+        biographyTextView.isScrollEnabled = true
+        biographyTextView.textColor = style.color.main.get()
+        biographyTextView.backgroundColor = .clear
+        biographyTextView.font = style.font.regular.get()
+        biographyView.addSubview(biographyTextView)
+        biographyTextView.text = "Kid'z(Dr.) / Hiro(Vo.) / Nob(Ba.) / Teru(Gu.) (L→R)\n\n2011年夏、東京渋谷で結成。\n\n2012年4月に1st FULL AL「MY FIRST STORY」でデビュー以降、確かな楽曲、ライブパフォーマンスが話題を呼び、全国の大型フェス出演や海外アーティストとの共演も数多く務め、着実に実力を付けた。\n\n2016年 4th FULL AL「ANTITHESE」をリリース。自身最高位であるオリコンウィークリー初登場４位を記録し、そのアルバムを携え、日本全国47都道府県を回るツアー。最終公演は日本武道館にて開催し、12,000人を動員しSOLD OUT。\n\n2017年''MMA'' TOURを開催。その最終公演として12月千葉 幕張メッセ 国際展示場9～11ホールにて開催し、外国人奏者による全曲フルオーケストラコンサートで、18,000人のオーディエンスは驚愕した。\n\n2018年、S･S･S TOURとして全国ライブハウスを回り、大阪、福岡、仙台、名古屋にて初のホールツアー。最終公演はこちらも初となる横浜アリーナ2days公演を行った。\n\n2019年、 「MY FIRST STORY TOUR 2019」として、ライブハウス・ホール編に加え、神戸ワールド記念ホール・さいたまスーパーアリーナにてアリーナツアーを開催。\n\nそして2020年、「MY FIRST STORY TOUR 2020」の開催が発表された。今年もライブハウス・ホールに加え、ファイナルシリーズとして初の東名阪3都市でのアリーナツアーが決定！\n\n絶えず進化を遂げる孤高のロックバンドMY FIRST STORYの躍進を見逃すわけにはいかないだろう。"
+        
         let constraints = [
             topAnchor.constraint(equalTo: contentView.topAnchor),
             bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -266,6 +281,11 @@ final class BandDetailHeaderView: UIView {
             stackView.heightAnchor.constraint(equalToConstant: 24),
             
             twitterButton.widthAnchor.constraint(equalToConstant: 24),
+            
+            biographyTextView.topAnchor.constraint(equalTo: biographyView.topAnchor, constant: 16),
+            biographyTextView.bottomAnchor.constraint(equalTo: biographyView.bottomAnchor, constant: -16),
+            biographyTextView.rightAnchor.constraint(equalTo: biographyView.rightAnchor, constant: -16),
+            biographyTextView.leftAnchor.constraint(equalTo: biographyView.leftAnchor, constant: 16),
         ]
         NSLayoutConstraint.activate(constraints)
     }

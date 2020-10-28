@@ -22,14 +22,14 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="1024"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LlA-XZ-xsc">
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LlA-XZ-xsc">
                     <rect key="frame" x="0.0" y="44" width="414" height="946"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kwn-rv-aqn">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="946"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y9D-z1-Lis" customClass="BandDetailHeaderView" customModule="Rocket" customModuleProvider="target">
-                                    <rect key="frame" x="0.0" y="0.0" width="406" height="250"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="250" id="IXH-G0-Nod"/>
                                     </constraints>
@@ -56,7 +56,7 @@
                                 <constraint firstItem="Y9D-z1-Lis" firstAttribute="top" secondItem="Kwn-rv-aqn" secondAttribute="top" id="QWM-b3-MRB"/>
                                 <constraint firstItem="Y9D-z1-Lis" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" id="RX8-34-Z9H"/>
                                 <constraint firstItem="vjU-mj-h0h" firstAttribute="top" secondItem="Y9D-z1-Lis" secondAttribute="bottom" constant="12" id="a9r-nL-Opy"/>
-                                <constraint firstAttribute="trailing" secondItem="Y9D-z1-Lis" secondAttribute="trailing" constant="8" id="dxt-oO-oKM"/>
+                                <constraint firstAttribute="trailing" secondItem="Y9D-z1-Lis" secondAttribute="trailing" id="dxt-oO-oKM"/>
                                 <constraint firstAttribute="height" constant="946" id="nLt-QC-Nst"/>
                                 <constraint firstItem="vjU-mj-h0h" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" constant="16" id="tZB-wK-HUP"/>
                             </constraints>
