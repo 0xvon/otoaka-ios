@@ -206,6 +206,13 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch tableView {
+        case self.bandsTableView:
+            let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider, input: ())
+            self.navigationController?.pushViewController(vc, animated: true)
+        default:
+            print("hello")
+        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

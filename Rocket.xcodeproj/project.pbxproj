@@ -43,6 +43,10 @@
 		D951C3E22549114A0010DB09 /* TrackCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3E12549114A0010DB09 /* TrackCell.xib */; };
 		D951C3E8254918390010DB09 /* BandCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3E7254918390010DB09 /* BandCell.swift */; };
 		D951C3ED254918760010DB09 /* BandCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3EC254918760010DB09 /* BandCell.xib */; };
+		D951C3F725492F1A0010DB09 /* BandDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3F625492F1A0010DB09 /* BandDetailViewController.swift */; };
+		D951C3FC25492FED0010DB09 /* BandDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3FB25492FED0010DB09 /* BandDetailViewController.xib */; };
+		D951C401254931CC0010DB09 /* BandDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C400254931CC0010DB09 /* BandDetailViewModel.swift */; };
+		D951C406254933240010DB09 /* BandDetailHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C405254933240010DB09 /* BandDetailHeaderView.swift */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -114,6 +118,10 @@
 		D951C3E12549114A0010DB09 /* TrackCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TrackCell.xib; sourceTree = "<group>"; };
 		D951C3E7254918390010DB09 /* BandCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandCell.swift; sourceTree = "<group>"; };
 		D951C3EC254918760010DB09 /* BandCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BandCell.xib; sourceTree = "<group>"; };
+		D951C3F625492F1A0010DB09 /* BandDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandDetailViewController.swift; sourceTree = "<group>"; };
+		D951C3FB25492FED0010DB09 /* BandDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BandDetailViewController.xib; sourceTree = "<group>"; };
+		D951C400254931CC0010DB09 /* BandDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandDetailViewModel.swift; sourceTree = "<group>"; };
+		D951C405254933240010DB09 /* BandDetailHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandDetailHeaderView.swift; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -244,7 +252,7 @@
 		D951C37525432C4D0010DB09 /* LiveDetail */ = {
 			isa = PBXGroup;
 			children = (
-				D951C39D25455A770010DB09 /* LiveDetailHeader */,
+				D951C39D25455A770010DB09 /* Header */,
 				D951C37625432C640010DB09 /* LiveDetailViewController.swift */,
 				D951C37B25432CCA0010DB09 /* LiveDetailViewModel.swift */,
 				D951C38025432CE30010DB09 /* LiveDetailViewController.xib */,
@@ -252,12 +260,12 @@
 			path = LiveDetail;
 			sourceTree = "<group>";
 		};
-		D951C39D25455A770010DB09 /* LiveDetailHeader */ = {
+		D951C39D25455A770010DB09 /* Header */ = {
 			isa = PBXGroup;
 			children = (
 				D951C3A125455C650010DB09 /* LiveDetailHeaderView.swift */,
 			);
-			path = LiveDetailHeader;
+			path = Header;
 			sourceTree = "<group>";
 		};
 		D951C3A625455F190010DB09 /* ReactionButton */ = {
@@ -304,6 +312,25 @@
 			path = BandCell;
 			sourceTree = "<group>";
 		};
+		D951C3F125492EB70010DB09 /* BandDetail */ = {
+			isa = PBXGroup;
+			children = (
+				D951C3F225492ED40010DB09 /* Header */,
+				D951C3F625492F1A0010DB09 /* BandDetailViewController.swift */,
+				D951C400254931CC0010DB09 /* BandDetailViewModel.swift */,
+				D951C3FB25492FED0010DB09 /* BandDetailViewController.xib */,
+			);
+			path = BandDetail;
+			sourceTree = "<group>";
+		};
+		D951C3F225492ED40010DB09 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				D951C405254933240010DB09 /* BandDetailHeaderView.swift */,
+			);
+			path = Header;
+			sourceTree = "<group>";
+		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
 			isa = PBXGroup;
 			children = (
@@ -327,6 +354,7 @@
 				D90B5FC5253ECB6000E9B655 /* Live */,
 				D951C37525432C4D0010DB09 /* LiveDetail */,
 				D90B5FC6253ECB6A00E9B655 /* Band */,
+				D951C3F125492EB70010DB09 /* BandDetail */,
 				D90B5FC7253ECB7200E9B655 /* Ticket */,
 				D90B5F86253C85B500E9B655 /* Home */,
 				D9CC5296253B2C990081ECF0 /* Auth */,
@@ -537,6 +565,7 @@
 				D951C3ED254918760010DB09 /* BandCell.xib in Resources */,
 				D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */,
 				D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */,
+				D951C3FC25492FED0010DB09 /* BandDetailViewController.xib in Resources */,
 				D90B5F2A253BDF9600E9B655 /* AuthViewController.xib in Resources */,
 				D951C3C12545B7EE0010DB09 /* BandContentsCell.xib in Resources */,
 				D90B5FF1253F090800E9B655 /* BandViewController.xib in Resources */,
@@ -672,6 +701,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D951C3BC2545B6130010DB09 /* BandContentsCell.swift in Sources */,
+				D951C406254933240010DB09 /* BandDetailHeaderView.swift in Sources */,
 				D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */,
 				D951C37725432C640010DB09 /* LiveDetailViewController.swift in Sources */,
 				D90B5FD8253ECDB900E9B655 /* LiveViewController.swift in Sources */,
@@ -687,6 +717,7 @@
 				D951C3B125458CAA0010DB09 /* BandBannerCell.swift in Sources */,
 				D90B5F54253C365A00E9B655 /* Config.swift in Sources */,
 				D90B5FE7253F08D700E9B655 /* BandViewController.swift in Sources */,
+				D951C3F725492F1A0010DB09 /* BandDetailViewController.swift in Sources */,
 				D951C3A825455F330010DB09 /* ReactionButtonView.swift in Sources */,
 				F2A300EC2543D4E200857227 /* ENV.swift in Sources */,
 				D90B5F88253C85C300E9B655 /* HomeViewController.swift in Sources */,
@@ -695,6 +726,7 @@
 				D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */,
 				D951C3632541CB0D0010DB09 /* BadgeView.swift in Sources */,
 				D90B5FCE253ECD1C00E9B655 /* TicketViewModel.swift in Sources */,
+				D951C401254931CC0010DB09 /* BandDetailViewModel.swift in Sources */,
 				D90B5FDD253ECDD700E9B655 /* LiveViewModel.swift in Sources */,
 				D951C3A225455C650010DB09 /* LiveDetailHeaderView.swift in Sources */,
 				D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */,
