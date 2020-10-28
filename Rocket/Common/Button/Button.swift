@@ -36,14 +36,14 @@ final class Button: UIView, InputAppliable {
     }
     
     func setup() {
+        layer.cornerRadius = self.bounds.height / 2
+        layer.borderWidth = 1
+        layer.borderColor = style.color.main.get().cgColor
+        
         let contentView = UIView(frame: self.frame)
         addSubview(contentView)
         
         contentView.backgroundColor = .clear
-        contentView.layer.opacity = 0.8
-        contentView.layer.cornerRadius = contentView.bounds.height / 2
-        contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = style.color.main.get().cgColor
         translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -88,7 +88,6 @@ final class Button: UIView, InputAppliable {
             button.bottomAnchor.constraint(equalTo: bottomAnchor),
             button.leftAnchor.constraint(equalTo: leftAnchor),
             button.rightAnchor.constraint(equalTo: rightAnchor),
-            button.heightAnchor.constraint(equalToConstant: self.bounds.height),
         ]
         NSLayoutConstraint.activate(constraints)
     }
