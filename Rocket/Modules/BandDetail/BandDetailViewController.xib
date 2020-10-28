@@ -12,21 +12,23 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandDetailViewController" customModule="Rocket" customModuleProvider="target">
             <connections>
                 <outlet property="commentButtonView" destination="lqm-IJ-L64" id="7kE-6M-SJ7"/>
+                <outlet property="contentsTableView" destination="HNk-Sr-seo" id="LWt-d4-69K"/>
                 <outlet property="headerView" destination="Y9D-z1-Lis" id="U9L-NT-87M"/>
                 <outlet property="likeButtonView" destination="L3a-GU-FLo" id="Qy3-LC-VTW"/>
+                <outlet property="liveTableView" destination="sQZ-gg-szN" id="58K-8R-WcF"/>
                 <outlet property="view" destination="iN0-l3-epB" id="sAZ-nS-7DA"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="1024"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="1224"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LlA-XZ-xsc">
-                    <rect key="frame" x="0.0" y="44" width="414" height="946"/>
+                    <rect key="frame" x="0.0" y="44" width="414" height="1146"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kwn-rv-aqn">
-                            <rect key="frame" x="0.0" y="0.0" width="414" height="946"/>
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="1146"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y9D-z1-Lis" customClass="BandDetailHeaderView" customModule="Rocket" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
@@ -51,13 +53,33 @@
                                         </view>
                                     </subviews>
                                 </stackView>
+                                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="sQZ-gg-szN">
+                                    <rect key="frame" x="16" y="334" width="383" height="362"/>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="362" id="hyx-qA-2x0"/>
+                                    </constraints>
+                                </tableView>
+                                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HNk-Sr-seo">
+                                    <rect key="frame" x="16" y="720" width="382" height="262"/>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="262" id="ONB-CW-LaD"/>
+                                    </constraints>
+                                </tableView>
                             </subviews>
                             <constraints>
+                                <constraint firstAttribute="trailing" secondItem="HNk-Sr-seo" secondAttribute="trailing" constant="16" id="6k3-cc-RYr"/>
+                                <constraint firstItem="sQZ-gg-szN" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" constant="16" id="E5i-iO-aMc"/>
+                                <constraint firstItem="HNk-Sr-seo" firstAttribute="top" secondItem="sQZ-gg-szN" secondAttribute="bottom" constant="24" id="JXD-eH-819"/>
                                 <constraint firstItem="Y9D-z1-Lis" firstAttribute="top" secondItem="Kwn-rv-aqn" secondAttribute="top" id="QWM-b3-MRB"/>
                                 <constraint firstItem="Y9D-z1-Lis" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" id="RX8-34-Z9H"/>
                                 <constraint firstItem="vjU-mj-h0h" firstAttribute="top" secondItem="Y9D-z1-Lis" secondAttribute="bottom" constant="12" id="a9r-nL-Opy"/>
                                 <constraint firstAttribute="trailing" secondItem="Y9D-z1-Lis" secondAttribute="trailing" id="dxt-oO-oKM"/>
-                                <constraint firstAttribute="height" constant="946" id="nLt-QC-Nst"/>
+                                <constraint firstItem="HNk-Sr-seo" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" constant="16" id="f7s-xR-4hm"/>
+                                <constraint firstItem="sQZ-gg-szN" firstAttribute="top" secondItem="vjU-mj-h0h" secondAttribute="bottom" constant="24" id="gKM-Yt-Q2I"/>
+                                <constraint firstAttribute="trailing" secondItem="sQZ-gg-szN" secondAttribute="trailing" constant="15" id="lfK-r7-Fs7"/>
+                                <constraint firstAttribute="height" constant="1146" id="nLt-QC-Nst"/>
                                 <constraint firstItem="vjU-mj-h0h" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" constant="16" id="tZB-wK-HUP"/>
                             </constraints>
                         </view>
