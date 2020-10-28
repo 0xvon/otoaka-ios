@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="BandCell" customModule="Rocket" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CUj-QU-1V3">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="250" id="pfY-JY-6YR"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mcz-II-bDG">
+                    <rect key="frame" x="16" y="16" width="382" height="20.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="p68-VP-LFw">
+                    <rect key="frame" x="16" y="90" width="382" height="144"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YGD-6Y-cJe" customClass="BadgeView" customModule="Rocket" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="382" height="30"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="zKB-hN-gfK"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dKS-9Q-Jlh" customClass="BadgeView" customModule="Rocket" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="38" width="382" height="30"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="Z9p-fM-O48"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xaw-dn-4ak" customClass="BadgeView" customModule="Rocket" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="76" width="382" height="30"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="7fx-sH-32R"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I3s-94-gFE" customClass="BadgeView" customModule="Rocket" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="114" width="382" height="30"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="8mF-19-xJq"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="CUj-QU-1V3" secondAttribute="bottom" id="6Wa-dj-a4l"/>
+                <constraint firstItem="p68-VP-LFw" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="AOK-sI-rAI"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="p68-VP-LFw" secondAttribute="trailing" constant="16" id="CFZ-ek-zX4"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="CUj-QU-1V3" secondAttribute="trailing" id="CwL-Vh-GvE"/>
+                <constraint firstItem="mcz-II-bDG" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="ERY-3t-lol"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="p68-VP-LFw" secondAttribute="bottom" constant="16" id="GjO-yI-wwC"/>
+                <constraint firstAttribute="trailing" secondItem="mcz-II-bDG" secondAttribute="trailing" constant="16" id="H0V-Zl-Wcz"/>
+                <constraint firstItem="CUj-QU-1V3" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="Hrr-JV-1UJ"/>
+                <constraint firstItem="CUj-QU-1V3" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="QVr-Ph-KTH"/>
+                <constraint firstItem="mcz-II-bDG" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="uA9-pQ-mF6"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="bandName" destination="mcz-II-bDG" id="KgX-SV-Ivc"/>
+                <outlet property="hometownBadgeView" destination="I3s-94-gFE" id="aO6-Fn-NFS"/>
+                <outlet property="jacketImageView" destination="CUj-QU-1V3" id="ebK-eu-feP"/>
+                <outlet property="labelBadgeView" destination="dKS-9Q-Jlh" id="hH8-pa-fJ1"/>
+                <outlet property="productionBadgeView" destination="YGD-6Y-cJe" id="QwJ-As-Cqe"/>
+                <outlet property="yearBadgeView" destination="Xaw-dn-4ak" id="RTv-as-zRf"/>
+            </connections>
+            <point key="canvasLocation" x="140.57971014492756" y="-95.758928571428569"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -83,8 +83,17 @@ final class BandViewController: UIViewController, Instantiable {
         
         let bandsView = UIView()
         bandsView.translatesAutoresizingMaskIntoConstraints = false
-        bandsView.backgroundColor = .green
+        bandsView.backgroundColor = style.color.background.get()
         horizontalScrollView.addSubview(bandsView)
+        
+        bandsTableView = UITableView()
+        bandsTableView.translatesAutoresizingMaskIntoConstraints = false
+        bandsTableView.showsVerticalScrollIndicator = false
+        bandsTableView.backgroundColor = style.color.background.get()
+        bandsTableView.delegate = self
+        bandsTableView.dataSource = self
+        bandsTableView.register(UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
+        bandsView.addSubview(bandsTableView)
         
         contentsPageTitleView.inject(input: (title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get()))
         contentsPageTitleView.bringSubviewToFront(contentsPageButton)
@@ -121,18 +130,30 @@ final class BandViewController: UIViewController, Instantiable {
             chartsTableView.rightAnchor.constraint(equalTo: chartsView.rightAnchor, constant: -16),
             chartsTableView.topAnchor.constraint(equalTo: chartsView.topAnchor, constant: 56),
             chartsTableView.bottomAnchor.constraint(equalTo: chartsView.bottomAnchor, constant: -16),
+            
+            bandsTableView.leftAnchor.constraint(equalTo: bandsView.leftAnchor, constant: 16),
+            bandsTableView.rightAnchor.constraint(equalTo: bandsView.rightAnchor, constant: -16),
+            bandsTableView.topAnchor.constraint(equalTo: bandsView.topAnchor, constant: 56),
+            bandsTableView.bottomAnchor.constraint(equalTo: bandsView.bottomAnchor, constant: -16),
         ]
         NSLayoutConstraint.activate(constraint)
     }
     @IBAction func contentsPageButtonTapped(_ sender: Any) {
-        horizontalScrollView.contentOffset.x = 0
+        UIScrollView.animate(withDuration: 0.3) {
+            self.horizontalScrollView.contentOffset.x = 0
+        }
     }
     @IBAction func chartsPageButtonTapped(_ sender: Any) {
-        horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width
+        UIScrollView.animate(withDuration: 0.3) {
+            self.horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width
+        }
+        
     }
     
     @IBAction func bandsPageButtonTapped(_ sender: Any) {
-        horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width * 2
+        UIScrollView.animate(withDuration: 0.3) {
+            self.horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width * 2
+        }
     }
 }
 
@@ -162,7 +183,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         case self.chartsTableView:
             return 400
         case self.bandsTableView:
-            return 300
+            return 250
         default:
             return 100
         }
@@ -176,8 +197,11 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         case self.chartsTableView:
             let cell = tableView.reuse(TrackCell.self, input: (), for: indexPath)
             return cell
+        case self.bandsTableView:
+            let cell = tableView.reuse(BandCell.self, input: (), for: indexPath)
+            return cell
         default:
-            return tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+            return UITableViewCell()
         }
     }
     
