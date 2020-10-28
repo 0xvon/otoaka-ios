@@ -39,6 +39,8 @@
 		D951C3B625458EF00010DB09 /* BandBannerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3B525458EF00010DB09 /* BandBannerCell.xib */; };
 		D951C3BC2545B6130010DB09 /* BandContentsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3BB2545B6130010DB09 /* BandContentsCell.swift */; };
 		D951C3C12545B7EE0010DB09 /* BandContentsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3C02545B7EE0010DB09 /* BandContentsCell.xib */; };
+		D951C3DA254910EF0010DB09 /* TrackCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C3D9254910EF0010DB09 /* TrackCell.swift */; };
+		D951C3E22549114A0010DB09 /* TrackCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3E12549114A0010DB09 /* TrackCell.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -106,6 +108,8 @@
 		D951C3B525458EF00010DB09 /* BandBannerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BandBannerCell.xib; sourceTree = "<group>"; };
 		D951C3BB2545B6130010DB09 /* BandContentsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandContentsCell.swift; sourceTree = "<group>"; };
 		D951C3C02545B7EE0010DB09 /* BandContentsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BandContentsCell.xib; sourceTree = "<group>"; };
+		D951C3D9254910EF0010DB09 /* TrackCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackCell.swift; sourceTree = "<group>"; };
+		D951C3E12549114A0010DB09 /* TrackCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TrackCell.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -159,6 +163,7 @@
 		D90B5F2E253BE0EF00E9B655 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D951C3D8254910DC0010DB09 /* TrackCell */,
 				D951C3BA2545B6000010DB09 /* BandContentsCell */,
 				D96C7DF025415BA800A9B2C6 /* LiveCell */,
 				D951C3AF25458C9B0010DB09 /* BandBannerCell */,
@@ -274,6 +279,15 @@
 				D951C3C02545B7EE0010DB09 /* BandContentsCell.xib */,
 			);
 			path = BandContentsCell;
+			sourceTree = "<group>";
+		};
+		D951C3D8254910DC0010DB09 /* TrackCell */ = {
+			isa = PBXGroup;
+			children = (
+				D951C3D9254910EF0010DB09 /* TrackCell.swift */,
+				D951C3E12549114A0010DB09 /* TrackCell.xib */,
+			);
+			path = TrackCell;
 			sourceTree = "<group>";
 		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
@@ -505,6 +519,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */,
+				D951C3E22549114A0010DB09 /* TrackCell.xib in Resources */,
 				D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */,
 				D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */,
 				D90B5F2A253BDF9600E9B655 /* AuthViewController.xib in Resources */,
@@ -648,6 +663,7 @@
 				D951C37C25432CCA0010DB09 /* LiveDetailViewModel.swift in Sources */,
 				D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */,
 				D90B5F30253BE12B00E9B655 /* Instantiable.swift in Sources */,
+				D951C3DA254910EF0010DB09 /* TrackCell.swift in Sources */,
 				D9CC5298253B2CA70081ECF0 /* AuthViewController.swift in Sources */,
 				D90B5FEC253F08F100E9B655 /* BandViewModel.swift in Sources */,
 				D90B5FF6253F0F2000E9B655 /* Style.swift in Sources */,

@@ -24,7 +24,7 @@ final class BandViewController: UIViewController, Instantiable {
     @IBOutlet weak var bandsPageButton: UIButton!
     
     private var contentsTableView: UITableView!
-    private var chartsTableVIew: UITableView!
+    private var chartsTableView: UITableView!
     private var bandsTableView: UITableView!
     
     init(dependencyProvider: DependencyProvider, input: Input) {
@@ -69,8 +69,17 @@ final class BandViewController: UIViewController, Instantiable {
         
         let chartsView = UIView()
         chartsView.translatesAutoresizingMaskIntoConstraints = false
-        chartsView.backgroundColor = .blue
+        chartsView.backgroundColor = style.color.background.get()
         horizontalScrollView.addSubview(chartsView)
+        
+        chartsTableView = UITableView()
+        chartsTableView.translatesAutoresizingMaskIntoConstraints = false
+        chartsTableView.showsVerticalScrollIndicator = false
+        chartsTableView.backgroundColor = style.color.background.get()
+        chartsTableView.delegate = self
+        chartsTableView.dataSource = self
+        chartsTableView.register(UINib(nibName: "TrackCell", bundle: nil), forCellReuseIdentifier: "TrackCell")
+        chartsView.addSubview(chartsTableView)
         
         let bandsView = UIView()
         bandsView.translatesAutoresizingMaskIntoConstraints = false
@@ -107,6 +116,11 @@ final class BandViewController: UIViewController, Instantiable {
             contentsTableView.rightAnchor.constraint(equalTo: contentsView.rightAnchor, constant: -16),
             contentsTableView.topAnchor.constraint(equalTo: contentsView.topAnchor, constant: 56),
             contentsTableView.bottomAnchor.constraint(equalTo: contentsView.bottomAnchor, constant: -16),
+            
+            chartsTableView.leftAnchor.constraint(equalTo: chartsView.leftAnchor, constant: 16),
+            chartsTableView.rightAnchor.constraint(equalTo: chartsView.rightAnchor, constant: -16),
+            chartsTableView.topAnchor.constraint(equalTo: chartsView.topAnchor, constant: 56),
+            chartsTableView.bottomAnchor.constraint(equalTo: chartsView.bottomAnchor, constant: -16),
         ]
         NSLayoutConstraint.activate(constraint)
     }
@@ -142,13 +156,25 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        switch tableView {
+        case self.contentsTableView:
+            return 200
+        case self.chartsTableView:
+            return 400
+        case self.bandsTableView:
+            return 300
+        default:
+            return 100
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tableView {
         case self.contentsTableView:
             let cell = tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+            return cell
+        case self.chartsTableView:
+            let cell = tableView.reuse(TrackCell.self, input: (), for: indexPath)
             return cell
         default:
             return tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
