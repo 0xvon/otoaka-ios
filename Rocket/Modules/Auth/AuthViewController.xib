@@ -25,9 +25,8 @@
                 </imageView>
                 <view contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="249" translatesAutoresizingMaskIntoConstraints="NO" id="r8Q-Ea-AYh" customClass="Button" customModule="Rocket" customModuleProvider="target">
                     <rect key="frame" x="77" y="748" width="260" height="60"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="60" placeholder="YES" id="OKh-ia-NSu"/>
+                        <constraint firstAttribute="height" constant="60" id="pBE-Qu-GWj"/>
                         <constraint firstAttribute="width" constant="260" id="svB-L4-xUj"/>
                     </constraints>
                 </view>
@@ -35,13 +34,11 @@
             <viewLayoutGuide key="safeArea" id="9cN-LU-Lp2"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
-                <constraint firstItem="9cN-LU-Lp2" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="r8Q-Ea-AYh" secondAttribute="trailing" constant="16" id="Jol-XP-q4M"/>
                 <constraint firstAttribute="bottom" secondItem="YMo-KT-2tl" secondAttribute="bottom" id="Koj-eV-9v9"/>
                 <constraint firstItem="YMo-KT-2tl" firstAttribute="leading" secondItem="9cN-LU-Lp2" secondAttribute="leading" id="MkL-3b-pK9"/>
                 <constraint firstItem="r8Q-Ea-AYh" firstAttribute="centerX" secondItem="qy2-Ib-wCX" secondAttribute="centerX" id="PA5-ZO-V5R"/>
                 <constraint firstItem="9cN-LU-Lp2" firstAttribute="trailing" secondItem="YMo-KT-2tl" secondAttribute="trailing" id="TQ3-ta-5Q6"/>
                 <constraint firstItem="YMo-KT-2tl" firstAttribute="top" secondItem="qy2-Ib-wCX" secondAttribute="top" id="bOC-Sw-rgH"/>
-                <constraint firstItem="r8Q-Ea-AYh" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9cN-LU-Lp2" secondAttribute="leading" constant="16" id="oIi-Lq-D41"/>
                 <constraint firstItem="9cN-LU-Lp2" firstAttribute="bottom" secondItem="r8Q-Ea-AYh" secondAttribute="bottom" constant="54" id="rxq-Yi-ll8"/>
             </constraints>
             <point key="canvasLocation" x="-359.4202898550725" y="-540.40178571428567"/>

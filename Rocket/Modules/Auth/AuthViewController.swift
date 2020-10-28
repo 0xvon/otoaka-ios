@@ -58,7 +58,8 @@ final class AuthViewController: UIViewController, Instantiable {
         backgroundImageView.contentMode = .scaleAspectFill
 
         signInButtonView.inject(input: (text: "サインイン", image: nil))
-        signInButtonView.backgroundColor = .clear
+        
+//        signInButtonView.backgroundColor = .clear
         signInButtonView.listen { [weak self] in
             self?.signInButtonTapped()
         }

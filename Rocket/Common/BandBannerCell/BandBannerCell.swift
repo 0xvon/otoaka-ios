@@ -27,7 +27,7 @@ class BandBannerCell: UITableViewCell, ReusableCell {
         backgroundColor = .clear
     }
     
-    func setup() {
+    func setup() {        
         likeButtonView.inject(input: (text: "10000", image: UIImage(named: "heart")))
         listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
         

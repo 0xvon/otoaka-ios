@@ -143,6 +143,17 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch tableView {
+        case self.liveTableView:
+            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"))
+            self.navigationController?.pushViewController(vc, animated: true)
+        default:
+            print("hello")
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     @objc private func seeMoreLive(_ sender: UIButton) {
         print("see more live")
     }
