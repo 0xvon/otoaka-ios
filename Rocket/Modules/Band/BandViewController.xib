@@ -18,6 +18,8 @@
                 <outlet property="contentsPageButton" destination="UdS-1K-vrF" id="SHr-CW-k6q"/>
                 <outlet property="contentsPageTitleView" destination="ewf-WW-z1u" id="Mxh-ve-tx7"/>
                 <outlet property="horizontalScrollView" destination="lei-An-07T" id="1b8-ws-RJR"/>
+                <outlet property="livePageButton" destination="pNi-qB-kvS" id="Onc-CR-rLl"/>
+                <outlet property="livePageTitleView" destination="jSg-Mf-HTE" id="QyP-8w-mXG"/>
                 <outlet property="pageTitleStackViewLeadingConstraint" destination="gEq-h1-Zwp" id="5cx-tO-0TX"/>
                 <outlet property="searchBar" destination="GsN-Z1-yr6" id="MOU-ZU-hJD"/>
                 <outlet property="view" destination="iN0-l3-epB" id="Snd-II-OqA"/>
@@ -32,7 +34,7 @@
                     <rect key="frame" x="0.0" y="100" width="414" height="600"/>
                 </scrollView>
                 <stackView opaque="NO" contentMode="scaleToFill" distribution="equalSpacing" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="bhE-rX-Bv6">
-                    <rect key="frame" x="16" y="116" width="376" height="40"/>
+                    <rect key="frame" x="16" y="116" width="624" height="40"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ewf-WW-z1u" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
@@ -52,8 +54,26 @@
                                 <constraint firstAttribute="trailing" secondItem="UdS-1K-vrF" secondAttribute="trailing" id="wyu-On-VNZ"/>
                             </constraints>
                         </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jSg-Mf-HTE" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
+                            <rect key="frame" x="128" y="0.0" width="240" height="40"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pNi-qB-kvS">
+                                    <rect key="frame" x="0.0" y="0.0" width="240" height="40"/>
+                                    <connections>
+                                        <action selector="livePageButtonTapped:" destination="-1" eventType="touchUpInside" id="UJe-zl-7n7"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <constraints>
+                                <constraint firstAttribute="trailing" secondItem="pNi-qB-kvS" secondAttribute="trailing" id="AiK-sr-4BX"/>
+                                <constraint firstAttribute="bottom" secondItem="pNi-qB-kvS" secondAttribute="bottom" id="QAg-jP-Qyr"/>
+                                <constraint firstItem="pNi-qB-kvS" firstAttribute="leading" secondItem="jSg-Mf-HTE" secondAttribute="leading" id="gPd-ay-juX"/>
+                                <constraint firstItem="pNi-qB-kvS" firstAttribute="top" secondItem="jSg-Mf-HTE" secondAttribute="top" id="qMI-hm-FGP"/>
+                            </constraints>
+                        </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wKc-y9-Hme" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
-                            <rect key="frame" x="128" y="0.0" width="120" height="40"/>
+                            <rect key="frame" x="376" y="0.0" width="120" height="40"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="spi-L9-hqt">
                                     <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
@@ -71,7 +91,7 @@
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhT-SK-B1p" customClass="TitleLabelView" customModule="Rocket" customModuleProvider="target">
-                            <rect key="frame" x="256" y="0.0" width="120" height="40"/>
+                            <rect key="frame" x="504" y="0.0" width="120" height="40"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="llB-oD-uP0">
                                     <rect key="frame" x="0.0" y="0.0" width="120" height="40"/>
