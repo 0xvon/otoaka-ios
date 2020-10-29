@@ -14,6 +14,8 @@ final class TicketViewController: UIViewController, Instantiable {
     
     var dependencyProvider: DependencyProvider!
     
+    @IBOutlet weak var ticketsTableView: UITableView!
+    
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         
@@ -24,8 +26,77 @@ final class TicketViewController: UIViewController, Instantiable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+    }
+    
+    func setup() {
+        self.view.backgroundColor = style.color.background.get()
+        
+        ticketsTableView.delegate = self
+        ticketsTableView.dataSource = self
+        ticketsTableView.register(UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+        ticketsTableView.backgroundColor = .clear
+    }
+}
+
+extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 10
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.reuse(LiveCell.self, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"), for: indexPath)
+        cell.listen { [weak self] in
+            self?.listenButtonTapped(cellIndex: indexPath.section)
+        }
+        cell.buyTicket { [weak self] in
+            self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return section == 0 ? 60 : 16
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        switch section {
+        case 0:
+            let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 32, height: 60))
+            let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 300, height: 40))
+            let titleView = TitleLabelView(input: (title: "TICKETS", font: style.font.xlarge.get(), color: style.color.main.get()))
+            titleBaseView.addSubview(titleView)
+            view.addSubview(titleBaseView)
+            return view
+        default:
+            let view = UIView()
+            view.backgroundColor = .clear
+            return view
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return .leastNonzeroMagnitude
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"))
+        self.navigationController?.pushViewController(vc, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    private func listenButtonTapped(cellIndex: Int) {
+        print("listen \(cellIndex) music")
+    }
+    
+    private func buyTicketButtonTapped(cellIndex: Int) {
+        print("buy \(cellIndex) ticket")
     }
 }
 

@@ -57,6 +57,7 @@ final class BandViewController: UIViewController, Instantiable {
         searchBar.barTintColor = style.color.background.get()
         searchBar.searchTextField.placeholder = "バンド・ライブを探す"
         searchBar.searchTextField.textColor = style.color.main.get()
+        searchBar.delegate = self
         
         let contentsView = UIView()
         contentsView.translatesAutoresizingMaskIntoConstraints = false
@@ -303,6 +304,15 @@ extension BandViewController: UIScrollViewDelegate {
             titleViews.forEach { $0.changeStyle(font: style.font.regular.get(), color: style.color.main.get()) }
             pageTitleStackViewLeadingConstraint.constant = CGFloat(16 - (scrollView.contentOffset.x / UIScreen.main.bounds.width * 60))
         }
+    }
+}
+
+extension BandViewController: UISearchBarDelegate {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        
+        let vc = SearchViewController(dependencyProvider: self.dependencyProvider, input: ())
+        self.navigationController?.pushViewController(vc, animated: true)
+        searchBar.endEditing(true)
     }
 }
 
