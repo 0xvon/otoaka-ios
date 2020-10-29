@@ -47,6 +47,10 @@
 		D951C3FC25492FED0010DB09 /* BandDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C3FB25492FED0010DB09 /* BandDetailViewController.xib */; };
 		D951C401254931CC0010DB09 /* BandDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C400254931CC0010DB09 /* BandDetailViewModel.swift */; };
 		D951C406254933240010DB09 /* BandDetailHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C405254933240010DB09 /* BandDetailHeaderView.swift */; };
+		D951C40F254A7F420010DB09 /* AccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C40E254A7F410010DB09 /* AccountViewController.swift */; };
+		D951C414254A8E6D0010DB09 /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C413254A8E6D0010DB09 /* AccountViewModel.swift */; };
+		D951C41A254A8E840010DB09 /* AccountCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C419254A8E840010DB09 /* AccountCell.swift */; };
+		D951C41F254A8EFD0010DB09 /* AccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C41E254A8EFD0010DB09 /* AccountCell.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -122,6 +126,10 @@
 		D951C3FB25492FED0010DB09 /* BandDetailViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BandDetailViewController.xib; sourceTree = "<group>"; };
 		D951C400254931CC0010DB09 /* BandDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandDetailViewModel.swift; sourceTree = "<group>"; };
 		D951C405254933240010DB09 /* BandDetailHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BandDetailHeaderView.swift; sourceTree = "<group>"; };
+		D951C40E254A7F410010DB09 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
+		D951C413254A8E6D0010DB09 /* AccountViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
+		D951C419254A8E840010DB09 /* AccountCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountCell.swift; sourceTree = "<group>"; };
+		D951C41E254A8EFD0010DB09 /* AccountCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountCell.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -331,6 +339,25 @@
 			path = Header;
 			sourceTree = "<group>";
 		};
+		D951C40D254A7F0F0010DB09 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				D951C418254A8E7B0010DB09 /* AccountCell */,
+				D951C40E254A7F410010DB09 /* AccountViewController.swift */,
+				D951C413254A8E6D0010DB09 /* AccountViewModel.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
+		D951C418254A8E7B0010DB09 /* AccountCell */ = {
+			isa = PBXGroup;
+			children = (
+				D951C419254A8E840010DB09 /* AccountCell.swift */,
+				D951C41E254A8EFD0010DB09 /* AccountCell.xib */,
+			);
+			path = AccountCell;
+			sourceTree = "<group>";
+		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
 			isa = PBXGroup;
 			children = (
@@ -351,10 +378,11 @@
 		D9CC5295253B2C8A0081ECF0 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
-				D90B5FC5253ECB6000E9B655 /* Live */,
-				D951C37525432C4D0010DB09 /* LiveDetail */,
+				D951C40D254A7F0F0010DB09 /* Account */,
 				D90B5FC6253ECB6A00E9B655 /* Band */,
+				D90B5FC5253ECB6000E9B655 /* Live */,
 				D951C3F125492EB70010DB09 /* BandDetail */,
+				D951C37525432C4D0010DB09 /* LiveDetail */,
 				D90B5FC7253ECB7200E9B655 /* Ticket */,
 				D90B5F86253C85B500E9B655 /* Home */,
 				D9CC5296253B2C990081ECF0 /* Auth */,
@@ -571,6 +599,7 @@
 				D90B5FF1253F090800E9B655 /* BandViewController.xib in Resources */,
 				D90B5FE2253ECE0900E9B655 /* LiveViewController.xib in Resources */,
 				F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */,
+				D951C41F254A8EFD0010DB09 /* AccountCell.xib in Resources */,
 				D951C3B625458EF00010DB09 /* BandBannerCell.xib in Resources */,
 				D951C38125432CE30010DB09 /* LiveDetailViewController.xib in Resources */,
 			);
@@ -726,12 +755,15 @@
 				D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */,
 				D951C3632541CB0D0010DB09 /* BadgeView.swift in Sources */,
 				D90B5FCE253ECD1C00E9B655 /* TicketViewModel.swift in Sources */,
+				D951C41A254A8E840010DB09 /* AccountCell.swift in Sources */,
 				D951C401254931CC0010DB09 /* BandDetailViewModel.swift in Sources */,
 				D90B5FDD253ECDD700E9B655 /* LiveViewModel.swift in Sources */,
 				D951C3A225455C650010DB09 /* LiveDetailHeaderView.swift in Sources */,
 				D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */,
 				D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */,
 				D90B5F35253BE1D800E9B655 /* ReusableCell.swift in Sources */,
+				D951C414254A8E6D0010DB09 /* AccountViewModel.swift in Sources */,
+				D951C40F254A7F420010DB09 /* AccountViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

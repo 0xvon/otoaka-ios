@@ -29,6 +29,7 @@ final class BandViewController: UIViewController, Instantiable {
     private var liveTableView: UITableView!
     private var chartsTableView: UITableView!
     private var bandsTableView: UITableView!
+    private var iconMenu: UIBarButtonItem!
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -85,7 +86,6 @@ final class BandViewController: UIViewController, Instantiable {
         liveTableView.register(UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
         liveView.addSubview(liveTableView)
         
-        
         let chartsView = UIView()
         chartsView.translatesAutoresizingMaskIntoConstraints = false
         chartsView.backgroundColor = style.color.background.get()
@@ -122,6 +122,16 @@ final class BandViewController: UIViewController, Instantiable {
         chartsPageTitleView.bringSubviewToFront(chartsPageButton)
         bandsPageTitleView.inject(input: (title: "BANDS", font: style.font.regular.get(), color: style.color.main.get()))
         bandsPageTitleView.bringSubviewToFront(bandsPageButton)
+        
+        let icon: UIButton = UIButton(type: .custom)
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        icon.setImage(UIImage(named: "band"), for: .normal)
+        icon.addTarget(self, action: #selector(iconTapped(_:)), for: .touchUpInside)
+        icon.imageView?.layer.cornerRadius = 20
+        
+        iconMenu = UIBarButtonItem(customView: icon)
+        self.navigationItem.leftBarButtonItem = iconMenu
         
         let constraint = [
             contentsView.leftAnchor.constraint(equalTo: horizontalScrollView.leftAnchor),
@@ -167,6 +177,9 @@ final class BandViewController: UIViewController, Instantiable {
             bandsTableView.rightAnchor.constraint(equalTo: bandsView.rightAnchor, constant: -16),
             bandsTableView.topAnchor.constraint(equalTo: bandsView.topAnchor, constant: 56),
             bandsTableView.bottomAnchor.constraint(equalTo: bandsView.bottomAnchor, constant: -16),
+            
+            iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
+            iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
         ]
         NSLayoutConstraint.activate(constraint)
     }
@@ -193,6 +206,11 @@ final class BandViewController: UIViewController, Instantiable {
         UIScrollView.animate(withDuration: 0.3) {
             self.horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width * 3
         }
+    }
+    
+    @objc private func iconTapped(_ sender: Any) {
+        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
+        present(vc, animated: true, completion: nil)
     }
 }
 
