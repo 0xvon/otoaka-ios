@@ -10,6 +10,7 @@ import AWSCognitoAuth
 
 struct DependencyProvider {
     var auth: AWSCognitoAuth
+    var apiEndpoint: String
 }
 
 extension DependencyProvider {
@@ -33,6 +34,6 @@ extension DependencyProvider {
         )
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: "cognitoAuth")
         let auth = AWSCognitoAuth.init(forKey: "cognitoAuth")
-        return DependencyProvider(auth: auth)
+        return DependencyProvider(auth: auth, apiEndpoint: config.apiEndpoint)
     }
 }

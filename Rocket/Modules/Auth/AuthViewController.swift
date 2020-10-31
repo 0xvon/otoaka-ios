@@ -13,12 +13,19 @@ final class AuthViewController: UIViewController, Instantiable {
     
     lazy var viewModel = AuthViewModel(
         auth: dependencyProvider.auth,
+        apiEndpoint: dependencyProvider.apiEndpoint,
         outputHander: { output in
             switch output {
-            case .signin(let session):
-                if let session = session {
+            case .signin(let session, let isSignedup):
+                if isSignedup {
                     let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: ())
                     self.navigationController?.pushViewController(vc, animated: true)
+                } else {
+                    DispatchQueue.main.async {
+                        let vc = CreateUserViewController(dependencyProvider: self.dependencyProvider, input: session)
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    }
+                    
                 }
             case .error(let error):
                 print(error)
@@ -53,6 +60,7 @@ final class AuthViewController: UIViewController, Instantiable {
     }
     
     func setup() {
+        self.view.backgroundColor = style.color.background.get()
         backgroundImageView.layer.opacity = 0.6
         backgroundImageView.image = UIImage(named: "live")
         backgroundImageView.contentMode = .scaleAspectFill

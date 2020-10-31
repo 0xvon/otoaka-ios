@@ -17,4 +17,5 @@ protocol Config {
     static var signOutRedirectUri: String { get }
     static var webDomain: String { get }
     static var userPoolIdForEnablingASF: String { get }
+    static var apiEndpoint: String { get }
 }

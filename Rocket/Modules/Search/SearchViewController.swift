@@ -98,10 +98,10 @@ final class SearchViewController: UIViewController, Instantiable {
             liveTextLabel.topAnchor.constraint(equalTo: liveImageView.bottomAnchor, constant: 4),
             liveTextLabel.centerXAnchor.constraint(equalTo: liveImageView.centerXAnchor),
             
-            liveChoiceButton.topAnchor.constraint(equalTo: liveImageView.topAnchor),
-            liveChoiceButton.bottomAnchor.constraint(equalTo: liveImageView.bottomAnchor),
-            liveChoiceButton.rightAnchor.constraint(equalTo: liveImageView.rightAnchor),
-            liveChoiceButton.leftAnchor.constraint(equalTo: liveImageView.leftAnchor),
+            liveChoiceButton.topAnchor.constraint(equalTo: liveChoiceView.topAnchor),
+            liveChoiceButton.bottomAnchor.constraint(equalTo: liveChoiceView.bottomAnchor),
+            liveChoiceButton.rightAnchor.constraint(equalTo: liveChoiceView.rightAnchor),
+            liveChoiceButton.leftAnchor.constraint(equalTo: liveChoiceView.leftAnchor),
             
             bandImageView.widthAnchor.constraint(equalToConstant: 40),
             bandImageView.heightAnchor.constraint(equalToConstant: 40),
@@ -111,10 +111,10 @@ final class SearchViewController: UIViewController, Instantiable {
             bandTextLabel.topAnchor.constraint(equalTo: bandImageView.bottomAnchor, constant: 4),
             bandTextLabel.centerXAnchor.constraint(equalTo: bandImageView.centerXAnchor),
             
-            bandChoiceButton.topAnchor.constraint(equalTo: bandImageView.topAnchor),
-            bandChoiceButton.bottomAnchor.constraint(equalTo: bandImageView.bottomAnchor),
-            bandChoiceButton.rightAnchor.constraint(equalTo: bandImageView.rightAnchor),
-            bandChoiceButton.leftAnchor.constraint(equalTo: bandImageView.leftAnchor),
+            bandChoiceButton.topAnchor.constraint(equalTo: bandChoiceView.topAnchor),
+            bandChoiceButton.bottomAnchor.constraint(equalTo: bandChoiceView.bottomAnchor),
+            bandChoiceButton.rightAnchor.constraint(equalTo: bandChoiceView.rightAnchor),
+            bandChoiceButton.leftAnchor.constraint(equalTo: bandChoiceView.leftAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }

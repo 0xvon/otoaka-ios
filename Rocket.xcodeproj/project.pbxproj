@@ -53,6 +53,9 @@
 		D951C41F254A8EFD0010DB09 /* AccountCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C41E254A8EFD0010DB09 /* AccountCell.xib */; };
 		D951C425254A99F80010DB09 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D951C424254A99F80010DB09 /* SearchViewController.swift */; };
 		D951C42D254AA98B0010DB09 /* SearchViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D951C42C254AA98B0010DB09 /* SearchViewController.xib */; };
+		D9578F7B254D4AD500C6C00E /* CreateUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578F7A254D4AD500C6C00E /* CreateUserViewController.swift */; };
+		D9578F81254D4BBE00C6C00E /* TextFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578F80254D4BBE00C6C00E /* TextFieldView.swift */; };
+		D9578F86254D52DA00C6C00E /* CreateUserViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9578F85254D52DA00C6C00E /* CreateUserViewController.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -134,6 +137,9 @@
 		D951C41E254A8EFD0010DB09 /* AccountCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AccountCell.xib; sourceTree = "<group>"; };
 		D951C424254A99F80010DB09 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		D951C42C254AA98B0010DB09 /* SearchViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchViewController.xib; sourceTree = "<group>"; };
+		D9578F7A254D4AD500C6C00E /* CreateUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateUserViewController.swift; sourceTree = "<group>"; };
+		D9578F80254D4BBE00C6C00E /* TextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldView.swift; sourceTree = "<group>"; };
+		D9578F85254D52DA00C6C00E /* CreateUserViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CreateUserViewController.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -187,6 +193,7 @@
 		D90B5F2E253BE0EF00E9B655 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D9578F7F254D4BA500C6C00E /* TextField */,
 				D951C3E6254918310010DB09 /* BandCell */,
 				D951C3D8254910DC0010DB09 /* TrackCell */,
 				D951C3BA2545B6000010DB09 /* BandContentsCell */,
@@ -371,6 +378,23 @@
 			path = Search;
 			sourceTree = "<group>";
 		};
+		D9578F76254D495100C6C00E /* CreateUser */ = {
+			isa = PBXGroup;
+			children = (
+				D9578F7A254D4AD500C6C00E /* CreateUserViewController.swift */,
+				D9578F85254D52DA00C6C00E /* CreateUserViewController.xib */,
+			);
+			path = CreateUser;
+			sourceTree = "<group>";
+		};
+		D9578F7F254D4BA500C6C00E /* TextField */ = {
+			isa = PBXGroup;
+			children = (
+				D9578F80254D4BBE00C6C00E /* TextFieldView.swift */,
+			);
+			path = TextField;
+			sourceTree = "<group>";
+		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
 			isa = PBXGroup;
 			children = (
@@ -400,6 +424,7 @@
 				D90B5FC7253ECB7200E9B655 /* Ticket */,
 				D90B5F86253C85B500E9B655 /* Home */,
 				D9CC5296253B2C990081ECF0 /* Auth */,
+				D9578F76254D495100C6C00E /* CreateUser */,
 			);
 			path = Modules;
 			sourceTree = "<group>";
@@ -617,6 +642,7 @@
 				D951C41F254A8EFD0010DB09 /* AccountCell.xib in Resources */,
 				D951C3B625458EF00010DB09 /* BandBannerCell.xib in Resources */,
 				D951C38125432CE30010DB09 /* LiveDetailViewController.xib in Resources */,
+				D9578F86254D52DA00C6C00E /* CreateUserViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -746,6 +772,7 @@
 			files = (
 				D951C3BC2545B6130010DB09 /* BandContentsCell.swift in Sources */,
 				D951C406254933240010DB09 /* BandDetailHeaderView.swift in Sources */,
+				D9578F7B254D4AD500C6C00E /* CreateUserViewController.swift in Sources */,
 				D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */,
 				D951C37725432C640010DB09 /* LiveDetailViewController.swift in Sources */,
 				D90B5FD8253ECDB900E9B655 /* LiveViewController.swift in Sources */,
@@ -763,6 +790,7 @@
 				D90B5FE7253F08D700E9B655 /* BandViewController.swift in Sources */,
 				D951C3F725492F1A0010DB09 /* BandDetailViewController.swift in Sources */,
 				D951C3A825455F330010DB09 /* ReactionButtonView.swift in Sources */,
+				D9578F81254D4BBE00C6C00E /* TextFieldView.swift in Sources */,
 				F2A300EC2543D4E200857227 /* ENV.swift in Sources */,
 				D90B5F88253C85C300E9B655 /* HomeViewController.swift in Sources */,
 				F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */,
