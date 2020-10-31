@@ -21,7 +21,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="jO8-j6-wtf">
-                    <rect key="frame" x="16" y="44" width="382" height="818"/>
+                    <rect key="frame" x="16" y="44" width="382" height="802"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 </tableView>
             </subviews>
@@ -31,7 +31,7 @@
                 <constraint firstItem="jO8-j6-wtf" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="3mV-ic-IWM"/>
                 <constraint firstItem="jO8-j6-wtf" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="Qyp-gY-Eyh"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="jO8-j6-wtf" secondAttribute="trailing" constant="16" id="THR-Rx-BHM"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="jO8-j6-wtf" secondAttribute="bottom" id="wIJ-6h-D1D"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="jO8-j6-wtf" secondAttribute="bottom" constant="16" id="wIJ-6h-D1D"/>
             </constraints>
             <point key="canvasLocation" x="140.57971014492756" y="107.8125"/>
         </view>

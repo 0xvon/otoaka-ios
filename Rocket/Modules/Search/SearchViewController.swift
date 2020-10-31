@@ -11,6 +11,21 @@ final class SearchViewController: UIViewController, Instantiable {
     typealias Input = Void
     var dependencyProvider: DependencyProvider!
     
+    enum Choice {
+        case live
+        case band
+    }
+    
+    private var choice: Choice = .live
+    private var prefectures = ["Tokyo", "Ibaragi", "Kanagawa"]
+    private var prefecturePicker: UIPickerView!
+    private var prefectureTextField: UITextField!
+    
+    @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var liveChoiceView: UIView!
+    @IBOutlet weak var bandChoiceView: UIView!
+    @IBOutlet weak var settingView: UIView!
+    
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         
@@ -27,6 +42,204 @@ final class SearchViewController: UIViewController, Instantiable {
     }
     
     func setup() {
+        self.view.backgroundColor = style.color.background.get()
         
+        prefecturePicker = UIPickerView()
+        prefecturePicker.translatesAutoresizingMaskIntoConstraints = false
+        prefecturePicker.dataSource = self
+        prefecturePicker.delegate = self
+        
+        searchBar.delegate = self
+        searchBar.showsSearchResultsButton = false
+        
+        let liveImageView = UIImageView()
+        liveImageView.translatesAutoresizingMaskIntoConstraints = false
+        liveImageView.image = UIImage(named: "selectedGuitarIcon")
+        liveChoiceView.addSubview(liveImageView)
+        
+        let liveTextLabel = UILabel()
+        liveTextLabel.translatesAutoresizingMaskIntoConstraints = false
+        liveTextLabel.text = "ライブ"
+        liveTextLabel.font = style.font.regular.get()
+        liveTextLabel.textColor = style.color.main.get()
+        liveChoiceView.addSubview(liveTextLabel)
+        
+        let liveChoiceButton = UIButton()
+        liveChoiceButton.translatesAutoresizingMaskIntoConstraints = false
+        liveChoiceButton.backgroundColor = .clear
+        liveChoiceButton.addTarget(self, action: #selector(liveChoiceButtonTapped(_:)), for: .touchUpInside)
+        liveChoiceView.addSubview(liveChoiceButton)
+        toggleSetting()
+        
+        let bandImageView = UIImageView()
+        bandImageView.translatesAutoresizingMaskIntoConstraints = false
+        bandImageView.image = UIImage(named: "selectedMusicIcon")
+        bandChoiceView.addSubview(bandImageView)
+        
+        let bandTextLabel = UILabel()
+        bandTextLabel.translatesAutoresizingMaskIntoConstraints = false
+        bandTextLabel.text = "バンド"
+        bandTextLabel.font = style.font.regular.get()
+        bandTextLabel.textColor = style.color.main.get()
+        bandChoiceView.addSubview(bandTextLabel)
+        
+        let bandChoiceButton = UIButton()
+        bandChoiceButton.translatesAutoresizingMaskIntoConstraints = false
+        bandChoiceButton.backgroundColor = .clear
+        bandChoiceButton.addTarget(self, action: #selector(bandChoiceButtonTapped(_:)), for: .touchUpInside)
+        bandChoiceView.addSubview(bandChoiceButton)
+        
+        let constraints = [
+            liveImageView.widthAnchor.constraint(equalToConstant: 40),
+            liveImageView.heightAnchor.constraint(equalToConstant: 40),
+            liveImageView.centerXAnchor.constraint(equalTo: liveChoiceView.centerXAnchor),
+            liveImageView.topAnchor.constraint(equalTo: liveChoiceView.topAnchor, constant: 32),
+            
+            liveTextLabel.topAnchor.constraint(equalTo: liveImageView.bottomAnchor, constant: 4),
+            liveTextLabel.centerXAnchor.constraint(equalTo: liveImageView.centerXAnchor),
+            
+            liveChoiceButton.topAnchor.constraint(equalTo: liveImageView.topAnchor),
+            liveChoiceButton.bottomAnchor.constraint(equalTo: liveImageView.bottomAnchor),
+            liveChoiceButton.rightAnchor.constraint(equalTo: liveImageView.rightAnchor),
+            liveChoiceButton.leftAnchor.constraint(equalTo: liveImageView.leftAnchor),
+            
+            bandImageView.widthAnchor.constraint(equalToConstant: 40),
+            bandImageView.heightAnchor.constraint(equalToConstant: 40),
+            bandImageView.centerXAnchor.constraint(equalTo: bandChoiceView.centerXAnchor),
+            bandImageView.topAnchor.constraint(equalTo: bandChoiceView.topAnchor, constant: 32),
+            
+            bandTextLabel.topAnchor.constraint(equalTo: bandImageView.bottomAnchor, constant: 4),
+            bandTextLabel.centerXAnchor.constraint(equalTo: bandImageView.centerXAnchor),
+            
+            bandChoiceButton.topAnchor.constraint(equalTo: bandImageView.topAnchor),
+            bandChoiceButton.bottomAnchor.constraint(equalTo: bandImageView.bottomAnchor),
+            bandChoiceButton.rightAnchor.constraint(equalTo: bandImageView.rightAnchor),
+            bandChoiceButton.leftAnchor.constraint(equalTo: bandImageView.leftAnchor),
+        ]
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    private func toggleSetting(_ choice: Choice = .live) {
+        self.choice = choice
+        settingView.subviews.forEach { $0.removeFromSuperview() }
+        
+        switch self.choice {
+        case .live:
+            bandChoiceView.layer.borderWidth = 0
+            liveChoiceView.layer.borderWidth = 1
+            liveChoiceView.layer.borderColor = style.color.main.get().cgColor
+            
+            let calendarView = UIView()
+            calendarView.translatesAutoresizingMaskIntoConstraints = false
+            settingView.addSubview(calendarView)
+            
+            let calendarImageView = UIImageView()
+            calendarImageView.translatesAutoresizingMaskIntoConstraints = false
+            calendarImageView.image = UIImage(named: "calendar")
+            calendarView.addSubview(calendarImageView)
+            
+            let datePicker = UIDatePicker()
+            datePicker.translatesAutoresizingMaskIntoConstraints = false
+            datePicker.date = Date()
+            datePicker.tintColor = style.color.main.get()
+            calendarView.addSubview(datePicker)
+            
+            let constraint = [
+                calendarImageView.widthAnchor.constraint(equalToConstant: 30),
+                calendarImageView.heightAnchor.constraint(equalToConstant: 30),
+                calendarImageView.centerYAnchor.constraint(equalTo: calendarView.centerYAnchor),
+                calendarImageView.leftAnchor.constraint(equalTo: calendarView.leftAnchor, constant: 16),
+                
+                datePicker.leftAnchor.constraint(equalTo: calendarImageView.rightAnchor, constant: 16),
+                datePicker.rightAnchor.constraint(equalTo: calendarView.rightAnchor, constant: -16),
+                datePicker.centerYAnchor.constraint(equalTo: calendarView.centerYAnchor),
+                
+                calendarView.leftAnchor.constraint(equalTo: settingView.leftAnchor),
+                calendarView.rightAnchor.constraint(equalTo: settingView.rightAnchor),
+                calendarView.topAnchor.constraint(equalTo: settingView.topAnchor),
+                calendarView.heightAnchor.constraint(equalToConstant: 60),
+            ]
+            NSLayoutConstraint.activate(constraint)
+        case .band:
+            liveChoiceView.layer.borderWidth = 0
+            bandChoiceView.layer.borderWidth = 1
+            bandChoiceView.layer.borderColor = style.color.main.get().cgColor
+            
+            let hometownView = UIView()
+            hometownView.translatesAutoresizingMaskIntoConstraints = false
+            settingView.addSubview(hometownView)
+            
+            let mapImageView = UIImageView()
+            mapImageView.translatesAutoresizingMaskIntoConstraints = false
+            mapImageView.image = UIImage(named: "map")
+            hometownView.addSubview(mapImageView)
+            
+            prefectureTextField = UITextField()
+            prefectureTextField.inputView = prefecturePicker
+            prefectureTextField.translatesAutoresizingMaskIntoConstraints = false
+            prefectureTextField.backgroundColor = style.color.subBackground.get()
+            prefectureTextField.font = style.font.regular.get()
+            prefectureTextField.textColor = style.color.main.get()
+            
+            let toobBar = UIToolbar()
+            toobBar.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
+            let doneButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePicker))
+            toobBar.setItems([doneButtonItem], animated: true)
+            prefectureTextField.inputAccessoryView = toobBar
+            hometownView.addSubview(prefectureTextField)
+            
+            let constraint = [
+                mapImageView.widthAnchor.constraint(equalToConstant: 30),
+                mapImageView.heightAnchor.constraint(equalToConstant: 30),
+                mapImageView.centerYAnchor.constraint(equalTo: hometownView.centerYAnchor),
+                mapImageView.leftAnchor.constraint(equalTo: hometownView.leftAnchor, constant: 16),
+                
+                prefectureTextField.leftAnchor.constraint(equalTo: mapImageView.rightAnchor, constant: 16),
+                prefectureTextField.rightAnchor.constraint(equalTo: hometownView.rightAnchor, constant: -16),
+                prefectureTextField.centerYAnchor.constraint(equalTo: hometownView.centerYAnchor),
+                prefectureTextField.heightAnchor.constraint(equalToConstant: 30),
+                
+                hometownView.leftAnchor.constraint(equalTo: settingView.leftAnchor),
+                hometownView.rightAnchor.constraint(equalTo: settingView.rightAnchor),
+                hometownView.topAnchor.constraint(equalTo: settingView.topAnchor),
+                hometownView.heightAnchor.constraint(equalToConstant: 60),
+            ]
+            NSLayoutConstraint.activate(constraint)
+        }
+    }
+    
+    @objc private func liveChoiceButtonTapped(_ sender: Any) {
+        toggleSetting(.live)
+    }
+    
+    @objc private func bandChoiceButtonTapped(_ sender: Any) {
+        toggleSetting(.band)
+    }
+    
+    @objc private func donePicker() {
+        prefectureTextField.endEditing(true)
+    }
+}
+
+extension SearchViewController: UISearchBarDelegate {
+    
+}
+
+extension SearchViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return prefectures.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return prefectures[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        print("row \(row)")
+        prefectureTextField.text = prefectures[row]
     }
 }
