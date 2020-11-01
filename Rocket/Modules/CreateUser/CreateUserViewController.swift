@@ -10,30 +10,36 @@ import AWSCognitoAuth
 
 final class CreateUserViewController: UIViewController, Instantiable {
     typealias Input = AWSCognitoAuthUserSession
+    var dependencyProvider: DependencyProvider
     var input: Input!
     
     enum SectionType {
         case fan
-        case band
+        case artist
     }
     
-//    lazy var viewModel = AuthViewModel(
-//        auth: dependencyProvider.auth,
-//        apiEndpoint: dependencyProvider.apiEndpoint,
-//        outputHander: { output in
-//            switch output {
-//            case .signin(let session, let isSignedup):
-//                if isSignedup {
-//                    let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: ())
-//                    self.navigationController?.pushViewController(vc, animated: true)
-//                } else {
-//                    print("hello")
-//                }
-//            case .error(let error):
-//                print(error)
-//            }
-//        }
-//    )
+    lazy var viewModel = CreateUserViewModel(
+        auth: dependencyProvider.auth,
+        session: self.input,
+        apiEndpoint: dependencyProvider.apiEndpoint,
+        s3Bucket: dependencyProvider.s3Bucket,
+        outputHander: { output in
+            switch output {
+            case .fan(let user):
+                DispatchQueue.main.async {
+                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: (session: self.input, user: user))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .artist(let user):
+                DispatchQueue.main.async {
+                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: (session: self.input, user: user))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .error(let error):
+                print(error)
+            }
+        }
+    )
     
     @IBOutlet weak var setProfileView: UIView!
     @IBOutlet weak var createUserButtonView: Button!
@@ -45,18 +51,30 @@ final class CreateUserViewController: UIViewController, Instantiable {
     private var artistNameInputView: TextFieldView!
     private var partInputView: TextFieldView!
     private var fanInputs: UIView!
+    private var partPicker: UIPickerView!
     private var bandInputs: UIView!
+    private var profileImageView: UIImageView!
     private var sectionType: SectionType = .fan
-    
-    var dependencyProvider: DependencyProvider
+    private let parts = [
+        "Vo.",
+        "Gt.",
+        "Ba.",
+        "Dr",
+        "Key.",
+        "Gt. & Vo.",
+        "Ba. & Vo.",
+        "Key. & Vo.",
+        "Gt. & Cho.",
+        "Ba. & Cho.",
+        "Dr. & Cho.",
+        "Key. & Cho."
+    ]
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
         
         super.init(nibName: nil, bundle: nil)
-        
-//        viewModel.signin()
     }
     
     required init?(coder: NSCoder) {
@@ -96,7 +114,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         
         let bandTitleLabel = UILabel()
         bandTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        bandTitleLabel.text = "バンド"
+        bandTitleLabel.text = "メンバー"
         bandTitleLabel.font = style.font.regular.get()
         bandTitleLabel.textColor = style.color.main.get()
         bandSection.addSubview(bandTitleLabel)
@@ -128,7 +146,39 @@ final class CreateUserViewController: UIViewController, Instantiable {
         partInputView.translatesAutoresizingMaskIntoConstraints = false
         bandInputs.addSubview(partInputView)
         
+        partPicker = UIPickerView()
+        partPicker.translatesAutoresizingMaskIntoConstraints = false
+        partPicker.dataSource = self
+        partPicker.delegate = self
+        
+        partInputView.selectInputView(inputView: partPicker)
+        
         sectionChanged(section: sectionType)
+        
+        profileImageView = UIImageView()
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.layer.cornerRadius = 60
+        profileImageView.clipsToBounds = true
+        profileImageView.image = UIImage(named: "band")
+        setProfileView.addSubview(profileImageView)
+        
+        let changeProfileImageButton = UIButton()
+        changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
+        changeProfileImageButton.addTarget(self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
+        setProfileView.addSubview(changeProfileImageButton)
+        
+        let profileImageTitle = UILabel()
+        profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
+        profileImageTitle.text = "プロフィール画像"
+        profileImageTitle.textAlignment = .center
+        profileImageTitle.font = style.font.regular.get()
+        profileImageTitle.textColor = style.color.main.get()
+        setProfileView.addSubview(profileImageTitle)
+        
+        createUserButtonView.inject(input: (text: "ユーザ作成", image: nil))
+        createUserButtonView.listen {
+            self.createUser()
+        }
         
         let constraints = [
             fanImageView.widthAnchor.constraint(equalToConstant: 40),
@@ -181,6 +231,22 @@ final class CreateUserViewController: UIViewController, Instantiable {
             partInputView.rightAnchor.constraint(equalTo: bandInputs.rightAnchor, constant: -16),
             partInputView.leftAnchor.constraint(equalTo: bandInputs.leftAnchor, constant: 16),
             partInputView.heightAnchor.constraint(equalToConstant: 50),
+            
+            profileImageView.widthAnchor.constraint(equalToConstant: 120),
+            profileImageView.heightAnchor.constraint(equalToConstant: 120),
+            profileImageView.topAnchor.constraint(equalTo: setProfileView.topAnchor),
+            profileImageView.rightAnchor.constraint(equalTo: setProfileView.rightAnchor),
+            profileImageView.leftAnchor.constraint(equalTo: setProfileView.leftAnchor),
+            
+            changeProfileImageButton.widthAnchor.constraint(equalToConstant: 120),
+            changeProfileImageButton.heightAnchor.constraint(equalToConstant: 120),
+            changeProfileImageButton.topAnchor.constraint(equalTo: setProfileView.topAnchor),
+            changeProfileImageButton.rightAnchor.constraint(equalTo: setProfileView.rightAnchor),
+            changeProfileImageButton.leftAnchor.constraint(equalTo: setProfileView.leftAnchor),
+            
+            profileImageTitle.leftAnchor.constraint(equalTo: setProfileView.leftAnchor),
+            profileImageTitle.rightAnchor.constraint(equalTo: setProfileView.rightAnchor),
+            profileImageTitle.bottomAnchor.constraint(equalTo: setProfileView.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
         
@@ -194,7 +260,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
             fanSection.layer.borderColor = style.color.main.get().cgColor
             bandSection.layer.borderWidth = 0
             profileInputView.bringSubviewToFront(fanInputs)
-        case .band:
+        case .artist:
             bandSection.layer.borderWidth = 1
             bandSection.layer.borderColor = style.color.main.get().cgColor
             fanSection.layer.borderWidth = 0
@@ -207,7 +273,56 @@ final class CreateUserViewController: UIViewController, Instantiable {
     }
     
     @objc private func bandSectionButtonTapped(_ sender: Any) {
-        sectionChanged(section: .band)
+        sectionChanged(section: .artist)
     }
     
+    @objc private func selectProfileImage(_ sender: Any) {
+        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+            let picker = UIImagePickerController()
+            picker.sourceType = .photoLibrary
+            picker.delegate = self
+            self.present(picker, animated: true, completion: nil)
+        }
+    }
+    
+    private func createUser() {
+        switch self.sectionType {
+        case .fan:
+            let name = nameInputView.getText() ?? ""
+            let thumbnail = profileImageView.image
+            viewModel.signupAsFan(name: name, thumbnail: thumbnail)
+        case .artist:
+            let name = artistNameInputView.getText() ?? ""
+            let thumbnail = profileImageView.image
+            let part = partInputView.getText() ?? ""
+            viewModel.signupAsArtist(name: name, thumbnail: thumbnail, part: part)
+        }
+    }
+}
+
+extension CreateUserViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
+        profileImageView.image = image
+        self.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension CreateUserViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return self.parts.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return self.parts[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let text = self.parts[row]
+        partInputView.setText(text: text)
+    }
 }

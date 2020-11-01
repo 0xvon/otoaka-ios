@@ -1,24 +1,29 @@
 PODS:
-  - AWSCognitoAuth (2.17.0):
-    - AWSCognitoIdentityProviderASF (= 2.17.0)
-    - AWSCore (= 2.17.0)
-  - AWSCognitoIdentityProviderASF (2.17.0)
-  - AWSCore (2.17.0)
+  - AWSCognitoAuth (2.18.0):
+    - AWSCognitoIdentityProviderASF (= 2.18.0)
+    - AWSCore (= 2.18.0)
+  - AWSCognitoIdentityProviderASF (2.18.0)
+  - AWSCore (2.18.0)
+  - AWSS3 (2.18.0):
+    - AWSCore (= 2.18.0)
 
 DEPENDENCIES:
   - AWSCognitoAuth
+  - AWSS3
 
 SPEC REPOS:
   trunk:
     - AWSCognitoAuth
     - AWSCognitoIdentityProviderASF
     - AWSCore
+    - AWSS3
 
 SPEC CHECKSUMS:
-  AWSCognitoAuth: 5043586a71ab03271cd7e54d022c6f1b5519b4dd
-  AWSCognitoIdentityProviderASF: 87ebf727c8429f93b4188b2ad13ad1f76ce3cefd
-  AWSCore: f20f7eb426d598ab753219e41ba524c0dc6f2b5c
+  AWSCognitoAuth: 48a8e91b42d4bee9bb4a6091677c210553077983
+  AWSCognitoIdentityProviderASF: 3c8bb7a1f306d21d22c4429509da5cf34ef72e6d
+  AWSCore: e8cc7fd06efa211328942cc7c9f6dddbe889a115
+  AWSS3: 31b24341477f8eaae01542900e2253e908eed1ee
 
-PODFILE CHECKSUM: 9326e8421f1cbb4b399a2c0329a8dcf0e39e1aad
+PODFILE CHECKSUM: 013af2ee22573044e1cd6f891aef0dfd4896eed8
 
 COCOAPODS: 1.10.0

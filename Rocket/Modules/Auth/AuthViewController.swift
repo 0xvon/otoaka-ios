@@ -18,8 +18,10 @@ final class AuthViewController: UIViewController, Instantiable {
             switch output {
             case .signin(let session, let isSignedup):
                 if isSignedup {
-                    let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: ())
-                    self.navigationController?.pushViewController(vc, animated: true)
+                    DispatchQueue.main.async {
+                        let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: ())
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    }
                 } else {
                     DispatchQueue.main.async {
                         let vc = CreateUserViewController(dependencyProvider: self.dependencyProvider, input: session)
@@ -66,8 +68,6 @@ final class AuthViewController: UIViewController, Instantiable {
         backgroundImageView.contentMode = .scaleAspectFill
 
         signInButtonView.inject(input: (text: "サインイン", image: nil))
-        
-//        signInButtonView.backgroundColor = .clear
         signInButtonView.listen { [weak self] in
             self?.signInButtonTapped()
         }

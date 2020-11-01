@@ -42,6 +42,7 @@ final class TextFieldView: UIView {
         contentView.translatesAutoresizingMaskIntoConstraints = false
         
         textField = UITextField()
+        textField.returnKeyType = .done
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.delegate = self
         textField.textColor = style.color.main.get()
@@ -82,6 +83,27 @@ final class TextFieldView: UIView {
         } else {
             underLine.backgroundColor = style.color.second.get()
         }
+    }
+    
+    func getText() -> String? {
+        return textField.text
+    }
+    
+    func setText(text: String) {
+        self.textField.text = text
+    }
+    
+    func selectInputView(inputView: UIView) {
+        self.textField.inputView = inputView
+        let toolBar = UIToolbar()
+        toolBar.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
+        let doneButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePicker))
+        toolBar.setItems([doneButtonItem], animated: true)
+        self.textField.inputAccessoryView = toolBar
+    }
+    
+    @objc private func donePicker() {
+        self.textField.endEditing(true)
     }
 }
 

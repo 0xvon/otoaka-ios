@@ -31,10 +31,10 @@
                             <rect key="frame" x="0.0" y="0.0" width="414" height="976"/>
                             <subviews>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nbj-uW-Kgl">
-                                    <rect key="frame" x="147" y="392" width="120" height="140"/>
+                                    <rect key="frame" x="147" y="392" width="120" height="150"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="120" id="9J6-lV-g4F"/>
-                                        <constraint firstAttribute="height" constant="140" id="B4T-Ay-KcP"/>
+                                        <constraint firstAttribute="height" constant="150" id="B4T-Ay-KcP"/>
                                     </constraints>
                                 </view>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1gS-ma-yAc">
@@ -61,7 +61,7 @@
                                     </constraints>
                                 </stackView>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8J5-mI-j2v" customClass="Button" customModule="Rocket" customModuleProvider="target">
-                                    <rect key="frame" x="127" y="580" width="160" height="40"/>
+                                    <rect key="frame" x="127" y="590" width="160" height="40"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="40" id="1n0-OA-NMr"/>
                                         <constraint firstAttribute="width" constant="160" id="Clu-qv-cQW"/>

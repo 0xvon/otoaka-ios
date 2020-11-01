@@ -7,10 +7,12 @@
 
 import Foundation
 import AWSCognitoAuth
+import AWSCore
 
 struct DependencyProvider {
     var auth: AWSCognitoAuth
     var apiEndpoint: String
+    var s3Bucket: String
 }
 
 extension DependencyProvider {
@@ -21,6 +23,18 @@ extension DependencyProvider {
     }
     #endif
     static func make(config: Config.Type) -> DependencyProvider {
+        let credentialProvider = AWSCognitoCredentialsProvider(
+            regionType: .APNortheast1,
+            identityPoolId: config.identityPoolId
+        )
+        
+        let configuration = AWSServiceConfiguration(
+            region: .APNortheast1,
+            credentialsProvider: credentialProvider
+        )
+        
+        AWSServiceManager.default()?.defaultServiceConfiguration = configuration
+        
         let cognitoConfiguration = AWSCognitoAuthConfiguration(
             appClientId: config.appClientId,
             appClientSecret: config.appClientSecret,
@@ -32,8 +46,9 @@ extension DependencyProvider {
             idpIdentifier: nil,
             userPoolIdForEnablingASF: config.userPoolIdForEnablingASF
         )
+        
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: "cognitoAuth")
         let auth = AWSCognitoAuth.init(forKey: "cognitoAuth")
-        return DependencyProvider(auth: auth, apiEndpoint: config.apiEndpoint)
+        return DependencyProvider(auth: auth, apiEndpoint: config.apiEndpoint, s3Bucket: config.s3Bucket)
     }
 }

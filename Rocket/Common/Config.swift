@@ -18,4 +18,6 @@ protocol Config {
     static var webDomain: String { get }
     static var userPoolIdForEnablingASF: String { get }
     static var apiEndpoint: String { get }
+    static var s3Bucket: String { get }
+    static var identityPoolId: String { get }
 }

@@ -13,6 +13,7 @@ struct style {
         case second
         case background
         case subBackground
+        case sub
         
         func get() -> UIColor {
             switch self {
@@ -24,6 +25,8 @@ struct style {
                 return UIColor.black
             case .subBackground:
                 return UIColor.darkGray
+            case .sub:
+                return UIColor.systemGray
             }
         }
     }
