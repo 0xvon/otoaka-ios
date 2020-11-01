@@ -63,6 +63,7 @@
 		D9578FB5254EAC3700C6C00E /* CreateBandViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9578FB4254EAC3700C6C00E /* CreateBandViewController.xib */; };
 		D9578FBC254EBA6900C6C00E /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FBB254EBA6900C6C00E /* InputTextView.swift */; };
 		D9578FC4254EBCCC00C6C00E /* CreateBandViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */; };
+		D9578FC9254EE9BB00C6C00E /* InvitationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FC8254EE9BB00C6C00E /* InvitationViewModel.swift */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -154,6 +155,7 @@
 		D9578FB4254EAC3700C6C00E /* CreateBandViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CreateBandViewController.xib; sourceTree = "<group>"; };
 		D9578FBB254EBA6900C6C00E /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
 		D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBandViewModel.swift; sourceTree = "<group>"; };
+		D9578FC8254EE9BB00C6C00E /* InvitationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationViewModel.swift; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -417,6 +419,7 @@
 			isa = PBXGroup;
 			children = (
 				D9578FA1254E8FFC00C6C00E /* InvitationViewController.swift */,
+				D9578FC8254EE9BB00C6C00E /* InvitationViewModel.swift */,
 				D9578FA6254E914700C6C00E /* InvitationViewController.xib */,
 			);
 			path = Invitation;
@@ -850,6 +853,7 @@
 				D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */,
 				D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */,
 				D90B5F35253BE1D800E9B655 /* ReusableCell.swift in Sources */,
+				D9578FC9254EE9BB00C6C00E /* InvitationViewModel.swift in Sources */,
 				D951C414254A8E6D0010DB09 /* AccountViewModel.swift in Sources */,
 				D951C40F254A7F420010DB09 /* AccountViewController.swift in Sources */,
 			);

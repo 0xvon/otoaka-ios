@@ -30,7 +30,6 @@ class CreateBandViewModel {
     func create(name: String, englishName: String?, biography: String?,
                 since: Date?, artwork: UIImage?, hometown: String?) {
         self.uploadImage(image: artwork) { (imageUrl, error) in
-            print("upload succeed")
             let path = DevelopmentConfig.apiEndpoint + "/" + CreateGroup.pathPattern.joined(separator: "/")
             guard let url = URL(string: path) else { return }
             
@@ -73,7 +72,6 @@ class CreateBandViewModel {
     }
     
     func uploadImage(image: UIImage?, callback: @escaping ((String?, String?) -> Void)) {
-        print("uploadImage called")
         let transferUtility = AWSS3TransferUtility.default()
         let key = "\(UUID()).png"
         let contentType = "application/png"

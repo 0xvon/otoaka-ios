@@ -15,6 +15,24 @@ final class InvitationViewController: UIViewController, Instantiable {
         idToken: String,
         user: User
     )
+    
+    lazy var viewModel = InvitationViewModel(
+        idToken: self.input.idToken,
+        apiEndpoint: dependencyProvider.apiEndpoint,
+        s3Bucket: dependencyProvider.s3Bucket,
+        outputHander: { output in
+            switch output {
+            case .joinGroup:
+                DispatchQueue.main.async {
+                    let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: self.input)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .error(let error):
+                print(error)
+            }
+        }
+    )
+    
     var dependencyProvider: DependencyProvider
     var input: Input!
     @IBOutlet weak var invitationView: TextFieldView!
@@ -89,6 +107,13 @@ final class InvitationViewController: UIViewController, Instantiable {
     }
     
     private func register() {
-        print("register")
+        let invitationCode = invitationView.getText()
+        
+        switch input.user.role {
+        case .artist(_):
+            viewModel.joinGroup(invitationCode: invitationCode)
+        case .fan(_):
+            viewModel.enterInvitationCode(invitationCode: invitationCode)
+        }
     }
 }
