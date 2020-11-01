@@ -12,6 +12,7 @@ import AWSCognitoAuth
 class AuthViewModel {
     enum Output {
         case signin(AWSCognitoAuthUserSession, Bool)
+        case getUser(User, String)
         case error(Error)
     }
     
@@ -66,5 +67,33 @@ class AuthViewModel {
             }
             task.resume()
         }
+    }
+    
+    func getUser(idToken: String) {
+        let path = DevelopmentConfig.apiEndpoint + "/" + GetUserInfo.pathPattern.joined(separator: "/")
+        guard let url = URL(string: path) else {
+            self.outputHandler(.error("request url not found" as! Error))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = GetUserInfo.method.rawValue
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                self.outputHandler(.error(error))
+            }
+            
+            guard let data = data else { return }
+            do {
+                let response = try JSONDecoder().decode(GetUserInfo.Response.self, from: data)
+                self.outputHandler(.getUser(response, idToken))
+            } catch let error {
+                self.outputHandler(.error(error))
+            }
+        }
+        task.resume()
     }
 }

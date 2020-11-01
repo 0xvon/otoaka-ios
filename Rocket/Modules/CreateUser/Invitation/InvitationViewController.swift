@@ -12,7 +12,7 @@ import AWSCognitoAuth
 final class InvitationViewController: UIViewController, Instantiable {
     
     typealias Input = (
-        session: AWSCognitoAuthUserSession,
+        idToken: String,
         user: User
     )
     var dependencyProvider: DependencyProvider
@@ -38,6 +38,10 @@ final class InvitationViewController: UIViewController, Instantiable {
         setup()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
+    }
+    
     func setup() {
         self.view.backgroundColor = style.color.background.get()
         
@@ -57,10 +61,31 @@ final class InvitationViewController: UIViewController, Instantiable {
         registerButtonView.listen {
             self.register()
         }
+        
+        let skipButton = UIButton()
+        skipButton.translatesAutoresizingMaskIntoConstraints = false
+        skipButton.setTitle("skip", for: .normal)
+        skipButton.titleLabel?.font = style.font.regular.get()
+        skipButton.setTitleColor(style.color.main.get(), for: .normal)
+        skipButton.addTarget(self, action: #selector(skip(_:)), for: .touchUpInside)
+        self.view.addSubview(skipButton)
+        
+        let constraints = [
+            skipButton.bottomAnchor.constraint(equalTo: self.invitationView.topAnchor, constant: -16),
+            skipButton.rightAnchor.constraint(equalTo: self.invitationView.rightAnchor),
+        ]
+        NSLayoutConstraint.activate(constraints)
     }
     
     @objc private func createBand(_ sender: Any) {
-        print("create band")
+        let vc = CreateBandViewController(dependencyProvider: self.dependencyProvider, input: self.input)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func skip(_ sender: Any) {
+        print("skipped")
+        let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: (idToken: self.input.idToken, user: self.input.user))
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func register() {

@@ -1,40 +1,37 @@
 //
-//  CreateUserViewModel.swift
+//  CreateBandViewModel.swift
 //  Rocket
 //
-//  Created by Masato TSUTSUMI on 2020/10/31.
+//  Created by Masato TSUTSUMI on 2020/11/01.
 //
 
 import Foundation
-
 import Endpoint
-import AWSCognitoAuth
 import AWSS3
 
-class CreateUserViewModel {
+class CreateBandViewModel {
     enum Output {
-        case artist(User)
-        case fan(User)
+        case create(Endpoint.Group)
         case error(String)
     }
     
-    let auth: AWSCognitoAuth
     let idToken: String
     let apiEndpoint: String
     let s3Bucket: String
     let outputHandler: (Output) -> Void
     
-    init(auth: AWSCognitoAuth, idToken: String, apiEndpoint: String, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
-        self.auth = auth
+    init(idToken: String, apiEndpoint: String, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
         self.idToken = idToken
         self.apiEndpoint = apiEndpoint
         self.s3Bucket = s3Bucket
         self.outputHandler = outputHander
     }
     
-    func signupAsFan(name: String, thumbnail: UIImage?) {
-        self.uploadImage(image: thumbnail) { (imageUrl, error) in
-            let path = DevelopmentConfig.apiEndpoint + "/" + Signup.pathPattern.joined(separator: "/")
+    func create(name: String, englishName: String?, biography: String?,
+                since: Date?, artwork: UIImage?, hometown: String?) {
+        self.uploadImage(image: artwork) { (imageUrl, error) in
+            print("upload succeed")
+            let path = DevelopmentConfig.apiEndpoint + "/" + CreateGroup.pathPattern.joined(separator: "/")
             guard let url = URL(string: path) else { return }
             
             if let error = error {
@@ -45,59 +42,30 @@ class CreateUserViewModel {
             guard let imageUrl = imageUrl else { return }
             
             var request = URLRequest(url: url)
-            request.httpMethod = Signup.method.rawValue
+            request.httpMethod = CreateGroup.method.rawValue
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue("application/json", forHTTPHeaderField: "Accept")
             request.addValue("Bearer \(self.idToken)", forHTTPHeaderField: "Authorization")
-            let body = Signup.Request(name: name, thumbnailURL: imageUrl, role: .fan(Fan()))
-            request.httpBody = try! JSONEncoder().encode(body)
+            let body = CreateGroup.Request(name: name, englishName: englishName, biography: biography, since: since, artworkURL: URL(string: imageUrl), hometown: hometown)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            request.httpBody = try! encoder.encode(body)
+            print(String(data: request.httpBody!, encoding: .utf8)!)
             
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 if let error = error {
-                    self.outputHandler(.error(error.localizedDescription))
+                    self.outputHandler(.error("error in request task: \(error.localizedDescription)"))
                 }
                 
                 guard let data = data else { return }
                 do {
-                    let response = try JSONDecoder().decode(Signup.Response.self, from: data)
-                    self.outputHandler(.fan(response))
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .iso8601
+                    let response = try decoder.decode(CreateGroup.Response.self, from: data)
+                    self.outputHandler(.create(response))
                 } catch let error {
-                    self.outputHandler(.error(error.localizedDescription))
-                }
-            }
-            task.resume()
-        }
-    }
-    
-    func signupAsArtist(name: String, thumbnail: UIImage?, part: String) {
-        self.uploadImage(image: thumbnail) { (imageUrl, error) in
-            let path = DevelopmentConfig.apiEndpoint + "/" + Signup.pathPattern.joined(separator: "/")
-            guard let url = URL(string: path) else { return }
-            
-            if let error = error {
-                print("upload failed")
-                self.outputHandler(.error(error))
-            }
-            
-            guard let imageUrl = imageUrl else { return }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = Signup.method.rawValue
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.addValue("Bearer \(self.idToken)", forHTTPHeaderField: "Authorization")
-            let body = Signup.Request(name: name, thumbnailURL: imageUrl, role: .artist(Artist(part: part)))
-            request.httpBody = try! JSONEncoder().encode(body)
-            
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                if let error = error {
-                    self.outputHandler(.error(error.localizedDescription))
-                }
-                
-                guard let data = data else { return }
-                do {
-                    let response = try JSONDecoder().decode(Signup.Response.self, from: data)
-                    self.outputHandler(.fan(response))
-                } catch let error {
-                    self.outputHandler(.error(error.localizedDescription))
+                    print(String(data: data, encoding: .utf8)!)
+                    self.outputHandler(.error("error in parsing response: \(error.localizedDescription)"))
                 }
             }
             task.resume()

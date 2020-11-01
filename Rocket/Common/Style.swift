@@ -57,21 +57,60 @@ struct style {
             }
         }
     }
-    
 }
 
-extension UIView {
-    func makeShadow() {
-//        let shadowView = UIView(frame: frame)
-//        shadowView.backgroundColor = self.backgroundColor
-//        self.addSubview(shadowView)
-//        self.sendSubviewToBack(shadowView)
-//        shadowView.layer.cornerRadius = self.layer.cornerRadius
-        self.layer.shadowOffset = CGSize(width: 10.0, height: 4.0)
-        self.layer.shadowColor = style.color.main.get().cgColor
-        self.layer.shadowOpacity = 0.6
-        self.layer.shadowRadius = self.layer.cornerRadius
-    }
+struct Components {
+    let prefectures = [
+        "東京都",
+        "青森県",
+        "大阪府",
+    ]
+    
+    let parts = [
+        "Vo.",
+        "Gt.",
+        "Ba.",
+        "Dr",
+        "Key.",
+        "Gt. & Vo.",
+        "Ba. & Vo.",
+        "Key. & Vo.",
+        "Gt. & Cho.",
+        "Ba. & Cho.",
+        "Dr. & Cho.",
+        "Key. & Cho."
+    ]
+    
+    let years = [
+        "1999",
+        "2000",
+        "2001",
+        "2002",
+        "2003",
+        "2004",
+        "2005",
+        "2006",
+        "2007",
+        "2008",
+        "2009",
+        "2010",
+        "2011",
+        "2012",
+        "2013",
+        "2014",
+        "2015",
+        "2016",
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026",
+    ]
 }
 
 extension UIImage {

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CreateBandViewController" customModule="Rocket" customModuleProvider="target">
+            <connections>
+                <outlet property="artworkInputView" destination="Fuc-GR-pli" id="8aU-uZ-BSs"/>
+                <outlet property="biographyInputView" destination="sqc-au-iZX" id="4Zf-Q3-m8O"/>
+                <outlet property="groupEnglishNameInputView" destination="o30-h3-CZN" id="cTg-TJ-ehJ"/>
+                <outlet property="groupNameInputView" destination="dm6-z9-MhV" id="TIv-XD-5SB"/>
+                <outlet property="hometownInputView" destination="PWB-K7-ipf" id="nD8-2T-Mp9"/>
+                <outlet property="registerButton" destination="OG7-Ev-yWk" id="NxY-VT-rsE"/>
+                <outlet property="sinceInputView" destination="AAU-4B-pdV" id="xJh-PE-5ze"/>
+                <outlet property="view" destination="iN0-l3-epB" id="hwy-qW-zD8"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="1027"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hwo-sd-Mme">
+                    <rect key="frame" x="0.0" y="44" width="414" height="949"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pUq-6B-GVY">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="949"/>
+                            <subviews>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dm6-z9-MhV" customClass="TextFieldView" customModule="Rocket" customModuleProvider="target">
+                                    <rect key="frame" x="16" y="24" width="382" height="40"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="40" id="Rzh-Q2-wc0"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o30-h3-CZN" customClass="TextFieldView" customModule="Rocket" customModuleProvider="target">
+                                    <rect key="frame" x="16" y="88" width="382" height="40"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="40" id="Ebt-MW-5Zh"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sqc-au-iZX" customClass="InputTextView" customModule="Rocket" customModuleProvider="target">
+                                    <rect key="frame" x="16" y="152" width="382" height="200"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="200" id="k9V-l0-74c"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AAU-4B-pdV" customClass="TextFieldView" customModule="Rocket" customModuleProvider="target">
+                                    <rect key="frame" x="16" y="376" width="382" height="40"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="40" id="yLS-6X-ypM"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PWB-K7-ipf" customClass="TextFieldView" customModule="Rocket" customModuleProvider="target">
+                                    <rect key="frame" x="16" y="440" width="382" height="40"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="40" id="yDl-Eg-5OD"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fuc-GR-pli">
+                                    <rect key="frame" x="147" y="516" width="120" height="150"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="150" id="MZA-D5-UjW"/>
+                                        <constraint firstAttribute="width" constant="120" id="fEo-Vt-WS9"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OG7-Ev-yWk" customClass="Button" customModule="Rocket" customModuleProvider="target">
+                                    <rect key="frame" x="127" y="714" width="160" height="40"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="40" id="GTX-hD-lw5"/>
+                                        <constraint firstAttribute="width" constant="160" id="eIF-1Y-gUz"/>
+                                    </constraints>
+                                </view>
+                            </subviews>
+                            <constraints>
+                                <constraint firstAttribute="trailing" secondItem="PWB-K7-ipf" secondAttribute="trailing" constant="16" id="4z4-nB-Lk3"/>
+                                <constraint firstItem="o30-h3-CZN" firstAttribute="top" secondItem="dm6-z9-MhV" secondAttribute="bottom" constant="24" id="6A7-ui-jdQ"/>
+                                <constraint firstAttribute="height" constant="949" id="8SH-I1-KPB"/>
+                                <constraint firstItem="AAU-4B-pdV" firstAttribute="leading" secondItem="pUq-6B-GVY" secondAttribute="leading" constant="16" id="ENj-3r-QeL"/>
+                                <constraint firstItem="dm6-z9-MhV" firstAttribute="top" secondItem="pUq-6B-GVY" secondAttribute="top" constant="24" id="H3p-fK-Gl6"/>
+                                <constraint firstItem="sqc-au-iZX" firstAttribute="top" secondItem="o30-h3-CZN" secondAttribute="bottom" constant="24" id="IAR-pJ-V3S"/>
+                                <constraint firstItem="o30-h3-CZN" firstAttribute="leading" secondItem="pUq-6B-GVY" secondAttribute="leading" constant="16" id="Nod-BT-ARV"/>
+                                <constraint firstItem="PWB-K7-ipf" firstAttribute="top" secondItem="AAU-4B-pdV" secondAttribute="bottom" constant="24" id="VGX-vT-nqQ"/>
+                                <constraint firstItem="OG7-Ev-yWk" firstAttribute="top" secondItem="Fuc-GR-pli" secondAttribute="bottom" constant="48" id="Z3q-dN-0Vu"/>
+                                <constraint firstItem="dm6-z9-MhV" firstAttribute="leading" secondItem="pUq-6B-GVY" secondAttribute="leading" constant="16" id="b6x-N2-gNy"/>
+                                <constraint firstAttribute="trailing" secondItem="AAU-4B-pdV" secondAttribute="trailing" constant="16" id="bHY-sy-tqW"/>
+                                <constraint firstItem="Fuc-GR-pli" firstAttribute="top" secondItem="PWB-K7-ipf" secondAttribute="bottom" constant="36" id="c0X-hw-Q5m"/>
+                                <constraint firstItem="PWB-K7-ipf" firstAttribute="leading" secondItem="pUq-6B-GVY" secondAttribute="leading" constant="16" id="eQC-as-Zr8"/>
+                                <constraint firstAttribute="trailing" secondItem="o30-h3-CZN" secondAttribute="trailing" constant="16" id="fMt-sA-OUC"/>
+                                <constraint firstAttribute="trailing" secondItem="sqc-au-iZX" secondAttribute="trailing" constant="16" id="izO-3X-0Ja"/>
+                                <constraint firstItem="Fuc-GR-pli" firstAttribute="centerX" secondItem="pUq-6B-GVY" secondAttribute="centerX" id="jnz-6i-k2O"/>
+                                <constraint firstItem="OG7-Ev-yWk" firstAttribute="centerX" secondItem="pUq-6B-GVY" secondAttribute="centerX" id="kkL-LA-0ni"/>
+                                <constraint firstItem="AAU-4B-pdV" firstAttribute="top" secondItem="sqc-au-iZX" secondAttribute="bottom" constant="24" id="mhp-YH-JEb"/>
+                                <constraint firstAttribute="trailing" secondItem="dm6-z9-MhV" secondAttribute="trailing" constant="16" id="mze-87-UUd"/>
+                                <constraint firstItem="sqc-au-iZX" firstAttribute="leading" secondItem="pUq-6B-GVY" secondAttribute="leading" constant="16" id="u1v-fA-ZmR"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="pUq-6B-GVY" firstAttribute="top" secondItem="hwo-sd-Mme" secondAttribute="top" id="ABZ-3g-bqm"/>
+                        <constraint firstItem="pUq-6B-GVY" firstAttribute="leading" secondItem="hwo-sd-Mme" secondAttribute="leading" id="Vju-YE-hai"/>
+                        <constraint firstAttribute="trailing" secondItem="pUq-6B-GVY" secondAttribute="trailing" id="ek5-Tj-udT"/>
+                        <constraint firstAttribute="bottom" secondItem="pUq-6B-GVY" secondAttribute="bottom" id="hAH-kM-j4t"/>
+                        <constraint firstItem="pUq-6B-GVY" firstAttribute="centerX" secondItem="hwo-sd-Mme" secondAttribute="centerX" id="mBU-mA-DLr"/>
+                    </constraints>
+                </scrollView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="hwo-sd-Mme" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="AXo-d3-lQh"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="hwo-sd-Mme" secondAttribute="trailing" id="BrD-1V-TH8"/>
+                <constraint firstItem="hwo-sd-Mme" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="Hz1-Tb-nf5"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="hwo-sd-Mme" secondAttribute="bottom" id="sij-J2-avJ"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="140.57971014492756" y="145.64732142857142"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

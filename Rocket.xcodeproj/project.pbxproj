@@ -59,6 +59,10 @@
 		D9578F8B254D866F00C6C00E /* CreateUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578F8A254D866F00C6C00E /* CreateUserViewModel.swift */; };
 		D9578FA2254E8FFC00C6C00E /* InvitationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FA1254E8FFC00C6C00E /* InvitationViewController.swift */; };
 		D9578FA7254E914700C6C00E /* InvitationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9578FA6254E914700C6C00E /* InvitationViewController.xib */; };
+		D9578FAD254EABCB00C6C00E /* CreateBandViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FAC254EABCB00C6C00E /* CreateBandViewController.swift */; };
+		D9578FB5254EAC3700C6C00E /* CreateBandViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9578FB4254EAC3700C6C00E /* CreateBandViewController.xib */; };
+		D9578FBC254EBA6900C6C00E /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FBB254EBA6900C6C00E /* InputTextView.swift */; };
+		D9578FC4254EBCCC00C6C00E /* CreateBandViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -146,6 +150,10 @@
 		D9578F8A254D866F00C6C00E /* CreateUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateUserViewModel.swift; sourceTree = "<group>"; };
 		D9578FA1254E8FFC00C6C00E /* InvitationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationViewController.swift; sourceTree = "<group>"; };
 		D9578FA6254E914700C6C00E /* InvitationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = InvitationViewController.xib; sourceTree = "<group>"; };
+		D9578FAC254EABCB00C6C00E /* CreateBandViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBandViewController.swift; sourceTree = "<group>"; };
+		D9578FB4254EAC3700C6C00E /* CreateBandViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CreateBandViewController.xib; sourceTree = "<group>"; };
+		D9578FBB254EBA6900C6C00E /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
+		D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBandViewModel.swift; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -387,6 +395,7 @@
 		D9578F76254D495100C6C00E /* CreateUser */ = {
 			isa = PBXGroup;
 			children = (
+				D9578FAB254EABC000C6C00E /* CreateBand */,
 				D9578FA0254E8FD900C6C00E /* Invitation */,
 				D9578F7A254D4AD500C6C00E /* CreateUserViewController.swift */,
 				D9578F8A254D866F00C6C00E /* CreateUserViewModel.swift */,
@@ -399,6 +408,7 @@
 			isa = PBXGroup;
 			children = (
 				D9578F80254D4BBE00C6C00E /* TextFieldView.swift */,
+				D9578FBB254EBA6900C6C00E /* InputTextView.swift */,
 			);
 			path = TextField;
 			sourceTree = "<group>";
@@ -410,6 +420,16 @@
 				D9578FA6254E914700C6C00E /* InvitationViewController.xib */,
 			);
 			path = Invitation;
+			sourceTree = "<group>";
+		};
+		D9578FAB254EABC000C6C00E /* CreateBand */ = {
+			isa = PBXGroup;
+			children = (
+				D9578FAC254EABCB00C6C00E /* CreateBandViewController.swift */,
+				D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */,
+				D9578FB4254EAC3700C6C00E /* CreateBandViewController.xib */,
+			);
+			path = CreateBand;
 			sourceTree = "<group>";
 		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
@@ -649,6 +669,7 @@
 				D951C3ED254918760010DB09 /* BandCell.xib in Resources */,
 				D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */,
 				D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */,
+				D9578FB5254EAC3700C6C00E /* CreateBandViewController.xib in Resources */,
 				D9578FA7254E914700C6C00E /* InvitationViewController.xib in Resources */,
 				D951C3FC25492FED0010DB09 /* BandDetailViewController.xib in Resources */,
 				D90B5F2A253BDF9600E9B655 /* AuthViewController.xib in Resources */,
@@ -788,6 +809,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9578FBC254EBA6900C6C00E /* InputTextView.swift in Sources */,
 				D951C3BC2545B6130010DB09 /* BandContentsCell.swift in Sources */,
 				D951C406254933240010DB09 /* BandDetailHeaderView.swift in Sources */,
 				D9578F8B254D866F00C6C00E /* CreateUserViewModel.swift in Sources */,
@@ -811,6 +833,7 @@
 				D951C3A825455F330010DB09 /* ReactionButtonView.swift in Sources */,
 				D9578FA2254E8FFC00C6C00E /* InvitationViewController.swift in Sources */,
 				D9578F81254D4BBE00C6C00E /* TextFieldView.swift in Sources */,
+				D9578FC4254EBCCC00C6C00E /* CreateBandViewModel.swift in Sources */,
 				F2A300EC2543D4E200857227 /* ENV.swift in Sources */,
 				D90B5F88253C85C300E9B655 /* HomeViewController.swift in Sources */,
 				F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */,
@@ -821,6 +844,7 @@
 				D951C41A254A8E840010DB09 /* AccountCell.swift in Sources */,
 				D951C401254931CC0010DB09 /* BandDetailViewModel.swift in Sources */,
 				D90B5FDD253ECDD700E9B655 /* LiveViewModel.swift in Sources */,
+				D9578FAD254EABCB00C6C00E /* CreateBandViewController.swift in Sources */,
 				D951C3A225455C650010DB09 /* LiveDetailHeaderView.swift in Sources */,
 				D951C425254A99F80010DB09 /* SearchViewController.swift in Sources */,
 				D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */,

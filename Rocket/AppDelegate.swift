@@ -20,7 +20,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow(frame: UIScreen.main.bounds)
         let viewController = AuthViewController(dependencyProvider: dependencyProvider, input: ())
-        window?.rootViewController = UINavigationController(rootViewController: viewController)
+        let nav = UINavigationController(rootViewController: viewController)
+        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.barTintColor = .clear
+        window?.rootViewController = nav
         window?.makeKeyAndVisible()
         return true
     }

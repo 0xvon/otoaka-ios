@@ -7,10 +7,14 @@
 
 import UIKit
 import AWSCognitoAuth
+import Endpoint
 
 final class HomeViewController: UITabBarController, Instantiable {
-    typealias Input = Void
-    var input: Input
+    typealias Input = (
+        idToken: String,
+        user: User
+    )
+    var input: Input!
     
     var dependencyProvider: DependencyProvider!
     

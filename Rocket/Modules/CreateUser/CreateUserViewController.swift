@@ -9,7 +9,7 @@ import UIKit
 import AWSCognitoAuth
 
 final class CreateUserViewController: UIViewController, Instantiable {
-    typealias Input = AWSCognitoAuthUserSession
+    typealias Input = String
     var dependencyProvider: DependencyProvider
     var input: Input!
     
@@ -20,19 +20,19 @@ final class CreateUserViewController: UIViewController, Instantiable {
     
     lazy var viewModel = CreateUserViewModel(
         auth: dependencyProvider.auth,
-        session: self.input,
+        idToken: self.input,
         apiEndpoint: dependencyProvider.apiEndpoint,
         s3Bucket: dependencyProvider.s3Bucket,
         outputHander: { output in
             switch output {
             case .fan(let user):
                 DispatchQueue.main.async {
-                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: (session: self.input, user: user))
+                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: (idToken: self.input, user: user))
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .artist(let user):
                 DispatchQueue.main.async {
-                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: (session: self.input, user: user))
+                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: (idToken: self.input, user: user))
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):
@@ -55,20 +55,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
     private var bandInputs: UIView!
     private var profileImageView: UIImageView!
     private var sectionType: SectionType = .fan
-    private let parts = [
-        "Vo.",
-        "Gt.",
-        "Ba.",
-        "Dr",
-        "Key.",
-        "Gt. & Vo.",
-        "Ba. & Vo.",
-        "Key. & Vo.",
-        "Gt. & Cho.",
-        "Ba. & Cho.",
-        "Dr. & Cho.",
-        "Key. & Cho."
-    ]
+    private let parts = Components().parts
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -84,6 +71,10 @@ final class CreateUserViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     func setup() {

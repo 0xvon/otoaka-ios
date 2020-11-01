@@ -17,17 +17,21 @@ final class AuthViewController: UIViewController, Instantiable {
         outputHander: { output in
             switch output {
             case .signin(let session, let isSignedup):
+                guard let idToken = session.idToken else { return }
                 if isSignedup {
                     DispatchQueue.main.async {
-                        let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: ())
-                        self.navigationController?.pushViewController(vc, animated: true)
+                        self.getUser(idToken: idToken.tokenString)
                     }
                 } else {
                     DispatchQueue.main.async {
-                        let vc = CreateUserViewController(dependencyProvider: self.dependencyProvider, input: session)
+                        let vc = CreateUserViewController(dependencyProvider: self.dependencyProvider, input: idToken.tokenString)
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
-                    
+                }
+            case.getUser(let user, let idToken):
+                DispatchQueue.main.async {
+                    let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: (idToken: idToken, user: user))
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):
                 print(error)
@@ -75,6 +79,10 @@ final class AuthViewController: UIViewController, Instantiable {
     
     func signInButtonTapped() {
         viewModel.signin()
+    }
+    
+    func getUser(idToken: String) {
+        viewModel.getUser(idToken: idToken)
     }
 }
 
