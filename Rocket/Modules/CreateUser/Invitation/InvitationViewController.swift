@@ -101,7 +101,6 @@ final class InvitationViewController: UIViewController, Instantiable {
     }
     
     @objc private func skip(_ sender: Any) {
-        print("skipped")
         let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: (idToken: self.input.idToken, user: self.input.user))
         self.navigationController?.pushViewController(vc, animated: true)
     }
