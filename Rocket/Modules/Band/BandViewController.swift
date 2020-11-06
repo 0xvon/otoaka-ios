@@ -31,6 +31,16 @@ final class BandViewController: UIViewController, Instantiable {
     private var bandsTableView: UITableView!
     private var iconMenu: UIBarButtonItem!
     
+    private var isOpened: Bool = false
+    private var creationView: UIView!
+    private var creationViewHeightConstraint: NSLayoutConstraint!
+    private var openButtonView: CreateButton!
+    private var createContentsView: CreateButton!
+    private var createContentsViewBottomConstraint: NSLayoutConstraint!
+    private var createLiveView: CreateButton!
+    private var createLiveViewBottomConstraint: NSLayoutConstraint!
+    private var creationButtonConstraintItems: [NSLayoutConstraint] = []
+    
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         
@@ -44,6 +54,7 @@ final class BandViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        setupCreation()
     }
     
     override func viewDidLayoutSubviews() {
@@ -184,6 +195,141 @@ final class BandViewController: UIViewController, Instantiable {
         ]
         NSLayoutConstraint.activate(constraint)
     }
+    
+    private func setupCreation() {
+        creationView = UIView()
+        creationView.backgroundColor = .clear
+        creationView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(creationView)
+        
+        creationViewHeightConstraint = NSLayoutConstraint(
+            item: creationView!,
+            attribute: .height,
+            relatedBy: .equal,
+            toItem: nil,
+            attribute: .height,
+            multiplier: 1,
+            constant: 60
+        )
+        creationView.addConstraint(creationViewHeightConstraint)
+        
+        createLiveView = CreateButton(input: UIImage(named: "ticket")!)
+        createLiveView.layer.cornerRadius = 30
+        createLiveView.translatesAutoresizingMaskIntoConstraints = false
+        createLiveView.listen {
+            self.createLive()
+        }
+        creationView.addSubview(createLiveView)
+        
+        createLiveViewBottomConstraint = NSLayoutConstraint(
+            item: createLiveView!,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: creationView,
+            attribute: .bottom,
+            multiplier: 1,
+            constant: 0
+        )
+        
+        createContentsView = CreateButton(input: UIImage(named: "music")!)
+        createContentsView.layer.cornerRadius = 30
+        createContentsView.translatesAutoresizingMaskIntoConstraints = false
+        createContentsView.listen {
+            self.createContents()
+        }
+        creationView.addSubview(createContentsView)
+        
+        createContentsViewBottomConstraint = NSLayoutConstraint(
+            item: createContentsView!,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: creationView,
+            attribute: .bottom,
+            multiplier: 1,
+            constant: 0
+        )
+        
+        openButtonView = CreateButton(input: UIImage(named: "plus")!)
+        openButtonView.layer.cornerRadius = 30
+        openButtonView.translatesAutoresizingMaskIntoConstraints = false
+        openButtonView.listen {
+            self.isOpened.toggle()
+            self.open(isOpened: self.isOpened)
+        }
+        creationView.addSubview(openButtonView)
+        
+        creationButtonConstraintItems = [
+            createContentsViewBottomConstraint,
+            createLiveViewBottomConstraint,
+        ]
+        
+        creationView.addConstraints(creationButtonConstraintItems)
+        
+        
+        let constraints = [
+            creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+            creationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100),
+            creationView.widthAnchor.constraint(equalToConstant: 60),
+            
+            openButtonView.bottomAnchor.constraint(equalTo: creationView.bottomAnchor),
+            openButtonView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+            openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+            openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            
+            createContentsView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+            createContentsView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+            createContentsView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            
+            createLiveView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+            createLiveView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+            createLiveView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+        ]
+        
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    func open(isOpened: Bool) {
+        if isOpened {
+            UIView.animate(withDuration: 0.2) {
+                self.openButtonView.transform = CGAffineTransform(rotationAngle: .pi * 3 / 4)
+            }
+            
+            self.creationButtonConstraintItems.enumerated().forEach { (index, item) in
+                creationView.removeConstraint(item)
+                item.constant = CGFloat((index + 1) * -76)
+                creationView.addConstraint(item)
+                UIView.animate(withDuration: 0.2) {
+                    self.creationView.layoutIfNeeded()
+                }
+            }
+            
+            creationViewHeightConstraint.constant = CGFloat(60 + 76 * creationButtonConstraintItems.count)
+        } else {
+            UIView.animate(withDuration: 0.2) {
+                self.openButtonView.transform = .identity
+            }
+            
+            self.creationButtonConstraintItems.enumerated().forEach { (index, item) in
+                creationView.removeConstraint(item)
+                item.constant = 0
+                creationView.addConstraint(item)
+                UIView.animate(withDuration: 0.2) {
+                    self.creationView.layoutIfNeeded()
+                }
+            }
+            
+            creationViewHeightConstraint.constant = 60
+        }
+    }
+    
+    func createContents() {
+        print("create contents")
+    }
+    
+    func createLive() {
+        print("create live")
+    }
+    
     @IBAction func contentsPageButtonTapped(_ sender: Any) {
         UIScrollView.animate(withDuration: 0.3) {
             self.horizontalScrollView.contentOffset.x = 0
@@ -278,6 +424,9 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         switch tableView {
         case self.bandsTableView:
             let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider, input: ())
+            self.navigationController?.pushViewController(vc, animated: true)
+        case self.liveTableView:
+            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"))
             self.navigationController?.pushViewController(vc, animated: true)
         default:
             print("hello")

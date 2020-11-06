@@ -64,6 +64,7 @@
 		D9578FBC254EBA6900C6C00E /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FBB254EBA6900C6C00E /* InputTextView.swift */; };
 		D9578FC4254EBCCC00C6C00E /* CreateBandViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */; };
 		D9578FC9254EE9BB00C6C00E /* InvitationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FC8254EE9BB00C6C00E /* InvitationViewModel.swift */; };
+		D9578FCF2553F55B00C6C00E /* CreateButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FCE2553F55B00C6C00E /* CreateButton.swift */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -156,6 +157,7 @@
 		D9578FBB254EBA6900C6C00E /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
 		D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBandViewModel.swift; sourceTree = "<group>"; };
 		D9578FC8254EE9BB00C6C00E /* InvitationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationViewModel.swift; sourceTree = "<group>"; };
+		D9578FCE2553F55B00C6C00E /* CreateButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateButton.swift; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 		D90B5F2E253BE0EF00E9B655 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				D9578FCD2553F2D000C6C00E /* CreateButton */,
 				D9578F7F254D4BA500C6C00E /* TextField */,
 				D951C3E6254918310010DB09 /* BandCell */,
 				D951C3D8254910DC0010DB09 /* TrackCell */,
@@ -433,6 +436,14 @@
 				D9578FB4254EAC3700C6C00E /* CreateBandViewController.xib */,
 			);
 			path = CreateBand;
+			sourceTree = "<group>";
+		};
+		D9578FCD2553F2D000C6C00E /* CreateButton */ = {
+			isa = PBXGroup;
+			children = (
+				D9578FCE2553F55B00C6C00E /* CreateButton.swift */,
+			);
+			path = CreateButton;
 			sourceTree = "<group>";
 		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
@@ -843,6 +854,7 @@
 				D90B5FC9253ECB8900E9B655 /* TicketViewController.swift in Sources */,
 				D90B5F77253C822400E9B655 /* PreviewWrapper.swift in Sources */,
 				D951C3632541CB0D0010DB09 /* BadgeView.swift in Sources */,
+				D9578FCF2553F55B00C6C00E /* CreateButton.swift in Sources */,
 				D90B5FCE253ECD1C00E9B655 /* TicketViewModel.swift in Sources */,
 				D951C41A254A8E840010DB09 /* AccountCell.swift in Sources */,
 				D951C401254931CC0010DB09 /* BandDetailViewModel.swift in Sources */,
