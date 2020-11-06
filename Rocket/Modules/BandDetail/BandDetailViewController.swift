@@ -19,6 +19,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
     @IBOutlet weak var liveTableView: UITableView!
     @IBOutlet weak var contentsTableView: UITableView!
     
+    private var isOpened: Bool = false
+    private var creationView: UIView!
+    private var creationViewHeightConstraint: NSLayoutConstraint!
+    private var openButtonView: CreateButton!
+    private var createMessageView: CreateButton!
+    private var createMessageViewBottomConstraint: NSLayoutConstraint!
+    private var createShareView: CreateButton!
+    private var createShareViewBottomConstraint: NSLayoutConstraint!
+    private var creationButtonConstraintItems: [NSLayoutConstraint] = []
+    
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
@@ -33,6 +43,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        setupCreation()
     }
     
     func setup() {
@@ -58,6 +69,140 @@ final class BandDetailViewController: UIViewController, Instantiable {
         contentsTableView.dataSource = self
         contentsTableView.backgroundColor = style.color.background.get()
         contentsTableView.register(UINib(nibName: "BandContentsCell", bundle: nil), forCellReuseIdentifier: "BandContentsCell")
+    }
+    
+    private func setupCreation() {
+        creationView = UIView()
+        creationView.backgroundColor = .clear
+        creationView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(creationView)
+        
+        creationViewHeightConstraint = NSLayoutConstraint(
+            item: creationView!,
+            attribute: .height,
+            relatedBy: .equal,
+            toItem: nil,
+            attribute: .height,
+            multiplier: 1,
+            constant: 60
+        )
+        creationView.addConstraint(creationViewHeightConstraint)
+        
+        createShareView = CreateButton(input: UIImage(named: "share")!)
+        createShareView.layer.cornerRadius = 30
+        createShareView.translatesAutoresizingMaskIntoConstraints = false
+        createShareView.listen {
+            self.createShare()
+        }
+        creationView.addSubview(createShareView)
+        
+        createShareViewBottomConstraint = NSLayoutConstraint(
+            item: createShareView!,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: creationView,
+            attribute: .bottom,
+            multiplier: 1,
+            constant: 0
+        )
+        
+        createMessageView = CreateButton(input: UIImage(named: "mail")!)
+        createMessageView.layer.cornerRadius = 30
+        createMessageView.translatesAutoresizingMaskIntoConstraints = false
+        createMessageView.listen {
+            self.createMessage()
+        }
+        creationView.addSubview(createMessageView)
+        
+        createMessageViewBottomConstraint = NSLayoutConstraint(
+            item: createMessageView!,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: creationView,
+            attribute: .bottom,
+            multiplier: 1,
+            constant: 0
+        )
+        
+        openButtonView = CreateButton(input: UIImage(named: "plus")!)
+        openButtonView.layer.cornerRadius = 30
+        openButtonView.translatesAutoresizingMaskIntoConstraints = false
+        openButtonView.listen {
+            self.isOpened.toggle()
+            self.open(isOpened: self.isOpened)
+        }
+        creationView.addSubview(openButtonView)
+        
+        creationButtonConstraintItems = [
+            createMessageViewBottomConstraint,
+            createShareViewBottomConstraint,
+        ]
+        
+        creationView.addConstraints(creationButtonConstraintItems)
+        
+        
+        let constraints = [
+            creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+            creationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100),
+            creationView.widthAnchor.constraint(equalToConstant: 60),
+            
+            openButtonView.bottomAnchor.constraint(equalTo: creationView.bottomAnchor),
+            openButtonView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+            openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+            openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            
+            createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+            createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+            createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            
+            createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+            createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+            createShareView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+        ]
+        
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    func open(isOpened: Bool) {
+        if isOpened {
+            UIView.animate(withDuration: 0.2) {
+                self.openButtonView.transform = CGAffineTransform(rotationAngle: .pi * 3 / 4)
+            }
+            
+            self.creationButtonConstraintItems.enumerated().forEach { (index, item) in
+                creationView.removeConstraint(item)
+                item.constant = CGFloat((index + 1) * -76)
+                creationView.addConstraint(item)
+                UIView.animate(withDuration: 0.2) {
+                    self.creationView.layoutIfNeeded()
+                }
+            }
+            
+            creationViewHeightConstraint.constant = CGFloat(60 + 76 * creationButtonConstraintItems.count)
+        } else {
+            UIView.animate(withDuration: 0.2) {
+                self.openButtonView.transform = .identity
+            }
+            
+            self.creationButtonConstraintItems.enumerated().forEach { (index, item) in
+                creationView.removeConstraint(item)
+                item.constant = 0
+                creationView.addConstraint(item)
+                UIView.animate(withDuration: 0.2) {
+                    self.creationView.layoutIfNeeded()
+                }
+            }
+            
+            creationViewHeightConstraint.constant = 60
+        }
+    }
+    
+    func createMessage() {
+        print("create message")
+    }
+    
+    func createShare() {
+        print("create share")
     }
     
     private func likeButtonTapped() {
