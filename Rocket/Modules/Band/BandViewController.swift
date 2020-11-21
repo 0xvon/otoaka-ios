@@ -323,7 +323,8 @@ final class BandViewController: UIViewController, Instantiable {
     }
     
     func createContents() {
-        print("create contents")
+        let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func createLive() {

@@ -65,6 +65,8 @@
 		D9578FC4254EBCCC00C6C00E /* CreateBandViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */; };
 		D9578FC9254EE9BB00C6C00E /* InvitationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FC8254EE9BB00C6C00E /* InvitationViewModel.swift */; };
 		D9578FCF2553F55B00C6C00E /* CreateButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FCE2553F55B00C6C00E /* CreateButton.swift */; };
+		D9578FD52556DCD200C6C00E /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9578FD42556DCD200C6C00E /* PostViewController.swift */; };
+		D9578FDD2556DE5F00C6C00E /* PostViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9578FDC2556DE5F00C6C00E /* PostViewController.xib */; };
 		D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */; };
 		D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D96C7DF125415BB900A9B2C6 /* LiveCell.swift */; };
 		D96C7DF725415E4100A9B2C6 /* LiveCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D96C7DF625415E4100A9B2C6 /* LiveCell.xib */; };
@@ -158,6 +160,8 @@
 		D9578FC3254EBCCC00C6C00E /* CreateBandViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateBandViewModel.swift; sourceTree = "<group>"; };
 		D9578FC8254EE9BB00C6C00E /* InvitationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationViewModel.swift; sourceTree = "<group>"; };
 		D9578FCE2553F55B00C6C00E /* CreateButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateButton.swift; sourceTree = "<group>"; };
+		D9578FD42556DCD200C6C00E /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
+		D9578FDC2556DE5F00C6C00E /* PostViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PostViewController.xib; sourceTree = "<group>"; };
 		D96C7DC12540057800A9B2C6 /* TitleLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleLabelView.swift; sourceTree = "<group>"; };
 		D96C7DF125415BB900A9B2C6 /* LiveCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveCell.swift; sourceTree = "<group>"; };
 		D96C7DF625415E4100A9B2C6 /* LiveCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LiveCell.xib; sourceTree = "<group>"; };
@@ -446,6 +450,15 @@
 			path = CreateButton;
 			sourceTree = "<group>";
 		};
+		D9578FD32556D89C00C6C00E /* Post */ = {
+			isa = PBXGroup;
+			children = (
+				D9578FD42556DCD200C6C00E /* PostViewController.swift */,
+				D9578FDC2556DE5F00C6C00E /* PostViewController.xib */,
+			);
+			path = Post;
+			sourceTree = "<group>";
+		};
 		D96C7DC02540052F00A9B2C6 /* TitleLabel */ = {
 			isa = PBXGroup;
 			children = (
@@ -466,6 +479,7 @@
 		D9CC5295253B2C8A0081ECF0 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				D9578FD32556D89C00C6C00E /* Post */,
 				D951C423254A99EE0010DB09 /* Search */,
 				D951C40D254A7F0F0010DB09 /* Account */,
 				D90B5FC6253ECB6A00E9B655 /* Band */,
@@ -683,6 +697,7 @@
 				D951C3ED254918760010DB09 /* BandCell.xib in Resources */,
 				D90B5FD3253ECD3100E9B655 /* TicketViewController.xib in Resources */,
 				D90B5F61253C6BE500E9B655 /* LaunchScreen.storyboard in Resources */,
+				D9578FDD2556DE5F00C6C00E /* PostViewController.xib in Resources */,
 				D9578FB5254EAC3700C6C00E /* CreateBandViewController.xib in Resources */,
 				D9578FA7254E914700C6C00E /* InvitationViewController.xib in Resources */,
 				D951C3FC25492FED0010DB09 /* BandDetailViewController.xib in Resources */,
@@ -831,6 +846,7 @@
 				D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */,
 				D951C37725432C640010DB09 /* LiveDetailViewController.swift in Sources */,
 				D90B5FD8253ECDB900E9B655 /* LiveViewController.swift in Sources */,
+				D9578FD52556DCD200C6C00E /* PostViewController.swift in Sources */,
 				D951C37C25432CCA0010DB09 /* LiveDetailViewModel.swift in Sources */,
 				D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */,
 				D951C3E8254918390010DB09 /* BandCell.swift in Sources */,

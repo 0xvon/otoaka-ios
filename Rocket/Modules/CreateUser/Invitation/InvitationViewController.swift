@@ -24,6 +24,7 @@ final class InvitationViewController: UIViewController, Instantiable {
             switch output {
             case .joinGroup:
                 DispatchQueue.main.async {
+                    self.navigationController?.setNavigationBarHidden(true, animated: true)
                     let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: self.input)
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
