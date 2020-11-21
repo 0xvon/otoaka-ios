@@ -19,7 +19,6 @@ final class CreateUserViewController: UIViewController, Instantiable {
     }
     
     lazy var viewModel = CreateUserViewModel(
-        auth: dependencyProvider.auth,
         idToken: self.input,
         apiEndpoint: dependencyProvider.apiEndpoint,
         s3Bucket: dependencyProvider.s3Bucket,

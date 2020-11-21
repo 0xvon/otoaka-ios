@@ -36,64 +36,26 @@ class AuthViewModel {
                 return
             }
             
-            let path = DevelopmentConfig.apiEndpoint + "/" + SignupStatus.pathPattern.joined(separator: "/")
-            guard let url = URL(string: path) else {
-                self.outputHandler(.error("request url not found" as! Error))
-                return
-            }
-            
-            guard let token = session.idToken else {
+            guard let idToken = session.idToken else {
                 self.outputHandler(.error("id token not found" as! Error))
                 return
             }
             
-            var request = URLRequest(url: url)
-            request.httpMethod = SignupStatus.method.rawValue
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.addValue("Bearer \(token.tokenString)", forHTTPHeaderField: "Authorization")
+            let signupStatusAPIClient = APIClient<SignupStatus>(baseUrl: self.apiEndpoint, idToken: idToken.tokenString)
+            let req: SignupStatus.Request = Empty()
             
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                if let error = error {
-                    self.outputHandler(.error(error))
-                }
-                
-                guard let data = data else { return }
-                do {
-                    let response = try JSONDecoder().decode(SignupStatus.Response.self, from: data)
-                    self.outputHandler(.signin(session, response.isSignedup))
-                } catch let error {
-                    self.outputHandler(.error(error))
-                }
+            signupStatusAPIClient.request(req: req) { res in
+                self.outputHandler(.signin(session, res.isSignedup))
             }
-            task.resume()
         }
     }
     
     func getUser(idToken: String) {
-        let path = DevelopmentConfig.apiEndpoint + "/" + GetUserInfo.pathPattern.joined(separator: "/")
-        guard let url = URL(string: path) else {
-            self.outputHandler(.error("request url not found" as! Error))
-            return
-        }
+        let getUserInfoAPIClient = APIClient<GetUserInfo>(baseUrl: self.apiEndpoint, idToken: idToken)
+        let req: GetUserInfo.Request = Empty()
         
-        var request = URLRequest(url: url)
-        request.httpMethod = GetUserInfo.method.rawValue
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                self.outputHandler(.error(error))
-            }
-            
-            guard let data = data else { return }
-            do {
-                let response = try JSONDecoder().decode(GetUserInfo.Response.self, from: data)
-                self.outputHandler(.getUser(response, idToken))
-            } catch let error {
-                self.outputHandler(.error(error))
-            }
+        getUserInfoAPIClient.request(req: req) { res in
+            self.outputHandler(.getUser(res, idToken))
         }
-        task.resume()
     }
 }

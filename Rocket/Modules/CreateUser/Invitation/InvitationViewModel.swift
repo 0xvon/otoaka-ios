@@ -28,31 +28,12 @@ class InvitationViewModel {
     
     func joinGroup(invitationCode: String?) {
         if let invitationCode = invitationCode {
-            let path = DevelopmentConfig.apiEndpoint + "/" + JoinGroup.pathPattern.joined(separator: "/")
-            guard let url = URL(string: path) else { return }
+            let joinGroupAPIClient = APIClient<JoinGroup>(baseUrl: self.apiEndpoint, idToken: self.idToken)
+            let req: JoinGroup.Request = JoinGroup.Request(invitationId: invitationCode)
             
-            var request = URLRequest(url: url)
-            request.httpMethod = Signup.method.rawValue
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.addValue("Bearer \(self.idToken)", forHTTPHeaderField: "Authorization")
-            let body = JoinGroup.Request(invitationId: invitationCode)
-            request.httpBody = try! JSONEncoder().encode(body)
-            
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                if let error = error {
-                    self.outputHandler(.error(error.localizedDescription))
-                }
-                
-                guard let data = data else { return }
-                do {
-                    let _ = try JSONDecoder().decode(JoinGroup.Response.self, from: data)
-                    self.outputHandler(.joinGroup)
-                } catch {
-                    self.outputHandler(.error(String(data: data, encoding: .utf8)!))
-                }
+            joinGroupAPIClient.request(req: req) { res in
+                self.outputHandler(.joinGroup)
             }
-            task.resume()
-            
         } else {
             outputHandler(.error("invitation code not found"))
         }
