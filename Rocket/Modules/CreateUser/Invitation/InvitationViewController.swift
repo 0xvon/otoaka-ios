@@ -11,14 +11,10 @@ import AWSCognitoAuth
 
 final class InvitationViewController: UIViewController, Instantiable {
     
-    typealias Input = (
-        idToken: String,
-        user: User
-    )
+    typealias Input = User
     
     lazy var viewModel = InvitationViewModel(
-        idToken: self.input.idToken,
-        apiEndpoint: dependencyProvider.apiEndpoint,
+        apiClient: dependencyProvider.apiClient,
         s3Bucket: dependencyProvider.s3Bucket,
         outputHander: { output in
             switch output {
@@ -64,7 +60,7 @@ final class InvitationViewController: UIViewController, Instantiable {
     func setup() {
         self.view.backgroundColor = style.color.background.get()
         
-        switch input.user.role {
+        switch input.role {
         case .fan(_):
             orLabel.isHidden = true
             createBandButton.isHidden = true
@@ -102,14 +98,14 @@ final class InvitationViewController: UIViewController, Instantiable {
     }
     
     @objc private func skip(_ sender: Any) {
-        let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: (idToken: self.input.idToken, user: self.input.user))
+        let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: self.input)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func register() {
         let invitationCode = invitationView.getText()
         
-        switch input.user.role {
+        switch input.role {
         case .artist(_):
             viewModel.joinGroup(invitationCode: invitationCode)
         case .fan(_):

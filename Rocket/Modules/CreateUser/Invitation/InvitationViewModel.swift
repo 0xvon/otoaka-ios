@@ -14,25 +14,29 @@ class InvitationViewModel {
         case error(String)
     }
     
-    let idToken: String
-    let apiEndpoint: String
+    let apiClient: APIClient
     let s3Bucket: String
     let outputHandler: (Output) -> Void
     
-    init(idToken: String, apiEndpoint: String, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
-        self.idToken = idToken
-        self.apiEndpoint = apiEndpoint
+    init(apiClient: APIClient, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
+        self.apiClient = apiClient
         self.s3Bucket = s3Bucket
         self.outputHandler = outputHander
     }
     
     func joinGroup(invitationCode: String?) {
         if let invitationCode = invitationCode {
-            let joinGroupAPIClient = APIClient<JoinGroup>(baseUrl: self.apiEndpoint, idToken: self.idToken)
-            let req: JoinGroup.Request = JoinGroup.Request(invitationId: invitationCode)
+            let req = JoinGroup.Request(invitationId: invitationCode)
             
-            joinGroupAPIClient.request(req: req) { res in
-                self.outputHandler(.joinGroup)
+            // FIXME
+            try! apiClient.request(JoinGroup.self, request: req) { result in
+                switch result {
+                case .success:
+                    self.outputHandler(.joinGroup)
+                case .failure(let error):
+                    // FIXME
+                    fatalError(String(describing: error))
+                }
             }
         } else {
             outputHandler(.error("invitation code not found"))

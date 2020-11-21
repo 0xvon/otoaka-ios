@@ -15,29 +15,32 @@ class CreateBandViewModel {
         case error(String)
     }
     
-    let idToken: String
-    let apiEndpoint: String
+    let apiClient: APIClient
     let s3Client: S3Client
     let outputHandler: (Output) -> Void
     
-    init(idToken: String, apiEndpoint: String, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
-        self.idToken = idToken
-        self.apiEndpoint = apiEndpoint
+    init(apiClient: APIClient, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
+        self.apiClient = apiClient
         self.s3Client = S3Client(s3Bucket: s3Bucket)
         self.outputHandler = outputHander
     }
     
     func create(name: String, englishName: String?, biography: String?,
                 since: Date?, artwork: UIImage?, hometown: String?) {
-        self.s3Client.uploadImage(image: artwork) { (imageUrl, error) in
+        self.s3Client.uploadImage(image: artwork) { [apiClient] (imageUrl, error) in
             if let error = error { self.outputHandler(.error(error)) }
             guard let imageUrl = imageUrl else { return }
-            
-            let createGroupAPIClient = APIClient<CreateGroup>(baseUrl: self.apiEndpoint, idToken: self.idToken)
-            let req: CreateGroup.Request = CreateGroup.Request(name: name, englishName: englishName, biography: biography, since: since, artworkURL: URL(string: imageUrl), hometown: hometown)
-            
-            createGroupAPIClient.request(req: req) { res in
-                self.outputHandler(.create(res))
+            let req = CreateGroup.Request(name: name, englishName: englishName, biography: biography, since: since, artworkURL: URL(string: imageUrl), hometown: hometown)
+
+            // FIXME
+            try! apiClient.request(CreateGroup.self, request: req) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.create(res))
+                case .failure(let error):
+                    // FIXME
+                    fatalError(String(describing: error))
+                }
             }
         }
     }

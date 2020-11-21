@@ -13,24 +13,25 @@ final class AuthViewController: UIViewController, Instantiable {
     
     lazy var viewModel = AuthViewModel(
         auth: dependencyProvider.auth,
-        apiEndpoint: dependencyProvider.apiEndpoint,
-        outputHander: { output in
+        apiClient: dependencyProvider.apiClient,
+        outputHander: { [dependencyProvider] output in
             switch output {
             case .signin(let session, let isSignedup):
                 guard let idToken = session.idToken else { return }
+                dependencyProvider.apiClient.login(with: idToken.tokenString)
                 if isSignedup {
                     DispatchQueue.main.async {
-                        self.getUser(idToken: idToken.tokenString)
+                        self.getUser()
                     }
                 } else {
                     DispatchQueue.main.async {
-                        let vc = CreateUserViewController(dependencyProvider: self.dependencyProvider, input: idToken.tokenString)
+                        let vc = CreateUserViewController(dependencyProvider: self.dependencyProvider, input: ())
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
                 }
-            case.getUser(let user, let idToken):
+            case.getUser(let user):
                 DispatchQueue.main.async {
-                    let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: (idToken: idToken, user: user))
+                    let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: user)
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):
@@ -81,8 +82,8 @@ final class AuthViewController: UIViewController, Instantiable {
         viewModel.signin()
     }
     
-    func getUser(idToken: String) {
-        viewModel.getUser(idToken: idToken)
+    func getUser() {
+        viewModel.getUser()
     }
 }
 

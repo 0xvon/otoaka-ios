@@ -16,37 +16,41 @@ class CreateUserViewModel {
         case error(String)
     }
     
-    let idToken: String
-    let apiEndpoint: String
+    let apiClient: APIClient
     let s3Client: S3Client
     let outputHandler: (Output) -> Void
     
     
-    init(idToken: String, apiEndpoint: String, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
-        self.idToken = idToken
-        self.apiEndpoint = apiEndpoint
+    init(apiClient: APIClient, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
+        self.apiClient = apiClient
         self.s3Client = S3Client(s3Bucket: s3Bucket)
         self.outputHandler = outputHander
     }
     
     func signupAsFan(name: String, thumbnail: UIImage?) {
-        self.s3Client.uploadImage(image: thumbnail) { (imageUrl, error) in
-            let signupAPIClient = APIClient<Signup>(baseUrl: self.apiEndpoint, idToken: self.idToken)
-            let req: Signup.Request = Signup.Request(name: name, biography: nil, thumbnailURL: imageUrl, role: .fan(Fan()))
-            
-            signupAPIClient.request(req: req) { res in
-                self.outputHandler(.fan(res))
+        self.s3Client.uploadImage(image: thumbnail) { [apiClient] (imageUrl, error) in
+            let req = Signup.Request(name: name, biography: nil, thumbnailURL: imageUrl, role: .fan(Fan()))
+            try! apiClient.request(Signup.self, request: req) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.fan(res))
+                case .failure(let error):
+                    fatalError(String(describing: error))
+                }
             }
         }
     }
     
     func signupAsArtist(name: String, thumbnail: UIImage?, part: String) {
-        self.s3Client.uploadImage(image: thumbnail) { (imageUrl, error) in
-            let signupAPIClient = APIClient<Signup>(baseUrl: self.apiEndpoint, idToken: self.idToken)
-            let req: Signup.Request = Signup.Request(name: name, biography: nil, thumbnailURL: imageUrl, role: .artist(Artist(part: part)))
-            
-            signupAPIClient.request(req: req) { res in
-                self.outputHandler(.artist(res))
+        self.s3Client.uploadImage(image: thumbnail) { [apiClient] (imageUrl, error) in
+            let req = Signup.Request(name: name, biography: nil, thumbnailURL: imageUrl, role: .artist(Artist(part: part)))
+            try! apiClient.request(Signup.self, request: req) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.artist(res))
+                case .failure(let error):
+                    fatalError(String(describing: error))
+                }
             }
         }
     }

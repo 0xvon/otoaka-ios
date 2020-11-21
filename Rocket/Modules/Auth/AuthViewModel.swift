@@ -12,21 +12,21 @@ import AWSCognitoAuth
 class AuthViewModel {
     enum Output {
         case signin(AWSCognitoAuthUserSession, Bool)
-        case getUser(User, String)
+        case getUser(User)
         case error(Error)
     }
     
     let auth: AWSCognitoAuth
-    let apiEndpoint: String
+    let apiClient: APIClient
     let outputHandler: (Output) -> Void
-    init(auth: AWSCognitoAuth, apiEndpoint: String,  outputHander: @escaping (Output) -> Void) {
+    init(auth: AWSCognitoAuth, apiClient: APIClient, outputHander: @escaping (Output) -> Void) {
         self.auth = auth
-        self.apiEndpoint = apiEndpoint
+        self.apiClient = apiClient
         self.outputHandler = outputHander
     }
     
     func signin() {
-        auth.getSession { (session: AWSCognitoAuthUserSession?, error: Error?) in
+        auth.getSession { [apiClient] (session: AWSCognitoAuthUserSession?, error: Error?) in
             if let error = error {
                 self.outputHandler(.error(error))
             }
@@ -35,27 +35,30 @@ class AuthViewModel {
                 self.outputHandler(.error("session not found" as! Error))
                 return
             }
-            
-            guard let idToken = session.idToken else {
-                self.outputHandler(.error("id token not found" as! Error))
-                return
-            }
-            
-            let signupStatusAPIClient = APIClient<SignupStatus>(baseUrl: self.apiEndpoint, idToken: idToken.tokenString)
-            let req: SignupStatus.Request = Empty()
-            
-            signupStatusAPIClient.request(req: req) { res in
-                self.outputHandler(.signin(session, res.isSignedup))
+
+            // FIXME
+            try! apiClient.request(SignupStatus.self) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.signin(session, res.isSignedup))
+                case .failure(let error):
+                    // FIXME
+                    fatalError(String(describing: error))
+                }
             }
         }
     }
     
-    func getUser(idToken: String) {
-        let getUserInfoAPIClient = APIClient<GetUserInfo>(baseUrl: self.apiEndpoint, idToken: idToken)
-        let req: GetUserInfo.Request = Empty()
-        
-        getUserInfoAPIClient.request(req: req) { res in
-            self.outputHandler(.getUser(res, idToken))
+    func getUser() {
+        // FIXME
+        try! apiClient.request(GetUserInfo.self) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getUser(res))
+            case .failure(let error):
+                // FIXME
+                fatalError(String(describing: error))
+            }
         }
     }
 }

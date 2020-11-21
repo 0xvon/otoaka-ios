@@ -20,14 +20,12 @@ class BandViewModel {
     }
     
     let auth: AWSCognitoAuth
-    let apiEndpoint: String
+    let apiClient: APIClient
     let outputHandler: (Output) -> Void
-    let idToken: String
     
-    init(idToken: String, auth: AWSCognitoAuth, apiEndpoint: String,  outputHander: @escaping (Output) -> Void) {
-        self.idToken = idToken
+    init(apiClient: APIClient, auth: AWSCognitoAuth, outputHander: @escaping (Output) -> Void) {
+        self.apiClient = apiClient
         self.auth = auth
-        self.apiEndpoint = apiEndpoint
         self.outputHandler = outputHander
     }
     
@@ -36,11 +34,17 @@ class BandViewModel {
     }
     
     func registerPushNotification(deviceToken: String) {
-        let registerDeviceTokenAPIClient = APIClient<RegisterDeviceToken>(baseUrl: self.apiEndpoint, idToken: self.idToken)
-        let req: RegisterDeviceToken.Request = RegisterDeviceToken.Request(deviceToken: deviceToken)
-        
-        registerDeviceTokenAPIClient.request(req: req) { res in
-            self.outputHandler(.registerIdToken)
+        let req = RegisterDeviceToken.Request(deviceToken: deviceToken)
+
+        // FIXME
+        try! apiClient.request(RegisterDeviceToken.self, request: req) { result in
+            switch result {
+            case .success:
+                self.outputHandler(.registerDeviceToken)
+            case .failure(let error):
+                // FIXME
+                fatalError(String(describing: error))
+            }
         }
     }
 }

@@ -9,7 +9,7 @@ import UIKit
 import AWSCognitoAuth
 
 final class CreateUserViewController: UIViewController, Instantiable {
-    typealias Input = String
+    typealias Input = Void
     var dependencyProvider: DependencyProvider
     var input: Input!
     
@@ -19,19 +19,18 @@ final class CreateUserViewController: UIViewController, Instantiable {
     }
     
     lazy var viewModel = CreateUserViewModel(
-        idToken: self.input,
-        apiEndpoint: dependencyProvider.apiEndpoint,
+        apiClient: dependencyProvider.apiClient,
         s3Bucket: dependencyProvider.s3Bucket,
         outputHander: { output in
             switch output {
             case .fan(let user):
                 DispatchQueue.main.async {
-                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: (idToken: self.input, user: user))
+                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: user)
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .artist(let user):
                 DispatchQueue.main.async {
-                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: (idToken: self.input, user: user))
+                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: user)
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):

@@ -10,14 +10,10 @@ import Foundation
 import Endpoint
 
 final class CreateBandViewController: UIViewController, Instantiable {
-    typealias Input = (
-        idToken: String,
-        user: User
-    )
+    typealias Input = User
     
     lazy var viewModel = CreateBandViewModel(
-        idToken: self.input.idToken,
-        apiEndpoint: dependencyProvider.apiEndpoint,
+        apiClient: dependencyProvider.apiClient,
         s3Bucket: dependencyProvider.s3Bucket,
         outputHander: { output in
             switch output {

@@ -8,36 +8,69 @@
 import Endpoint
 import Foundation
 
-class APIClient<E: EndpointProtocol> {
-    var baseUrl: String
-    var idToken: String
+class APIClient {
+    private let baseURL: URL
+    private var idToken: String?
+    private let session: URLSession
+    private let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }()
+    private let decoder: JSONDecoder = JSONDecoder()
     
-    init(baseUrl: String, idToken: String) {
-        self.baseUrl = baseUrl
+    init(baseUrl: URL, idToken: String?, session: URLSession = .shared) {
+        self.baseURL = baseUrl
+        self.idToken = idToken
+        self.session = session
+    }
+
+    func login(with idToken: String) {
         self.idToken = idToken
     }
-    
-    public func request(req: E.Request, callback: @escaping ((E.Response) -> Void)) {
-        let url = try! E.URI().encode(baseURL: URL(string: self.baseUrl)!)
+
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        uri: E.URI = E.URI(),
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    ) throws where E.Request == Empty {
+        try request(E.self, request: Empty(), uri: uri, callback: callback)
+    }
+
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        request: E.Request, uri: E.URI = E.URI(),
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    ) throws {
+        let url = try uri.encode(baseURL: baseURL)
         print(url)
         
-        var request = URLRequest(url: url)
-        request.httpMethod = E.method.rawValue
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("Bearer \(self.idToken)", forHTTPHeaderField: "Authorization")
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = E.method.rawValue
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let idToken = idToken {
+            urlRequest.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
+        }
         if E.method != .get {
-            let body = req
-            request.httpBody = try! JSONEncoder().encode(body)
+            urlRequest.httpBody = try! encoder.encode(request)
         }
         
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error { print(error); return }
-            guard let data = data else { return }
-            
+        let task = session.dataTask(with: urlRequest) { [decoder] (data, response, error) in
+            if let error = error {
+                callback(.failure(error))
+                return
+            }
+            guard let data = data else {
+                fatalError("URLSession.dataTask should provide either response or error")
+            }
+
             do {
-                let response: E.Response = try JSONDecoder().decode(E.Response.self, from: data)
-                callback(response)
-            } catch let error { print(error); return }
+                let response: E.Response = try decoder.decode(E.Response.self, from: data)
+                callback(.success(response))
+            } catch let error {
+                callback(.failure(error))
+                return
+            }
         }
         task.resume()
     }

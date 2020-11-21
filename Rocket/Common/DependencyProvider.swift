@@ -11,7 +11,7 @@ import AWSCore
 
 struct DependencyProvider {
     var auth: AWSCognitoAuth
-    var apiEndpoint: String
+    var apiClient: APIClient
     var s3Bucket: String
 }
 
@@ -49,6 +49,8 @@ extension DependencyProvider {
         
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: "cognitoAuth")
         let auth = AWSCognitoAuth.init(forKey: "cognitoAuth")
-        return DependencyProvider(auth: auth, apiEndpoint: config.apiEndpoint, s3Bucket: config.s3Bucket)
+        // FIXME: Restore idToken from Keychain
+        let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, idToken: nil)
+        return DependencyProvider(auth: auth, apiClient: apiClient, s3Bucket: config.s3Bucket)
     }
 }

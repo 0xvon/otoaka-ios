@@ -12,10 +12,7 @@ import Endpoint
 
 final class BandViewController: UIViewController, Instantiable {
     
-    typealias Input = (
-        idToken: String,
-        user: User
-    )
+    typealias Input = User
     var input: Input!
     var dependencyProvider: DependencyProvider!
     
@@ -48,9 +45,8 @@ final class BandViewController: UIViewController, Instantiable {
     private var creationButtonConstraintItems: [NSLayoutConstraint] = []
     
     lazy var viewModel = BandViewModel(
-        idToken: self.input.idToken,
+        apiClient: dependencyProvider.apiClient,
         auth: dependencyProvider.auth,
-        apiEndpoint: dependencyProvider.apiEndpoint,
         outputHander: { output in
             switch output {
             case .registerDeviceToken:
