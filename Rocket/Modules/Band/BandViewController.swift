@@ -7,10 +7,16 @@
 
 import Foundation
 import UIKit
+import UserNotifications
+import Endpoint
 
 final class BandViewController: UIViewController, Instantiable {
     
-    typealias Input = Void
+    typealias Input = (
+        idToken: String,
+        user: User
+    )
+    var input: Input!
     var dependencyProvider: DependencyProvider!
     
     @IBOutlet weak var pageTitleStackViewLeadingConstraint: NSLayoutConstraint!
@@ -41,8 +47,23 @@ final class BandViewController: UIViewController, Instantiable {
     private var createLiveViewBottomConstraint: NSLayoutConstraint!
     private var creationButtonConstraintItems: [NSLayoutConstraint] = []
     
+    lazy var viewModel = BandViewModel(
+        idToken: self.input.idToken,
+        auth: dependencyProvider.auth,
+        apiEndpoint: dependencyProvider.apiEndpoint,
+        outputHander: { output in
+            switch output {
+            case .registerDeviceToken:
+                print("hello")
+            case .requestRemortNotification:
+                print("yo")
+            }
+        }
+    )
+    
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
+        self.input = input
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -55,6 +76,7 @@ final class BandViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         setup()
         setupCreation()
+        requestNotification()
     }
     
     override func viewDidLayoutSubviews() {
@@ -322,6 +344,25 @@ final class BandViewController: UIViewController, Instantiable {
         }
     }
     
+    func requestNotification() {
+        UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error { print(error); return }
+            guard granted else { return }
+            
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+                self.viewModel.requestRemortNotification()
+            }
+        }
+    }
+    
+//    func registerDeviceToken() {
+//        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { setting in
+//            setting.
+//        })
+//    }
+    
     func createContents() {
         let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
@@ -466,17 +507,6 @@ extension BandViewController: UISearchBarDelegate {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
-import SwiftUI
-
-struct BandViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        ViewControllerWrapper<BandViewController>(
-            dependencyProvider: .make(),
-            input: ()
-        )
-    }
+extension BandViewController: UNUserNotificationCenterDelegate {
+    
 }
-
-#endif
-

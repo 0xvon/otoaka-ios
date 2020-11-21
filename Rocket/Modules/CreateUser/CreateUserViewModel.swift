@@ -6,9 +6,8 @@
 //
 
 import Foundation
-
+import UIKit
 import Endpoint
-import AWSS3
 
 class CreateUserViewModel {
     enum Output {

@@ -6,8 +6,8 @@
 //
 
 import Foundation
+import UIKit
 import Endpoint
-import AWSS3
 
 class CreateBandViewModel {
     enum Output {

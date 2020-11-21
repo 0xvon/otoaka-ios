@@ -6,8 +6,10 @@
 //
 
 import UIKit
+import UserNotifications
 import AWSCognitoAuth
 import AWSCore
+import Endpoint
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
