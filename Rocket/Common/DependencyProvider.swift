@@ -8,6 +8,17 @@
 import Foundation
 import AWSCognitoAuth
 import AWSCore
+import Endpoint
+
+@dynamicMemberLookup
+struct LoggedInDependencyProvider {
+    let provider: DependencyProvider
+    let user: User
+
+    subscript<T>(dynamicMember keyPath: KeyPath<DependencyProvider, T>) -> T {
+        provider[keyPath: keyPath]
+    }
+}
 
 struct DependencyProvider {
     var auth: AWSCognitoAuth

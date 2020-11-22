@@ -9,8 +9,9 @@ import UIKit
 
 protocol Instantiable {
     associatedtype Input
+    associatedtype Provider
     
-    init(dependencyProvider: DependencyProvider, input: Input)
+    init(dependencyProvider: Provider, input: Input)
 }
 
 protocol ViewInstantiable {

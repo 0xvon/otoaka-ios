@@ -35,7 +35,8 @@ final class AuthViewController: UIViewController, Instantiable {
                 }
             case.getUser(let user):
                 DispatchQueue.main.async {
-                    let vc = HomeViewController(dependencyProvider: self.dependencyProvider, input: user)
+                    let provider = LoggedInDependencyProvider(provider: self.dependencyProvider, user: user)
+                    let vc = HomeViewController(dependencyProvider: provider, input: ())
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):

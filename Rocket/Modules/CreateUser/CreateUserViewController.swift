@@ -25,12 +25,14 @@ final class CreateUserViewController: UIViewController, Instantiable {
             switch output {
             case .fan(let user):
                 DispatchQueue.main.async {
-                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: user)
+                    let provider = LoggedInDependencyProvider(provider: self.dependencyProvider, user: user)
+                    let vc = InvitationViewController(dependencyProvider: provider, input: ())
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .artist(let user):
                 DispatchQueue.main.async {
-                    let vc = InvitationViewController(dependencyProvider: self.dependencyProvider, input: user)
+                    let provider = LoggedInDependencyProvider(provider: self.dependencyProvider, user: user)
+                    let vc = InvitationViewController(dependencyProvider: provider, input: ())
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):

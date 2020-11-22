@@ -26,11 +26,11 @@ final class LiveViewController: UIViewController, Instantiable {
     )
     
     var lives: [Live] = []
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
     @IBOutlet weak var liveTableView: UITableView!
     @IBOutlet weak var liveSearchBar: UISearchBar!
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
         
@@ -62,7 +62,7 @@ final class LiveViewController: UIViewController, Instantiable {
     }
     
     @objc func tappedButton(sender: UIButton!) {
-        let vc = BandViewController(dependencyProvider: dependencyProvider, input: self.input)
+        let vc = BandViewController(dependencyProvider: dependencyProvider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -114,7 +114,7 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let live = self.lives[indexPath.section]
-        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
+        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }

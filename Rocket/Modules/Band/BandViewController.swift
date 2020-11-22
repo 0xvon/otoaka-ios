@@ -12,9 +12,9 @@ import Endpoint
 
 final class BandViewController: UIViewController, Instantiable {
     
-    typealias Input = User
+    typealias Input = Void
     var input: Input!
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
     
     @IBOutlet weak var pageTitleStackViewLeadingConstraint: NSLayoutConstraint!
     @IBOutlet weak var contentsPageTitleView: TitleLabelView!
@@ -55,7 +55,7 @@ final class BandViewController: UIViewController, Instantiable {
         }
     )
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
         
@@ -351,7 +351,7 @@ final class BandViewController: UIViewController, Instantiable {
     }
     
     func createContents() {
-        let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
+        let vc = PostViewController(dependencyProvider: self.dependencyProvider.provider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -385,7 +385,7 @@ final class BandViewController: UIViewController, Instantiable {
     }
     
     @objc private func iconTapped(_ sender: Any) {
-        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
+        let vc = AccountViewController(dependencyProvider: self.dependencyProvider.provider, input: ())
         present(vc, animated: true, completion: nil)
     }
 }
@@ -452,10 +452,10 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView {
         case self.bandsTableView:
-            let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider, input: ())
+            let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: ())
             self.navigationController?.pushViewController(vc, animated: true)
         case self.liveTableView:
-            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"))
+            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"))
             self.navigationController?.pushViewController(vc, animated: true)
         default:
             print("hello")
@@ -488,7 +488,7 @@ extension BandViewController: UIScrollViewDelegate {
 extension BandViewController: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         
-        let vc = SearchViewController(dependencyProvider: self.dependencyProvider, input: ())
+        let vc = SearchViewController(dependencyProvider: self.dependencyProvider.provider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
         searchBar.endEditing(true)
     }
