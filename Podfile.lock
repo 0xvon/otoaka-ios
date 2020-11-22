@@ -1,15 +1,17 @@
 PODS:
-  - AWSCognitoAuth (2.18.0):
-    - AWSCognitoIdentityProviderASF (= 2.18.0)
-    - AWSCore (= 2.18.0)
-  - AWSCognitoIdentityProviderASF (2.18.0)
-  - AWSCore (2.18.0)
-  - AWSS3 (2.18.0):
-    - AWSCore (= 2.18.0)
+  - AWSCognitoAuth (2.19.1):
+    - AWSCognitoIdentityProviderASF (= 2.19.1)
+    - AWSCore (= 2.19.1)
+  - AWSCognitoIdentityProviderASF (2.19.1)
+  - AWSCore (2.19.1)
+  - AWSS3 (2.19.1):
+    - AWSCore (= 2.19.1)
+  - KeychainAccess (4.2.1)
 
 DEPENDENCIES:
   - AWSCognitoAuth
   - AWSS3
+  - KeychainAccess
 
 SPEC REPOS:
   trunk:
@@ -17,13 +19,15 @@ SPEC REPOS:
     - AWSCognitoIdentityProviderASF
     - AWSCore
     - AWSS3
+    - KeychainAccess
 
 SPEC CHECKSUMS:
-  AWSCognitoAuth: 48a8e91b42d4bee9bb4a6091677c210553077983
-  AWSCognitoIdentityProviderASF: 3c8bb7a1f306d21d22c4429509da5cf34ef72e6d
-  AWSCore: e8cc7fd06efa211328942cc7c9f6dddbe889a115
-  AWSS3: 31b24341477f8eaae01542900e2253e908eed1ee
+  AWSCognitoAuth: 467aabe80c53d007ab8ed83add183724c23d3976
+  AWSCognitoIdentityProviderASF: 749f58b75e69f7f0144b9d38539525562b843d34
+  AWSCore: 55c154ae27efc5c98bdc30a0eeea5a35d10a2ab5
+  AWSS3: 2272253b098d07803af8dd20ce6ce7302bcffb47
+  KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
 
-PODFILE CHECKSUM: 013af2ee22573044e1cd6f891aef0dfd4896eed8
+PODFILE CHECKSUM: 462e3a76e3196cbe34cd5fd1b4cd2652d5ab69b4
 
 COCOAPODS: 1.10.0

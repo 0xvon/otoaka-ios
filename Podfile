@@ -8,6 +8,7 @@ target 'Rocket' do
   # Pods for Rocket
   pod 'AWSCognitoAuth'
   pod 'AWSS3'
+  pod 'KeychainAccess'
 
   target 'RocketTests' do
     inherit! :search_paths
