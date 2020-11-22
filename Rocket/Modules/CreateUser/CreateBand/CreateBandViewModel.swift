@@ -42,7 +42,7 @@ class CreateBandViewModel {
                     }
                 }
             } catch let error {
-                self.outputHandler(.error(erorr))
+                self.outputHandler(.error(error))
             }
         }
     }
