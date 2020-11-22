@@ -16,9 +16,13 @@ final class AuthViewController: UIViewController, Instantiable {
         apiClient: dependencyProvider.apiClient,
         outputHander: { [dependencyProvider] output in
             switch output {
-            case .signin(let session, let isSignedup):
+            case .signin(let session):
                 guard let idToken = session.idToken else { return }
                 dependencyProvider.apiClient.login(with: idToken.tokenString)
+                DispatchQueue.main.async {
+                    self.signupStatus()
+                }
+            case .signupStatus(let isSignedup):
                 if isSignedup {
                     DispatchQueue.main.async {
                         self.getUser()
@@ -50,7 +54,11 @@ final class AuthViewController: UIViewController, Instantiable {
         super.init(nibName: nil, bundle: nil)
         
         self.dependencyProvider.auth.delegate = self
-        viewModel.signin()
+        if dependencyProvider.apiClient.isLoggedIn() {
+            self.signupStatus()
+        } else {
+            self.signin()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -66,6 +74,18 @@ final class AuthViewController: UIViewController, Instantiable {
         setup()
     }
     
+    func signin() {
+        viewModel.signin()
+    }
+    
+    func signupStatus() {
+        viewModel.getSignupStatus()
+    }
+    
+    func getUser() {
+        viewModel.getUser()
+    }
+    
     func setup() {
         self.view.backgroundColor = style.color.background.get()
         backgroundImageView.layer.opacity = 0.6
@@ -79,11 +99,7 @@ final class AuthViewController: UIViewController, Instantiable {
     }
     
     func signInButtonTapped() {
-        viewModel.signin()
-    }
-    
-    func getUser() {
-        viewModel.getUser()
+        signin()
     }
 }
 

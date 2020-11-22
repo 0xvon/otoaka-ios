@@ -27,6 +27,11 @@ class APIClient {
 
     func login(with idToken: String) {
         self.idToken = idToken
+        KeyChainClient().save(key: "ID_TOKEN", value: idToken)
+    }
+    
+    func isLoggedIn() -> Bool {
+        return self.idToken != nil
     }
 
     public func request<E: EndpointProtocol>(

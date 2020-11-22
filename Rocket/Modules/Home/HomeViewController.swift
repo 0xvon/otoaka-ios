@@ -30,7 +30,7 @@ final class HomeViewController: UITabBarController, Instantiable {
     func tab() {
         self.view.backgroundColor = style.color.background.get()
         
-        let bandViewController = BandViewController(dependencyProvider: dependencyProvider, input: ())
+        let bandViewController = BandViewController(dependencyProvider: dependencyProvider, input: self.input)
         let vc1 = UINavigationController(rootViewController: bandViewController)
         vc1.tabBarItem = UITabBarItem(title: "Home", image: UIImage(named: "musicIcon"), selectedImage: UIImage(named: "selectedMusicIcon"))
         vc1.navigationBar.tintColor = style.color.main.get()

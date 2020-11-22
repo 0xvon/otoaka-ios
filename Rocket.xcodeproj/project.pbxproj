@@ -74,6 +74,7 @@
 		D9CC529A253B2CAD0081ECF0 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9CC5299253B2CAD0081ECF0 /* AuthViewModel.swift */; };
 		D9F5A15D2569261F000D341D /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F5A15C2569261F000D341D /* APIClient.swift */; };
 		D9F5A16525694134000D341D /* S3Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F5A16425694134000D341D /* S3Client.swift */; };
+		D9F5A176256A181B000D341D /* KeyChainClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F5A175256A181B000D341D /* KeyChainClient.swift */; };
 		F2A300EC2543D4E200857227 /* ENV.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A300EB2543D4E200857227 /* ENV.swift */; };
 		F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71832539A36C001243D0 /* AppDelegate.swift */; };
 		F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2BA718C2539A36D001243D0 /* Assets.xcassets */; };
@@ -172,6 +173,7 @@
 		D9F5A15C2569261F000D341D /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		D9F5A16425694134000D341D /* S3Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = S3Client.swift; sourceTree = "<group>"; };
 		D9F5A1692569482D000D341D /* Rocket.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rocket.entitlements; sourceTree = "<group>"; };
+		D9F5A175256A181B000D341D /* KeyChainClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainClient.swift; sourceTree = "<group>"; };
 		E285B46102C9D0E64E152F80 /* Pods_Rocket_RocketUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rocket_RocketUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFF14A939688807DDE6A2620 /* Pods-RocketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RocketTests.debug.xcconfig"; path = "Target Support Files/Pods-RocketTests/Pods-RocketTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F2A300EB2543D4E200857227 /* ENV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ENV.swift; sourceTree = "<group>"; };
@@ -240,6 +242,7 @@
 				F2A300EB2543D4E200857227 /* ENV.swift */,
 				D90B5FF5253F0F2000E9B655 /* Style.swift */,
 				D9F5A16425694134000D341D /* S3Client.swift */,
+				D9F5A175256A181B000D341D /* KeyChainClient.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -857,6 +860,7 @@
 				D9578FD52556DCD200C6C00E /* PostViewController.swift in Sources */,
 				D951C37C25432CCA0010DB09 /* LiveDetailViewModel.swift in Sources */,
 				D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */,
+				D9F5A176256A181B000D341D /* KeyChainClient.swift in Sources */,
 				D951C3E8254918390010DB09 /* BandCell.swift in Sources */,
 				D90B5F30253BE12B00E9B655 /* Instantiable.swift in Sources */,
 				D951C3DA254910EF0010DB09 /* TrackCell.swift in Sources */,

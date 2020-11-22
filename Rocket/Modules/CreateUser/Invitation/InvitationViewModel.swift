@@ -11,7 +11,7 @@ import Endpoint
 class InvitationViewModel {
     enum Output {
         case joinGroup
-        case error(String)
+        case error(Error)
     }
     
     let apiClient: APIClient
@@ -27,19 +27,20 @@ class InvitationViewModel {
     func joinGroup(invitationCode: String?) {
         if let invitationCode = invitationCode {
             let req = JoinGroup.Request(invitationId: invitationCode)
-            
-            // FIXME
-            try! apiClient.request(JoinGroup.self, request: req) { result in
-                switch result {
-                case .success:
-                    self.outputHandler(.joinGroup)
-                case .failure(let error):
-                    // FIXME
-                    fatalError(String(describing: error))
-                }
+            do {
+                try apiClient.request(JoinGroup.self, request: req) { result in
+                    switch result {
+                    case .success:
+                        self.outputHandler(.joinGroup)
+                    case .failure(let error):
+                        self.outputHandler(.error(error))
+                    }
+                }    
+            } catch {
+                self.outputHandler(.error("request faild" as! Error))
             }
         } else {
-            outputHandler(.error("invitation code not found"))
+            outputHandler(.error("invitation code not found" as! Error))
         }
     }
     

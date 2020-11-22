@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Endpoint
 
 final class LiveViewController: UIViewController, Instantiable {
     
-    typealias Input = Void
+    typealias Input = User
+    var input: Input!
     
     lazy var viewModel = LiveViewModel(
         outputHander: { output in
@@ -30,6 +32,7 @@ final class LiveViewController: UIViewController, Instantiable {
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
+        self.input = input
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -59,7 +62,7 @@ final class LiveViewController: UIViewController, Instantiable {
     }
     
     @objc func tappedButton(sender: UIButton!) {
-        let vc = BandViewController(dependencyProvider: dependencyProvider, input: ())
+        let vc = BandViewController(dependencyProvider: dependencyProvider, input: self.input)
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -124,17 +127,3 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
         print("buy \(cellIndex) ticket")
     }
 }
-
-#if DEBUG && canImport(SwiftUI)
-import SwiftUI
-
-struct LiveViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        ViewControllerWrapper<LiveViewController>(
-            dependencyProvider: .make(),
-            input: ()
-        )
-    }
-}
-
-#endif

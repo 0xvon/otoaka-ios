@@ -49,10 +49,8 @@ final class BandViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
-            case .registerDeviceToken:
-                print("hello")
-            case .requestRemortNotification:
-                print("yo")
+            case .error(let error):
+                print(error)
             }
         }
     )
@@ -348,16 +346,9 @@ final class BandViewController: UIViewController, Instantiable {
             
             DispatchQueue.main.async {
                 UIApplication.shared.registerForRemoteNotifications()
-                self.viewModel.requestRemortNotification()
             }
         }
     }
-    
-//    func registerDeviceToken() {
-//        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { setting in
-//            setting.
-//        })
-//    }
     
     func createContents() {
         let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())

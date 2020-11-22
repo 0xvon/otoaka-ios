@@ -13,7 +13,7 @@ class CreateUserViewModel {
     enum Output {
         case artist(User)
         case fan(User)
-        case error(String)
+        case error(Error)
     }
     
     let apiClient: APIClient
@@ -30,13 +30,18 @@ class CreateUserViewModel {
     func signupAsFan(name: String, thumbnail: UIImage?) {
         self.s3Client.uploadImage(image: thumbnail) { [apiClient] (imageUrl, error) in
             let req = Signup.Request(name: name, biography: nil, thumbnailURL: imageUrl, role: .fan(Fan()))
-            try! apiClient.request(Signup.self, request: req) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.fan(res))
-                case .failure(let error):
-                    fatalError(String(describing: error))
+            
+            do {
+                try apiClient.request(Signup.self, request: req) { result in
+                    switch result {
+                    case .success(let res):
+                        self.outputHandler(.fan(res))
+                    case .failure(let error):
+                        self.outputHandler(.error(error))
+                    }
                 }
+            } catch {
+                self.outputHandler(.error("request faild" as! Error))
             }
         }
     }
@@ -44,13 +49,18 @@ class CreateUserViewModel {
     func signupAsArtist(name: String, thumbnail: UIImage?, part: String) {
         self.s3Client.uploadImage(image: thumbnail) { [apiClient] (imageUrl, error) in
             let req = Signup.Request(name: name, biography: nil, thumbnailURL: imageUrl, role: .artist(Artist(part: part)))
-            try! apiClient.request(Signup.self, request: req) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.artist(res))
-                case .failure(let error):
-                    fatalError(String(describing: error))
+            
+            do {
+                try apiClient.request(Signup.self, request: req) { result in
+                    switch result {
+                    case .success(let res):
+                        self.outputHandler(.artist(res))
+                    case .failure(let error):
+                        self.outputHandler(.error(error))
+                    }
                 }
+            } catch {
+                self.outputHandler(.error("request faild" as! Error))
             }
         }
     }

@@ -33,6 +33,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         return dependencyProvider.auth.application(app, open: url, options: options)
     }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let token = deviceToken.map { (byte: UInt8) in String(format: "%02.2hhx", byte) }.joined()
+        let req = RegisterDeviceToken.Request(deviceToken: token)
+        do {
+            try dependencyProvider.apiClient.request(RegisterDeviceToken.self, request: req) { result in
+                print(result)
+            }
+        } catch {
+            print("failed")
+        }
+    }
 
 //    // MARK: UISceneSession Lifecycle
 //

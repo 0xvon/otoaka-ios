@@ -11,7 +11,8 @@ import AWSCognitoAuth
 
 class AuthViewModel {
     enum Output {
-        case signin(AWSCognitoAuthUserSession, Bool)
+        case signin(AWSCognitoAuthUserSession)
+        case signupStatus(Bool)
         case getUser(User)
         case error(Error)
     }
@@ -35,30 +36,43 @@ class AuthViewModel {
                 self.outputHandler(.error("session not found" as! Error))
                 return
             }
-
-            // FIXME
-            try! apiClient.request(SignupStatus.self) { result in
+            
+            guard let idToken = session.idToken?.tokenString else {
+                self.outputHandler(.error("idToken not found" as! Error))
+                return
+            }
+            apiClient.login(with: idToken)
+            self.outputHandler(.signin(session))
+        }
+    }
+    
+    func getSignupStatus() {
+        do {
+            try apiClient.request(SignupStatus.self) { result in
                 switch result {
                 case .success(let res):
-                    self.outputHandler(.signin(session, res.isSignedup))
+                    self.outputHandler(.signupStatus(res.isSignedup))
                 case .failure(let error):
-                    // FIXME
-                    fatalError(String(describing: error))
+                    self.outputHandler(.error(error))
                 }
             }
+        } catch {
+            self.outputHandler(.error("request faild" as! Error))
         }
     }
     
     func getUser() {
-        // FIXME
-        try! apiClient.request(GetUserInfo.self) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.getUser(res))
-            case .failure(let error):
-                // FIXME
-                fatalError(String(describing: error))
+        do {
+            try apiClient.request(GetUserInfo.self) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.getUser(res))
+                case .failure(let error):
+                    self.outputHandler(.error(error))
+                }
             }
+        } catch {
+            self.outputHandler(.error("request faild" as! Error))
         }
     }
 }

@@ -12,7 +12,7 @@ import Endpoint
 class CreateBandViewModel {
     enum Output {
         case create(Endpoint.Group)
-        case error(String)
+        case error(Error)
     }
     
     let apiClient: APIClient
@@ -28,19 +28,21 @@ class CreateBandViewModel {
     func create(name: String, englishName: String?, biography: String?,
                 since: Date?, artwork: UIImage?, hometown: String?) {
         self.s3Client.uploadImage(image: artwork) { [apiClient] (imageUrl, error) in
-            if let error = error { self.outputHandler(.error(error)) }
+            if let error = error { self.outputHandler(.error(error as! Error)) }
             guard let imageUrl = imageUrl else { return }
             let req = CreateGroup.Request(name: name, englishName: englishName, biography: biography, since: since, artworkURL: URL(string: imageUrl), hometown: hometown)
 
-            // FIXME
-            try! apiClient.request(CreateGroup.self, request: req) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.create(res))
-                case .failure(let error):
-                    // FIXME
-                    fatalError(String(describing: error))
+            do {
+                try apiClient.request(CreateGroup.self, request: req) { result in
+                    switch result {
+                    case .success(let res):
+                        self.outputHandler(.create(res))
+                    case .failure(let error):
+                        self.outputHandler(.error(error))
+                    }
                 }
+            } catch {
+                self.outputHandler(.error("request faild" as! Error))
             }
         }
     }
