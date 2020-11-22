@@ -11,7 +11,7 @@ import AWSCognitoAuth
 
 final class InvitationViewController: UIViewController, Instantiable {
     
-    typealias Input = User
+    typealias Input = Void
     
     lazy var viewModel = InvitationViewModel(
         apiClient: dependencyProvider.apiClient,
@@ -30,14 +30,14 @@ final class InvitationViewController: UIViewController, Instantiable {
         }
     )
     
-    var dependencyProvider: DependencyProvider
+    var dependencyProvider: LoggedInDependencyProvider
     var input: Input!
     @IBOutlet weak var invitationView: TextFieldView!
     @IBOutlet weak var registerButtonView: Button!
     @IBOutlet weak var orLabel: UILabel!
     @IBOutlet weak var createBandButton: UIButton!
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
         
@@ -60,7 +60,7 @@ final class InvitationViewController: UIViewController, Instantiable {
     func setup() {
         self.view.backgroundColor = style.color.background.get()
         
-        switch input.role {
+        switch dependencyProvider.user.role {
         case .fan(_):
             orLabel.isHidden = true
             createBandButton.isHidden = true
@@ -105,7 +105,7 @@ final class InvitationViewController: UIViewController, Instantiable {
     private func register() {
         let invitationCode = invitationView.getText()
         
-        switch input.role {
+        switch dependencyProvider.user.role {
         case .artist(_):
             viewModel.joinGroup(invitationCode: invitationCode)
         case .fan(_):

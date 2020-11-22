@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ViewControllerWrapper<ViewController>: UIViewControllerRepresentable
 where ViewController: Instantiable, ViewController: UIViewController {
-    let dependencyProvider: DependencyProvider
+    let dependencyProvider: ViewController.Provider
     let input: ViewController.Input
 
     func makeUIViewController(context: Context) -> ViewController {

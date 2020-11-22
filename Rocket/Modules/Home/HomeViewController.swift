@@ -10,12 +10,12 @@ import AWSCognitoAuth
 import Endpoint
 
 final class HomeViewController: UITabBarController, Instantiable {
-    typealias Input = User
+    typealias Input = Void
     var input: Input!
     
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         super.init(nibName: nil, bundle: nil)
         
@@ -36,7 +36,7 @@ final class HomeViewController: UITabBarController, Instantiable {
         vc1.navigationBar.tintColor = style.color.main.get()
         vc1.navigationBar.barTintColor = .clear
         
-        let ticketViewController = TicketViewController(dependencyProvider: dependencyProvider, input: ())
+        let ticketViewController = TicketViewController(dependencyProvider: dependencyProvider.provider, input: ())
         let vc2 = UINavigationController(rootViewController: ticketViewController)
         vc2.tabBarItem = UITabBarItem(title: "Ticket", image: UIImage(named: "ticketIcon"), selectedImage: UIImage(named: "selectedTicketIcon"))
         vc2.navigationBar.tintColor = style.color.main.get()

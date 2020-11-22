@@ -10,7 +10,7 @@ import Foundation
 import Endpoint
 
 final class CreateBandViewController: UIViewController, Instantiable {
-    typealias Input = User
+    typealias Input = Void
     
     lazy var viewModel = CreateBandViewModel(
         apiClient: dependencyProvider.apiClient,
@@ -29,7 +29,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         }
     )
     
-    var dependencyProvider: DependencyProvider
+    var dependencyProvider: LoggedInDependencyProvider
     var input: Input!
     let hometowns = Components().prefectures
     let years = Components().years
@@ -46,7 +46,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
     private var hometownPicker: UIPickerView!
     private var yearPicker: UIPickerView!
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
         
