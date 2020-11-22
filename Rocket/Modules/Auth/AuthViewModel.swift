@@ -56,8 +56,8 @@ class AuthViewModel {
                     self.outputHandler(.error(error))
                 }
             }
-        } catch {
-            self.outputHandler(.error("request faild" as! Error))
+        } catch let error {
+            self.outputHandler(.error(error))
         }
     }
     
@@ -71,8 +71,8 @@ class AuthViewModel {
                     self.outputHandler(.error(error))
                 }
             }
-        } catch {
-            self.outputHandler(.error("request faild" as! Error))
+        } catch let error {
+            self.outputHandler(.error(error))
         }
     }
 }

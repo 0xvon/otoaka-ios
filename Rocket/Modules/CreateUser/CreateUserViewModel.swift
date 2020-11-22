@@ -40,8 +40,8 @@ class CreateUserViewModel {
                         self.outputHandler(.error(error))
                     }
                 }
-            } catch {
-                self.outputHandler(.error("request faild" as! Error))
+            } catch let error {
+                self.outputHandler(.error(error))
             }
         }
     }
@@ -59,8 +59,8 @@ class CreateUserViewModel {
                         self.outputHandler(.error(error))
                     }
                 }
-            } catch {
-                self.outputHandler(.error("request faild" as! Error))
+            } catch let error {
+                self.outputHandler(.error(error))
             }
         }
     }

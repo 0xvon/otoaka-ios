@@ -36,8 +36,8 @@ class InvitationViewModel {
                         self.outputHandler(.error(error))
                     }
                 }    
-            } catch {
-                self.outputHandler(.error("request faild" as! Error))
+            } catch let error {
+                self.outputHandler(.error(error))
             }
         } else {
             outputHandler(.error("invitation code not found" as! Error))
