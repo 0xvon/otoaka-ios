@@ -9,17 +9,17 @@ import Foundation
 import KeychainAccess
 
 class KeyChainClient {
-    let keyChain: Keychain
+    private let keyChain: Keychain
     
     init() {
         self.keyChain = Keychain(service: "dev.wall-of-death.Rocket")
     }
     
-    func save(key: String, value: String) {
+    public func save(key: String, value: String) {
         keyChain[key] = value
     }
     
-    func get(key: String) -> String? {
+    public func get(key: String) -> String? {
         do {
             let val = try keyChain.getString(key)
             return val
@@ -29,7 +29,7 @@ class KeyChainClient {
         }
     }
     
-    func delete(key: String) {
+    public func delete(key: String) {
         keyChain[key] = nil
     }
 }

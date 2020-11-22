@@ -70,8 +70,15 @@ class APIClient {
             }
 
             do {
-                let response: E.Response = try decoder.decode(E.Response.self, from: data)
-                callback(.success(response))
+                
+                if let httpResponse = response as? HTTPURLResponse {
+                    if (200...299).contains(httpResponse.statusCode) {
+                        let response: E.Response = try decoder.decode(E.Response.self, from: data)
+                        callback(.success(response))
+                    } else {
+                        callback(.failure("internal server error" as! Error))
+                    }
+                }
             } catch let error {
                 callback(.failure(error))
                 return

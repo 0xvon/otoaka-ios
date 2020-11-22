@@ -27,4 +27,20 @@ class BandViewModel {
         self.auth = auth
         self.outputHandler = outputHander
     }
+    
+    func getContents() {
+        
+    }
+    
+    func getLives() {
+        
+    }
+    
+    func getCharts() {
+        
+    }
+    
+    func getBands() {
+        
+    }
 }
