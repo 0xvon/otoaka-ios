@@ -25,9 +25,11 @@ class APIClient {
         self.session = session
     }
 
-    func login(with idToken: String) {
+    func login(with idToken: String) throws {
         self.idToken = idToken
-        KeyChainClient().save(key: "ID_TOKEN", value: idToken)
+        do {
+            try KeyChainClient().save(key: "ID_TOKEN", value: idToken)
+        }
     }
     
     func isLoggedIn() -> Bool {
@@ -76,7 +78,9 @@ class APIClient {
                         let response: E.Response = try decoder.decode(E.Response.self, from: data)
                         callback(.success(response))
                     } else {
-                        callback(.failure("internal server error" as! Error))
+                        let errorMessage = try decoder.decode(String.self, from: data)
+                        callback(.failure(APIError.invalidStatus("status: \(httpResponse.statusCode), message: \(errorMessage)")))
+                        print()
                     }
                 }
             } catch let error {

@@ -33,16 +33,20 @@ class AuthViewModel {
             }
             
             guard let session = session else {
-                self.outputHandler(.error("session not found" as! Error))
+                self.outputHandler(.error(ViewModelError.notFoundError("session not found")))
                 return
             }
             
             guard let idToken = session.idToken?.tokenString else {
-                self.outputHandler(.error("idToken not found" as! Error))
+                self.outputHandler(.error(ViewModelError.notFoundError("idToken not found")))
                 return
             }
-            apiClient.login(with: idToken)
-            self.outputHandler(.signin(session))
+            do {
+                try apiClient.login(with: idToken)
+                self.outputHandler(.signin(session))
+            } catch let error {
+                self.outputHandler(.error(error))
+            }
         }
     }
     

@@ -60,8 +60,12 @@ extension DependencyProvider {
         
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: "cognitoAuth")
         let auth = AWSCognitoAuth.init(forKey: "cognitoAuth")
-        let idToken: String? = KeyChainClient().get(key: "ID_TOKEN")
-        let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, idToken: idToken)
-        return DependencyProvider(auth: auth, apiClient: apiClient, s3Bucket: config.s3Bucket)
+        do {
+            let idToken: String? = try KeyChainClient().get(key: "ID_TOKEN")
+            let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, idToken: idToken)
+            return DependencyProvider(auth: auth, apiClient: apiClient, s3Bucket: config.s3Bucket)
+        } catch let error {
+            fatalError(error.localizedDescription)
+        }
     }
 }

@@ -18,7 +18,11 @@ final class AuthViewController: UIViewController, Instantiable {
             switch output {
             case .signin(let session):
                 guard let idToken = session.idToken else { return }
-                dependencyProvider.apiClient.login(with: idToken.tokenString)
+                do {
+                    try dependencyProvider.apiClient.login(with: idToken.tokenString)
+                } catch let error {
+                    print(error)
+                }
                 DispatchQueue.main.async {
                     self.signupStatus()
                 }
@@ -55,11 +59,7 @@ final class AuthViewController: UIViewController, Instantiable {
         super.init(nibName: nil, bundle: nil)
         
         self.dependencyProvider.auth.delegate = self
-        if dependencyProvider.apiClient.isLoggedIn() {
-            self.signupStatus()
-        } else {
-            self.signin()
-        }
+        self.signin()
     }
     
     override func viewWillAppear(_ animated: Bool) {

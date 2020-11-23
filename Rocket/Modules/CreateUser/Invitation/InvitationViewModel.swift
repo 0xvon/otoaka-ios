@@ -40,7 +40,7 @@ class InvitationViewModel {
                 self.outputHandler(.error(error))
             }
         } else {
-            outputHandler(.error("invitation code not found" as! Error))
+            outputHandler(.error(ViewModelError.notFoundError("invitation code not found")))
         }
     }
     
