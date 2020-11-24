@@ -111,6 +111,50 @@ struct Components {
         "2025",
         "2026",
     ]
+    
+    let liveStyles: [String] = [
+        "ワンマン",
+        "対バン",
+        "フェス",
+    ]
+    
+    let livehouses: [String] = [
+        "ビルボードライブ東京",
+        "TSUTAYA O-EAST",
+        "TSUTAYA O-Crest",
+        "SHIBUYA CYCLONE",
+        "Zepp DiverCity(TOKYO)",
+        "新宿BLAZE",
+        "品川プリンスホテル　ステラボール",
+        "東高円寺U.F.O.CLUB",
+        "立川BABEL",
+        "LIQUIDROOM",
+        "新宿PIT INN",
+        "原宿ASTRO HALL",
+        "大塚MEETS",
+        "新宿FACE",
+        "KOENJI HIGH",
+        "青山月見ル君想フ",
+        "新宿ロフト",
+        "ニコファーレ",
+        "WWW / WWW X",
+        "八王子RIPS",
+        "KIWA",
+        "新宿MARZ",
+        "西荻窪FLAT",
+        "東高円寺二万電圧",
+        "ジャズレストラン 六本木サテンドール",
+        "吉祥寺WARP",
+        "shinjuku ANTIKNOCK",
+        "duo MUSIC EXCHANGE",
+        "UNIT",
+        "南青山MANDALA",
+        "SHIBUYA-La.mama",
+        "BUSHBASH",
+        "Blue Note Tokyo",
+        "Zepp Tokyo",
+        "八王子MatchVox",
+    ]
 }
 
 extension UIImage {

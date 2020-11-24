@@ -217,6 +217,7 @@ extension LiveDetailHeaderView: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let group = input.groups[indexPath.section]
+        
         let group = Group(id: "1223", bandName: "MY FIRST STORY", image: "band")
         let cell = tableView.reuse(BandBannerCell.self, input: group, for: indexPath)
         cell.like { [weak self] in

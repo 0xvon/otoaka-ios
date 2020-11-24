@@ -284,18 +284,3 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
         print("see more")
     }
 }
-
-#if DEBUG && canImport(SwiftUI)
-import SwiftUI
-
-struct LiveDetailViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        ViewControllerWrapper<LiveDetailViewController>(
-            dependencyProvider: .make(),
-            input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時")
-        )
-    }
-}
-
-#endif
-

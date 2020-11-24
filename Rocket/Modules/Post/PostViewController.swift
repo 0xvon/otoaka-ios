@@ -9,7 +9,7 @@ import UIKit
 
 final class PostViewController: UIViewController, Instantiable {
     typealias Input = Void
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
     
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var sectionView: UIView!
@@ -24,7 +24,7 @@ final class PostViewController: UIViewController, Instantiable {
         case spotify
     }
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         
         super.init(nibName: nil, bundle: nil)

@@ -134,10 +134,6 @@ final class SearchViewController: UIViewController, Instantiable {
         calendarImageView.image = UIImage(named: "calendar")
         calendarView.addSubview(calendarImageView)
         
-//        dateTextFieldView = TextFieldView(input: dateFormatter.string(from: Date()))
-//        dateTextFieldView.translatesAutoresizingMaskIntoConstraints = false
-//        calendarView.addSubview(dateTextFieldView)
-        
         let datePicker = UIDatePicker()
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.date = Date()
@@ -145,9 +141,6 @@ final class SearchViewController: UIViewController, Instantiable {
         datePicker.addTarget(self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
         datePicker.tintColor = style.color.main.get()
         datePicker.backgroundColor = .clear
-//        datePicker.tintColor = style.color.main.get()
-//        datePicker.backgroundColor = style.color.background.get()
-//        dateTextFieldView.selectInputView(inputView: datePicker)
         
         calendarView.addSubview(datePicker)
         

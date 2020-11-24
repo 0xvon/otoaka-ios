@@ -17,7 +17,11 @@ class APIClient {
         encoder.dateEncodingStrategy = .iso8601
         return encoder
     }()
-    private let decoder: JSONDecoder = JSONDecoder()
+    private let decoder: JSONDecoder = {
+       let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }()
     
     init(baseUrl: URL, idToken: String?, session: URLSession = .shared) {
         self.baseURL = baseUrl

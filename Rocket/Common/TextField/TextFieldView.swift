@@ -112,6 +112,12 @@ extension TextFieldView: UITextFieldDelegate {
         underLine.backgroundColor = style.color.main.get()
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        underLineColor()
+        return true
+    }
+    
     func textFieldDidEndEditing(_ textField: UITextField) {
         underLineColor()
     }

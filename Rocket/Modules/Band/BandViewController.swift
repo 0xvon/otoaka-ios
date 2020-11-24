@@ -355,12 +355,13 @@ final class BandViewController: UIViewController, Instantiable {
     }
     
     func createContents() {
-        let vc = PostViewController(dependencyProvider: self.dependencyProvider.provider, input: ())
+        let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func createLive() {
-        print("create live")
+        let vc = CreateLiveViewController(dependencyProvider: self.dependencyProvider, input: ())
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func contentsPageButtonTapped(_ sender: Any) {

@@ -85,6 +85,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.cornerRadius = 60
         profileImageView.clipsToBounds = true
+        profileImageView.contentMode = .scaleAspectFill
         profileImageView.image = UIImage(named: "band")
         artworkInputView.addSubview(profileImageView)
         

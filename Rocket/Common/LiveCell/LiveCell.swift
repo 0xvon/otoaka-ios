@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Endpoint
 
 class LiveCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "LiveCell" }

@@ -76,6 +76,8 @@
 		D9F5A16525694134000D341D /* S3Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F5A16425694134000D341D /* S3Client.swift */; };
 		D9F5A176256A181B000D341D /* KeyChainClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F5A175256A181B000D341D /* KeyChainClient.swift */; };
 		D9F5A186256ABFB9000D341D /* ErrorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F5A185256ABFB9000D341D /* ErrorType.swift */; };
+		D9F5A18C256B95F7000D341D /* CreateLiveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F5A18B256B95F7000D341D /* CreateLiveViewController.swift */; };
+		D9F5A194256BD615000D341D /* CreateLiveViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F5A193256BD615000D341D /* CreateLiveViewModel.swift */; };
 		F2A300EC2543D4E200857227 /* ENV.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2A300EB2543D4E200857227 /* ENV.swift */; };
 		F2BA71842539A36C001243D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2BA71832539A36C001243D0 /* AppDelegate.swift */; };
 		F2BA718D2539A36D001243D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F2BA718C2539A36D001243D0 /* Assets.xcassets */; };
@@ -176,6 +178,8 @@
 		D9F5A1692569482D000D341D /* Rocket.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Rocket.entitlements; sourceTree = "<group>"; };
 		D9F5A175256A181B000D341D /* KeyChainClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyChainClient.swift; sourceTree = "<group>"; };
 		D9F5A185256ABFB9000D341D /* ErrorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorType.swift; sourceTree = "<group>"; };
+		D9F5A18B256B95F7000D341D /* CreateLiveViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateLiveViewController.swift; sourceTree = "<group>"; };
+		D9F5A193256BD615000D341D /* CreateLiveViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateLiveViewModel.swift; sourceTree = "<group>"; };
 		E285B46102C9D0E64E152F80 /* Pods_Rocket_RocketUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rocket_RocketUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFF14A939688807DDE6A2620 /* Pods-RocketTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RocketTests.debug.xcconfig"; path = "Target Support Files/Pods-RocketTests/Pods-RocketTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F2A300EB2543D4E200857227 /* ENV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ENV.swift; sourceTree = "<group>"; };
@@ -492,6 +496,7 @@
 		D9CC5295253B2C8A0081ECF0 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				D9F5A18A256B95E9000D341D /* CreateLive */,
 				D9578FD32556D89C00C6C00E /* Post */,
 				D951C423254A99EE0010DB09 /* Search */,
 				D951C40D254A7F0F0010DB09 /* Account */,
@@ -515,6 +520,15 @@
 				D90B5F29253BDF9600E9B655 /* AuthViewController.xib */,
 			);
 			path = Auth;
+			sourceTree = "<group>";
+		};
+		D9F5A18A256B95E9000D341D /* CreateLive */ = {
+			isa = PBXGroup;
+			children = (
+				D9F5A18B256B95F7000D341D /* CreateLiveViewController.swift */,
+				D9F5A193256BD615000D341D /* CreateLiveViewModel.swift */,
+			);
+			path = CreateLive;
 			sourceTree = "<group>";
 		};
 		E794C9777A6EA86E694A68D0 /* Pods */ = {
@@ -861,6 +875,7 @@
 				D951C37725432C640010DB09 /* LiveDetailViewController.swift in Sources */,
 				D90B5FD8253ECDB900E9B655 /* LiveViewController.swift in Sources */,
 				D9578FD52556DCD200C6C00E /* PostViewController.swift in Sources */,
+				D9F5A18C256B95F7000D341D /* CreateLiveViewController.swift in Sources */,
 				D951C37C25432CCA0010DB09 /* LiveDetailViewModel.swift in Sources */,
 				D96C7DC22540057800A9B2C6 /* TitleLabelView.swift in Sources */,
 				D9F5A176256A181B000D341D /* KeyChainClient.swift in Sources */,
@@ -899,6 +914,7 @@
 				D96C7DF225415BB900A9B2C6 /* LiveCell.swift in Sources */,
 				D90B5F6F253C70AC00E9B655 /* DependencyProvider.swift in Sources */,
 				D90B5F35253BE1D800E9B655 /* ReusableCell.swift in Sources */,
+				D9F5A194256BD615000D341D /* CreateLiveViewModel.swift in Sources */,
 				D9578FC9254EE9BB00C6C00E /* InvitationViewModel.swift in Sources */,
 				D951C414254A8E6D0010DB09 /* AccountViewModel.swift in Sources */,
 				D951C40F254A7F420010DB09 /* AccountViewController.swift in Sources */,
