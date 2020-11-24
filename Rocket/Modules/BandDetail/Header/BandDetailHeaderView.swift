@@ -72,6 +72,7 @@ final class BandDetailHeaderView: UIView {
         bandImageView.loadImageAsynchronously(url: input.artworkURL)
         bandImageView.contentMode = .scaleAspectFill
         bandImageView.layer.opacity = 0.6
+        bandImageView.clipsToBounds = true
         addSubview(bandImageView)
         
         horizontalScrollView = UIScrollView()

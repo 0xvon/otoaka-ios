@@ -19,6 +19,11 @@ final class LiveDetailHeaderView: UIView {
     var listen: ((Int) -> Void)?
     var like: ((Int) -> Void)?
     var pushToBandViewController: ((UIViewController) -> Void)?
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM月dd日 HH:mm"
+        return dateFormatter
+    }()
     
     private var horizontalScrollView: UIScrollView!
     private var liveInformationView: UIView!
@@ -59,8 +64,9 @@ final class LiveDetailHeaderView: UIView {
         
         liveImageView = UIImageView()
         liveImageView.translatesAutoresizingMaskIntoConstraints = false
-        liveImageView.image = UIImage(named: "live")
+        liveImageView.loadImageAsynchronously(url: input.live.artworkURL)
         liveImageView.contentMode = .scaleAspectFill
+        liveImageView.clipsToBounds = true
         liveImageView.layer.opacity = 0.6
         addSubview(liveImageView)
         
@@ -95,7 +101,14 @@ final class LiveDetailHeaderView: UIView {
         
         bandNameLabel = UILabel()
         bandNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        bandNameLabel.text = "masatojames, kateinoigakukun"
+        switch input.live.style {
+        case .oneman(_):
+            self.bandNameLabel.text = input.live.hostGroup.name
+        case .battle(let groups):
+            self.bandNameLabel.text = groups.map { $0.name }.joined(separator: ", ")
+        case .festival(let groups):
+            self.bandNameLabel.text = groups.map { $0.name }.joined(separator: ", ")
+        }
         bandNameLabel.font = style.font.regular.get()
         bandNameLabel.textColor = style.color.main.get()
         bandNameLabel.lineBreakMode = .byWordWrapping
@@ -104,7 +117,8 @@ final class LiveDetailHeaderView: UIView {
         bandNameLabel.sizeToFit()
         liveInformationView.addSubview(bandNameLabel)
         
-        dateBadgeView = BadgeView(input: (text: "明日18時", image: UIImage(named: "calendar")))
+        let date: String = (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
+        dateBadgeView = BadgeView(input: (text: date, image: UIImage(named: "calendar")))
         liveInformationView.addSubview(dateBadgeView)
         
         mapBadgeView = BadgeView(input: (text: "代々木公演", image: UIImage(named: "map")))
