@@ -361,7 +361,7 @@ final class BandViewController: UIViewController, Instantiable {
     
     func initializeItems() {
         viewModel.getLives()
-        viewModel.getBands()
+        viewModel.getGroups()
     }
     
     func requestNotification() {
@@ -496,7 +496,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView {
         case self.bandsTableView:
-            let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: ())
+            let band = self.bands[indexPath.section]
+            let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: band)
             self.navigationController?.pushViewController(vc, animated: true)
         case self.liveTableView:
             let live = self.lives[indexPath.section]

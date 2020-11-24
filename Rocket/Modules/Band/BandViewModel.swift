@@ -77,10 +77,6 @@ class BandViewModel {
         
     }
     
-    func getBands() {
-        
-    }
-    
     func reserveTicket(liveId: Live.ID) {
         let request = ReserveTicket.Request(liveId: liveId)
         

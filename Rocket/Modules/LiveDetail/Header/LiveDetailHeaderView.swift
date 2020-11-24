@@ -204,8 +204,8 @@ extension LiveDetailHeaderView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        let vc = BandDetailViewController(dependencyProvider: input.dependencyProvider, input: ())
+        let band = input.groups[indexPath.section]
+        let vc = BandDetailViewController(dependencyProvider: input.dependencyProvider, input: band)
         self.pushToBandViewController?(vc)
         tableView.deselectRow(at: indexPath, animated: true)
     }

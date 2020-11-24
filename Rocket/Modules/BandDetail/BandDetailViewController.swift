@@ -73,7 +73,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     
     func setup() {
         view.backgroundColor = style.color.background.get()
-        headerView.inject(input: self.dependencyProvider)
+        headerView.inject(input: input)
         
         likeButtonView.inject(input: (text: "10,000", image: UIImage(named: "heart")))
         likeButtonView.listen {

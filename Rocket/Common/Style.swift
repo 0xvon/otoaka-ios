@@ -175,6 +175,7 @@ extension UIImageView {
     func loadImageAsynchronously(url: URL?, defaultUIImage: UIImage? = nil) -> Void {
         
         guard let url = url else { self.image = defaultUIImage; return }
+        print("async!!!!")
         let path = url.absoluteString
         if let data = cache[path] {
             self.image = data
@@ -193,7 +194,8 @@ extension UIImageView {
                     }
                 }
             }
-            catch {
+            catch let error {
+                print(error)
                 DispatchQueue.main.async {
                     cache[path] = defaultUIImage
                     self.image = defaultUIImage

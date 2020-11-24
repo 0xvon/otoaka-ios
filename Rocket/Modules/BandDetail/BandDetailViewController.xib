@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -37,7 +37,7 @@
                                     </constraints>
                                 </view>
                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="vjU-mj-h0h">
-                                    <rect key="frame" x="16" y="262" width="248" height="48"/>
+                                    <rect key="frame" x="16" y="282" width="248" height="48"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L3a-GU-FLo" customClass="ReactionButtonView" customModule="Rocket" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="120" height="48"/>
@@ -54,14 +54,14 @@
                                     </subviews>
                                 </stackView>
                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="sQZ-gg-szN">
-                                    <rect key="frame" x="16" y="334" width="383" height="362"/>
+                                    <rect key="frame" x="16" y="354" width="383" height="362"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="362" id="hyx-qA-2x0"/>
                                     </constraints>
                                 </tableView>
                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HNk-Sr-seo">
-                                    <rect key="frame" x="16" y="720" width="382" height="262"/>
+                                    <rect key="frame" x="16" y="740" width="382" height="262"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="262" id="ONB-CW-LaD"/>
@@ -74,7 +74,7 @@
                                 <constraint firstItem="HNk-Sr-seo" firstAttribute="top" secondItem="sQZ-gg-szN" secondAttribute="bottom" constant="24" id="JXD-eH-819"/>
                                 <constraint firstItem="Y9D-z1-Lis" firstAttribute="top" secondItem="Kwn-rv-aqn" secondAttribute="top" id="QWM-b3-MRB"/>
                                 <constraint firstItem="Y9D-z1-Lis" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" id="RX8-34-Z9H"/>
-                                <constraint firstItem="vjU-mj-h0h" firstAttribute="top" secondItem="Y9D-z1-Lis" secondAttribute="bottom" constant="12" id="a9r-nL-Opy"/>
+                                <constraint firstItem="vjU-mj-h0h" firstAttribute="top" secondItem="Y9D-z1-Lis" secondAttribute="bottom" constant="32" id="a9r-nL-Opy"/>
                                 <constraint firstAttribute="trailing" secondItem="Y9D-z1-Lis" secondAttribute="trailing" id="dxt-oO-oKM"/>
                                 <constraint firstItem="HNk-Sr-seo" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" constant="16" id="f7s-xR-4hm"/>
                                 <constraint firstItem="sQZ-gg-szN" firstAttribute="top" secondItem="vjU-mj-h0h" secondAttribute="bottom" constant="24" id="gKM-Yt-Q2I"/>

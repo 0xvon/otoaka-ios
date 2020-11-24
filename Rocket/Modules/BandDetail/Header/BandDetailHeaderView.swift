@@ -6,11 +6,17 @@
 //
 
 import UIKit
+import Endpoint
 
 final class BandDetailHeaderView: UIView {
-    typealias Input = DependencyProvider
+    typealias Input = Group
     
     var input: Input!
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY年"
+        return dateFormatter
+    }()
     
     private var horizontalScrollView: UIScrollView!
     private var bandInformationView: UIView!
@@ -63,7 +69,7 @@ final class BandDetailHeaderView: UIView {
         
         bandImageView = UIImageView()
         bandImageView.translatesAutoresizingMaskIntoConstraints = false
-        bandImageView.image = UIImage(named: "jacket")
+        bandImageView.loadImageAsynchronously(url: input.artworkURL)
         bandImageView.contentMode = .scaleAspectFill
         bandImageView.layer.opacity = 0.6
         addSubview(bandImageView)
@@ -92,7 +98,7 @@ final class BandDetailHeaderView: UIView {
         
         bandNameLabel = UILabel()
         bandNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        bandNameLabel.text = "MY FIRST STORY"
+        bandNameLabel.text = input.name
         bandNameLabel.font = style.font.xlarge.get()
         bandNameLabel.textColor = style.color.main.get()
         bandNameLabel.lineBreakMode = .byWordWrapping
@@ -100,11 +106,11 @@ final class BandDetailHeaderView: UIView {
         bandNameLabel.adjustsFontSizeToFitWidth = false
         bandNameLabel.sizeToFit()
         bandInformationView.addSubview(bandNameLabel)
-        
-        dateBadgeView = BadgeView(input: (text: "2011年", image: UIImage(named: "calendar")))
+        let startYear: String = (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"
+        dateBadgeView = BadgeView(input: (text: startYear, image: UIImage(named: "calendar")))
         bandInformationView.addSubview(dateBadgeView)
         
-        mapBadgeView = BadgeView(input: (text: "東京", image: UIImage(named: "map")))
+        mapBadgeView = BadgeView(input: (text: input.hometown ?? "不明", image: UIImage(named: "map")))
         bandInformationView.addSubview(mapBadgeView)
         
         labelBadgeView = BadgeView(input: (text: "Intact Records", image: UIImage(named: "record")))
@@ -210,7 +216,7 @@ final class BandDetailHeaderView: UIView {
         biographyTextView.backgroundColor = .clear
         biographyTextView.font = style.font.regular.get()
         biographyView.addSubview(biographyTextView)
-        biographyTextView.text = "Kid'z(Dr.) / Hiro(Vo.) / Nob(Ba.) / Teru(Gu.) (L→R)\n\n2011年夏、東京渋谷で結成。\n\n2012年4月に1st FULL AL「MY FIRST STORY」でデビュー以降、確かな楽曲、ライブパフォーマンスが話題を呼び、全国の大型フェス出演や海外アーティストとの共演も数多く務め、着実に実力を付けた。\n\n2016年 4th FULL AL「ANTITHESE」をリリース。自身最高位であるオリコンウィークリー初登場４位を記録し、そのアルバムを携え、日本全国47都道府県を回るツアー。最終公演は日本武道館にて開催し、12,000人を動員しSOLD OUT。\n\n2017年''MMA'' TOURを開催。その最終公演として12月千葉 幕張メッセ 国際展示場9～11ホールにて開催し、外国人奏者による全曲フルオーケストラコンサートで、18,000人のオーディエンスは驚愕した。\n\n2018年、S･S･S TOURとして全国ライブハウスを回り、大阪、福岡、仙台、名古屋にて初のホールツアー。最終公演はこちらも初となる横浜アリーナ2days公演を行った。\n\n2019年、 「MY FIRST STORY TOUR 2019」として、ライブハウス・ホール編に加え、神戸ワールド記念ホール・さいたまスーパーアリーナにてアリーナツアーを開催。\n\nそして2020年、「MY FIRST STORY TOUR 2020」の開催が発表された。今年もライブハウス・ホールに加え、ファイナルシリーズとして初の東名阪3都市でのアリーナツアーが決定！\n\n絶えず進化を遂げる孤高のロックバンドMY FIRST STORYの躍進を見逃すわけにはいかないだろう。"
+        biographyTextView.text = input.biography
         
         let constraints = [
             topAnchor.constraint(equalTo: contentView.topAnchor),

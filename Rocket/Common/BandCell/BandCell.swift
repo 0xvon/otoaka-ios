@@ -22,7 +22,7 @@ final class BandCell: UITableViewCell, ReusableCell {
     
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YY年"
+        dateFormatter.dateFormat = "YYYY年"
         return dateFormatter
     }()
     
