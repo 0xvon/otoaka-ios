@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Endpoint
 
 final class LiveDetailHeaderView: UIView {
     typealias Input = (
@@ -191,7 +192,7 @@ extension LiveDetailHeaderView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 10
+        return input.groups.count
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -216,9 +217,7 @@ extension LiveDetailHeaderView: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let group = input.groups[indexPath.section]
-        
-        let group = Group(id: "1223", bandName: "MY FIRST STORY", image: "band")
+        let group = input.groups[indexPath.section]
         let cell = tableView.reuse(BandBannerCell.self, input: group, for: indexPath)
         cell.like { [weak self] in
             self?.like?(indexPath.section)

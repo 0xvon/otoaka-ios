@@ -172,10 +172,10 @@ extension UIImage {
 var cache: [String: UIImage] = NSMutableDictionary() as! [String : UIImage]
 
 extension UIImageView {
-    func loadImageAsynchronously(path: String?, defaultUIImage: UIImage? = nil) -> Void {
+    func loadImageAsynchronously(url: URL?, defaultUIImage: UIImage? = nil) -> Void {
         
-        guard let path = path else { self.image = defaultUIImage; return }
-        
+        guard let url = url else { self.image = defaultUIImage; return }
+        let path = url.absoluteString
         if let data = cache[path] {
             self.image = data
             return;
@@ -183,8 +183,7 @@ extension UIImageView {
         
         DispatchQueue.global().async {
             do {
-                let url: URL? = URL(string: path)
-                let imageData: Data? = try Data(contentsOf: url!)
+                let imageData: Data? = try Data(contentsOf: url)
                 DispatchQueue.main.async { [weak self] in
                     if let data = imageData {
                         cache[path] = UIImage(data: data)

@@ -34,6 +34,10 @@ final class BandViewController: UIViewController, Instantiable {
     private var bandsTableView: UITableView!
     private var iconMenu: UIBarButtonItem!
     
+    var lives: [Live] = []
+//    var contents = []
+    var bands: [Group] = []
+    
     private var isOpened: Bool = false
     private var creationView: UIView!
     private var creationViewHeightConstraint: NSLayoutConstraint!
@@ -49,6 +53,23 @@ final class BandViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
+            case .getLives(let lives):
+                DispatchQueue.main.async {
+                    self.lives = lives
+                    self.liveTableView.reloadData()
+                }
+            case .getBands(let groups):
+                DispatchQueue.main.async {
+                    self.bands = groups
+                    self.bandsTableView.reloadData()
+                }
+            case .reserveTicket(let ticket):
+                DispatchQueue.main.async {
+                    if let index = self.lives.firstIndex(where: {$0.id == ticket.live.id}) {
+                        self.lives.remove(at: index)
+                    }
+                    self.liveTableView.reloadData()
+                }
             case .error(let error):
                 print(error)
             }
@@ -210,6 +231,7 @@ final class BandViewController: UIViewController, Instantiable {
             iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
         ]
         NSLayoutConstraint.activate(constraint)
+        initializeItems()
     }
     
     private func setupCreation() {
@@ -281,7 +303,6 @@ final class BandViewController: UIViewController, Instantiable {
         
         creationView.addConstraints(creationButtonConstraintItems)
         
-        
         let constraints = [
             creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
             creationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100),
@@ -336,6 +357,11 @@ final class BandViewController: UIViewController, Instantiable {
             
             creationViewHeightConstraint.constant = 60
         }
+    }
+    
+    func initializeItems() {
+        viewModel.getLives()
+        viewModel.getBands()
     }
     
     func requestNotification() {
@@ -401,7 +427,18 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 10
+        switch tableView {
+        case self.contentsTableView:
+            return 10
+        case self.liveTableView:
+            return self.lives.count
+        case self.chartsTableView:
+            return 10
+        case self.bandsTableView:
+            return self.bands.count
+        default:
+            return 10
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -435,7 +472,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
             return cell
         case self.liveTableView:
-            let cell = tableView.reuse(LiveCell.self, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"), for: indexPath)
+            let live = self.lives[indexPath.section]
+            let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
             cell.listen { [weak self] in
                 self?.listenButtonTapped(cellIndex: indexPath.section)
             }
@@ -447,7 +485,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.reuse(TrackCell.self, input: (), for: indexPath)
             return cell
         case self.bandsTableView:
-            let cell = tableView.reuse(BandCell.self, input: (), for: indexPath)
+            let band = self.bands[indexPath.section]
+            let cell = tableView.reuse(BandCell.self, input: band, for: indexPath)
             return cell
         default:
             return UITableViewCell()
@@ -460,7 +499,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: ())
             self.navigationController?.pushViewController(vc, animated: true)
         case self.liveTableView:
-            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"))
+            let live = self.lives[indexPath.section]
+            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
         default:
             print("hello")
@@ -473,7 +513,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func buyTicketButtonTapped(cellIndex: Int) {
-        print("buy ticket")
+        let live = self.lives[cellIndex]
+        viewModel.reserveTicket(liveId: live.id)
     }
 }
 

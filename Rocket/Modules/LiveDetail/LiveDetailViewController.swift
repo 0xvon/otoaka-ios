@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Endpoint
 
 final class LiveDetailViewController: UIViewController, Instantiable {
     

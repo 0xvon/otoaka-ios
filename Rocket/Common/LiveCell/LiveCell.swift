@@ -13,6 +13,11 @@ class LiveCell: UITableViewCell, ReusableCell {
 
     typealias Input = Live
     var input: Input!
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM月dd日 HH:mm"
+        return dateFormatter
+    }()
     
     @IBOutlet weak var liveTitleLabel: UILabel!
     @IBOutlet weak var bandsLabel: UILabel!
@@ -24,10 +29,6 @@ class LiveCell: UITableViewCell, ReusableCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(named: "ticket")))
-        listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
-        dateView.inject(input: (text: "明日18時", image: UIImage(named: "calendar")))
-        placeView.inject(input: (text: "代々木公園", image: UIImage(named: "map")))
     }
     
     func inject(input: Live) {
@@ -41,7 +42,7 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.layer.borderColor = style.color.main.get().cgColor
         self.layer.cornerRadius = 10        
         
-        self.liveTitleLabel.text = "BANGOHAN TOUR 2020 ~今日の夜はなまたまごとライスと米~"
+        self.liveTitleLabel.text = input.title
         self.liveTitleLabel.font = style.font.xlarge.get()
         self.liveTitleLabel.textColor = style.color.main.get()
         self.liveTitleLabel.backgroundColor = .clear
@@ -50,7 +51,14 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.liveTitleLabel.adjustsFontSizeToFitWidth = false
         self.liveTitleLabel.sizeToFit()
 
-        self.bandsLabel.text = "masatojames, kateinoigakukun"
+        switch input.style {
+        case .oneman(_):
+            self.bandsLabel.text = input.hostGroup.name
+        case .battle(let groups):
+            self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
+        case .festival(let groups):
+            self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
+        }
         self.bandsLabel.font = style.font.regular.get()
         self.bandsLabel.textColor = style.color.main.get()
         self.bandsLabel.lineBreakMode = .byWordWrapping
@@ -58,9 +66,16 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.bandsLabel.adjustsFontSizeToFitWidth = false
         self.bandsLabel.sizeToFit()
         
-        self.thumbnailView.image = UIImage(named: "live")
+        self.thumbnailView.loadImageAsynchronously(url: input.artworkURL)
         self.thumbnailView.contentMode = .scaleAspectFill
         self.thumbnailView.layer.opacity = 0.6
+        
+        let date: String = (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
+        
+        buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(named: "ticket")))
+        listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
+        dateView.inject(input: (text: date, image: UIImage(named: "calendar")))
+        placeView.inject(input: (text: "代々木公園", image: UIImage(named: "map")))
     }
     
     override func prepareForReuse() {

@@ -7,10 +7,12 @@
 
 import Foundation
 import UIKit
+import Endpoint
 
 final class TicketViewController: UIViewController, Instantiable {
     
     typealias Input = Void
+    let lives: [Live] = []
     
     var dependencyProvider: DependencyProvider!
     
@@ -43,7 +45,7 @@ final class TicketViewController: UIViewController, Instantiable {
 
 extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 10
+        return self.lives.count
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -51,7 +53,8 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.reuse(LiveCell.self, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"), for: indexPath)
+        let live = self.lives[indexPath.section]
+        let cell = tableView.reuse(LiveCell.self, input:live, for: indexPath)
         cell.listen { [weak self] in
             self?.listenButtonTapped(cellIndex: indexPath.section)
         }
@@ -86,7 +89,8 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"))
+        let live = self.lives[indexPath.section]
+        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }

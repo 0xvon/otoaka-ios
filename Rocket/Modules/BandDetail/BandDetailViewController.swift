@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import Endpoint
 
 final class BandDetailViewController: UIViewController, Instantiable {
-    typealias Input = Void
+    typealias Input = Group
     
     var dependencyProvider: DependencyProvider!
     var input: Input
+    var lives: [Live] = []
+    var isLiked: Bool = false
     
     @IBOutlet weak var headerView: BandDetailHeaderView!
     @IBOutlet weak var likeButtonView: ReactionButtonView!
@@ -28,6 +31,28 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private var createShareView: CreateButton!
     private var createShareViewBottomConstraint: NSLayoutConstraint!
     private var creationButtonConstraintItems: [NSLayoutConstraint] = []
+    
+    lazy var viewModel = BandDetailViewModel(
+        apiClient: dependencyProvider.apiClient,
+        auth: dependencyProvider.auth,
+        group: self.input,
+        outputHander: { output in
+            switch output {
+            case .follow:
+                DispatchQueue.main.async {
+                    self.isLiked.toggle()
+                    self.likeButtonColor()
+                }
+            case .unfollow:
+                DispatchQueue.main.async {
+                    self.isLiked.toggle()
+                    self.likeButtonColor()
+                }
+            case .error(let error):
+                print(error)
+            }
+        }
+    )
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -205,8 +230,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
         print("create share")
     }
     
+    func likeButtonColor() {
+        
+    }
+    
     private func likeButtonTapped() {
-        print("like")
+        if self.isLiked {
+            viewModel.unfollowGroup()
+        } else {
+            viewModel.followGroup()
+        }
     }
     
     private func commentButtonTapped() {
@@ -220,7 +253,7 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return min(1, self.lives.count)
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -278,7 +311,8 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tableView {
         case self.liveTableView:
-            let cell = tableView.reuse(LiveCell.self, input: Live(id: "xxx", title: "cxx", type: .battles, host_id: "xxx", open_at: "xx:xx", start_at: "xx:xx", end_at: "xx:xx"), for: indexPath)
+            let live = self.lives[indexPath.section]
+            let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
             return cell
         case self.contentsTableView:
             let cell = tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
@@ -291,7 +325,8 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView {
         case self.liveTableView:
-            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: Live(id: "123", title: "BANGOHAN TOUR 2020", type: .battles, host_id: "12345", open_at: "明日", start_at: "12時", end_at: "14時"))
+            let live = self.lives[indexPath.section]
+            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
         default:
             print("hello")

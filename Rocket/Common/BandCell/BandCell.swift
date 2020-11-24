@@ -6,9 +6,10 @@
 //
 
 import UIKit
+import Endpoint
 
 final class BandCell: UITableViewCell, ReusableCell {
-    typealias Input = Void
+    typealias Input = Group
     var input: Input!
     static var reusableIdentifier: String { "BandCell" }
     
@@ -19,6 +20,12 @@ final class BandCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var hometownBadgeView: BadgeView!
     @IBOutlet weak var jacketImageView: UIImageView!
     
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YY年"
+        return dateFormatter
+    }()
+    
     func inject(input: Input) {
         self.input = input
         setup()
@@ -27,21 +34,21 @@ final class BandCell: UITableViewCell, ReusableCell {
     func setup() {
         backgroundColor = style.color.background.get()
         
-        jacketImageView.image = UIImage(named: "jacket")
+        jacketImageView.loadImageAsynchronously(url: input.artworkURL)
         jacketImageView.layer.opacity = 0.6
         jacketImageView.layer.cornerRadius = 16
         jacketImageView.layer.borderWidth = 1
         jacketImageView.layer.borderColor = style.color.main.get().cgColor
         jacketImageView.clipsToBounds = true
         
-        bandName.text = "MY FIRST STORY"
+        bandName.text = input.name
         bandName.font = style.font.xlarge.get()
         bandName.textColor = style.color.main.get()
         
         productionBadgeView.inject(input: (text: "Japan Music Systems", image: UIImage(named: "production")))
         labelBadgeView.inject(input: (text: "Intact Records", image: UIImage(named: "record")))
-        yearBadgeView.inject(input: (text: "2011年", image: UIImage(named: "calendar")))
-        hometownBadgeView.inject(input: (text: "東京都", image: UIImage(named: "map")))
-        
+        let startYear: String = (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"
+        yearBadgeView.inject(input: (text: startYear, image: UIImage(named: "calendar")))
+        hometownBadgeView.inject(input: (text: input.hometown ?? "不明", image: UIImage(named: "map")))
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Endpoint
 
 class BandBannerCell: UITableViewCell, ReusableCell {
     
@@ -37,7 +38,7 @@ class BandBannerCell: UITableViewCell, ReusableCell {
         bandImageView.layer.borderColor = style.color.main.get().cgColor
         bandImageView.clipsToBounds = true
         
-        bandNameLabel.text = "MY FIRST STORY"
+        bandNameLabel.text = input.name
         bandNameLabel.font = style.font.large.get()
         bandNameLabel.textColor = style.color.main.get()
         bandNameLabel.lineBreakMode = .byWordWrapping
