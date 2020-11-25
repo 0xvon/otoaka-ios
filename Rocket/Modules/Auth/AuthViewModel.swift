@@ -11,7 +11,7 @@ import AWSCognitoAuth
 
 class AuthViewModel {
     enum Output {
-        case signin(AWSCognitoAuthUserSession)
+        case signin
         case signupStatus(Bool)
         case getUser(User)
         case error(Error)
@@ -27,27 +27,7 @@ class AuthViewModel {
     }
     
     func signin() {
-        auth.getSession { [apiClient] (session: AWSCognitoAuthUserSession?, error: Error?) in
-            if let error = error {
-                self.outputHandler(.error(error))
-            }
-            
-            guard let session = session else {
-                self.outputHandler(.error(ViewModelError.notFoundError("session not found")))
-                return
-            }
-            
-            guard let idToken = session.idToken?.tokenString else {
-                self.outputHandler(.error(ViewModelError.notFoundError("idToken not found")))
-                return
-            }
-            do {
-                try apiClient.login(with: idToken)
-                self.outputHandler(.signin(session))
-            } catch let error {
-                self.outputHandler(.error(error))
-            }
-        }
+        self.outputHandler(.signin)
     }
     
     func getSignupStatus() {

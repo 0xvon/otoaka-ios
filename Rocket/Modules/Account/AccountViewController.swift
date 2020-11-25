@@ -123,7 +123,7 @@ final class AccountViewController: UIViewController, Instantiable {
     }
     
     private func logout() {
-        print("logout")
+        dependencyProvider.auth.signOutLocally()
     }
 }
 

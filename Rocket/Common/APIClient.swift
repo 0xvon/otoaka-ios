@@ -8,9 +8,13 @@
 import Endpoint
 import Foundation
 
+protocol APITokenProvider {
+    func provideIdToken(_: @escaping (Result<String, Error>) -> Void)
+}
+
 class APIClient {
     private let baseURL: URL
-    private var idToken: String?
+    private let tokenProvider: APITokenProvider
     private let session: URLSession
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
@@ -23,39 +27,46 @@ class APIClient {
         return decoder
     }()
     
-    init(baseUrl: URL, idToken: String?, session: URLSession = .shared) {
+    init(baseUrl: URL, tokenProvider: APITokenProvider, session: URLSession = .shared) {
         self.baseURL = baseUrl
-        self.idToken = idToken
+        self.tokenProvider = tokenProvider
         self.session = session
     }
 
-    func login(with idToken: String) throws {
-        self.idToken = idToken
-        do {
-            try KeyChainClient().save(key: "ID_TOKEN", value: idToken)
-        }
-    }
-    
-    func isLoggedIn() -> Bool {
-        return self.idToken != nil
-    }
-
     public func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
-        uri: E.URI = E.URI(),
+        uri: E.URI = E.URI(), withToken: Bool = true,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) throws where E.Request == Empty {
-        try request(E.self, request: Empty(), uri: uri, callback: callback)
+        try request(E.self, request: Empty(), uri: uri, withToken: withToken, callback: callback)
     }
 
     public func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
-        request: E.Request, uri: E.URI = E.URI(),
+        request: E.Request, uri: E.URI = E.URI(), withToken: Bool = true,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) throws {
         let url = try uri.encode(baseURL: baseURL)
+        if withToken {
+            tokenProvider.provideIdToken { result in
+                switch result {
+                case .success(let idToken):
+                    self.request(endpoint, request: request, url: url, idToken: idToken, callback: callback)
+                case .failure(let error):
+                    callback(.failure(error))
+                }
+            }
+        } else {
+            self.request(endpoint, request: request, url: url, idToken: nil, callback: callback)
+        }
+    }
+
+    private func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        request: E.Request, url: URL, idToken: String?,
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    ) {
         print(url)
-        
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = E.method.rawValue
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")

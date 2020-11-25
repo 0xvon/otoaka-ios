@@ -16,13 +16,7 @@ final class AuthViewController: UIViewController, Instantiable {
         apiClient: dependencyProvider.apiClient,
         outputHander: { [dependencyProvider] output in
             switch output {
-            case .signin(let session):
-                guard let idToken = session.idToken else { return }
-                do {
-                    try dependencyProvider.apiClient.login(with: idToken.tokenString)
-                } catch let error {
-                    print(error)
-                }
+            case .signin:
                 DispatchQueue.main.async {
                     self.signupStatus()
                 }

@@ -60,12 +60,24 @@ extension DependencyProvider {
         
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: "cognitoAuth")
         let auth = AWSCognitoAuth.init(forKey: "cognitoAuth")
-        do {
-            let idToken: String? = try KeyChainClient().get(key: "ID_TOKEN")
-            let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, idToken: idToken)
-            return DependencyProvider(auth: auth, apiClient: apiClient, s3Bucket: config.s3Bucket)
-        } catch let error {
-            fatalError(error.localizedDescription)
+        let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: auth)
+        return DependencyProvider(auth: auth, apiClient: apiClient, s3Bucket: config.s3Bucket)
+    }
+}
+
+extension AWSCognitoAuth: APITokenProvider {
+    enum Error: Swift.Error {
+        case unexpectedGetSessionResult
+    }
+    func provideIdToken(_ callback: @escaping (Result<String, Swift.Error>) -> Void) {
+        getSession { (session, error) in
+            if let session = session, let idToken = session.idToken {
+                callback(.success(idToken.tokenString))
+            } else if let error = error {
+                callback(.failure(error))
+            } else {
+                callback(.failure(Error.unexpectedGetSessionResult))
+            }
         }
     }
 }
