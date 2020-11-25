@@ -428,7 +428,7 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
         case self.livehousePickerView:
             return livehouses[row]
         case self.partnerPickerView:
-            return partnerGroups[row].name
+            return partnersChoises[row].name
         default:
             return "yo"
         }
@@ -443,7 +443,7 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
         case self.livehousePickerView:
             return livehouses.count
         case self.partnerPickerView:
-            return partnerGroups.count
+            return partnersChoises.count
         default:
             return 1
         }

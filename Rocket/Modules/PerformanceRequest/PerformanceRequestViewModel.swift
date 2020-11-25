@@ -12,6 +12,7 @@ import AWSCognitoAuth
 class PerformanceRequestViewModel {
     enum Output {
         case getRequests([PerformanceRequest])
+        case replyRequest(Int)
         case error(Error)
     }
     
@@ -38,6 +39,23 @@ class PerformanceRequestViewModel {
                 switch result {
                 case .success(let res):
                     self.outputHandler(.getRequests(res.items))
+                case .failure(let error):
+                    self.outputHandler(.error(error))
+                }
+            }
+        } catch let error {
+            self.outputHandler(.error(error))
+        }
+    }
+    
+    func replyRequest(requestId: PerformanceRequest.ID , accept: Bool, cellIndex: Int) {
+        let req = ReplyPerformanceRequest.Request(requestId: requestId, reply: accept ? .accept : .deny)
+        
+        do {
+            try apiClient.request(ReplyPerformanceRequest.self, request: req) { result in
+                switch result {
+                case .success(_):
+                    self.outputHandler(.replyRequest(cellIndex))
                 case .failure(let error):
                     self.outputHandler(.error(error))
                 }

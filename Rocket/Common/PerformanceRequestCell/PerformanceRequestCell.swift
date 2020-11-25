@@ -51,11 +51,11 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
         liveArtworkImageView.clipsToBounds = true
         
         bandImageView.loadImageAsynchronously(url: input.live.hostGroup.artworkURL)
-        liveArtworkImageView.contentMode = .scaleAspectFill
-        liveArtworkImageView.layer.cornerRadius = 30
-        liveArtworkImageView.clipsToBounds = true
+        bandImageView.contentMode = .scaleAspectFill
+        bandImageView.layer.cornerRadius = 30
+        bandImageView.clipsToBounds = true
         
-        hostGroupNameLabel.text = input.live.hostGroup.name
+        hostGroupNameLabel.text = "\(input.live.hostGroup.name)から"
         hostGroupNameLabel.font = style.font.regular.get()
         hostGroupNameLabel.textColor = style.color.main.get()
         hostGroupNameLabel.backgroundColor = .clear
