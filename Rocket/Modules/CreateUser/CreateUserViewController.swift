@@ -73,10 +73,6 @@ final class CreateUserViewController: UIViewController, Instantiable {
         setup()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-    }
-    
     func setup() {
         self.view.backgroundColor = style.color.background.get()
         

@@ -90,7 +90,12 @@ final class BandViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        setupCreation()
+        switch dependencyProvider.user.role {
+        case .artist(_):
+            setupCreation()
+        case .fan(_):
+            print()
+        }
         requestNotification()
     }
     

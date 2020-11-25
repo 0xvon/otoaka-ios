@@ -47,9 +47,9 @@ struct style {
         func get() -> UIFont {
             switch self {
             case .xlarge:
-                return UIFont.systemFont(ofSize: CGFloat(26), weight: UIFont.Weight(500))
+                return UIFont.systemFont(ofSize: CGFloat(22), weight: UIFont.Weight(500))
             case .large:
-                return UIFont.systemFont(ofSize: CGFloat(20), weight: UIFont.Weight(300))
+                return UIFont.systemFont(ofSize: CGFloat(18), weight: UIFont.Weight(300))
             case .regular:
                 return UIFont.systemFont(ofSize: CGFloat(14), weight: UIFont.Weight(100))
             case .small:
