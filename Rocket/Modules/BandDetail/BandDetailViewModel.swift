@@ -29,34 +29,34 @@ class BandDetailViewModel {
     }
     
     func followGroup() {
-//        let req = FollowGroup.Request(id: self.group.id)
-//        do {
-//            try apiClient.request(FollowGroup.self, request: req) { result in
-//                switch result {
-//                case .success(let res):
-//                    self.outputHandler(.follow)
-//                case .failure(let error):
-//                    self.outputHandler(.error(error))
-//                }
-//            }
-//        } catch let error {
-//            self.outputHandler(.error(error))
-//        }
+        let req = FollowGroup.Request(groupId: self.group.id)
+        do {
+            try apiClient.request(FollowGroup.self, request: req) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.follow)
+                case .failure(let error):
+                    self.outputHandler(.error(error))
+                }
+            }
+        } catch let error {
+            self.outputHandler(.error(error))
+        }
     }
     
     func unfollowGroup() {
-//        let req = UnfollowGroup.Request(id: self.group.id)
-//        do {
-//            try apiClient.request(UnfollowGroup.self, request: req) { result in
-//                switch result {
-//                case .success(let res):
-//                    self.outputHandler(.follow)
-//                case .failure(let error):
-//                    self.outputHandler(.error(error))
-//                }
-//            }
-//        } catch let error {
-//            self.outputHandler(.error(error))
-//        }
+        let req = UnfollowGroup.Request(groupId: self.group.id)
+        do {
+            try apiClient.request(UnfollowGroup.self, request: req) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.follow)
+                case .failure(let error):
+                    self.outputHandler(.error(error))
+                }
+            }
+        } catch let error {
+            self.outputHandler(.error(error))
+        }
     }
 }

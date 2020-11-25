@@ -14,11 +14,11 @@ final class TicketViewController: UIViewController, Instantiable {
     typealias Input = Void
     let lives: [Live] = []
     
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
     
     @IBOutlet weak var ticketsTableView: UITableView!
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         
         super.init(nibName: nil, bundle: nil)
@@ -103,17 +103,3 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
         print("buy \(cellIndex) ticket")
     }
 }
-
-#if DEBUG && canImport(SwiftUI)
-import SwiftUI
-
-struct TicketViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        ViewControllerWrapper<TicketViewController>(
-            dependencyProvider: .make(),
-            input: ()
-        )
-    }
-}
-
-#endif

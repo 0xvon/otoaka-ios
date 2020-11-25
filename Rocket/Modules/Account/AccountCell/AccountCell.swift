@@ -11,7 +11,8 @@ class AccountCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "AccountCell" }
     typealias Input = (
         title: String,
-        image: UIImage?
+        image: UIImage?,
+        hasNotif: Bool
     )
     var input: Input!
     
@@ -36,7 +37,16 @@ class AccountCell: UITableViewCell, ReusableCell {
         itemTitleLabel.textColor = style.color.main.get()
         itemTitleLabel.font = style.font.regular.get()
         
-        notifView.backgroundColor = style.color.second.get()
-        notifView.layer.cornerRadius = 5
+        notification()
+    }
+    
+    func notification() {
+        if input.hasNotif {
+            notifView.backgroundColor = style.color.second.get()
+            notifView.layer.cornerRadius = 5
+        } else {
+            notifView.backgroundColor = .clear
+            notifView.layer.cornerRadius = 5
+        }
     }
 }

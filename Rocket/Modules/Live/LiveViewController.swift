@@ -114,7 +114,7 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let live = self.lives[indexPath.section]
-        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: live)
+        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }

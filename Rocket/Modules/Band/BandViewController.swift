@@ -175,7 +175,8 @@ final class BandViewController: UIViewController, Instantiable {
         let icon: UIButton = UIButton(type: .custom)
         icon.translatesAutoresizingMaskIntoConstraints = false
         icon.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        icon.setImage(UIImage(named: "band"), for: .normal)
+        let image = UIImage(url: dependencyProvider.user.thumbnailURL!)
+        icon.setImage(image, for: .normal)
         icon.addTarget(self, action: #selector(iconTapped(_:)), for: .touchUpInside)
         icon.imageView?.layer.cornerRadius = 20
         
@@ -416,7 +417,7 @@ final class BandViewController: UIViewController, Instantiable {
     }
     
     @objc private func iconTapped(_ sender: Any) {
-        let vc = AccountViewController(dependencyProvider: self.dependencyProvider.provider, input: ())
+        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
         present(vc, animated: true, completion: nil)
     }
 }
@@ -497,11 +498,11 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         switch tableView {
         case self.bandsTableView:
             let band = self.bands[indexPath.section]
-            let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: band)
+            let vc = BandDetailViewController(dependencyProvider: self.dependencyProvider, input: band)
             self.navigationController?.pushViewController(vc, animated: true)
         case self.liveTableView:
             let live = self.lives[indexPath.section]
-            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider.provider, input: live)
+            let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
         default:
             print("hello")

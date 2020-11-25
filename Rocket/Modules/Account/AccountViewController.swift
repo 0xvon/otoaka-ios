@@ -10,12 +10,15 @@ import UIKit
 final class AccountViewController: UIViewController, Instantiable {
     typealias Input = Void
     
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
     var items: [AccountSettingItem] = []
     
     private var tableView: UITableView!
+    private var profileSettingItem: AccountSettingItem!
+    private var seeRequestsItem: AccountSettingItem!
+    private var logoutItem: AccountSettingItem!
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         
         super.init(nibName: nil, bundle: nil)
@@ -33,10 +36,11 @@ final class AccountViewController: UIViewController, Instantiable {
     func setup() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
         
-        self.items = [
-            AccountSettingItem(title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile),
-            AccountSettingItem(title: "ログアウト", image: UIImage(named: "logout"), action: self.logout)
-        ]
+        profileSettingItem = AccountSettingItem(title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile, hasNotification: false)
+        seeRequestsItem = AccountSettingItem(title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests, hasNotification: true)
+        logoutItem = AccountSettingItem(title: "ログアウト", image: UIImage(named: "logout"), action: self.logout, hasNotification: false)
+        
+        setAccountSetting()
         
         self.view.backgroundColor = style.color.subBackground.get()
         tableView = UITableView()
@@ -58,8 +62,29 @@ final class AccountViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate(constraints)
     }
     
+    private func setAccountSetting() {
+        switch dependencyProvider.user.role {
+        case .artist(_):
+            self.items = [
+                profileSettingItem,
+                seeRequestsItem,
+                logoutItem,
+            ]
+        case .fan(_):
+            self.items = [
+                profileSettingItem,
+                logoutItem,
+            ]
+        }
+    }
+    
     private func setProfile() {
         print("profile")
+    }
+    
+    private func seeRequests() {
+        let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
+        present(vc, animated: true, completion: nil)
     }
     
     private func logout() {
@@ -78,7 +103,7 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = items[indexPath.row]
-        let cell = tableView.reuse(AccountCell.self, input: (title: item.title, image: item.image), for: indexPath)
+        let cell = tableView.reuse(AccountCell.self, input: (title: item.title, image: item.image, hasNotif: item.hasNotification), for: indexPath)
         return cell
     }
     
@@ -87,12 +112,11 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
         item.action()
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    
 }
 
 struct AccountSettingItem {
     let title: String
     let image: UIImage?
     let action: () -> ()
+    let hasNotification: Bool
 }

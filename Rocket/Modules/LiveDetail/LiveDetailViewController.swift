@@ -12,7 +12,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     typealias Input = Live
     
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
     var input: Input
     @IBOutlet weak var liveDetailHeader: LiveDetailHeaderView!
     @IBOutlet weak var likeButtonView: ReactionButtonView!
@@ -31,7 +31,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     private var createShareViewBottomConstraint: NSLayoutConstraint!
     private var creationButtonConstraintItems: [NSLayoutConstraint] = []
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
         

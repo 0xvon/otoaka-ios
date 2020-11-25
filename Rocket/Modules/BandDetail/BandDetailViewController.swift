@@ -11,7 +11,7 @@ import Endpoint
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group
     
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
     var input: Input
     var lives: [Live] = []
     var isLiked: Bool = false
@@ -54,7 +54,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         }
     )
     
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
         

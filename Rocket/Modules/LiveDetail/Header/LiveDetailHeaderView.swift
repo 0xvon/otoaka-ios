@@ -10,7 +10,7 @@ import Endpoint
 
 final class LiveDetailHeaderView: UIView {
     typealias Input = (
-        dependencyProvider: DependencyProvider,
+        dependencyProvider: LoggedInDependencyProvider,
         live: Live,
         groups: [Group]
     )

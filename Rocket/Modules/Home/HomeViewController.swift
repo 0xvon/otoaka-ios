@@ -36,7 +36,7 @@ final class HomeViewController: UITabBarController, Instantiable {
         vc1.navigationBar.tintColor = style.color.main.get()
         vc1.navigationBar.barTintColor = .clear
         
-        let ticketViewController = TicketViewController(dependencyProvider: dependencyProvider.provider, input: ())
+        let ticketViewController = TicketViewController(dependencyProvider: dependencyProvider, input: ())
         let vc2 = UINavigationController(rootViewController: ticketViewController)
         vc2.tabBarItem = UITabBarItem(title: "Ticket", image: UIImage(named: "ticketIcon"), selectedImage: UIImage(named: "selectedTicketIcon"))
         vc2.navigationBar.tintColor = style.color.main.get()

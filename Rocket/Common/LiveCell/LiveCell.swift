@@ -37,7 +37,7 @@ class LiveCell: UITableViewCell, ReusableCell {
     }
 
     func setup() {
-        self.backgroundColor = UIColor(patternImage: UIImage(named: "live")!)
+        self.backgroundColor = .clear
         self.layer.borderWidth = 1
         self.layer.borderColor = style.color.main.get().cgColor
         self.layer.cornerRadius = 10        
@@ -69,6 +69,8 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.thumbnailView.loadImageAsynchronously(url: input.artworkURL)
         self.thumbnailView.contentMode = .scaleAspectFill
         self.thumbnailView.layer.opacity = 0.6
+        self.thumbnailView.layer.cornerRadius = 10
+        self.thumbnailView.clipsToBounds = true
         
         let date: String = (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
         
