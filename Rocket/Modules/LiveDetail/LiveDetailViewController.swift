@@ -29,6 +29,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     private var createMessageViewBottomConstraint: NSLayoutConstraint!
     private var createShareView: CreateButton!
     private var createShareViewBottomConstraint: NSLayoutConstraint!
+    private var editLiveView: CreateButton!
+    private var editLiveViewBottomConstraint: NSLayoutConstraint!
     private var creationButtonConstraintItems: [NSLayoutConstraint] = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -102,6 +104,23 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         )
         creationView.addConstraint(creationViewHeightConstraint)
         
+        editLiveView = CreateButton(input: UIImage(named: "edit")!)
+        editLiveView.layer.cornerRadius = 30
+        editLiveView.translatesAutoresizingMaskIntoConstraints = false
+        editLiveView.listen {
+            self.editLive()
+        }
+        creationView.addSubview(editLiveView)
+        editLiveViewBottomConstraint = NSLayoutConstraint(
+            item: editLiveView!,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: creationView,
+            attribute: .bottom,
+            multiplier: 1,
+            constant: 0
+        )
+        
         createShareView = CreateButton(input: UIImage(named: "share")!)
         createShareView.layer.cornerRadius = 30
         createShareView.translatesAutoresizingMaskIntoConstraints = false
@@ -150,10 +169,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         creationButtonConstraintItems = [
             createMessageViewBottomConstraint,
             createShareViewBottomConstraint,
+            editLiveViewBottomConstraint,
         ]
         
         creationView.addConstraints(creationButtonConstraintItems)
-        
         
         let constraints = [
             creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
@@ -172,6 +191,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
             createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
             createShareView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            
+            editLiveView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+            editLiveView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+            editLiveView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
         ]
         
         NSLayoutConstraint.activate(constraints)
@@ -217,6 +240,13 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     func createShare() {
         print("create share")
+    }
+    
+    func editLive() {
+        let vc = EditLiveViewController(dependencyProvider: dependencyProvider, input: input)
+        self.navigationController?.pushViewController(vc, animated: true)
+        self.isOpened.toggle()
+        self.open(isOpened: self.isOpened)
     }
     
     private func likeButtonTapped() {
