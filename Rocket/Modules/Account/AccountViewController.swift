@@ -16,6 +16,7 @@ final class AccountViewController: UIViewController, Instantiable {
     private var tableView: UITableView!
     private var profileSettingItem: AccountSettingItem!
     private var seeRequestsItem: AccountSettingItem!
+    private var inviteGroupItem: AccountSettingItem!
     private var logoutItem: AccountSettingItem!
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -32,12 +33,29 @@ final class AccountViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         setup()
     }
+    
+    lazy var viewModel = AccountViewModel(
+        apiClient: dependencyProvider.apiClient,
+        user: dependencyProvider.user,
+        auth: dependencyProvider.auth,
+        outputHander: { output in
+            switch output {
+            case .inviteGroup(let invitation):
+                DispatchQueue.main.async {
+                    self.showInviteCode(invitationCode: invitation.id)
+                }
+            case .error(let error):
+                print(error)
+            }
+        }
+    )
         
     func setup() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
         
         profileSettingItem = AccountSettingItem(title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile, hasNotification: false)
         seeRequestsItem = AccountSettingItem(title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests, hasNotification: true)
+        inviteGroupItem = AccountSettingItem(title: "招待コードの発行", image: nil, action: self.inviteGroup, hasNotification: false)
         logoutItem = AccountSettingItem(title: "ログアウト", image: UIImage(named: "logout"), action: self.logout, hasNotification: false)
         
         setAccountSetting()
@@ -67,6 +85,7 @@ final class AccountViewController: UIViewController, Instantiable {
         case .artist(_):
             self.items = [
                 profileSettingItem,
+                inviteGroupItem,
                 seeRequestsItem,
                 logoutItem,
             ]
@@ -86,6 +105,21 @@ final class AccountViewController: UIViewController, Instantiable {
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
         present(vc, animated: true, completion: nil)
+    }
+    
+    private func inviteGroup() {
+        viewModel.inviteGroup()
+    }
+    
+    private func showInviteCode(invitationCode: String) {
+        let alertController = UIAlertController(title: "招待コード", message: invitationCode, preferredStyle: UIAlertController.Style.alert)
+        
+        let cancelAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: { action in
+            print("close")
+        })
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
     }
     
     private func logout() {
