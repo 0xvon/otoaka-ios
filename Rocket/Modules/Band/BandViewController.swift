@@ -115,11 +115,16 @@ final class BandViewController: UIViewController, Instantiable {
         contentsTableView = UITableView()
         contentsTableView.translatesAutoresizingMaskIntoConstraints = false
         contentsTableView.showsVerticalScrollIndicator = false
+        contentsTableView.tableFooterView = UIView(frame: .zero)
+        contentsTableView.separatorStyle = .none
         contentsTableView.backgroundColor = style.color.background.get()
         contentsTableView.delegate = self
         contentsTableView.dataSource = self
         contentsTableView.register(UINib(nibName: "BandContentsCell", bundle: nil), forCellReuseIdentifier: "BandContentsCell")
         contentsView.addSubview(contentsTableView)
+        
+        contentsTableView.refreshControl = UIRefreshControl()
+        contentsTableView.refreshControl?.addTarget(self, action: #selector(refreshContents(sender:)), for: .valueChanged)
         
         let liveView = UIView()
         liveView.translatesAutoresizingMaskIntoConstraints = false
@@ -129,11 +134,16 @@ final class BandViewController: UIViewController, Instantiable {
         liveTableView = UITableView()
         liveTableView.translatesAutoresizingMaskIntoConstraints = false
         liveTableView.showsVerticalScrollIndicator = false
+        liveTableView.tableFooterView = UIView(frame: .zero)
+        liveTableView.separatorStyle = .none
         liveTableView.backgroundColor = style.color.background.get()
         liveTableView.delegate = self
         liveTableView.dataSource = self
         liveTableView.register(UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
         liveView.addSubview(liveTableView)
+        
+        liveTableView.refreshControl = UIRefreshControl()
+        liveTableView.refreshControl?.addTarget(self, action: #selector(refreshLive(sender:)), for: .valueChanged)
         
         let chartsView = UIView()
         chartsView.translatesAutoresizingMaskIntoConstraints = false
@@ -144,10 +154,15 @@ final class BandViewController: UIViewController, Instantiable {
         chartsTableView.translatesAutoresizingMaskIntoConstraints = false
         chartsTableView.showsVerticalScrollIndicator = false
         chartsTableView.backgroundColor = style.color.background.get()
+        chartsTableView.tableFooterView = UIView(frame: .zero)
+        chartsTableView.separatorStyle = .none
         chartsTableView.delegate = self
         chartsTableView.dataSource = self
         chartsTableView.register(UINib(nibName: "TrackCell", bundle: nil), forCellReuseIdentifier: "TrackCell")
         chartsView.addSubview(chartsTableView)
+        
+        chartsTableView.refreshControl = UIRefreshControl()
+        chartsTableView.refreshControl?.addTarget(self, action: #selector(refreshChart(sender:)), for: .valueChanged)
         
         let bandsView = UIView()
         bandsView.translatesAutoresizingMaskIntoConstraints = false
@@ -157,11 +172,16 @@ final class BandViewController: UIViewController, Instantiable {
         bandsTableView = UITableView()
         bandsTableView.translatesAutoresizingMaskIntoConstraints = false
         bandsTableView.showsVerticalScrollIndicator = false
+        bandsTableView.tableFooterView = UIView(frame: .zero)
+        bandsTableView.separatorStyle = .none
         bandsTableView.backgroundColor = style.color.background.get()
         bandsTableView.delegate = self
         bandsTableView.dataSource = self
         bandsTableView.register(UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
         bandsView.addSubview(bandsTableView)
+        
+        bandsTableView.refreshControl = UIRefreshControl()
+        bandsTableView.refreshControl?.addTarget(self, action: #selector(refreshBand(sender:)), for: .valueChanged)
         
         contentsPageTitleView.inject(input: (title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get()))
         contentsPageTitleView.bringSubviewToFront(contentsPageButton)
@@ -364,6 +384,26 @@ final class BandViewController: UIViewController, Instantiable {
         viewModel.getLives()
         viewModel.getGroups()
     }
+    
+    @objc private func refreshContents(sender: UIRefreshControl) {
+        sender.endRefreshing()
+    }
+    
+    @objc private func refreshLive(sender: UIRefreshControl) {
+        viewModel.getLives()
+        sender.endRefreshing()
+    }
+    
+    @objc private func refreshChart(sender: UIRefreshControl) {
+        sender.endRefreshing()
+    }
+    
+    @objc private func refreshBand(sender: UIRefreshControl) {
+        viewModel.getGroups()
+        sender.endRefreshing()
+    }
+    
+    
     
     func requestNotification() {
         UNUserNotificationCenter.current().delegate = self

@@ -16,6 +16,7 @@
                 <outlet property="headerView" destination="Y9D-z1-Lis" id="U9L-NT-87M"/>
                 <outlet property="likeButtonView" destination="L3a-GU-FLo" id="Qy3-LC-VTW"/>
                 <outlet property="liveTableView" destination="sQZ-gg-szN" id="58K-8R-WcF"/>
+                <outlet property="verticalScrollView" destination="LlA-XZ-xsc" id="EEU-kM-Guc"/>
                 <outlet property="view" destination="iN0-l3-epB" id="sAZ-nS-7DA"/>
             </connections>
         </placeholder>

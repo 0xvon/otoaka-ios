@@ -20,6 +20,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     @IBOutlet weak var buyTicketButtonView: Button!
     @IBOutlet weak var scrollableView: UIView!
     @IBOutlet weak var contentsTableView: UITableView!
+    @IBOutlet weak var verticalScrollView: UIScrollView!
     
     private var isOpened: Bool = false
     private var creationView: UIView!
@@ -49,6 +50,22 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         setup()
         setupCreation()
     }
+    
+    lazy var viewModel = LiveDetailViewModel(
+        apiClient: dependencyProvider.apiClient,
+        auth: dependencyProvider.auth,
+        outputHander: { output in
+            switch output {
+            case .getLive(let live):
+                DispatchQueue.main.async {
+                    self.input = live
+                    self.inject()
+                }
+            case .error(let error):
+                print(error)
+            }
+        }
+    )
     
     func setup() {
         view.backgroundColor = style.color.background.get()
@@ -87,11 +104,18 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
     }
     
+    func inject() {
+        liveDetailHeader.inject(input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: []))
+    }
+    
     private func setupCreation() {
         creationView = UIView()
         creationView.backgroundColor = .clear
         creationView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(creationView)
+        
+        verticalScrollView.refreshControl = UIRefreshControl()
+        verticalScrollView.refreshControl?.addTarget(self, action: #selector(refreshLive(sender:)), for: .valueChanged)
         
         creationViewHeightConstraint = NSLayoutConstraint(
             item: creationView!,
@@ -198,6 +222,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         ]
         
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    @objc private func refreshLive(sender: UIRefreshControl) {
+        viewModel.getLive(liveId: input.id)
+        sender.endRefreshing()
     }
     
     func open(isOpened: Bool) {

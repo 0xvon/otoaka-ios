@@ -21,6 +21,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     @IBOutlet weak var commentButtonView: ReactionButtonView!
     @IBOutlet weak var liveTableView: UITableView!
     @IBOutlet weak var contentsTableView: UITableView!
+    @IBOutlet weak var verticalScrollView: UIScrollView!
     
     private var isOpened: Bool = false
     private var creationView: UIView!
@@ -38,6 +39,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
         group: self.input,
         outputHander: { output in
             switch output {
+            case .getGroup(let group):
+                DispatchQueue.main.async {
+                    self.input = group
+                    self.inject()
+                }
             case .follow:
                 DispatchQueue.main.async {
                     self.isLiked.toggle()
@@ -74,6 +80,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
     func setup() {
         view.backgroundColor = style.color.background.get()
         headerView.inject(input: input)
+        
+        verticalScrollView.refreshControl = UIRefreshControl()
+        verticalScrollView.refreshControl?.addTarget(self, action: #selector(refreshBand(sender:)), for: .valueChanged)
         
         likeButtonView.inject(input: (text: "10,000", image: UIImage(named: "heart")))
         likeButtonView.listen {
@@ -186,6 +195,15 @@ final class BandDetailViewController: UIViewController, Instantiable {
         ]
         
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    func inject() {
+        headerView.inject(input: input)
+    }
+    
+    @objc private func refreshBand(sender: UIRefreshControl) {
+        viewModel.getGroup(groupId: input.id)
+        sender.endRefreshing()
     }
     
     func open(isOpened: Bool) {
