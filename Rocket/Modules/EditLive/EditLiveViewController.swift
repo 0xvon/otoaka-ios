@@ -119,6 +119,8 @@ final class EditLiveViewController: UIViewController, Instantiable {
         mainView.addSubview(liveTitleInputView)
         
         livehouseInputView = TextFieldView(input: "会場")
+        // FIXME: replace here
+        livehouseInputView.setText(text: livehouses[0])
         livehouseInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(livehouseInputView)
         
