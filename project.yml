@@ -12,7 +12,7 @@ targets:
     platform: iOS
     settings:
       base:
-        DEVELOPMENT_TEAM: K677BRB35L
+        DEVELOPMENT_TEAM: 6WL9GUCS6V
         VERSIONING_SYSTEM: apple-generic
         CURRENT_PROJECT_VERSION: 1
     configFiles:
