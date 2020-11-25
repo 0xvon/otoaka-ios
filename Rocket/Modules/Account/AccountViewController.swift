@@ -79,7 +79,8 @@ final class AccountViewController: UIViewController, Instantiable {
     }
     
     private func setProfile() {
-        print("profile")
+        let vc = EditAccountViewController(dependencyProvider: dependencyProvider, input: ())
+        present(vc, animated: true, completion: nil)
     }
     
     private func seeRequests() {

@@ -89,6 +89,7 @@ final class InputTextView: UIView {
     
     func setText(text: String) {
         self.textView.text = text
+        underLineColor()
     }
 }
 

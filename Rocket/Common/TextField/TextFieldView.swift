@@ -91,6 +91,7 @@ final class TextFieldView: UIView {
     
     func setText(text: String) {
         self.textField.text = text
+        underLineColor()
     }
     
     func selectInputView(inputView: UIView) {
