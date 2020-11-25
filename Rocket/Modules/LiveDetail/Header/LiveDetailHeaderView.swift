@@ -39,6 +39,8 @@ final class LiveDetailHeaderView: UIView {
     init(input: Input) {
         self.input = input
         super.init(frame: .zero)
+        
+        self.setup()
         self.inject(input: input)
     }
     
@@ -46,10 +48,42 @@ final class LiveDetailHeaderView: UIView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
+    func update(input: Input) {
+        self.input = input
+        
+        liveImageView.loadImageAsynchronously(url: input.live.artworkURL)
+        liveTitleLabel.text = input.live.title
+        switch input.live.style {
+        case .oneman(_):
+            self.bandNameLabel.text = input.live.hostGroup.name
+        case .battle(let groups):
+            self.bandNameLabel.text = groups.map { $0.name }.joined(separator: ", ")
+        case .festival(let groups):
+            self.bandNameLabel.text = groups.map { $0.name }.joined(separator: ", ")
+        }
+        let date: String = (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
+        dateBadgeView.updateText(text: date)
+        mapBadgeView.updateText(text: "代々木公園")
+    }
         
     func inject(input: Input) {
         self.input = input
-        self.setup()
+        
+        setup()
+        liveImageView.loadImageAsynchronously(url: input.live.artworkURL)
+        liveTitleLabel.text = input.live.title
+        switch input.live.style {
+        case .oneman(_):
+            self.bandNameLabel.text = input.live.hostGroup.name
+        case .battle(let groups):
+            self.bandNameLabel.text = groups.map { $0.name }.joined(separator: ", ")
+        case .festival(let groups):
+            self.bandNameLabel.text = groups.map { $0.name }.joined(separator: ", ")
+        }
+        let date: String = (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
+        dateBadgeView.updateText(text: date)
+        mapBadgeView.updateText(text: "代々木公園")
     }
     
     func setup() {
@@ -64,7 +98,6 @@ final class LiveDetailHeaderView: UIView {
         
         liveImageView = UIImageView()
         liveImageView.translatesAutoresizingMaskIntoConstraints = false
-        liveImageView.loadImageAsynchronously(url: input.live.artworkURL)
         liveImageView.contentMode = .scaleAspectFill
         liveImageView.clipsToBounds = true
         liveImageView.layer.opacity = 0.6
@@ -90,7 +123,6 @@ final class LiveDetailHeaderView: UIView {
         
         liveTitleLabel = UILabel()
         liveTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        liveTitleLabel.text = input.live.title
         liveTitleLabel.font = style.font.xlarge.get()
         liveTitleLabel.textColor = style.color.main.get()
         liveTitleLabel.lineBreakMode = .byWordWrapping
@@ -101,14 +133,6 @@ final class LiveDetailHeaderView: UIView {
         
         bandNameLabel = UILabel()
         bandNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        switch input.live.style {
-        case .oneman(_):
-            self.bandNameLabel.text = input.live.hostGroup.name
-        case .battle(let groups):
-            self.bandNameLabel.text = groups.map { $0.name }.joined(separator: ", ")
-        case .festival(let groups):
-            self.bandNameLabel.text = groups.map { $0.name }.joined(separator: ", ")
-        }
         bandNameLabel.font = style.font.regular.get()
         bandNameLabel.textColor = style.color.main.get()
         bandNameLabel.lineBreakMode = .byWordWrapping
@@ -117,11 +141,10 @@ final class LiveDetailHeaderView: UIView {
         bandNameLabel.sizeToFit()
         liveInformationView.addSubview(bandNameLabel)
         
-        let date: String = (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
-        dateBadgeView = BadgeView(input: (text: date, image: UIImage(named: "calendar")))
+        dateBadgeView = BadgeView(input: (text: "時間未定", image: UIImage(named: "calendar")))
         liveInformationView.addSubview(dateBadgeView)
         
-        mapBadgeView = BadgeView(input: (text: "代々木公演", image: UIImage(named: "map")))
+        mapBadgeView = BadgeView(input: (text: "代々木公園", image: UIImage(named: "map")))
         liveInformationView.addSubview(mapBadgeView)
         
         arrowButton = UIButton()

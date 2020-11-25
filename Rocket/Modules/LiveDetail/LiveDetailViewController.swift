@@ -105,7 +105,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     func inject() {
-        liveDetailHeader.inject(input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: []))
+        liveDetailHeader.update(input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: []))
     }
     
     private func setupCreation() {

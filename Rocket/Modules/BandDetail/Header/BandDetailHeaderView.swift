@@ -51,6 +51,16 @@ final class BandDetailHeaderView: UIView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
+    
+    func update(input: Input) {
+        self.input = input
+        
+        bandImageView.loadImageAsynchronously(url: input.artworkURL)
+        bandNameLabel.text = input.name
+        let startYear: String = (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"
+        dateBadgeView.updateText(text: startYear)
+        artworkImageView.image = UIImage(named: "track")
+    }
         
     func inject(input: Input) {
         self.input = input

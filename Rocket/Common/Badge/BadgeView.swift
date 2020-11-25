@@ -34,6 +34,11 @@ final class BadgeView: UIView {
         self.setup()
     }
     
+    func updateText(text: String) {
+        input.text = text
+        badgeTitle.text = input.text
+    }
+    
     func setup() {
         backgroundColor = .clear
         let contentView = UIView(frame: self.frame)
