@@ -14,7 +14,7 @@ DEPENDENCIES:
   - KeychainAccess
 
 SPEC REPOS:
-  trunk:
+  https://cdn.cocoapods.org/:
     - AWSCognitoAuth
     - AWSCognitoIdentityProviderASF
     - AWSCore
@@ -28,6 +28,6 @@ SPEC CHECKSUMS:
   AWSS3: 2272253b098d07803af8dd20ce6ce7302bcffb47
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
 
-PODFILE CHECKSUM: 462e3a76e3196cbe34cd5fd1b4cd2652d5ab69b4
+PODFILE CHECKSUM: ef5a5f17ffa792095274236ccdc0424c255cb3ac
 
 COCOAPODS: 1.10.0

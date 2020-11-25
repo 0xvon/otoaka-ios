@@ -1,5 +1,6 @@
-# Uncomment the next line to define a global platform for your project
+install! 'cocoapods', integrate_targets: false
 platform :ios, '13.0'
+source 'https://cdn.cocoapods.org/'
 
 target 'Rocket' do
   # Comment the next line if you don't want to use dynamic frameworks
