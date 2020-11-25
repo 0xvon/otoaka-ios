@@ -37,18 +37,25 @@ class APIClient {
         _ endpoint: E.Type,
         uri: E.URI = E.URI(), withToken: Bool = true,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
-    ) throws where E.Request == Empty {
-        try request(E.self, request: Empty(), uri: uri, withToken: withToken, callback: callback)
+    ) where E.Request == Empty {
+        request(E.self, request: Empty(), uri: uri, withToken: withToken, callback: callback)
     }
 
     public func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
         request: E.Request, uri: E.URI = E.URI(), withToken: Bool = true,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
-    ) throws {
-        let url = try uri.encode(baseURL: baseURL)
+    ) {
+        let url: URL
+        do {
+            url = try uri.encode(baseURL: baseURL)
+        } catch {
+            callback(.failure(error))
+            return
+        }
+
         if withToken {
-            tokenProvider.provideIdToken { result in
+            tokenProvider.provideIdToken { [unowned self] result in
                 switch result {
                 case .success(let idToken):
                     self.request(endpoint, request: request, url: url, idToken: idToken, callback: callback)

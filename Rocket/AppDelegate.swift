@@ -21,11 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        let viewController = AuthViewController(dependencyProvider: dependencyProvider, input: ())
-        let nav = UINavigationController(rootViewController: viewController)
-        nav.navigationBar.tintColor = style.color.main.get()
-        nav.navigationBar.barTintColor = .clear
-        window?.rootViewController = nav
+        let viewController = HomeViewController(dependencyProvider: dependencyProvider, input: ())
+        window?.rootViewController = viewController
         window?.makeKeyAndVisible()
         return true
     }

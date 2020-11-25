@@ -11,9 +11,7 @@ import AWSCognitoAuth
 
 class AuthViewModel {
     enum Output {
-        case signin
         case signupStatus(Bool)
-        case getUser(User)
         case error(Error)
     }
     
@@ -26,37 +24,14 @@ class AuthViewModel {
         self.outputHandler = outputHander
     }
     
-    func signin() {
-        self.outputHandler(.signin)
-    }
-    
     func getSignupStatus() {
-        do {
-            try apiClient.request(SignupStatus.self) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.signupStatus(res.isSignedup))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(SignupStatus.self) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.signupStatus(res.isSignedup))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
-        }
-    }
-    
-    func getUser() {
-        do {
-            try apiClient.request(GetUserInfo.self) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.getUser(res))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
-            }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 }
