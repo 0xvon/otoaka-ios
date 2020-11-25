@@ -21,6 +21,7 @@ $ pod install
 #### 2. open Xcode Workspace
 
 ```
+$ xcodegen
 $ open Rocket.xcworkspace
 ```
 

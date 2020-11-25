@@ -14,7 +14,7 @@ DEPENDENCIES:
   - KeychainAccess
 
 SPEC REPOS:
-  https://cdn.cocoapods.org/:
+  trunk:
     - AWSCognitoAuth
     - AWSCognitoIdentityProviderASF
     - AWSCore
