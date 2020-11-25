@@ -5,16 +5,16 @@
 //  Created by Masato TSUTSUMI on 2020/11/21.
 //
 
-import Foundation
 import AWSS3
+import Foundation
 
 class S3Client {
     let s3Bucket: String
-    
+
     init(s3Bucket: String) {
         self.s3Bucket = s3Bucket
     }
-    
+
     public func uploadImage(image: UIImage?, callback: @escaping ((String?, String?) -> Void)) {
         let transferUtility = AWSS3TransferUtility.default()
         let key = "\(UUID()).png"
@@ -24,9 +24,10 @@ class S3Client {
             callback(nil, "cannot convert image to png data")
             return
         }
-        
+
         let expression = AWSS3TransferUtilityUploadExpression()
-        let completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock = { (task, error) -> Void in
+        let completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock = {
+            (task, error) -> Void in
             DispatchQueue.main.async {
                 if let error = error {
                     callback(nil, error.localizedDescription)
@@ -34,7 +35,7 @@ class S3Client {
                 callback("https://\(self.s3Bucket).s3-ap-northeast-1.amazonaws.com/\(key)", nil)
             }
         }
-        
+
         transferUtility.uploadData(
             pngData,
             bucket: s3Bucket,
@@ -46,13 +47,13 @@ class S3Client {
             if let error = task.error {
                 callback(nil, error.localizedDescription)
             }
-            
+
             if let _ = task.result {
                 DispatchQueue.main.async {
                     print("uploading...")
                 }
             }
-            
+
             return nil
         }
     }

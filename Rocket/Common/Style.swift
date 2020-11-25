@@ -14,7 +14,7 @@ struct style {
         case background
         case subBackground
         case sub
-        
+
         func get() -> UIColor {
             switch self {
             case .main:
@@ -30,20 +30,20 @@ struct style {
             }
         }
     }
-    
-//    一応書いとくけどIB内で設定するから使わない(迷ったら見てね的な)
+
+    //    一応書いとくけどIB内で設定するから使わない(迷ったら見てね的な)
     enum margin: Int {
         case box = 12
         case area = 16
         case letter = 8
     }
-    
+
     enum font {
         case xlarge
         case large
         case regular
         case small
-        
+
         func get() -> UIFont {
             switch self {
             case .xlarge:
@@ -65,7 +65,7 @@ struct Components {
         "青森県",
         "大阪府",
     ]
-    
+
     let parts = [
         "Vo.",
         "Gt.",
@@ -78,9 +78,9 @@ struct Components {
         "Gt. & Cho.",
         "Ba. & Cho.",
         "Dr. & Cho.",
-        "Key. & Cho."
+        "Key. & Cho.",
     ]
-    
+
     let years = [
         "1999",
         "2000",
@@ -111,13 +111,13 @@ struct Components {
         "2025",
         "2026",
     ]
-    
+
     let liveStyles: [String] = [
         "ワンマン",
         "対バン",
         "フェス",
     ]
-    
+
     let livehouses: [String] = [
         "ビルボードライブ東京",
         "TSUTAYA O-EAST",
@@ -169,18 +169,21 @@ extension UIImage {
     }
 }
 
-var cache: [String: UIImage] = NSMutableDictionary() as! [String : UIImage]
+var cache: [String: UIImage] = NSMutableDictionary() as! [String: UIImage]
 
 extension UIImageView {
-    func loadImageAsynchronously(url: URL?, defaultUIImage: UIImage? = nil) -> Void {
-        
-        guard let url = url else { self.image = defaultUIImage; return }
+    func loadImageAsynchronously(url: URL?, defaultUIImage: UIImage? = nil) {
+
+        guard let url = url else {
+            self.image = defaultUIImage
+            return
+        }
         let path = url.absoluteString
         if let data = cache[path] {
             self.image = data
-            return;
+            return
         }
-        
+
         DispatchQueue.global().async {
             do {
                 let imageData: Data? = try Data(contentsOf: url)
@@ -192,8 +195,7 @@ extension UIImageView {
                         self?.image = defaultUIImage
                     }
                 }
-            }
-            catch let error {
+            } catch let error {
                 print(error)
                 DispatchQueue.main.async {
                     cache[path] = defaultUIImage

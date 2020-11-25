@@ -5,25 +5,25 @@
 //  Created by Masato TSUTSUMI on 2020/11/25.
 //
 
-import UIKit
 import Endpoint
+import UIKit
 
 final class PerformanceRequestViewController: UIViewController, Instantiable {
     typealias Input = Void
     var dependencyProvider: LoggedInDependencyProvider!
-    
+
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private var requestTableView: UITableView!
     private var requests: [PerformanceRequest] = []
-    
+
     lazy var viewModel = PerformanceRequestViewModel(
         apiClient: dependencyProvider.apiClient,
         s3Bucket: dependencyProvider.s3Bucket,
@@ -45,26 +45,28 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
             }
         }
     )
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
         viewModel.getRequests()
     }
-    
+
     func setup() {
         self.view.backgroundColor = style.color.background.get()
-        
+
         requestTableView = UITableView(frame: .zero, style: .grouped)
         requestTableView.translatesAutoresizingMaskIntoConstraints = false
         requestTableView.separatorStyle = .none
         requestTableView.showsVerticalScrollIndicator = false
         requestTableView.delegate = self
         requestTableView.dataSource = self
-        requestTableView.register(UINib(nibName: "PerformanceRequestCell", bundle: nil), forCellReuseIdentifier: "PerformanceRequestCell")
-        
+        requestTableView.register(
+            UINib(nibName: "PerformanceRequestCell", bundle: nil),
+            forCellReuseIdentifier: "PerformanceRequestCell")
+
         self.view.addSubview(requestTableView)
-        
+
         let constraints: [NSLayoutConstraint] = [
             requestTableView.topAnchor.constraint(equalTo: self.view.topAnchor),
             requestTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
@@ -73,7 +75,7 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
         ]
         NSLayoutConstraint.activate(constraints)
     }
-    
+
     func replyPerformanceRequest(request: PerformanceRequest, accept: Bool, cellIndex: Int) {
         viewModel.replyRequest(requestId: request.id, accept: accept, cellIndex: cellIndex)
     }
@@ -83,11 +85,11 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return self.requests.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let request = self.requests[indexPath.section]
         let cell = tableView.reuse(PerformanceRequestCell.self, input: request, for: indexPath)
@@ -96,21 +98,25 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
         }
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 332
     }
-    
+
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return section == 0 ? 60 : 16
     }
-    
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         switch section {
         case 0:
-            let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 32, height: 60))
+            let view = UIView(
+                frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 32, height: 60))
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 300, height: 40))
-            let titleView = TitleLabelView(input: (title: "REQUESTS", font: style.font.xlarge.get(), color: style.color.main.get()))
+            let titleView = TitleLabelView(
+                input: (
+                    title: "REQUESTS", font: style.font.xlarge.get(), color: style.color.main.get()
+                ))
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)
             return view
@@ -120,39 +126,46 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
             return view
         }
     }
-    
+
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return .leastNonzeroMagnitude
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.showAlertView(cellIndex: indexPath.section)
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
+
     private func viewBandPage(cellIndex: Int) {
         let band = self.requests[cellIndex].live.hostGroup
         let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: band)
         present(vc, animated: true, completion: nil)
     }
-    
+
     private func showAlertView(cellIndex: Int) {
         let request = self.requests[cellIndex]
-        let alertController = UIAlertController(title: "参加を承認しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-        
-        let acceptAction = UIAlertAction(title: "承認", style: UIAlertAction.Style.default, handler: { action in
-            self.replyPerformanceRequest(request: request, accept: true, cellIndex: cellIndex)
-        })
-        let denyAction = UIAlertAction(title: "却下", style: UIAlertAction.Style.destructive, handler: { action in
-            self.replyPerformanceRequest(request: request, accept: false, cellIndex: cellIndex)
-        })
-        let cancelAction = UIAlertAction(title: "キャンセル", style: UIAlertAction.Style.cancel, handler: { action in
-            print("close")
-        })
+        let alertController = UIAlertController(
+            title: "参加を承認しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+
+        let acceptAction = UIAlertAction(
+            title: "承認", style: UIAlertAction.Style.default,
+            handler: { action in
+                self.replyPerformanceRequest(request: request, accept: true, cellIndex: cellIndex)
+            })
+        let denyAction = UIAlertAction(
+            title: "却下", style: UIAlertAction.Style.destructive,
+            handler: { action in
+                self.replyPerformanceRequest(request: request, accept: false, cellIndex: cellIndex)
+            })
+        let cancelAction = UIAlertAction(
+            title: "キャンセル", style: UIAlertAction.Style.cancel,
+            handler: { action in
+                print("close")
+            })
         alertController.addAction(acceptAction)
         alertController.addAction(denyAction)
         alertController.addAction(cancelAction)
-        
+
         self.present(alertController, animated: true, completion: nil)
     }
 }

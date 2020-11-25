@@ -5,37 +5,37 @@
 //  Created by Masato TSUTSUMI on 2020/10/18.
 //
 
-import UIKit
 import AWSCognitoAuth
 import Endpoint
+import UIKit
 
 final class HomeViewController: UITabBarController, Instantiable {
     typealias Input = Void
     var input: Input!
-    
+
     var dependencyProvider: DependencyProvider!
-    
+
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         super.init(nibName: nil, bundle: nil)
-        
+
         self.input = input
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         self.view.backgroundColor = style.color.background.get()
         self.tabBar.tintColor = style.color.main.get()
         self.tabBar.barTintColor = style.color.background.get()
         self.tabBar.backgroundColor = style.color.background.get()
         self.navigationController?.navigationBar.tintColor = style.color.main.get()
         self.navigationController?.navigationBar.barTintColor = .clear
-        
+
         if dependencyProvider.auth.isSignedIn {
             makeViewFromUserInfo()
         } else {
@@ -48,7 +48,7 @@ final class HomeViewController: UITabBarController, Instantiable {
             self.present(nav, animated: true)
         }
     }
-    
+
     func makeViewFromUserInfo() {
         dependencyProvider.apiClient.request(GetUserInfo.self) { [unowned self] result in
             switch result {
@@ -64,15 +64,21 @@ final class HomeViewController: UITabBarController, Instantiable {
 
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
-        let bandViewController = BandViewController(dependencyProvider: loggedInProvider, input: self.input)
+        let bandViewController = BandViewController(
+            dependencyProvider: loggedInProvider, input: self.input)
         let vc1 = UINavigationController(rootViewController: bandViewController)
-        vc1.tabBarItem = UITabBarItem(title: "Home", image: UIImage(named: "musicIcon"), selectedImage: UIImage(named: "selectedMusicIcon"))
+        vc1.tabBarItem = UITabBarItem(
+            title: "Home", image: UIImage(named: "musicIcon"),
+            selectedImage: UIImage(named: "selectedMusicIcon"))
         vc1.navigationBar.tintColor = style.color.main.get()
         vc1.navigationBar.barTintColor = .clear
 
-        let ticketViewController = TicketViewController(dependencyProvider: loggedInProvider, input: ())
+        let ticketViewController = TicketViewController(
+            dependencyProvider: loggedInProvider, input: ())
         let vc2 = UINavigationController(rootViewController: ticketViewController)
-        vc2.tabBarItem = UITabBarItem(title: "Ticket", image: UIImage(named: "ticketIcon"), selectedImage: UIImage(named: "selectedTicketIcon"))
+        vc2.tabBarItem = UITabBarItem(
+            title: "Ticket", image: UIImage(named: "ticketIcon"),
+            selectedImage: UIImage(named: "selectedTicketIcon"))
         vc2.navigationBar.tintColor = style.color.main.get()
         vc2.navigationBar.barTintColor = .clear
         return [vc1, vc2]

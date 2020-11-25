@@ -5,28 +5,31 @@
 //  Created by Masato TSUTSUMI on 2020/10/29.
 //
 
-import UIKit
-import Endpoint
 import AWSCognitoAuth
+import Endpoint
+import UIKit
 
 class AccountViewModel {
     enum Output {
         case inviteGroup(InviteGroup.Invitation)
         case error(Error)
     }
-    
+
     let auth: AWSCognitoAuth
     let apiClient: APIClient
     let user: User
     let outputHandler: (Output) -> Void
-    
-    init(apiClient: APIClient, user: User, auth: AWSCognitoAuth, outputHander: @escaping (Output) -> Void) {
+
+    init(
+        apiClient: APIClient, user: User, auth: AWSCognitoAuth,
+        outputHander: @escaping (Output) -> Void
+    ) {
         self.apiClient = apiClient
         self.user = user
         self.auth = auth
         self.outputHandler = outputHander
     }
-    
+
     func inviteGroup() {
         let request = Empty()
         var uri = Endpoint.GetMemberships.URI()
@@ -45,9 +48,9 @@ class AccountViewModel {
             self.outputHandler(.error(error))
         }
     }
-    
+
     func inviteGroup(groupId: Group.ID) {
-        
+
         let request = InviteGroup.Request(groupId: groupId)
         do {
             try apiClient.request(InviteGroup.self, request: request) { result in

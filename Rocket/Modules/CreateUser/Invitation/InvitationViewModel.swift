@@ -5,25 +5,25 @@
 //  Created by Masato TSUTSUMI on 2020/11/01.
 //
 
-import Foundation
 import Endpoint
+import Foundation
 
 class InvitationViewModel {
     enum Output {
         case joinGroup
         case error(Error)
     }
-    
+
     let apiClient: APIClient
     let s3Bucket: String
     let outputHandler: (Output) -> Void
-    
+
     init(apiClient: APIClient, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
         self.apiClient = apiClient
         self.s3Bucket = s3Bucket
         self.outputHandler = outputHander
     }
-    
+
     func joinGroup(invitationCode: String?) {
         if let invitationCode = invitationCode {
             let req = JoinGroup.Request(invitationId: invitationCode)
@@ -35,7 +35,7 @@ class InvitationViewModel {
                     case .failure(let error):
                         self.outputHandler(.error(error))
                     }
-                }    
+                }
             } catch let error {
                 self.outputHandler(.error(error))
             }
@@ -43,8 +43,8 @@ class InvitationViewModel {
             outputHandler(.error(ViewModelError.notFoundError("invitation code not found")))
         }
     }
-    
+
     func enterInvitationCode(invitationCode: String?) {
-        
+
     }
 }

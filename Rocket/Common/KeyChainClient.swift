@@ -10,11 +10,11 @@ import KeychainAccess
 
 class KeyChainClient {
     private let keyChain: Keychain
-    
+
     init() {
         self.keyChain = Keychain(service: "dev.wall-of-death.Rocket")
     }
-    
+
     public func save(key: String, value: String) throws {
         do {
             try keyChain.set(value, key: key)
@@ -22,7 +22,7 @@ class KeyChainClient {
             throw error
         }
     }
-    
+
     public func get(key: String) throws -> String? {
         do {
             let val = try keyChain.getString(key)
@@ -31,7 +31,7 @@ class KeyChainClient {
             throw error
         }
     }
-    
+
     public func delete(key: String) throws {
         do {
             try keyChain.remove(key)

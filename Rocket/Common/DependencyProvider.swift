@@ -5,10 +5,10 @@
 //  Created by Masato TSUTSUMI on 2020/10/18.
 //
 
-import Foundation
 import AWSCognitoAuth
 import AWSCore
 import Endpoint
+import Foundation
 
 @dynamicMemberLookup
 struct LoggedInDependencyProvider {
@@ -29,23 +29,23 @@ struct DependencyProvider {
 extension DependencyProvider {
 
     #if DEBUG
-    static func make() -> DependencyProvider {
-        .make(config: DevelopmentConfig.self)
-    }
+        static func make() -> DependencyProvider {
+            .make(config: DevelopmentConfig.self)
+        }
     #endif
     static func make(config: Config.Type) -> DependencyProvider {
         let credentialProvider = AWSCognitoCredentialsProvider(
             regionType: .APNortheast1,
             identityPoolId: config.identityPoolId
         )
-        
+
         let configuration = AWSServiceConfiguration(
             region: .APNortheast1,
             credentialsProvider: credentialProvider
         )
-        
+
         AWSServiceManager.default()?.defaultServiceConfiguration = configuration
-        
+
         let cognitoConfiguration = AWSCognitoAuthConfiguration(
             appClientId: config.appClientId,
             appClientSecret: config.appClientSecret,
@@ -57,7 +57,7 @@ extension DependencyProvider {
             idpIdentifier: nil,
             userPoolIdForEnablingASF: config.userPoolIdForEnablingASF
         )
-        
+
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: "cognitoAuth")
         let auth = AWSCognitoAuth.init(forKey: "cognitoAuth")
         let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: auth)

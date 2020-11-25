@@ -5,14 +5,14 @@
 //  Created by Masato TSUTSUMI on 2020/11/01.
 //
 
-import UIKit
-import Endpoint
 import AWSCognitoAuth
+import Endpoint
+import UIKit
 
 final class InvitationViewController: UIViewController, Instantiable {
-    
+
     typealias Input = Void
-    
+
     lazy var viewModel = InvitationViewModel(
         apiClient: dependencyProvider.apiClient,
         s3Bucket: dependencyProvider.s3Bucket,
@@ -27,37 +27,37 @@ final class InvitationViewController: UIViewController, Instantiable {
             }
         }
     )
-    
+
     var dependencyProvider: LoggedInDependencyProvider
     var input: Input!
     @IBOutlet weak var invitationView: TextFieldView!
     @IBOutlet weak var registerButtonView: Button!
     @IBOutlet weak var orLabel: UILabel!
     @IBOutlet weak var createBandButton: UIButton!
-    
+
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
-        
+
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
-    
+
     func setup() {
         self.view.backgroundColor = style.color.background.get()
-        
+
         switch dependencyProvider.user.role {
         case .fan(_):
             orLabel.isHidden = true
@@ -68,13 +68,13 @@ final class InvitationViewController: UIViewController, Instantiable {
             createBandButton.setTitleColor(style.color.sub.get(), for: .normal)
             createBandButton.addTarget(self, action: #selector(createBand(_:)), for: .touchUpInside)
         }
-        
+
         invitationView.inject(input: "招待コード")
         registerButtonView.inject(input: (text: "登録", image: nil))
         registerButtonView.listen {
             self.register()
         }
-        
+
         let skipButton = UIButton()
         skipButton.translatesAutoresizingMaskIntoConstraints = false
         skipButton.setTitle("skip", for: .normal)
@@ -82,26 +82,28 @@ final class InvitationViewController: UIViewController, Instantiable {
         skipButton.setTitleColor(style.color.main.get(), for: .normal)
         skipButton.addTarget(self, action: #selector(skip(_:)), for: .touchUpInside)
         self.view.addSubview(skipButton)
-        
+
         let constraints = [
-            skipButton.bottomAnchor.constraint(equalTo: self.invitationView.topAnchor, constant: -16),
+            skipButton.bottomAnchor.constraint(
+                equalTo: self.invitationView.topAnchor, constant: -16),
             skipButton.rightAnchor.constraint(equalTo: self.invitationView.rightAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
-    
+
     @objc private func createBand(_ sender: Any) {
-        let vc = CreateBandViewController(dependencyProvider: self.dependencyProvider, input: self.input)
+        let vc = CreateBandViewController(
+            dependencyProvider: self.dependencyProvider, input: self.input)
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
+
     @objc private func skip(_ sender: Any) {
         self.dismiss(animated: true)
     }
-    
+
     private func register() {
         let invitationCode = invitationView.getText()
-        
+
         switch dependencyProvider.user.role {
         case .artist(_):
             viewModel.joinGroup(invitationCode: invitationCode)

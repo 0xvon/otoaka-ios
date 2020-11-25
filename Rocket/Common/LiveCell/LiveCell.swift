@@ -5,8 +5,8 @@
 //  Created by Masato TSUTSUMI on 2020/10/22.
 //
 
-import UIKit
 import Endpoint
+import UIKit
 
 class LiveCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "LiveCell" }
@@ -18,7 +18,7 @@ class LiveCell: UITableViewCell, ReusableCell {
         dateFormatter.dateFormat = "MM月dd日 HH:mm"
         return dateFormatter
     }()
-    
+
     @IBOutlet weak var liveTitleLabel: UILabel!
     @IBOutlet weak var bandsLabel: UILabel!
     @IBOutlet weak var placeView: BadgeView!
@@ -26,11 +26,11 @@ class LiveCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var listenButtonView: Button!
     @IBOutlet weak var buyTicketButtonView: Button!
     @IBOutlet weak var thumbnailView: UIImageView!
-    
+
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
+
     func inject(input: Live) {
         self.input = input
         setup()
@@ -40,8 +40,8 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.backgroundColor = .clear
         self.layer.borderWidth = 1
         self.layer.borderColor = style.color.main.get().cgColor
-        self.layer.cornerRadius = 10        
-        
+        self.layer.cornerRadius = 10
+
         self.liveTitleLabel.text = input.title
         self.liveTitleLabel.font = style.font.xlarge.get()
         self.liveTitleLabel.textColor = style.color.main.get()
@@ -65,29 +65,30 @@ class LiveCell: UITableViewCell, ReusableCell {
         self.bandsLabel.numberOfLines = 0
         self.bandsLabel.adjustsFontSizeToFitWidth = false
         self.bandsLabel.sizeToFit()
-        
+
         self.thumbnailView.loadImageAsynchronously(url: input.artworkURL)
         self.thumbnailView.contentMode = .scaleAspectFill
         self.thumbnailView.layer.opacity = 0.6
         self.thumbnailView.layer.cornerRadius = 10
         self.thumbnailView.clipsToBounds = true
-        
-        let date: String = (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
-        
+
+        let date: String =
+            (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
+
         buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(named: "ticket")))
         listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
         dateView.inject(input: (text: date, image: UIImage(named: "calendar")))
         placeView.inject(input: (text: "代々木公園", image: UIImage(named: "map")))
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
     }
-    
+
     func listen(_ listener: @escaping () -> Void) {
         listenButtonView.listen(listener)
     }
-    
+
     func buyTicket(_ listener: @escaping () -> Void) {
         buyTicketButtonView.listen(listener)
     }

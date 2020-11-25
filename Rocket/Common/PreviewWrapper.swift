@@ -16,7 +16,7 @@ where ViewController: Instantiable, ViewController: UIViewController {
         ViewController(dependencyProvider: dependencyProvider, input: input)
     }
     func updateUIViewController(_ uiViewController: ViewController, context: Context) {
-        
+
     }
 }
 
@@ -29,15 +29,15 @@ struct ViewWrapper<View>: UIViewRepresentable
 where View: UIView, View: InputAppliable {
     typealias UIViewType = View
     let input: View.Input
-    
+
     init(input: View.Input) {
         self.input = input
     }
-    
+
     func makeUIView(context: Context) -> View {
         View()
     }
-    
+
     func updateUIView(_ uiView: View, context: Context) {
         uiView.inject(input: input)
     }
@@ -46,13 +46,13 @@ where View: UIView, View: InputAppliable {
 struct TableCellWrapper<View>: UIViewRepresentable
 where View: ReusableCell, View: UITableViewCell {
     typealias UIViewType = View
-    
+
     let input: View.Input
-    
+
     func makeUIView(context: Context) -> View {
         View(style: .default, reuseIdentifier: View.reusableIdentifier)
     }
-    
+
     func updateUIView(_ cell: View, context: Context) {
         cell.inject(input: input)
     }

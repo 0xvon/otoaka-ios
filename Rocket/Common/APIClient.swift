@@ -22,11 +22,11 @@ class APIClient {
         return encoder
     }()
     private let decoder: JSONDecoder = {
-       let decoder = JSONDecoder()
+        let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }()
-    
+
     init(baseUrl: URL, tokenProvider: APITokenProvider, session: URLSession = .shared) {
         self.baseURL = baseUrl
         self.tokenProvider = tokenProvider
@@ -58,7 +58,8 @@ class APIClient {
             tokenProvider.provideIdToken { [unowned self] result in
                 switch result {
                 case .success(let idToken):
-                    self.request(endpoint, request: request, url: url, idToken: idToken, callback: callback)
+                    self.request(
+                        endpoint, request: request, url: url, idToken: idToken, callback: callback)
                 case .failure(let error):
                     callback(.failure(error))
                 }
@@ -83,7 +84,7 @@ class APIClient {
         if E.method != .get {
             urlRequest.httpBody = try! encoder.encode(request)
         }
-        
+
         let task = session.dataTask(with: urlRequest) { [decoder] (data, response, error) in
             if let error = error {
                 callback(.failure(error))
@@ -94,14 +95,18 @@ class APIClient {
             }
 
             do {
-                
+
                 if let httpResponse = response as? HTTPURLResponse {
                     if (200...299).contains(httpResponse.statusCode) {
                         let response: E.Response = try decoder.decode(E.Response.self, from: data)
                         callback(.success(response))
                     } else {
                         let errorMessage = try decoder.decode(String.self, from: data)
-                        callback(.failure(APIError.invalidStatus("status: \(httpResponse.statusCode), message: \(errorMessage)")))
+                        callback(
+                            .failure(
+                                APIError.invalidStatus(
+                                    "status: \(httpResponse.statusCode), message: \(errorMessage)"))
+                        )
                         print()
                     }
                 }

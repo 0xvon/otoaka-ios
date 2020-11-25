@@ -8,7 +8,7 @@
 import Foundation
 
 protocol Config {
-    
+
     static var poolId: String { get }
     static var appClientId: String { get }
     static var appClientSecret: String { get }

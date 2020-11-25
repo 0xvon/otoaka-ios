@@ -5,13 +5,13 @@
 //  Created by Masato TSUTSUMI on 2020/11/01.
 //
 
-import UIKit
-import Foundation
 import Endpoint
+import Foundation
+import UIKit
 
 final class CreateBandViewController: UIViewController, Instantiable {
     typealias Input = Void
-    
+
     lazy var viewModel = CreateBandViewModel(
         apiClient: dependencyProvider.apiClient,
         s3Bucket: dependencyProvider.s3Bucket,
@@ -26,12 +26,12 @@ final class CreateBandViewController: UIViewController, Instantiable {
             }
         }
     )
-    
+
     var dependencyProvider: LoggedInDependencyProvider
     var input: Input!
     let hometowns = Components().prefectures
     let years = Components().years
-    
+
     @IBOutlet weak var groupNameInputView: TextFieldView!
     @IBOutlet weak var groupEnglishNameInputView: TextFieldView!
     @IBOutlet weak var biographyInputView: InputTextView!
@@ -39,31 +39,31 @@ final class CreateBandViewController: UIViewController, Instantiable {
     @IBOutlet weak var hometownInputView: TextFieldView!
     @IBOutlet weak var artworkInputView: UIView!
     @IBOutlet weak var registerButton: Button!
-    
+
     private var profileImageView: UIImageView!
     private var hometownPicker: UIPickerView!
     private var yearPicker: UIPickerView!
-    
+
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
-        
+
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-    
+
     func setup() {
         self.view.backgroundColor = style.color.background.get()
         self.navigationController?.setNavigationBarHidden(false, animated: true)
-        
+
         groupNameInputView.inject(input: "バンド名")
         groupEnglishNameInputView.inject(input: "English Name")
         sinceInputView.inject(input: "結成年")
@@ -78,7 +78,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         hometownPicker.dataSource = self
         hometownPicker.delegate = self
         hometownInputView.selectInputView(inputView: hometownPicker)
-        
+
         profileImageView = UIImageView()
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.cornerRadius = 60
@@ -86,14 +86,15 @@ final class CreateBandViewController: UIViewController, Instantiable {
         profileImageView.contentMode = .scaleAspectFill
         profileImageView.image = UIImage(named: "band")
         artworkInputView.addSubview(profileImageView)
-        
+
         biographyInputView.inject(input: "bio")
-        
+
         let changeProfileImageButton = UIButton()
         changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
-        changeProfileImageButton.addTarget(self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
+        changeProfileImageButton.addTarget(
+            self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
         artworkInputView.addSubview(changeProfileImageButton)
-        
+
         let profileImageTitle = UILabel()
         profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
         profileImageTitle.text = "プロフィール画像"
@@ -101,32 +102,32 @@ final class CreateBandViewController: UIViewController, Instantiable {
         profileImageTitle.font = style.font.regular.get()
         profileImageTitle.textColor = style.color.main.get()
         artworkInputView.addSubview(profileImageTitle)
-        
+
         registerButton.inject(input: (text: "バンドを作成", image: nil))
         registerButton.listen {
             self.register()
         }
-        
+
         let constraints = [
             profileImageView.widthAnchor.constraint(equalToConstant: 120),
             profileImageView.heightAnchor.constraint(equalToConstant: 120),
             profileImageView.topAnchor.constraint(equalTo: artworkInputView.topAnchor),
             profileImageView.rightAnchor.constraint(equalTo: artworkInputView.rightAnchor),
             profileImageView.leftAnchor.constraint(equalTo: artworkInputView.leftAnchor),
-            
+
             changeProfileImageButton.widthAnchor.constraint(equalToConstant: 120),
             changeProfileImageButton.heightAnchor.constraint(equalToConstant: 120),
             changeProfileImageButton.topAnchor.constraint(equalTo: artworkInputView.topAnchor),
             changeProfileImageButton.rightAnchor.constraint(equalTo: artworkInputView.rightAnchor),
             changeProfileImageButton.leftAnchor.constraint(equalTo: artworkInputView.leftAnchor),
-            
+
             profileImageTitle.leftAnchor.constraint(equalTo: artworkInputView.leftAnchor),
             profileImageTitle.rightAnchor.constraint(equalTo: artworkInputView.rightAnchor),
             profileImageTitle.bottomAnchor.constraint(equalTo: artworkInputView.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
-    
+
     @objc private func selectProfileImage(_ sender: Any) {
         if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
             let picker = UIImagePickerController()
@@ -135,7 +136,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
             self.present(picker, animated: true, completion: nil)
         }
     }
-    
+
     private func register() {
         guard let groupName = groupNameInputView.getText() else { return }
         guard let groupEnglishName = groupEnglishNameInputView.getText() else { return }
@@ -147,7 +148,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         guard let sinceInput = sinceInputView.getText() else { return }
         let since: Date? = dateFormatter.date(from: sinceInput)
         let hometown = hometownInputView.getText()
-        
+
         viewModel.create(
             name: groupName,
             englishName: groupEnglishName,
@@ -159,9 +160,15 @@ final class CreateBandViewController: UIViewController, Instantiable {
     }
 }
 
-extension CreateBandViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
+extension CreateBandViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate
+{
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
+            return
+        }
         profileImageView.image = image
         self.dismiss(animated: true, completion: nil)
     }
@@ -171,8 +178,10 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
+        -> String?
+    {
         switch pickerView {
         case self.hometownPicker:
             return hometowns[row]
@@ -182,7 +191,7 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
             return "yo"
         }
     }
-    
+
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch pickerView {
         case self.hometownPicker:
@@ -193,7 +202,7 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
             return 1
         }
     }
-    
+
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView {
         case self.hometownPicker:

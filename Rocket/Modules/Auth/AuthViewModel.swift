@@ -5,16 +5,16 @@
 //  Created by Masato TSUTSUMI on 2020/10/17.
 //
 
-import Foundation
-import Endpoint
 import AWSCognitoAuth
+import Endpoint
+import Foundation
 
 class AuthViewModel {
     enum Output {
         case signupStatus(Bool)
         case error(Error)
     }
-    
+
     let auth: AWSCognitoAuth
     let apiClient: APIClient
     let outputHandler: (Output) -> Void
@@ -23,7 +23,7 @@ class AuthViewModel {
         self.apiClient = apiClient
         self.outputHandler = outputHander
     }
-    
+
     func getSignupStatus() {
         apiClient.request(SignupStatus.self) { result in
             switch result {

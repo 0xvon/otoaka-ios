@@ -9,31 +9,31 @@ import UIKit
 
 final class AccountViewController: UIViewController, Instantiable {
     typealias Input = Void
-    
+
     var dependencyProvider: LoggedInDependencyProvider!
     var items: [AccountSettingItem] = []
-    
+
     private var tableView: UITableView!
     private var profileSettingItem: AccountSettingItem!
     private var seeRequestsItem: AccountSettingItem!
     private var inviteGroupItem: AccountSettingItem!
     private var logoutItem: AccountSettingItem!
-    
+
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        
+
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-    
+
     lazy var viewModel = AccountViewModel(
         apiClient: dependencyProvider.apiClient,
         user: dependencyProvider.user,
@@ -49,17 +49,24 @@ final class AccountViewController: UIViewController, Instantiable {
             }
         }
     )
-        
+
     func setup() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        
-        profileSettingItem = AccountSettingItem(title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile, hasNotification: false)
-        seeRequestsItem = AccountSettingItem(title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests, hasNotification: true)
-        inviteGroupItem = AccountSettingItem(title: "招待コードの発行", image: nil, action: self.inviteGroup, hasNotification: false)
-        logoutItem = AccountSettingItem(title: "ログアウト", image: UIImage(named: "logout"), action: self.logout, hasNotification: false)
-        
+
+        profileSettingItem = AccountSettingItem(
+            title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile,
+            hasNotification: false)
+        seeRequestsItem = AccountSettingItem(
+            title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
+            hasNotification: true)
+        inviteGroupItem = AccountSettingItem(
+            title: "招待コードの発行", image: nil, action: self.inviteGroup, hasNotification: false)
+        logoutItem = AccountSettingItem(
+            title: "ログアウト", image: UIImage(named: "logout"), action: self.logout,
+            hasNotification: false)
+
         setAccountSetting()
-        
+
         self.view.backgroundColor = style.color.subBackground.get()
         tableView = UITableView()
         tableView.backgroundColor = .clear
@@ -68,9 +75,10 @@ final class AccountViewController: UIViewController, Instantiable {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorColor = style.color.main.get()
-        tableView.register(UINib(nibName: "AccountCell", bundle: nil), forCellReuseIdentifier: "AccountCell")
+        tableView.register(
+            UINib(nibName: "AccountCell", bundle: nil), forCellReuseIdentifier: "AccountCell")
         self.view.addSubview(tableView)
-        
+
         let constraints = [
             tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
             tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
@@ -79,7 +87,7 @@ final class AccountViewController: UIViewController, Instantiable {
         ]
         NSLayoutConstraint.activate(constraints)
     }
-    
+
     private func setAccountSetting() {
         switch dependencyProvider.user.role {
         case .artist(_):
@@ -96,32 +104,35 @@ final class AccountViewController: UIViewController, Instantiable {
             ]
         }
     }
-    
+
     private func setProfile() {
         let vc = EditAccountViewController(dependencyProvider: dependencyProvider, input: ())
         present(vc, animated: true, completion: nil)
     }
-    
+
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
         present(vc, animated: true, completion: nil)
     }
-    
+
     private func inviteGroup() {
         viewModel.inviteGroup()
     }
-    
+
     private func showInviteCode(invitationCode: String) {
-        let alertController = UIAlertController(title: "招待コード", message: invitationCode, preferredStyle: UIAlertController.Style.alert)
-        
-        let cancelAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: { action in
-            print("close")
-        })
+        let alertController = UIAlertController(
+            title: "招待コード", message: invitationCode, preferredStyle: UIAlertController.Style.alert)
+
+        let cancelAction = UIAlertAction(
+            title: "OK", style: UIAlertAction.Style.cancel,
+            handler: { action in
+                print("close")
+            })
         alertController.addAction(cancelAction)
-        
+
         self.present(alertController, animated: true, completion: nil)
     }
-    
+
     private func logout() {
         dependencyProvider.auth.signOutLocally()
     }
@@ -131,17 +142,20 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = items[indexPath.row]
-        let cell = tableView.reuse(AccountCell.self, input: (title: item.title, image: item.image, hasNotif: item.hasNotification), for: indexPath)
+        let cell = tableView.reuse(
+            AccountCell.self,
+            input: (title: item.title, image: item.image, hasNotif: item.hasNotification),
+            for: indexPath)
         return cell
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = items[indexPath.row]
         item.action()
@@ -152,6 +166,6 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
 struct AccountSettingItem {
     let title: String
     let image: UIImage?
-    let action: () -> ()
+    let action: () -> Void
     let hasNotification: Bool
 }

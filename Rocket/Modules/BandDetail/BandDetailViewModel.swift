@@ -16,19 +16,22 @@ class BandDetailViewModel {
         case unfollow
         case error(Error)
     }
-    
+
     let auth: AWSCognitoAuth
     let apiClient: APIClient
     let group: Group
     let outputHandler: (Output) -> Void
-    
-    init(apiClient: APIClient, auth: AWSCognitoAuth, group: Group, outputHander: @escaping (Output) -> Void) {
+
+    init(
+        apiClient: APIClient, auth: AWSCognitoAuth, group: Group,
+        outputHander: @escaping (Output) -> Void
+    ) {
         self.apiClient = apiClient
         self.auth = auth
         self.group = group
         self.outputHandler = outputHander
     }
-    
+
     func followGroup() {
         let req = FollowGroup.Request(groupId: self.group.id)
         do {
@@ -44,7 +47,7 @@ class BandDetailViewModel {
             self.outputHandler(.error(error))
         }
     }
-    
+
     func unfollowGroup() {
         let req = UnfollowGroup.Request(groupId: self.group.id)
         do {
@@ -60,11 +63,11 @@ class BandDetailViewModel {
             self.outputHandler(.error(error))
         }
     }
-    
+
     func getGroup(groupId: Group.ID) {
         var uri = GetGroup.URI()
         uri.groupId = groupId
-        
+
         do {
             try apiClient.request(GetGroup.self, request: Empty(), uri: uri) { result in
                 switch result {

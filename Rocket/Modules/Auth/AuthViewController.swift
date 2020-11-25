@@ -5,13 +5,13 @@
 //  Created by Masato TSUTSUMI on 2020/10/17.
 //
 
-import UIKit
 import AWSCognitoAuth
+import UIKit
 
 final class AuthViewController: UIViewController, Instantiable {
     typealias SignedUpHandler = () -> Void
     typealias Input = SignedUpHandler
-    
+
     lazy var viewModel = AuthViewModel(
         auth: dependencyProvider.auth,
         apiClient: dependencyProvider.apiClient,
@@ -25,7 +25,8 @@ final class AuthViewController: UIViewController, Instantiable {
                     }
                 } else {
                     DispatchQueue.main.async {
-                        let vc = CreateUserViewController(dependencyProvider: self.dependencyProvider, input: ())
+                        let vc = CreateUserViewController(
+                            dependencyProvider: self.dependencyProvider, input: ())
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
                 }
@@ -37,22 +38,22 @@ final class AuthViewController: UIViewController, Instantiable {
 
     @IBOutlet weak var backgroundImageView: UIImageView!
     @IBOutlet weak var signInButtonView: Button!
-    
+
     var dependencyProvider: DependencyProvider
     var signedUpHandler: SignedUpHandler
-    
+
     init(dependencyProvider: DependencyProvider, input: @escaping Input) {
         self.dependencyProvider = dependencyProvider
         self.signedUpHandler = input
         super.init(nibName: nil, bundle: nil)
-        
+
         self.dependencyProvider.auth.delegate = self
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -69,7 +70,7 @@ final class AuthViewController: UIViewController, Instantiable {
             self?.signInButtonTapped()
         }
     }
-    
+
     func signInButtonTapped() {
         viewModel.getSignupStatus()
     }
@@ -82,15 +83,15 @@ extension AuthViewController: AWSCognitoAuthDelegate {
 }
 
 #if DEBUG && canImport(SwiftUI)
-import SwiftUI
+    import SwiftUI
 
-struct AuthViewController_Previews: PreviewProvider {
-    static var previews: some View {
-        ViewControllerWrapper<AuthViewController>(
-            dependencyProvider: .make(),
-            input: {}
-        )
+    struct AuthViewController_Previews: PreviewProvider {
+        static var previews: some View {
+            ViewControllerWrapper<AuthViewController>(
+                dependencyProvider: .make(),
+                input: {}
+            )
+        }
     }
-}
 
 #endif

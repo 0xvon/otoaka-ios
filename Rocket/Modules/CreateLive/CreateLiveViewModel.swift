@@ -5,8 +5,8 @@
 //  Created by Masato TSUTSUMI on 2020/11/23.
 //
 
-import Foundation
 import Endpoint
+import Foundation
 import UIKit
 
 class CreateLiveViewModel {
@@ -16,19 +16,21 @@ class CreateLiveViewModel {
         case getPerformers([Endpoint.Group])
         case error(Error)
     }
-    
+
     let apiClient: APIClient
     let s3Client: S3Client
     let user: User
     let outputHandler: (Output) -> Void
-    
-    init(apiClient: APIClient, s3Bucket: String, user: User, outputHander: @escaping (Output) -> Void) {
+
+    init(
+        apiClient: APIClient, s3Bucket: String, user: User, outputHander: @escaping (Output) -> Void
+    ) {
         self.apiClient = apiClient
         self.s3Client = S3Client(s3Bucket: s3Bucket)
         self.user = user
         self.outputHandler = outputHander
     }
-    
+
     func getMyGroups() {
         let request = Empty()
         var uri = Endpoint.GetMemberships.URI()
@@ -46,7 +48,7 @@ class CreateLiveViewModel {
             self.outputHandler(.error(error))
         }
     }
-    
+
     func getGroups() {
         let request = Empty()
         var uri = Endpoint.GetAllGroups.URI()
@@ -65,10 +67,16 @@ class CreateLiveViewModel {
             self.outputHandler(.error(error))
         }
     }
-    
-    func createLive(title: String, style: LiveStyleInput, hostGroupId: Endpoint.Group.ID, livehouse: String, openAt: Date?, startAt: Date?, endAt: Date?, thumbnail: UIImage?) {
+
+    func createLive(
+        title: String, style: LiveStyleInput, hostGroupId: Endpoint.Group.ID, livehouse: String,
+        openAt: Date?, startAt: Date?, endAt: Date?, thumbnail: UIImage?
+    ) {
         self.s3Client.uploadImage(image: thumbnail) { [apiClient] (imageUrl, error) in
-            let req = CreateLive.Request(title: title, style: style, artworkURL: URL(string: imageUrl!), hostGroupId: hostGroupId, openAt: openAt, startAt: startAt, endAt: endAt)
+            let req = CreateLive.Request(
+                title: title, style: style, artworkURL: URL(string: imageUrl!),
+                hostGroupId: hostGroupId,
+                openAt: openAt, startAt: startAt, endAt: endAt)
             do {
                 try apiClient.request(CreateLive.self, request: req) { result in
                     switch result {
