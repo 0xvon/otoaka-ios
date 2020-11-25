@@ -35,10 +35,10 @@ class APIClient {
 
     public func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
-        uri: E.URI = E.URI(), withToken: Bool = true,
+        uri: E.URI = E.URI(),
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) where E.Request == Empty {
-        request(E.self, request: Empty(), uri: uri, withToken: withToken, callback: callback)
+        request(E.self, request: Empty(), uri: uri, callback: callback)
     }
 
     public func request<E: EndpointProtocol>(
@@ -54,33 +54,27 @@ class APIClient {
             return
         }
 
-        if withToken {
-            tokenProvider.provideIdToken { [unowned self] result in
-                switch result {
-                case .success(let idToken):
-                    self.request(
-                        endpoint, request: request, url: url, idToken: idToken, callback: callback)
-                case .failure(let error):
-                    callback(.failure(error))
-                }
+        tokenProvider.provideIdToken { [unowned self] result in
+            switch result {
+            case .success(let idToken):
+                self.request(
+                    endpoint, request: request, url: url, idToken: idToken, callback: callback)
+            case .failure(let error):
+                callback(.failure(error))
             }
-        } else {
-            self.request(endpoint, request: request, url: url, idToken: nil, callback: callback)
         }
     }
 
     private func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
-        request: E.Request, url: URL, idToken: String?,
+        request: E.Request, url: URL, idToken: String,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) {
         print(url)
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = E.method.rawValue
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let idToken = idToken {
-            urlRequest.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
-        }
+        urlRequest.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
         if E.method != .get {
             urlRequest.httpBody = try! encoder.encode(request)
         }
