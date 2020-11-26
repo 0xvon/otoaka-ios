@@ -135,6 +135,13 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func logout() {
         dependencyProvider.auth.signOutLocally()
+        self.dismiss(animated: true, completion: nil)
+        self.listener()
+    }
+    
+    private var listener: () -> Void = {}
+    func signout(_ listener: @escaping () -> Void) {
+        self.listener = listener
     }
 }
 

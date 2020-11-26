@@ -35,7 +35,10 @@ final class HomeViewController: UITabBarController, Instantiable {
         self.tabBar.backgroundColor = style.color.background.get()
         self.navigationController?.navigationBar.tintColor = style.color.main.get()
         self.navigationController?.navigationBar.barTintColor = .clear
-
+        checkSignupStatus()
+    }
+    
+    func checkSignupStatus() {
         if dependencyProvider.auth.isSignedIn {
             dependencyProvider.apiClient.request(SignupStatus.self) { [unowned self] result in
                 switch result {
@@ -62,9 +65,12 @@ final class HomeViewController: UITabBarController, Instantiable {
         let vc = AuthViewController(dependencyProvider: dependencyProvider) { [unowned self] in
             self.makeViewFromUserInfo()
         }
-        let nav = UINavigationController(rootViewController: vc)
+        let nav = IndependentNavigationController(rootViewController: vc)
         nav.navigationBar.tintColor = style.color.main.get()
         nav.navigationBar.barTintColor = .clear
+        nav.dismiss {
+            self.checkSignupStatus()
+        }
         self.present(nav, animated: true)
     }
 
@@ -87,21 +93,27 @@ final class HomeViewController: UITabBarController, Instantiable {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let bandViewController = BandViewController(
             dependencyProvider: loggedInProvider, input: self.input)
-        let vc1 = UINavigationController(rootViewController: bandViewController)
+        let vc1 = IndependentNavigationController(rootViewController: bandViewController)
         vc1.tabBarItem = UITabBarItem(
             title: "Home", image: UIImage(named: "musicIcon"),
             selectedImage: UIImage(named: "selectedMusicIcon"))
         vc1.navigationBar.tintColor = style.color.main.get()
         vc1.navigationBar.barTintColor = .clear
+        vc1.dismiss {
+            self.checkSignupStatus()
+        }
 
         let ticketViewController = TicketViewController(
             dependencyProvider: loggedInProvider, input: ())
-        let vc2 = UINavigationController(rootViewController: ticketViewController)
+        let vc2 = IndependentNavigationController(rootViewController: ticketViewController)
         vc2.tabBarItem = UITabBarItem(
             title: "Ticket", image: UIImage(named: "ticketIcon"),
             selectedImage: UIImage(named: "selectedTicketIcon"))
         vc2.navigationBar.tintColor = style.color.main.get()
         vc2.navigationBar.barTintColor = .clear
+        vc2.dismiss {
+            self.checkSignupStatus()
+        }
         return [vc1, vc2]
     }
     private func promptAlertViewController(with message: String) {

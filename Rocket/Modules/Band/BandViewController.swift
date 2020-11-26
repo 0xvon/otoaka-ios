@@ -485,6 +485,10 @@ final class BandViewController: UIViewController, Instantiable {
 
     @objc private func iconTapped(_ sender: Any) {
         let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
+        vc.signout {
+            print("signout")
+            self.navigationController?.popViewController(animated: true)
+        }
         present(vc, animated: true, completion: nil)
     }
 }
