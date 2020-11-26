@@ -65,7 +65,7 @@ final class HomeViewController: UITabBarController, Instantiable {
         let vc = AuthViewController(dependencyProvider: dependencyProvider) { [unowned self] in
             self.makeViewFromUserInfo()
         }
-        let nav = IndependentNavigationController(rootViewController: vc)
+        let nav = ModalNavigationController(rootViewController: vc)
         nav.navigationBar.tintColor = style.color.main.get()
         nav.navigationBar.barTintColor = .clear
         nav.dismiss {
@@ -93,7 +93,7 @@ final class HomeViewController: UITabBarController, Instantiable {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let bandViewController = BandViewController(
             dependencyProvider: loggedInProvider, input: self.input)
-        let vc1 = IndependentNavigationController(rootViewController: bandViewController)
+        let vc1 = UINavigationController(rootViewController: bandViewController)
         vc1.tabBarItem = UITabBarItem(
             title: "Home", image: UIImage(named: "musicIcon"),
             selectedImage: UIImage(named: "selectedMusicIcon"))
@@ -105,7 +105,7 @@ final class HomeViewController: UITabBarController, Instantiable {
 
         let ticketViewController = TicketViewController(
             dependencyProvider: loggedInProvider, input: ())
-        let vc2 = IndependentNavigationController(rootViewController: ticketViewController)
+        let vc2 = UINavigationController(rootViewController: ticketViewController)
         vc2.tabBarItem = UITabBarItem(
             title: "Ticket", image: UIImage(named: "ticketIcon"),
             selectedImage: UIImage(named: "selectedTicketIcon"))

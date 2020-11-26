@@ -7,7 +7,7 @@
 
 import UIKit
 
-class IndependentNavigationController: UINavigationController {
+class ModalNavigationController: UINavigationController {
     override func viewWillDisappear(_ animated: Bool) {
         if isBeingDismissed {
             self.listener()
