@@ -58,26 +58,39 @@ extension DependencyProvider {
             userPoolIdForEnablingASF: config.userPoolIdForEnablingASF
         )
 
-        AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: "cognitoAuth")
-        let auth = AWSCognitoAuth.init(forKey: "cognitoAuth")
-        let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: auth)
+        let cognitoAuthKey = "dev.wall-of-death.Rocket.cognito-auth"
+        AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: cognitoAuthKey)
+        let auth = AWSCognitoAuth(forKey: cognitoAuthKey)
+        let wrapper = CognitoAuthWrapper(awsCognitoAuth: auth)
+        let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: wrapper)
         return DependencyProvider(auth: auth, apiClient: apiClient, s3Bucket: config.s3Bucket)
     }
 }
 
-extension AWSCognitoAuth: APITokenProvider {
+class CognitoAuthWrapper: APITokenProvider {
     enum Error: Swift.Error {
         case unexpectedGetSessionResult
     }
+    let auth: AWSCognitoAuth
+    let queue = DispatchQueue(label: "dev.wall-of-death.Rocket.cognito-id-provider")
+    init(awsCognitoAuth: AWSCognitoAuth) {
+        self.auth = awsCognitoAuth
+    }
+
     func provideIdToken(_ callback: @escaping (Result<String, Swift.Error>) -> Void) {
-        getSession { (session, error) in
-            if let session = session, let idToken = session.idToken {
-                callback(.success(idToken.tokenString))
-            } else if let error = error {
-                callback(.failure(error))
-            } else {
-                callback(.failure(Error.unexpectedGetSessionResult))
+        queue.async { [auth] in
+            let semaphore = DispatchSemaphore(value: 0)
+            auth.getSession { (session, error) in
+                semaphore.signal()
+                if let session = session, let idToken = session.idToken {
+                    callback(.success(idToken.tokenString))
+                } else if let error = error {
+                    callback(.failure(error))
+                } else {
+                    callback(.failure(Error.unexpectedGetSessionResult))
+                }
             }
+            semaphore.wait()
         }
     }
 }
