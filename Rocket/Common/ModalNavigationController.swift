@@ -9,6 +9,8 @@ import UIKit
 
 class ModalNavigationController: UINavigationController {
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
         if isBeingDismissed {
             self.listener()
         }
