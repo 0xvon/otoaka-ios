@@ -487,6 +487,7 @@ final class BandViewController: UIViewController, Instantiable {
         let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
         vc.signout {
             print("signout")
+            // FIXME: back to HomeViewController
             self.navigationController?.popViewController(animated: true)
         }
         present(vc, animated: true, completion: nil)
