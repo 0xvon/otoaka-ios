@@ -68,7 +68,7 @@ final class HomeViewController: UITabBarController, Instantiable {
         let nav = ModalNavigationController(rootViewController: vc)
         nav.navigationBar.tintColor = style.color.main.get()
         nav.navigationBar.barTintColor = .clear
-        nav.dismiss {
+        nav.subscribeDismission {
             self.checkSignupStatus()
         }
         self.present(nav, animated: true)

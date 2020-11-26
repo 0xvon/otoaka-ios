@@ -17,7 +17,7 @@ class ModalNavigationController: UINavigationController {
     }
     
     private var listener: () -> Void = {}
-    func dismiss(_ listener: @escaping () -> Void) {
+    func subscribeDismission(_ listener: @escaping () -> Void) {
         self.listener = listener
     }
 }
