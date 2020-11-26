@@ -37,16 +37,35 @@ final class HomeViewController: UITabBarController, Instantiable {
         self.navigationController?.navigationBar.barTintColor = .clear
 
         if dependencyProvider.auth.isSignedIn {
-            makeViewFromUserInfo()
-        } else {
-            let vc = AuthViewController(dependencyProvider: dependencyProvider) { [unowned self] in
-                self.makeViewFromUserInfo()
+            dependencyProvider.apiClient.request(SignupStatus.self) { [unowned self] result in
+                switch result {
+                case .success(let res):
+                    if res.isSignedup {
+                        makeViewFromUserInfo()
+                    } else {
+                        DispatchQueue.main.async {
+                            makeAuth()
+                        }
+                    }
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        self.promptAlertViewController(with: String(describing: error))
+                    }
+                }
             }
-            let nav = UINavigationController(rootViewController: vc)
-            nav.navigationBar.tintColor = style.color.main.get()
-            nav.navigationBar.barTintColor = .clear
-            self.present(nav, animated: true)
+        } else {
+            makeAuth()
         }
+    }
+    
+    func makeAuth() {
+        let vc = AuthViewController(dependencyProvider: dependencyProvider) { [unowned self] in
+            self.makeViewFromUserInfo()
+        }
+        let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.barTintColor = .clear
+        self.present(nav, animated: true)
     }
 
     func makeViewFromUserInfo() {
