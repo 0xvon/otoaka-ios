@@ -64,15 +64,15 @@ final class CreateBandViewController: UIViewController, Instantiable {
         self.view.backgroundColor = style.color.background.get()
         self.navigationController?.setNavigationBarHidden(false, animated: true)
 
-        groupNameInputView.inject(input: "バンド名")
-        groupEnglishNameInputView.inject(input: "English Name")
-        sinceInputView.inject(input: "結成年")
+        groupNameInputView.inject(input: (placeholder: "バンド名", maxLength: 20))
+        groupEnglishNameInputView.inject(input: (placeholder: "English Name", maxLength: 40))
+        sinceInputView.inject(input: (placeholder: "結成年", maxLength: 12))
         yearPicker = UIPickerView()
         yearPicker.translatesAutoresizingMaskIntoConstraints = false
         yearPicker.dataSource = self
         yearPicker.delegate = self
         sinceInputView.selectInputView(inputView: yearPicker)
-        hometownInputView.inject(input: "出身地")
+        hometownInputView.inject(input: (placeholder: "出身地", maxLength: 12))
         hometownPicker = UIPickerView()
         hometownPicker.translatesAutoresizingMaskIntoConstraints = false
         hometownPicker.dataSource = self
@@ -87,7 +87,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         profileImageView.image = UIImage(named: "band")
         artworkInputView.addSubview(profileImageView)
 
-        biographyInputView.inject(input: "bio")
+        biographyInputView.inject(input: (text: "bio", maxLength: 200))
 
         let changeProfileImageButton = UIButton()
         changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false

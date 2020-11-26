@@ -92,21 +92,21 @@ final class EditBandViewController: UIViewController, Instantiable {
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
-        displayNameInputView = TextFieldView(input: "バンド名")
+        displayNameInputView = TextFieldView(input: (placeholder:"バンド名", maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         displayNameInputView.setText(text: input.name)
         mainView.addSubview(displayNameInputView)
 
-        englishNameInputView = TextFieldView(input: "英語名")
+        englishNameInputView = TextFieldView(input: (placeholder:"English Name", maxLength: 40))
         englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
         englishNameInputView.setText(text: input.name)
         mainView.addSubview(englishNameInputView)
 
-        biographyInputView = InputTextView(input: input.biography ?? "bio")
+        biographyInputView = InputTextView(input: (text: input.biography ?? "bio", maxLength: 200))
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(biographyInputView)
 
-        sinceInputView = TextFieldView(input: "出身地")
+        sinceInputView = TextFieldView(input: (placeholder: "結成年", maxLength: 20))
         sinceInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(sinceInputView)
 
@@ -116,7 +116,7 @@ final class EditBandViewController: UIViewController, Instantiable {
         sincePickerView.delegate = self
         sinceInputView.selectInputView(inputView: sincePickerView)
 
-        hometownInputView = TextFieldView(input: "出身地")
+        hometownInputView = TextFieldView(input: (placeholder: "出身地", maxLength: 20))
         hometownInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(hometownInputView)
 

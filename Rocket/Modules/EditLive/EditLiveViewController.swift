@@ -113,12 +113,12 @@ final class EditLiveViewController: UIViewController, Instantiable {
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
-        liveTitleInputView = TextFieldView(input: "タイトル")
+        liveTitleInputView = TextFieldView(input: (placeholder: "タイトル", maxLength: 32))
         liveTitleInputView.setText(text: input.title)
         liveTitleInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(liveTitleInputView)
 
-        livehouseInputView = TextFieldView(input: "会場")
+        livehouseInputView = TextFieldView(input: (placeholder: "会場", maxLength: 40))
         // FIXME: replace here
         livehouseInputView.setText(text: livehouses[0])
         livehouseInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -130,7 +130,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
         livehousePickerView.delegate = self
         livehouseInputView.selectInputView(inputView: livehousePickerView)
 
-        primaryPartnerInputView = TextFieldView(input: "対バン相手")
+        primaryPartnerInputView = TextFieldView(input: (placeholder: "対バン相手", maxLength: 20))
         switch input.style {
         case .battle(let performers):
             primaryPartnerInputView.setText(text: performers[0].name)

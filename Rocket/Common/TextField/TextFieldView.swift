@@ -9,7 +9,10 @@ import UIKit
 
 final class TextFieldView: UIView {
 
-    typealias Input = String
+    typealias Input = (
+        placeholder: String,
+        maxLength: Int
+    )
     var input: Input!
 
     private var textField: UITextField!
@@ -47,9 +50,9 @@ final class TextFieldView: UIView {
         textField.delegate = self
         textField.textColor = style.color.main.get()
         textField.font = style.font.regular.get()
-        textField.placeholder = self.input
+        textField.placeholder = self.input.placeholder
         textField.attributedPlaceholder = NSAttributedString(
-            string: self.input,
+            string: self.input.placeholder,
             attributes: [NSAttributedString.Key.foregroundColor: style.color.main.get()])
         textField.borderStyle = .none
         contentView.addSubview(textField)
@@ -123,6 +126,7 @@ extension TextFieldView: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.text = textField.text?.prefix(input.maxLength).description
         underLineColor()
     }
 }

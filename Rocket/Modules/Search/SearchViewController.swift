@@ -116,7 +116,7 @@ final class SearchViewController: UIViewController, Instantiable {
         mapImageView.image = UIImage(named: "map")
         hometownView.addSubview(mapImageView)
 
-        prefectureTextFieldView = TextFieldView(input: "出身地")
+        prefectureTextFieldView = TextFieldView(input: (placeholder: "出身地", maxLength: 20))
         prefectureTextFieldView.selectInputView(inputView: prefecturePicker)
         prefectureTextFieldView.translatesAutoresizingMaskIntoConstraints = false
         prefectureTextFieldView.backgroundColor = .clear

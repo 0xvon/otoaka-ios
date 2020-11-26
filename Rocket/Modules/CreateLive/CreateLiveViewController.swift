@@ -120,7 +120,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
-        hostGroupInputView = TextFieldView(input: "主催バンド")
+        hostGroupInputView = TextFieldView(input: (placeholder: "主催バンド", maxLength: 20))
         hostGroupInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(hostGroupInputView)
 
@@ -130,11 +130,11 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         hostGroupPickerView.delegate = self
         hostGroupInputView.selectInputView(inputView: hostGroupPickerView)
 
-        liveTitleInputView = TextFieldView(input: "タイトル")
+        liveTitleInputView = TextFieldView(input: (placeholder: "タイトル", maxLength: 32))
         liveTitleInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(liveTitleInputView)
 
-        liveStyleInputView = TextFieldView(input: "形式")
+        liveStyleInputView = TextFieldView(input: (placeholder: "形式", maxLength: 20))
         liveStyleInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(liveStyleInputView)
 
@@ -144,7 +144,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         liveStylePickerView.delegate = self
         liveStyleInputView.selectInputView(inputView: liveStylePickerView)
 
-        livehouseInputView = TextFieldView(input: "会場")
+        livehouseInputView = TextFieldView(input: (placeholder: "会場", maxLength: 40))
         livehouseInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(livehouseInputView)
 
@@ -154,7 +154,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         livehousePickerView.delegate = self
         livehouseInputView.selectInputView(inputView: livehousePickerView)
 
-        primaryPartnerInputView = TextFieldView(input: "対バン相手")
+        primaryPartnerInputView = TextFieldView(input: (placeholder: "対バン相手", maxLength: 20))
         primaryPartnerInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(primaryPartnerInputView)
         partnerBandInputViews = [primaryPartnerInputView]

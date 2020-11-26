@@ -9,7 +9,10 @@ import UIKit
 
 final class InputTextView: UIView {
 
-    typealias Input = String
+    typealias Input = (
+        text: String,
+        maxLength: Int
+    )
     var input: Input!
 
     private var textView: UITextView!
@@ -47,7 +50,7 @@ final class InputTextView: UIView {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textColor = style.color.main.get()
         textView.font = style.font.regular.get()
-        textView.text = self.input
+        textView.text = self.input.text
         contentView.addSubview(textView)
 
         underLine = UIView()
@@ -100,5 +103,9 @@ extension InputTextView: UITextViewDelegate {
 
     func textViewDidEndEditing(_ textView: UITextView) {
         underLineColor()
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        textView.text = textView.text.prefix(input.maxLength).description
     }
 }

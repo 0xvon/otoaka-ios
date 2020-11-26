@@ -79,12 +79,12 @@ final class EditAccountViewController: UIViewController, Instantiable {
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
-        displayNameInputView = TextFieldView(input: "表示名")
+        displayNameInputView = TextFieldView(input: (placeholder: "表示名", maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         displayNameInputView.setText(text: dependencyProvider.user.name)
         mainView.addSubview(displayNameInputView)
 
-        biographyInputView = InputTextView(input: dependencyProvider.user.biography ?? "bio")
+        biographyInputView = InputTextView(input: (text: dependencyProvider.user.biography ?? "bio", maxLength: 200) )
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(biographyInputView)
 
@@ -187,7 +187,7 @@ final class EditAccountViewController: UIViewController, Instantiable {
     func setupPartInput() {
         switch dependencyProvider.user.role {
         case .artist(let artist):
-            partInputView = TextFieldView(input: "パート")
+            partInputView = TextFieldView(input: (placeholder:"パート", maxLength: 20))
             partInputView.translatesAutoresizingMaskIntoConstraints = false
             partInputView.setText(text: artist.part)
             mainView.addSubview(partInputView)

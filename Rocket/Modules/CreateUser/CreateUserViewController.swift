@@ -120,7 +120,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         fanInputs.translatesAutoresizingMaskIntoConstraints = false
         profileInputView.addSubview(fanInputs)
 
-        nameInputView = TextFieldView(input: "表示名")
+        nameInputView = TextFieldView(input: (placeholder: "表示名", maxLength: 20))
         nameInputView.translatesAutoresizingMaskIntoConstraints = false
         fanInputs.addSubview(nameInputView)
 
@@ -129,11 +129,11 @@ final class CreateUserViewController: UIViewController, Instantiable {
         bandInputs.translatesAutoresizingMaskIntoConstraints = false
         profileInputView.addSubview(bandInputs)
 
-        artistNameInputView = TextFieldView(input: "表示名")
+        artistNameInputView = TextFieldView(input: (placeholder: "表示名", maxLength: 20))
         artistNameInputView.translatesAutoresizingMaskIntoConstraints = false
         bandInputs.addSubview(artistNameInputView)
 
-        partInputView = TextFieldView(input: "パート")
+        partInputView = TextFieldView(input: (placeholder: "パート", maxLength: 20))
         partInputView.translatesAutoresizingMaskIntoConstraints = false
         bandInputs.addSubview(partInputView)
 
