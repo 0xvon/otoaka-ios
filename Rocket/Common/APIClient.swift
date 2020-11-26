@@ -43,7 +43,7 @@ class APIClient {
 
     public func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
-        request: E.Request, uri: E.URI = E.URI(), withToken: Bool = true,
+        request: E.Request, uri: E.URI = E.URI(),
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) {
         let url: URL
