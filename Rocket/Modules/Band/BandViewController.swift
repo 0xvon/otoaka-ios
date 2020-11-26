@@ -487,11 +487,16 @@ final class BandViewController: UIViewController, Instantiable {
         let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
         vc.signout {
             print("signout")
-            // FIXME: back to HomeViewController
-            self.navigationController?.popViewController(animated: true)
+            self.listener()
         }
         present(vc, animated: true, completion: nil)
     }
+    
+    private var listener: () -> Void = {}
+    func signout(_ listener: @escaping () -> Void) {
+        self.listener = listener
+    }
+    
 }
 
 extension BandViewController: UITableViewDelegate, UITableViewDataSource {

@@ -99,7 +99,7 @@ final class HomeViewController: UITabBarController, Instantiable {
             selectedImage: UIImage(named: "selectedMusicIcon"))
         vc1.navigationBar.tintColor = style.color.main.get()
         vc1.navigationBar.barTintColor = .clear
-        vc1.dismiss {
+        bandViewController.signout {
             self.checkSignupStatus()
         }
 
@@ -111,9 +111,6 @@ final class HomeViewController: UITabBarController, Instantiable {
             selectedImage: UIImage(named: "selectedTicketIcon"))
         vc2.navigationBar.tintColor = style.color.main.get()
         vc2.navigationBar.barTintColor = .clear
-        vc2.dismiss {
-            self.checkSignupStatus()
-        }
         return [vc1, vc2]
     }
     private func promptAlertViewController(with message: String) {
