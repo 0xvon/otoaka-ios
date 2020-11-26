@@ -27,20 +27,14 @@ class InvitationViewModel {
     func joinGroup(invitationCode: String?) {
         if let invitationCode = invitationCode {
             let req = JoinGroup.Request(invitationId: invitationCode)
-            do {
-                try apiClient.request(JoinGroup.self, request: req) { result in
-                    switch result {
-                    case .success:
-                        self.outputHandler(.joinGroup)
-                    case .failure(let error):
-                        self.outputHandler(.error(error))
-                    }
+            apiClient.request(JoinGroup.self, request: req) { result in
+                switch result {
+                case .success:
+                    self.outputHandler(.joinGroup)
+                case .failure(let error):
+                    self.outputHandler(.error(error))
                 }
-            } catch let error {
-                self.outputHandler(.error(error))
             }
-        } else {
-            outputHandler(.error(ViewModelError.notFoundError("invitation code not found")))
         }
     }
 

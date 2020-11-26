@@ -44,13 +44,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("token is")
         print(token)
         let req = RegisterDeviceToken.Request(deviceToken: token)
-        do {
-            try dependencyProvider.apiClient.request(RegisterDeviceToken.self, request: req) {
-                result in
-                print(result)
-            }
-        } catch {
-            print("failed")
+        dependencyProvider.apiClient.request(RegisterDeviceToken.self, request: req) {
+            result in
+            print(result)
         }
     }
 

@@ -35,36 +35,26 @@ class PerformanceRequestViewModel {
         uri.page = 1
         uri.per = 1000
         let req = Empty()
-
-        do {
-            try apiClient.request(GetPerformanceRequests.self, request: req, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.getRequests(res.items))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(GetPerformanceRequests.self, request: req, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getRequests(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 
     func replyRequest(requestId: PerformanceRequest.ID, accept: Bool, cellIndex: Int) {
         let req = ReplyPerformanceRequest.Request(
             requestId: requestId, reply: accept ? .accept : .deny)
-
-        do {
-            try apiClient.request(ReplyPerformanceRequest.self, request: req) { result in
-                switch result {
-                case .success(_):
-                    self.outputHandler(.replyRequest(cellIndex))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(ReplyPerformanceRequest.self, request: req) { result in
+            switch result {
+            case .success(_):
+                self.outputHandler(.replyRequest(cellIndex))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 }

@@ -35,18 +35,13 @@ class CreateBandViewModel {
             let req = CreateGroup.Request(
                 name: name, englishName: englishName, biography: biography, since: since,
                 artworkURL: URL(string: imageUrl), hometown: hometown)
-
-            do {
-                try apiClient.request(CreateGroup.self, request: req) { result in
-                    switch result {
-                    case .success(let res):
-                        self.outputHandler(.create(res))
-                    case .failure(let error):
-                        self.outputHandler(.error(error))
-                    }
+            apiClient.request(CreateGroup.self, request: req) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.create(res))
+                case .failure(let error):
+                    self.outputHandler(.error(error))
                 }
-            } catch let error {
-                self.outputHandler(.error(error))
             }
         }
     }

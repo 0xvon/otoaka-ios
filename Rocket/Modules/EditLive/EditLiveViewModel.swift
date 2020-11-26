@@ -38,17 +38,13 @@ class EditLiveViewModel {
         let request = Empty()
         var uri = Endpoint.GetMemberships.URI()
         uri.artistId = self.user.id
-        do {
-            try apiClient.request(GetMemberships.self, request: request, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.getHostGroups(res))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(GetMemberships.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getHostGroups(res))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 
@@ -57,17 +53,13 @@ class EditLiveViewModel {
         var uri = Endpoint.GetAllGroups.URI()
         uri.page = 1
         uri.per = 1000
-        do {
-            try apiClient.request(GetAllGroups.self, request: request, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.getPerformers(res.items))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(GetAllGroups.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getPerformers(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 
@@ -82,18 +74,13 @@ class EditLiveViewModel {
             let req = EditLive.Request(
                 title: title, artworkURL: URL(string: imageUrl!), openAt: openAt, startAt: startAt,
                 endAt: endAt)
-
-            do {
-                try apiClient.request(EditLive.self, request: req, uri: uri) { result in
-                    switch result {
-                    case .success(let res):
-                        self.outputHandler(.editLive(res))
-                    case .failure(let error):
-                        self.outputHandler(.error(error))
-                    }
+            apiClient.request(EditLive.self, request: req, uri: uri) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.editLive(res))
+                case .failure(let error):
+                    self.outputHandler(.error(error))
                 }
-            } catch let error {
-                self.outputHandler(.error(error))
             }
         }
     }

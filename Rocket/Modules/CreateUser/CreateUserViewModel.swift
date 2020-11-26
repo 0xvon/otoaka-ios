@@ -30,18 +30,13 @@ class CreateUserViewModel {
         self.s3Client.uploadImage(image: thumbnail) { [apiClient] (imageUrl, error) in
             let req = Signup.Request(
                 name: name, biography: nil, thumbnailURL: imageUrl, role: .fan(Fan()))
-
-            do {
-                try apiClient.request(Signup.self, request: req) { result in
-                    switch result {
-                    case .success(let res):
-                        self.outputHandler(.fan(res))
-                    case .failure(let error):
-                        self.outputHandler(.error(error))
-                    }
+            apiClient.request(Signup.self, request: req) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.fan(res))
+                case .failure(let error):
+                    self.outputHandler(.error(error))
                 }
-            } catch let error {
-                self.outputHandler(.error(error))
             }
         }
     }
@@ -51,18 +46,13 @@ class CreateUserViewModel {
             let req = Signup.Request(
                 name: name, biography: nil, thumbnailURL: imageUrl,
                 role: .artist(Artist(part: part)))
-
-            do {
-                try apiClient.request(Signup.self, request: req) { result in
-                    switch result {
-                    case .success(let res):
-                        self.outputHandler(.artist(res))
-                    case .failure(let error):
-                        self.outputHandler(.error(error))
-                    }
+            apiClient.request(Signup.self, request: req) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.artist(res))
+                case .failure(let error):
+                    self.outputHandler(.error(error))
                 }
-            } catch let error {
-                self.outputHandler(.error(error))
             }
         }
     }

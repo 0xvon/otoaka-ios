@@ -29,18 +29,13 @@ class LiveDetailViewModel {
         var uri = GetLive.URI()
         uri.liveId = liveId
         let req = Empty()
-
-        do {
-            try apiClient.request(GetLive.self, request: req, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.getLive(res))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(GetLive.self, request: req, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getLive(res))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 }

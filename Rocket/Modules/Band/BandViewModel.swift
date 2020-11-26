@@ -38,18 +38,13 @@ class BandViewModel {
         uri.page = 1
         uri.per = 1000
         let req = Empty()
-
-        do {
-            try apiClient.request(GetUpcomingLives.self, request: req, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.getLives(res.items))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(GetUpcomingLives.self, request: req, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getLives(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 
@@ -58,18 +53,13 @@ class BandViewModel {
         uri.page = 1
         uri.per = 1000
         let req = Empty()
-
-        do {
-            try apiClient.request(GetAllGroups.self, request: req, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.getBands(res.items))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(GetAllGroups.self, request: req, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getBands(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 
@@ -79,18 +69,13 @@ class BandViewModel {
 
     func reserveTicket(liveId: Live.ID) {
         let request = ReserveTicket.Request(liveId: liveId)
-
-        do {
-            try apiClient.request(ReserveTicket.self, request: request) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.reserveTicket(res))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(ReserveTicket.self, request: request) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.reserveTicket(res))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 }

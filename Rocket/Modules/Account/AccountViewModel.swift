@@ -34,35 +34,26 @@ class AccountViewModel {
         let request = Empty()
         var uri = Endpoint.GetMemberships.URI()
         uri.artistId = self.user.id
-        do {
-            try apiClient.request(GetMemberships.self, request: request, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    let groupId = res[0].id
-                    self.inviteGroup(groupId: groupId)
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(GetMemberships.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                let groupId = res[0].id
+                self.inviteGroup(groupId: groupId)
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 
     func inviteGroup(groupId: Group.ID) {
-
         let request = InviteGroup.Request(groupId: groupId)
-        do {
-            try apiClient.request(InviteGroup.self, request: request) { result in
-                switch result {
-                case .success(let invitation):
-                    self.outputHandler(.inviteGroup(invitation))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+        apiClient.request(InviteGroup.self, request: request) { result in
+            switch result {
+            case .success(let invitation):
+                self.outputHandler(.inviteGroup(invitation))
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
-        } catch let error {
-            self.outputHandler(.error(error))
         }
     }
 }

@@ -57,7 +57,9 @@ final class HomeViewController: UITabBarController, Instantiable {
                     self.setViewControllers(instantiateTabs(with: user), animated: true)
                 }
             case .failure(let error):
-                self.promptAlertViewController(with: String(describing: error))
+                DispatchQueue.main.async {
+                    self.promptAlertViewController(with: String(describing: error))
+                }
             }
         }
     }
