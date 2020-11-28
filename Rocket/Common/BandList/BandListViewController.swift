@@ -24,6 +24,7 @@ final class BandListViewController: UIViewController, Instantiable {
 
     lazy var viewModel = BandListViewModel(
         apiClient: dependencyProvider.apiClient,
+        userId: dependencyProvider.user.id,
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
@@ -96,7 +97,7 @@ final class BandListViewController: UIViewController, Instantiable {
     func getGroups() {
         switch self.input {
         case .memberships:
-            viewModel.getMemberships(userId: dependencyProvider.user.id)
+            viewModel.getMemberships()
         case .followingGroups:
             viewModel.getFollowingGroups()
         case .searchResults(let query):

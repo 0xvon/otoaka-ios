@@ -16,6 +16,7 @@ final class AccountViewController: UIViewController, Instantiable {
     private var tableView: UITableView!
     private var profileSettingItem: AccountSettingItem!
     private var seeRequestsItem: AccountSettingItem!
+    private var createBandItem: AccountSettingItem!
     private var membershipItem: AccountSettingItem!
     private var logoutItem: AccountSettingItem!
 
@@ -60,7 +61,9 @@ final class AccountViewController: UIViewController, Instantiable {
             title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
             hasNotification: true)
         membershipItem = AccountSettingItem(
-            title: "所属バンド一覧", image: UIImage(named: "invitation"), action: self.memberships, hasNotification: false)
+            title: "所属バンド一覧", image: UIImage(named: "people"), action: self.memberships, hasNotification: false)
+        createBandItem = AccountSettingItem(
+            title: "新規バンド作成", image: UIImage(named: "selectedGuitarIcon"), action: self.createBand, hasNotification: false)
         logoutItem = AccountSettingItem(
             title: "ログアウト", image: UIImage(named: "logout"), action: self.logout,
             hasNotification: false)
@@ -95,6 +98,7 @@ final class AccountViewController: UIViewController, Instantiable {
                 profileSettingItem,
                 membershipItem,
                 seeRequestsItem,
+                createBandItem,
                 logoutItem,
             ]
         case .fan(_):
@@ -112,6 +116,11 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
+        present(vc, animated: true, completion: nil)
+    }
+    
+    private func createBand() {
+        let vc = CreateBandViewController(dependencyProvider: dependencyProvider, input: ())
         present(vc, animated: true, completion: nil)
     }
 
