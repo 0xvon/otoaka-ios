@@ -16,7 +16,7 @@ final class AccountViewController: UIViewController, Instantiable {
     private var tableView: UITableView!
     private var profileSettingItem: AccountSettingItem!
     private var seeRequestsItem: AccountSettingItem!
-    private var inviteGroupItem: AccountSettingItem!
+    private var membershipItem: AccountSettingItem!
     private var logoutItem: AccountSettingItem!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -59,8 +59,8 @@ final class AccountViewController: UIViewController, Instantiable {
         seeRequestsItem = AccountSettingItem(
             title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
             hasNotification: true)
-        inviteGroupItem = AccountSettingItem(
-            title: "招待コードの発行", image: UIImage(named: "invitation"), action: self.inviteGroup, hasNotification: false)
+        membershipItem = AccountSettingItem(
+            title: "所属バンド一覧", image: UIImage(named: "invitation"), action: self.memberships, hasNotification: false)
         logoutItem = AccountSettingItem(
             title: "ログアウト", image: UIImage(named: "logout"), action: self.logout,
             hasNotification: false)
@@ -93,7 +93,7 @@ final class AccountViewController: UIViewController, Instantiable {
         case .artist(_):
             self.items = [
                 profileSettingItem,
-                inviteGroupItem,
+                membershipItem,
                 seeRequestsItem,
                 logoutItem,
             ]
@@ -115,8 +115,10 @@ final class AccountViewController: UIViewController, Instantiable {
         present(vc, animated: true, completion: nil)
     }
 
-    private func inviteGroup() {
-        viewModel.inviteGroup()
+    private func memberships() {
+        let vc = BandListViewController(dependencyProvider: dependencyProvider, input: .memberships)
+        let nav = UINavigationController(rootViewController: vc)
+        present(nav, animated: true, completion: nil)
     }
 
     private func showInviteCode(invitationCode: String) {
