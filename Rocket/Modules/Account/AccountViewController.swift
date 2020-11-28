@@ -60,7 +60,7 @@ final class AccountViewController: UIViewController, Instantiable {
             title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
             hasNotification: true)
         inviteGroupItem = AccountSettingItem(
-            title: "招待コードの発行", image: nil, action: self.inviteGroup, hasNotification: false)
+            title: "招待コードの発行", image: UIImage(named: "invitation"), action: self.inviteGroup, hasNotification: false)
         logoutItem = AccountSettingItem(
             title: "ログアウト", image: UIImage(named: "logout"), action: self.logout,
             hasNotification: false)

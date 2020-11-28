@@ -11,9 +11,15 @@ import UIKit
 final class LiveDetailViewController: UIViewController, Instantiable {
 
     typealias Input = Live
-
     var dependencyProvider: LoggedInDependencyProvider!
-    var input: Input
+    var input: Input!
+    enum UserType {
+        case fan
+        case group
+        case performer
+    }
+    var userType: UserType!
+    
     @IBOutlet weak var liveDetailHeader: LiveDetailHeaderView!
     @IBOutlet weak var likeButtonView: ReactionButtonView!
     @IBOutlet weak var commentButtonView: ReactionButtonView!
@@ -37,6 +43,12 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
+        switch dependencyProvider.user.role {
+        case .artist(_):
+            self.userType = .performer
+        case .fan(_):
+            self.userType = .fan
+        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -118,10 +130,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         creationView.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(creationView)
 
-        verticalScrollView.refreshControl = UIRefreshControl()
-        verticalScrollView.refreshControl?.addTarget(
-            self, action: #selector(refreshLive(sender:)), for: .valueChanged)
-
         creationViewHeightConstraint = NSLayoutConstraint(
             item: creationView!,
             attribute: .height,
@@ -132,101 +140,230 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             constant: 60
         )
         creationView.addConstraint(creationViewHeightConstraint)
+        
+        switch self.userType {
+        case .performer:
+            editLiveView = CreateButton(input: UIImage(named: "edit")!)
+            editLiveView.layer.cornerRadius = 30
+            editLiveView.translatesAutoresizingMaskIntoConstraints = false
+            editLiveView.listen {
+                self.editLive()
+            }
+            creationView.addSubview(editLiveView)
 
-        editLiveView = CreateButton(input: UIImage(named: "edit")!)
-        editLiveView.layer.cornerRadius = 30
-        editLiveView.translatesAutoresizingMaskIntoConstraints = false
-        editLiveView.listen {
-            self.editLive()
+            editLiveViewBottomConstraint = NSLayoutConstraint(
+                item: editLiveView!,
+                attribute: .bottom,
+                relatedBy: .equal,
+                toItem: creationView,
+                attribute: .bottom,
+                multiplier: 1,
+                constant: 0
+            )
+            
+            createShareView = CreateButton(input: UIImage(named: "share")!)
+            createShareView.layer.cornerRadius = 30
+            createShareView.translatesAutoresizingMaskIntoConstraints = false
+            createShareView.listen {
+                self.createShare()
+            }
+            creationView.addSubview(createShareView)
+
+            createShareViewBottomConstraint = NSLayoutConstraint(
+                item: createShareView!,
+                attribute: .bottom,
+                relatedBy: .equal,
+                toItem: creationView,
+                attribute: .bottom,
+                multiplier: 1,
+                constant: 0
+            )
+
+            createMessageView = CreateButton(input: UIImage(named: "mail")!)
+            createMessageView.layer.cornerRadius = 30
+            createMessageView.translatesAutoresizingMaskIntoConstraints = false
+            createMessageView.listen {
+                self.createMessage()
+            }
+            creationView.addSubview(createMessageView)
+
+            createMessageViewBottomConstraint = NSLayoutConstraint(
+                item: createMessageView!,
+                attribute: .bottom,
+                relatedBy: .equal,
+                toItem: creationView,
+                attribute: .bottom,
+                multiplier: 1,
+                constant: 0
+            )
+
+            openButtonView = CreateButton(input: UIImage(named: "plus")!)
+            openButtonView.layer.cornerRadius = 30
+            openButtonView.translatesAutoresizingMaskIntoConstraints = false
+            openButtonView.listen {
+                self.isOpened.toggle()
+                self.open(isOpened: self.isOpened)
+            }
+            creationView.addSubview(openButtonView)
+
+            creationButtonConstraintItems = [
+                createMessageViewBottomConstraint,
+                createShareViewBottomConstraint,
+                editLiveViewBottomConstraint,
+            ]
+
+            creationView.addConstraints(creationButtonConstraintItems)
+
+            let constraints = [
+                creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+                creationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100),
+                creationView.widthAnchor.constraint(equalToConstant: 60),
+
+                openButtonView.bottomAnchor.constraint(equalTo: creationView.bottomAnchor),
+                openButtonView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+
+                createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+
+                createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                createShareView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+                
+                editLiveView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                editLiveView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                editLiveView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            ]
+
+            NSLayoutConstraint.activate(constraints)
+        case .group:
+            createShareView = CreateButton(input: UIImage(named: "share")!)
+            createShareView.layer.cornerRadius = 30
+            createShareView.translatesAutoresizingMaskIntoConstraints = false
+            createShareView.listen {
+                self.createShare()
+            }
+            creationView.addSubview(createShareView)
+
+            createShareViewBottomConstraint = NSLayoutConstraint(
+                item: createShareView!,
+                attribute: .bottom,
+                relatedBy: .equal,
+                toItem: creationView,
+                attribute: .bottom,
+                multiplier: 1,
+                constant: 0
+            )
+
+            createMessageView = CreateButton(input: UIImage(named: "mail")!)
+            createMessageView.layer.cornerRadius = 30
+            createMessageView.translatesAutoresizingMaskIntoConstraints = false
+            createMessageView.listen {
+                self.createMessage()
+            }
+            creationView.addSubview(createMessageView)
+
+            createMessageViewBottomConstraint = NSLayoutConstraint(
+                item: createMessageView!,
+                attribute: .bottom,
+                relatedBy: .equal,
+                toItem: creationView,
+                attribute: .bottom,
+                multiplier: 1,
+                constant: 0
+            )
+
+            openButtonView = CreateButton(input: UIImage(named: "plus")!)
+            openButtonView.layer.cornerRadius = 30
+            openButtonView.translatesAutoresizingMaskIntoConstraints = false
+            openButtonView.listen {
+                self.isOpened.toggle()
+                self.open(isOpened: self.isOpened)
+            }
+            creationView.addSubview(openButtonView)
+
+            creationButtonConstraintItems = [
+                createMessageViewBottomConstraint,
+                createShareViewBottomConstraint,
+            ]
+
+            creationView.addConstraints(creationButtonConstraintItems)
+
+            let constraints = [
+                creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+                creationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100),
+                creationView.widthAnchor.constraint(equalToConstant: 60),
+
+                openButtonView.bottomAnchor.constraint(equalTo: creationView.bottomAnchor),
+                openButtonView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+
+                createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+
+                createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                createShareView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            ]
+
+            NSLayoutConstraint.activate(constraints)
+        case .fan:
+            createShareView = CreateButton(input: UIImage(named: "share")!)
+            createShareView.layer.cornerRadius = 30
+            createShareView.translatesAutoresizingMaskIntoConstraints = false
+            createShareView.listen {
+                self.createShare()
+            }
+            creationView.addSubview(createShareView)
+
+            createShareViewBottomConstraint = NSLayoutConstraint(
+                item: createShareView!,
+                attribute: .bottom,
+                relatedBy: .equal,
+                toItem: creationView,
+                attribute: .bottom,
+                multiplier: 1,
+                constant: 0
+            )
+
+            openButtonView = CreateButton(input: UIImage(named: "plus")!)
+            openButtonView.layer.cornerRadius = 30
+            openButtonView.translatesAutoresizingMaskIntoConstraints = false
+            openButtonView.listen {
+                self.isOpened.toggle()
+                self.open(isOpened: self.isOpened)
+            }
+            creationView.addSubview(openButtonView)
+
+            creationButtonConstraintItems = [
+                createShareViewBottomConstraint,
+            ]
+
+            creationView.addConstraints(creationButtonConstraintItems)
+
+            let constraints = [
+                creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+                creationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100),
+                creationView.widthAnchor.constraint(equalToConstant: 60),
+
+                openButtonView.bottomAnchor.constraint(equalTo: creationView.bottomAnchor),
+                openButtonView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+
+                createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                createShareView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            ]
+
+            NSLayoutConstraint.activate(constraints)
+        case .none:
+            break
         }
-        creationView.addSubview(editLiveView)
-        editLiveViewBottomConstraint = NSLayoutConstraint(
-            item: editLiveView!,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: creationView,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 0
-        )
-
-        createShareView = CreateButton(input: UIImage(named: "share")!)
-        createShareView.layer.cornerRadius = 30
-        createShareView.translatesAutoresizingMaskIntoConstraints = false
-        createShareView.listen {
-            self.createShare()
-        }
-        creationView.addSubview(createShareView)
-
-        createShareViewBottomConstraint = NSLayoutConstraint(
-            item: createShareView!,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: creationView,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 0
-        )
-
-        createMessageView = CreateButton(input: UIImage(named: "mail")!)
-        createMessageView.layer.cornerRadius = 30
-        createMessageView.translatesAutoresizingMaskIntoConstraints = false
-        createMessageView.listen {
-            self.createMessage()
-        }
-        creationView.addSubview(createMessageView)
-
-        createMessageViewBottomConstraint = NSLayoutConstraint(
-            item: createMessageView!,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: creationView,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 0
-        )
-
-        openButtonView = CreateButton(input: UIImage(named: "plus")!)
-        openButtonView.layer.cornerRadius = 30
-        openButtonView.translatesAutoresizingMaskIntoConstraints = false
-        openButtonView.listen {
-            self.isOpened.toggle()
-            self.open(isOpened: self.isOpened)
-        }
-        creationView.addSubview(openButtonView)
-
-        creationButtonConstraintItems = [
-            createMessageViewBottomConstraint,
-            createShareViewBottomConstraint,
-            editLiveViewBottomConstraint,
-        ]
-
-        creationView.addConstraints(creationButtonConstraintItems)
-
-        let constraints = [
-            creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            creationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100),
-            creationView.widthAnchor.constraint(equalToConstant: 60),
-
-            openButtonView.bottomAnchor.constraint(equalTo: creationView.bottomAnchor),
-            openButtonView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-            openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-            openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
-
-            createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-            createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-            createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
-
-            createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-            createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-            createShareView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
-
-            editLiveView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-            editLiveView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-            editLiveView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
-        ]
-
-        NSLayoutConstraint.activate(constraints)
     }
 
     @objc private func refreshLive(sender: UIRefreshControl) {

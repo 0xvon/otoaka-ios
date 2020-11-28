@@ -66,6 +66,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
 
         groupNameInputView.inject(input: (placeholder: "バンド名", maxLength: 20))
         groupEnglishNameInputView.inject(input: (placeholder: "English Name", maxLength: 40))
+        groupEnglishNameInputView.keyboardType(true)
         sinceInputView.inject(input: (placeholder: "結成年", maxLength: 12))
         yearPicker = UIPickerView()
         yearPicker.translatesAutoresizingMaskIntoConstraints = false

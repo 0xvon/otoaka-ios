@@ -98,6 +98,7 @@ final class EditBandViewController: UIViewController, Instantiable {
         mainView.addSubview(displayNameInputView)
 
         englishNameInputView = TextFieldView(input: (placeholder:"English Name", maxLength: 40))
+        englishNameInputView.keyboardType(true)
         englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
         englishNameInputView.setText(text: input.name)
         mainView.addSubview(englishNameInputView)
@@ -135,8 +136,8 @@ final class EditBandViewController: UIViewController, Instantiable {
         profileImageView.layer.cornerRadius = 60
         profileImageView.clipsToBounds = true
         profileImageView.contentMode = .scaleAspectFill
-        if let thumbnail = dependencyProvider.user.thumbnailURL {
-            profileImageView.loadImageAsynchronously(url: URL(string: thumbnail))
+        if let thumbnail = input.artworkURL {
+            profileImageView.loadImageAsynchronously(url: thumbnail)
         }
         thumbnailInputView.addSubview(profileImageView)
 

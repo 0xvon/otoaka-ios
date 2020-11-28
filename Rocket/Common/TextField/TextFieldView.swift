@@ -80,6 +80,10 @@ final class TextFieldView: UIView {
         ]
         NSLayoutConstraint.activate(constraints)
     }
+    
+    func keyboardType(_ alphabet: Bool) {
+        textField.keyboardType = alphabet ? .alphabet : .default
+    }
 
     func underLineColor() {
         guard let text = textField.text else { return }
