@@ -26,9 +26,6 @@ class BandContentsCell: UITableViewCell, ReusableCell {
 
     func setup() {
         backgroundColor = style.color.background.get()
-        //        layer.cornerRadius = 16
-        //        layer.borderWidth = 1
-        //        layer.borderColor = style.color.main.get().cgColor
 
         thumbnailImageView.image = UIImage(named: "live")
         thumbnailImageView.layer.opacity = 0.6
@@ -36,7 +33,7 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         thumbnailImageView.layer.borderWidth = 1
         thumbnailImageView.layer.borderColor = style.color.main.get().cgColor
 
-        titleLabel.text = "STORY TELLER TOUR 2020 TOKYO"
+        titleLabel.text = "STORY TELLER TOUR 2020 OSAKA"
         titleLabel.font = style.font.large.get()
         titleLabel.textColor = style.color.main.get()
         titleLabel.lineBreakMode = .byWordWrapping

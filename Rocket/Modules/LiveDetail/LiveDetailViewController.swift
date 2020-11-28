@@ -19,6 +19,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         case performer
     }
     var userType: UserType!
+    var performers: [Group] = []
     
     @IBOutlet weak var liveDetailHeader: LiveDetailHeaderView!
     @IBOutlet weak var likeButtonView: ReactionButtonView!
@@ -73,6 +74,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                     self.input = live
                     self.inject()
                 }
+            case .toggleFollow(let index):
+                DispatchQueue.main.async {
+                    print(index)
+                }
             case .error(let error):
                 print(error)
             }
@@ -97,9 +102,17 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         buyTicketButtonView.listen {
             self.buyTicketButtonTapped()
         }
-
+        
+        switch input.style {
+        case .oneman(let performer):
+            self.performers = [performer]
+        case .battle(let performers):
+            self.performers = performers
+        case .festival(let performers):
+            self.performers = performers
+        }
         liveDetailHeader.inject(
-            input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: []))
+            input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: self.performers))
         liveDetailHeader.pushToBandViewController = { [weak self] vc in
             self?.navigationController?.pushViewController(vc, animated: true)
         }
@@ -107,7 +120,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             print("listen \(cellIndex) band")
         }
         liveDetailHeader.like = { [weak self] cellIndex in
-            print("like \(cellIndex) band")
+            self?.likeBand(cellIndex: cellIndex)
         }
 
         contentsTableView.delegate = self
@@ -419,6 +432,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         self.navigationController?.pushViewController(vc, animated: true)
         self.isOpened.toggle()
         self.open(isOpened: self.isOpened)
+    }
+    
+    private func likeBand(cellIndex: Int) {
+        viewModel.followGroup(groupId: self.performers[cellIndex].id, cellIndex: cellIndex)
     }
 
     private func likeButtonTapped() {
