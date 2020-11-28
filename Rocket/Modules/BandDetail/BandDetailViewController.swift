@@ -55,6 +55,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     self.input = group
                     self.inject()
                 }
+            case .getGroupLives(let lives):
+                DispatchQueue.main.async {
+                    self.lives = lives
+                    self.liveTableView.reloadData()
+                }
             case .follow:
                 DispatchQueue.main.async {
                     self.isLiked.toggle()
@@ -121,10 +126,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
         liveTableView.backgroundColor = style.color.background.get()
         liveTableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+        liveTableView.tableFooterView = UIView(frame: .zero)
+        viewModel.getGroupLives(groupId: input.id)
 
         contentsTableView.delegate = self
         contentsTableView.dataSource = self
         contentsTableView.backgroundColor = style.color.background.get()
+        contentsTableView.tableFooterView = UIView(frame: .zero)
         contentsTableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
@@ -567,5 +575,4 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     @objc private func seeMoreContents(_ sender: UIButton) {
         print("see more contents")
     }
-
 }

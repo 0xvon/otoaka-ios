@@ -12,6 +12,7 @@ import Foundation
 class BandDetailViewModel {
     enum Output {
         case getGroup(Group)
+        case getGroupLives([Live])
         case follow
         case unfollow
         case inviteGroup(InviteGroup.Invitation)
@@ -76,6 +77,22 @@ class BandDetailViewModel {
             switch result {
             case .success(let invitation):
                 self.outputHandler(.inviteGroup(invitation))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func getGroupLives(groupId: Group.ID) {
+        let request = Empty()
+        var uri = Endpoint.GetGroupLives.URI()
+        uri.page = 1
+        uri.per = 100
+        uri.groupId = groupId
+        apiClient.request(GetGroupLives.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let lives):
+                self.outputHandler(.getGroupLives(lives.items))
             case .failure(let error):
                 self.outputHandler(.error(error))
             }
