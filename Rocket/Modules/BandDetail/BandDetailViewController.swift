@@ -40,6 +40,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private var createShareViewBottomConstraint: NSLayoutConstraint!
     private var createEditView: CreateButton!
     private var createEditViewBottomConstraint: NSLayoutConstraint!
+    private var inviteCodeView: CreateButton!
+    private var inviteCodeViewBottomConstraint: NSLayoutConstraint!
     private var creationButtonConstraintItems: [NSLayoutConstraint] = []
 
     lazy var viewModel = BandDetailViewModel(
@@ -62,6 +64,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 DispatchQueue.main.async {
                     self.isLiked.toggle()
                     self.likeButtonColor()
+                }
+            case .inviteGroup(let invitation):
+                DispatchQueue.main.async {
+                    self.showInviteCode(invitationCode: invitation.id)
                 }
             case .error(let error):
                 print(error)
@@ -161,6 +167,24 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 constant: 0
             )
             
+            inviteCodeView = CreateButton(input: UIImage(named: "invitation")!)
+            inviteCodeView.layer.cornerRadius = 30
+            inviteCodeView.translatesAutoresizingMaskIntoConstraints = false
+            inviteCodeView.listen {
+                self.inviteGroup()
+            }
+            creationView.addSubview(inviteCodeView)
+
+            inviteCodeViewBottomConstraint = NSLayoutConstraint(
+                item: inviteCodeView!,
+                attribute: .bottom,
+                relatedBy: .equal,
+                toItem: creationView,
+                attribute: .bottom,
+                multiplier: 1,
+                constant: 0
+            )
+            
             createShareView = CreateButton(input: UIImage(named: "share")!)
             createShareView.layer.cornerRadius = 30
             createShareView.translatesAutoresizingMaskIntoConstraints = false
@@ -179,24 +203,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 constant: 0
             )
 
-            createMessageView = CreateButton(input: UIImage(named: "mail")!)
-            createMessageView.layer.cornerRadius = 30
-            createMessageView.translatesAutoresizingMaskIntoConstraints = false
-            createMessageView.listen {
-                self.createMessage()
-            }
-            creationView.addSubview(createMessageView)
-
-            createMessageViewBottomConstraint = NSLayoutConstraint(
-                item: createMessageView!,
-                attribute: .bottom,
-                relatedBy: .equal,
-                toItem: creationView,
-                attribute: .bottom,
-                multiplier: 1,
-                constant: 0
-            )
-
             openButtonView = CreateButton(input: UIImage(named: "plus")!)
             openButtonView.layer.cornerRadius = 30
             openButtonView.translatesAutoresizingMaskIntoConstraints = false
@@ -207,8 +213,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
             creationView.addSubview(openButtonView)
 
             creationButtonConstraintItems = [
-                createMessageViewBottomConstraint,
                 createShareViewBottomConstraint,
+                inviteCodeViewBottomConstraint,
                 createEditViewBottomConstraint,
             ]
 
@@ -224,10 +230,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
                 openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
 
-                createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-                createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-                createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
-
                 createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
                 createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
                 createShareView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
@@ -235,6 +237,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 createEditView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
                 createEditView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
                 createEditView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+                
+                inviteCodeView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+                inviteCodeView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+                inviteCodeView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
             ]
 
             NSLayoutConstraint.activate(constraints)
@@ -410,9 +416,27 @@ final class BandDetailViewController: UIViewController, Instantiable {
         }
     }
     
+    private func showInviteCode(invitationCode: String) {
+        let alertController = UIAlertController(
+            title: "招待コード", message: invitationCode, preferredStyle: UIAlertController.Style.alert)
+
+        let cancelAction = UIAlertAction(
+            title: "OK", style: UIAlertAction.Style.cancel,
+            handler: { action in
+                print("close")
+            })
+        alertController.addAction(cancelAction)
+
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
     func editGroup() {
         let vc = EditBandViewController(dependencyProvider: dependencyProvider, input: input)
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func inviteGroup() {
+        viewModel.inviteGroup(groupId: input.id)
     }
 
     func createMessage() {

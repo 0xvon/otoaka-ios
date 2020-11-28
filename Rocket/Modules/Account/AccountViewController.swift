@@ -41,10 +41,6 @@ final class AccountViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
-            case .inviteGroup(let invitation):
-                DispatchQueue.main.async {
-                    self.showInviteCode(invitationCode: invitation.id)
-                }
             case .error(let error):
                 print(error)
             }
@@ -128,20 +124,6 @@ final class AccountViewController: UIViewController, Instantiable {
         let vc = BandListViewController(dependencyProvider: dependencyProvider, input: .memberships)
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true, completion: nil)
-    }
-
-    private func showInviteCode(invitationCode: String) {
-        let alertController = UIAlertController(
-            title: "招待コード", message: invitationCode, preferredStyle: UIAlertController.Style.alert)
-
-        let cancelAction = UIAlertAction(
-            title: "OK", style: UIAlertAction.Style.cancel,
-            handler: { action in
-                print("close")
-            })
-        alertController.addAction(cancelAction)
-
-        self.present(alertController, animated: true, completion: nil)
     }
 
     private func logout() {

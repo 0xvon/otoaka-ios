@@ -14,6 +14,7 @@ class BandDetailViewModel {
         case getGroup(Group)
         case follow
         case unfollow
+        case inviteGroup(InviteGroup.Invitation)
         case error(Error)
     }
 
@@ -63,6 +64,18 @@ class BandDetailViewModel {
             switch result {
             case .success(let res):
                 self.outputHandler(.getGroup(res))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func inviteGroup(groupId: Group.ID) {
+        let request = InviteGroup.Request(groupId: groupId)
+        apiClient.request(InviteGroup.self, request: request) { result in
+            switch result {
+            case .success(let invitation):
+                self.outputHandler(.inviteGroup(invitation))
             case .failure(let error):
                 self.outputHandler(.error(error))
             }
