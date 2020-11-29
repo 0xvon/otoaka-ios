@@ -13,6 +13,7 @@ class BandDetailViewModel {
     enum Output {
         case getGroup(Group)
         case getGroupLives([Live])
+        case getFollowers([User])
         case follow
         case unfollow
         case inviteGroup(InviteGroup.Invitation)
@@ -51,16 +52,16 @@ class BandDetailViewModel {
         apiClient.request(UnfollowGroup.self, request: req) { result in
             switch result {
             case .success(_):
-                self.outputHandler(.follow)
+                self.outputHandler(.unfollow)
             case .failure(let error):
                 self.outputHandler(.error(error))
             }
         }
     }
 
-    func getGroup(groupId: Group.ID) {
+    func getGroup() {
         var uri = GetGroup.URI()
-        uri.groupId = groupId
+        uri.groupId = self.group.id
         apiClient.request(GetGroup.self, request: Empty(), uri: uri) { result in
             switch result {
             case .success(let res):
@@ -83,16 +84,32 @@ class BandDetailViewModel {
         }
     }
     
-    func getGroupLives(groupId: Group.ID) {
+    func getGroupLives() {
         let request = Empty()
         var uri = Endpoint.GetGroupLives.URI()
         uri.page = 1
         uri.per = 100
-        uri.groupId = groupId
+        uri.groupId = self.group.id
         apiClient.request(GetGroupLives.self, request: request, uri: uri) { result in
             switch result {
             case .success(let lives):
                 self.outputHandler(.getGroupLives(lives.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func getFollowers() {
+        let request = Empty()
+        var uri = GroupFollowers.URI()
+        uri.page = 1
+        uri.per = 100
+        uri.id = self.group.id
+        apiClient.request(GroupFollowers.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let users):
+                self.outputHandler(.getFollowers(users.items))
             case .failure(let error):
                 self.outputHandler(.error(error))
             }

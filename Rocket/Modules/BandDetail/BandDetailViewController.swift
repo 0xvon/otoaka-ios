@@ -20,6 +20,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
     var lives: [Live] = []
+    var followers:[User] = []
     var isLiked: Bool = false
     var userType: UserType!
 
@@ -60,14 +61,24 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     self.lives = lives
                     self.liveTableView.reloadData()
                 }
+            case .getFollowers(let users):
+                DispatchQueue.main.async {
+                    self.followers = users
+                    self.isLiked = users.contains { $0.id == self.dependencyProvider.user.id }
+                    self.setupLikeView()
+                }
             case .follow:
                 DispatchQueue.main.async {
                     self.isLiked.toggle()
+                    self.followers.append(self.dependencyProvider.user)
+                    self.setupLikeView()
                     self.likeButtonColor()
                 }
             case .unfollow:
                 DispatchQueue.main.async {
                     self.isLiked.toggle()
+                    self.followers = self.followers.filter { $0.id != self.dependencyProvider.user.id }
+                    self.setupLikeView()
                     self.likeButtonColor()
                 }
             case .inviteGroup(let invitation):
@@ -127,7 +138,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
         liveTableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
         liveTableView.tableFooterView = UIView(frame: .zero)
-        viewModel.getGroupLives(groupId: input.id)
+        viewModel.getGroupLives()
+        viewModel.getFollowers()
 
         contentsTableView.delegate = self
         contentsTableView.dataSource = self
@@ -136,6 +148,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
         contentsTableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
+    }
+    
+    private func setupLikeView() {
+        let image: UIImage = self.isLiked ? UIImage(named: "heart_fill")! : UIImage(named: "heart")!
+        self.likeButtonView.setItem(text: "\(self.followers.count)", image: image)
     }
 
     private func setupCreation() {
@@ -385,7 +402,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     @objc private func refreshBand(sender: UIRefreshControl) {
-        viewModel.getGroup(groupId: input.id)
+        viewModel.getGroup()
+        viewModel.getFollowers()
         sender.endRefreshing()
     }
 

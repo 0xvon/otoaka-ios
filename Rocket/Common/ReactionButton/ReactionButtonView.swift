@@ -89,6 +89,11 @@ final class ReactionButtonView: UIView {
         ]
         NSLayoutConstraint.activate(constraints)
     }
+    
+    func setItem(text: String, image: UIImage) {
+        self.numOfReaction.text = text
+        self.reactionImageView.image = image
+    }
 
     @objc private func touchUpInside() {
         self.listener()
