@@ -34,9 +34,6 @@ final class EditLiveViewController: UIViewController, Instantiable {
 
     var partnerGroups: [Endpoint.Group] = []
     var livehouse: String!
-    var openAt: Date? = Date()
-    var startAt: Date? = Date()
-    var endAt: Date? = Date()
     var thumbnail: UIImage!
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -149,9 +146,8 @@ final class EditLiveViewController: UIViewController, Instantiable {
 
         openTimeInputView = UIDatePicker()
         openTimeInputView.date = input.openAt ?? Date()
-        self.openAt = input.openAt
         openTimeInputView.translatesAutoresizingMaskIntoConstraints = false
-        openTimeInputView.date = Date()
+        openTimeInputView.date = input.openAt ?? Date()
         openTimeInputView.datePickerMode = .dateAndTime
         openTimeInputView.addTarget(
             self, action: #selector(openTimeChanged(_:)), for: .valueChanged)
@@ -169,9 +165,8 @@ final class EditLiveViewController: UIViewController, Instantiable {
 
         startTimeInputView = UIDatePicker()
         startTimeInputView.date = input.openAt ?? Date()
-        self.startAt = input.startAt
         startTimeInputView.translatesAutoresizingMaskIntoConstraints = false
-        startTimeInputView.date = Date()
+        startTimeInputView.date = input.startAt ?? Date()
         startTimeInputView.datePickerMode = .dateAndTime
         startTimeInputView.addTarget(
             self, action: #selector(startTimeChanged(_:)), for: .valueChanged)
@@ -189,9 +184,8 @@ final class EditLiveViewController: UIViewController, Instantiable {
 
         endTimeInputView = UIDatePicker()
         endTimeInputView.date = input.endAt ?? Date()
-        self.endAt = input.endAt
         endTimeInputView.translatesAutoresizingMaskIntoConstraints = false
-        endTimeInputView.date = Date()
+        endTimeInputView.date = input.endAt ?? Date()
         endTimeInputView.datePickerMode = .dateAndTime
         endTimeInputView.addTarget(self, action: #selector(endTimeChanged(_:)), for: .valueChanged)
         endTimeInputView.tintColor = style.color.main.get()
@@ -205,6 +199,8 @@ final class EditLiveViewController: UIViewController, Instantiable {
         endTimeLabel.textAlignment = .center
         endTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(endTimeLabel)
+        
+        restrictDatePickers()
 
         thumbnailInputView = UIView()
         thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -237,7 +233,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
         thumbnailLabel.translatesAutoresizingMaskIntoConstraints = false
         thumbnailInputView.addSubview(thumbnailLabel)
 
-        createButton = Button(input: (text: "ライブを作成", image: nil))
+        createButton = Button(input: (text: "ライブを編集", image: nil))
         createButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.layer.cornerRadius = 18
         createButton.listen {
@@ -357,30 +353,29 @@ final class EditLiveViewController: UIViewController, Instantiable {
     }
 
     @objc private func openTimeChanged(_ sender: Any) {
-        self.openAt = openTimeInputView.date
+        restrictDatePickers()
     }
 
     @objc private func startTimeChanged(_ sender: Any) {
-        if let openAt = self.openAt {
-            let startAt = startTimeInputView.date
-            self.startAt = openAt < startAt ? startAt : nil
-        }
+        restrictDatePickers()
     }
 
     @objc private func endTimeChanged(_ sender: Any) {
-        if let _ = self.openAt, let startAt = self.startAt {
-            let endAt = endTimeInputView.date
-            self.startAt = startAt < endAt ? endAt : nil
-        }
+        restrictDatePickers()
+    }
+    
+    private func restrictDatePickers() {
+        openTimeInputView.minimumDate = Date()
+        startTimeInputView.minimumDate = openTimeInputView.date
+        endTimeInputView.minimumDate = startTimeInputView.date
     }
 
     func createLive() {
         guard let title: String = liveTitleInputView.getText() else { return }
         guard let livehouse = livehouseInputView.getText() else { return }
-
         viewModel.editLive(
-            title: title, liveId: input.id, livehouse: livehouse, openAt: self.openAt,
-            startAt: self.startAt, endAt: self.endAt, thumbnail: self.thumbnail)
+            title: title, liveId: input.id, livehouse: livehouse, openAt: openTimeInputView.date,
+            startAt: startTimeInputView.date, endAt: endTimeInputView.date, thumbnail: self.thumbnail)
     }
 }
 

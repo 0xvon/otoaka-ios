@@ -41,9 +41,6 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     var partnerGroups: [Endpoint.Group] = []
     var liveStyle: Endpoint.LiveStyleInput!
     var livehouse: String!
-    var openAt: Date? = Date()
-    var startAt: Date? = Date()
-    var endAt: Date? = Date()
     var thumbnail: UIImage!
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -218,6 +215,8 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         endTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(endTimeLabel)
 
+        restrictDatePickers()
+        
         thumbnailInputView = UIView()
         thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(thumbnailInputView)
@@ -379,21 +378,21 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     }
 
     @objc private func openTimeChanged(_ sender: Any) {
-        self.openAt = openTimeInputView.date
+        restrictDatePickers()
     }
 
     @objc private func startTimeChanged(_ sender: Any) {
-        if let openAt = self.openAt {
-            let startAt = startTimeInputView.date
-            self.startAt = openAt < startAt ? startAt : nil
-        }
+        restrictDatePickers()
     }
 
     @objc private func endTimeChanged(_ sender: Any) {
-        if let _ = self.openAt, let startAt = self.startAt {
-            let endAt = endTimeInputView.date
-            self.startAt = startAt < endAt ? endAt : nil
-        }
+        restrictDatePickers()
+    }
+    
+    private func restrictDatePickers() {
+        openTimeInputView.minimumDate = Date()
+        startTimeInputView.minimumDate = openTimeInputView.date
+        endTimeInputView.minimumDate = startTimeInputView.date
     }
 
     func createLive() {
@@ -403,7 +402,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
         viewModel.createLive(
             title: title, style: style, hostGroupId: self.hostGroup.id, livehouse: livehouse,
-            openAt: self.openAt, startAt: self.startAt, endAt: self.endAt, thumbnail: self.thumbnail
+            openAt: openTimeInputView.date, startAt: startTimeInputView.date, endAt: endTimeInputView.date, thumbnail: self.thumbnail
         )
     }
 
