@@ -109,6 +109,7 @@ final class EditBandViewController: UIViewController, Instantiable {
 
         sinceInputView = TextFieldView(input: (placeholder: "結成年", maxLength: 20))
         sinceInputView.translatesAutoresizingMaskIntoConstraints = false
+        sinceInputView.setText(text: dateFormatter.string(from: input.since ?? Date()))
         mainView.addSubview(sinceInputView)
 
         sincePickerView = UIPickerView()
@@ -118,6 +119,7 @@ final class EditBandViewController: UIViewController, Instantiable {
         sinceInputView.selectInputView(inputView: sincePickerView)
 
         hometownInputView = TextFieldView(input: (placeholder: "出身地", maxLength: 20))
+        hometownInputView.setText(text: input.hometown!)
         hometownInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(hometownInputView)
 
