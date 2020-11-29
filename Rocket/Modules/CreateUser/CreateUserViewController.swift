@@ -134,6 +134,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         bandInputs.addSubview(artistNameInputView)
 
         partInputView = TextFieldView(input: (placeholder: "パート", maxLength: 20))
+        partInputView.setText(text: parts[0])
         partInputView.translatesAutoresizingMaskIntoConstraints = false
         bandInputs.addSubview(partInputView)
 
