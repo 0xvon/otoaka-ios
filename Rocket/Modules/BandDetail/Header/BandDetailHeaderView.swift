@@ -60,7 +60,9 @@ final class BandDetailHeaderView: UIView {
         let startYear: String =
             (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"
         dateBadgeView.updateText(text: startYear)
+        mapBadgeView.updateText(text: input.hometown ?? "不明")
         artworkImageView.image = UIImage(named: "track")
+        biographyTextView.text = input.biography
     }
 
     func inject(input: Input) {

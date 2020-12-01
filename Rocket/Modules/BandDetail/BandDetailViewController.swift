@@ -398,7 +398,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func inject() {
-        headerView.inject(input: input)
+        headerView.update(input: input)
     }
 
     @objc private func refreshBand(sender: UIRefreshControl) {

@@ -87,6 +87,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     func setup() {
         view.backgroundColor = style.color.background.get()
         scrollableView.backgroundColor = style.color.background.get()
+        
+        verticalScrollView.refreshControl = UIRefreshControl()
+        verticalScrollView.refreshControl?.addTarget(
+            self, action: #selector(refreshLive(sender:)), for: .valueChanged)
 
         likeButtonView.inject(input: (text: "10000", image: UIImage(named: "heart")))
         likeButtonView.listen {
