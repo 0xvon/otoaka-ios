@@ -13,7 +13,6 @@ class CreateLiveViewModel {
     enum Output {
         case createLive(Endpoint.Live)
         case getHostGroups([Endpoint.Group])
-        case getPerformers([Endpoint.Group])
         case error(Error)
     }
 
@@ -45,20 +44,20 @@ class CreateLiveViewModel {
         }
     }
 
-    func getGroups() {
-        let request = Empty()
-        var uri = Endpoint.GetAllGroups.URI()
-        uri.page = 1
-        uri.per = 1000
-        apiClient.request(GetAllGroups.self, request: request, uri: uri) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.getPerformers(res.items))
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
-        }
-    }
+//    func getGroups() {
+//        let request = Empty()
+//        var uri = Endpoint.GetAllGroups.URI()
+//        uri.page = 1
+//        uri.per = 1000
+//        apiClient.request(GetAllGroups.self, request: request, uri: uri) { result in
+//            switch result {
+//            case .success(let res):
+//                self.outputHandler(.getPerformers(res.items))
+//            case .failure(let error):
+//                self.outputHandler(.error(error))
+//            }
+//        }
+//    }
 
     func createLive(
         title: String, style: LiveStyleInput, hostGroupId: Endpoint.Group.ID, livehouse: String,

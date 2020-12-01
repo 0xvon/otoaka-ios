@@ -22,9 +22,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     private var liveStylePickerView: UIPickerView!
     private var livehouseInputView: TextFieldView!
     private var livehousePickerView: UIPickerView!
-    private var partnerBandInputViews: [TextFieldView] = []
-    private var primaryPartnerInputView: TextFieldView!
-    private var partnerPickerView: UIPickerView!
+    private var partnerInputView: TextFieldView!
     private var openTimeInputView: UIDatePicker!
     private var startTimeInputView: UIDatePicker!
     private var endTimeInputView: UIDatePicker!
@@ -34,7 +32,6 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
     var hostGroups: [Endpoint.Group] = []
     var liveStyles: [String] = Components().liveStyles
-    var partnersChoises: [Endpoint.Group] = []
     var livehouses: [String] = Components().livehouses
 
     var hostGroup: Endpoint.Group!
@@ -64,11 +61,6 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                     self.hostGroupInputView.setText(text: self.hostGroup.name)
                     self.hostGroups = groups
                     self.hostGroupPickerView.reloadAllComponents()
-                }
-            case .getPerformers(let groups):
-                DispatchQueue.main.async {
-                    self.partnersChoises = groups
-                    self.partnerPickerView.reloadAllComponents()
                 }
             case .error(let error):
                 print(error)
@@ -151,16 +143,15 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         livehousePickerView.delegate = self
         livehouseInputView.selectInputView(inputView: livehousePickerView)
 
-        primaryPartnerInputView = TextFieldView(input: (placeholder: "対バン相手", maxLength: 20))
-        primaryPartnerInputView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(primaryPartnerInputView)
-        partnerBandInputViews = [primaryPartnerInputView]
-
-        partnerPickerView = UIPickerView()
-        partnerPickerView.translatesAutoresizingMaskIntoConstraints = false
-        partnerPickerView.dataSource = self
-        partnerPickerView.delegate = self
-        primaryPartnerInputView.selectInputView(inputView: partnerPickerView)
+        partnerInputView = TextFieldView(input: (placeholder: "対バン相手を追加する", maxLength: 20))
+        partnerInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(partnerInputView)
+        
+        let partnerInputButton = UIButton()
+        partnerInputButton.translatesAutoresizingMaskIntoConstraints = false
+        partnerInputButton.backgroundColor = .clear
+        partnerInputButton.addTarget(self, action: #selector(addPartner(_:)), for: .touchUpInside)
+        mainView.addSubview(partnerInputButton)
 
         openTimeInputView = UIDatePicker()
         openTimeInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -289,16 +280,21 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             livehouseInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
             livehouseInputView.heightAnchor.constraint(equalToConstant: 50),
 
-            primaryPartnerInputView.topAnchor.constraint(
+            partnerInputView.topAnchor.constraint(
                 equalTo: livehouseInputView.bottomAnchor, constant: 24),
-            primaryPartnerInputView.rightAnchor.constraint(
+            partnerInputView.rightAnchor.constraint(
                 equalTo: mainView.rightAnchor, constant: -16),
-            primaryPartnerInputView.leftAnchor.constraint(
+            partnerInputView.leftAnchor.constraint(
                 equalTo: mainView.leftAnchor, constant: 16),
-            primaryPartnerInputView.heightAnchor.constraint(equalToConstant: 50),
+            partnerInputView.heightAnchor.constraint(equalToConstant: 50),
+            
+            partnerInputButton.topAnchor.constraint(equalTo: partnerInputView.topAnchor),
+            partnerInputButton.bottomAnchor.constraint(equalTo: partnerInputView.bottomAnchor),
+            partnerInputButton.rightAnchor.constraint(equalTo: partnerInputView.rightAnchor),
+            partnerInputButton.leftAnchor.constraint(equalTo: partnerInputView.leftAnchor),
 
             openTimeLabel.topAnchor.constraint(
-                equalTo: primaryPartnerInputView.bottomAnchor, constant: 24),
+                equalTo: partnerInputView.bottomAnchor, constant: 24),
             openTimeLabel.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
             openTimeLabel.heightAnchor.constraint(equalToConstant: 50),
 
@@ -361,11 +357,16 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
     func updatePickerComponents() {
         viewModel.getMyGroups()
-        viewModel.getGroups()
     }
 
-    func addPartnerInputView() {
-
+    @objc private func addPartner(_ sender: Any) {
+        let vc = SelectPerformersViewController(dependencyProvider: dependencyProvider, input: self.partnerGroups)
+        vc.listen { groups in
+            self.partnerGroups = groups
+            let text = groups.map { $0.name }.joined(separator: ",")
+            self.partnerInputView.setText(text: text)
+        }
+        present(vc, animated: true, completion: nil)
     }
 
     @objc private func changeThumbnail(_ sender: Any) {
@@ -452,8 +453,6 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
             return liveStyles[row]
         case self.livehousePickerView:
             return livehouses[row]
-        case self.partnerPickerView:
-            return partnersChoises[row].name
         default:
             return "yo"
         }
@@ -467,8 +466,6 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
             return self.liveStyles.count
         case self.livehousePickerView:
             return livehouses.count
-        case self.partnerPickerView:
-            return partnersChoises.count
         default:
             return 1
         }
@@ -486,9 +483,6 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
         case self.livehousePickerView:
             self.livehouseInputView.setText(text: self.livehouses[row])
             self.livehouse = self.livehouses[row]
-        case self.partnerPickerView:
-            self.primaryPartnerInputView.setText(text: partnersChoises[row].name)
-            self.partnerGroups.append(partnersChoises[row])
         default:
             print("hello")
         }
