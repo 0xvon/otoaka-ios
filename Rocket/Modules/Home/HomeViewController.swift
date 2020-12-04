@@ -29,6 +29,7 @@ final class HomeViewController: UITabBarController, Instantiable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        dependencyProvider.auth.delegate = self
         self.view.backgroundColor = style.color.background.get()
         self.tabBar.tintColor = style.color.main.get()
         self.tabBar.barTintColor = style.color.background.get()
@@ -120,5 +121,11 @@ final class HomeViewController: UITabBarController, Instantiable {
         let ok = UIAlertAction(title: "OK", style: .default)
         alertController.addAction(ok)
         self.present(alertController, animated: true)
+    }
+}
+
+extension HomeViewController: AWSCognitoAuthDelegate {
+    func getViewController() -> UIViewController {
+        return self
     }
 }

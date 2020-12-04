@@ -41,8 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         let token = deviceToken.map { (byte: UInt8) in String(format: "%02.2hhx", byte) }.joined()
-        print("token is")
-        print(token)
         let req = RegisterDeviceToken.Request(deviceToken: token)
         dependencyProvider.apiClient.request(RegisterDeviceToken.self, request: req) {
             result in

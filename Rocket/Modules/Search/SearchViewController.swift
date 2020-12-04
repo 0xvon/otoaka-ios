@@ -252,7 +252,9 @@ final class SearchViewController: UIViewController, Instantiable {
 }
 
 extension SearchViewController: UISearchBarDelegate {
-
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
 }
 
 extension SearchViewController: UIPickerViewDataSource, UIPickerViewDelegate {
