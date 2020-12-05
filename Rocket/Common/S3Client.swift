@@ -66,7 +66,7 @@ class S3Client {
         let key = "\(UUID()).mp4"
         let contentType = "movie/mp4"
     
-        PHImageManager().requestExportSession(forVideo: asset, options: nil, exportPreset: "AVAssetExportPresetHighestQuality") { session, data in
+        PHImageManager().requestExportSession(forVideo: asset, options: nil, exportPreset: "AVAssetExportPresetLowQuality") { session, data in
             
             guard let session = session else {
                 callback(nil, "session not found")

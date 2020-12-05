@@ -26,8 +26,8 @@ class BandContentsCell: UITableViewCell, ReusableCell {
 
     func setup() {
         backgroundColor = style.color.background.get()
-
-        thumbnailImageView.image = UIImage(named: "live")
+        let thumbnail = URL(string: "https://i.ytimg.com/vi/T_27VmK1vmc/hqdefault.jpg")
+        thumbnailImageView.loadImageAsynchronously(url: thumbnail)
         thumbnailImageView.layer.opacity = 0.6
         thumbnailImageView.layer.cornerRadius = 16
         thumbnailImageView.layer.borderWidth = 1

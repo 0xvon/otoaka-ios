@@ -9,6 +9,7 @@ import Endpoint
 import Foundation
 import UIKit
 import UserNotifications
+import SafariServices
 
 final class BandViewController: UIViewController, Instantiable {
 
@@ -583,6 +584,12 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             let vc = LiveDetailViewController(
                 dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
+        case self.contentsTableView:
+            let url = URL(string: "https://youtu.be/T_27VmK1vmc")
+            if let url = url {
+                let safari = SFSafariViewController(url: url)
+                present(safari, animated: true, completion: nil)
+            }
         default:
             print("hello")
         }

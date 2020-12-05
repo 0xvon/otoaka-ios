@@ -97,7 +97,6 @@ final class PostViewController: UIViewController, Instantiable {
         textView.delegate = self
         textView.font = style.font.large.get()
         textView.textColor = style.color.main.get()
-        textView.becomeFirstResponder()
         postView.addSubview(textView)
         
         movieThumbnailImageView = UIImageView()
@@ -173,6 +172,8 @@ final class PostViewController: UIViewController, Instantiable {
             sectionBorderView.heightAnchor.constraint(equalToConstant: 1),
         ]
         NSLayoutConstraint.activate(constraints)
+        
+        textView.becomeFirstResponder()
     }
     
     func setupSectionView () {
@@ -316,7 +317,6 @@ final class PostViewController: UIViewController, Instantiable {
 
 extension PostViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-        self.textView.text = textView.text.prefix(self.maxLength).description
         let textCount = textView.text.count
         numOfTextLable.text = "\(maxLength - textCount)"
     }

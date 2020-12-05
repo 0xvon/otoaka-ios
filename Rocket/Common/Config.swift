@@ -20,4 +20,7 @@ protocol Config {
     static var apiEndpoint: String { get }
     static var s3Bucket: String { get }
     static var identityPoolId: String { get }
+    static var spotifyClientId: String { get }
+    static var spotifyClientSecret: String { get }
+    static var spotifyRedirectUri: String { get }
 }
