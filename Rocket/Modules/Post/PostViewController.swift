@@ -216,21 +216,21 @@ final class PostViewController: UIViewController, Instantiable {
         youtubeButton.addTarget(self, action: #selector(searchYoutube(_:)), for: .touchUpInside)
         youtubeButtonView.addSubview(youtubeButton)
         
-        let spotifyButtonView = UIView()
-        spotifyButtonView.backgroundColor = .clear
-        stackView.addArrangedSubview(spotifyButtonView)
-        
-        let spotifyButtonImage = UIImageView()
-        spotifyButtonImage.image = UIImage(named: "music")
-        spotifyButtonImage.clipsToBounds = true
-        spotifyButtonImage.translatesAutoresizingMaskIntoConstraints = false
-        spotifyButtonView.addSubview(spotifyButtonImage)
-        
-        let spotifyButton = UIButton()
-        spotifyButton.backgroundColor = .clear
-        spotifyButton.translatesAutoresizingMaskIntoConstraints = false
-        spotifyButton.addTarget(self, action: #selector(searchSpotify(_:)), for: .touchUpInside)
-        spotifyButtonView.addSubview(spotifyButton)
+//        let spotifyButtonView = UIView()
+//        spotifyButtonView.backgroundColor = .clear
+//        stackView.addArrangedSubview(spotifyButtonView)
+//
+//        let spotifyButtonImage = UIImageView()
+//        spotifyButtonImage.image = UIImage(named: "music")
+//        spotifyButtonImage.clipsToBounds = true
+//        spotifyButtonImage.translatesAutoresizingMaskIntoConstraints = false
+//        spotifyButtonView.addSubview(spotifyButtonImage)
+//
+//        let spotifyButton = UIButton()
+//        spotifyButton.backgroundColor = .clear
+//        spotifyButton.translatesAutoresizingMaskIntoConstraints = false
+//        spotifyButton.addTarget(self, action: #selector(searchSpotify(_:)), for: .touchUpInside)
+//        spotifyButtonView.addSubview(spotifyButton)
         
         let constraints: [NSLayoutConstraint] = [
             stackView.heightAnchor.constraint(equalToConstant: 60),
@@ -261,17 +261,17 @@ final class PostViewController: UIViewController, Instantiable {
             youtubeButton.rightAnchor.constraint(equalTo: youtubeButtonView.rightAnchor),
             youtubeButton.leftAnchor.constraint(equalTo: youtubeButtonView.leftAnchor),
             
-            spotifyButtonView.widthAnchor.constraint(equalToConstant: 60),
-            
-            spotifyButtonImage.widthAnchor.constraint(equalToConstant: 40),
-            spotifyButtonImage.heightAnchor.constraint(equalToConstant: 40),
-            spotifyButtonImage.centerYAnchor.constraint(equalTo: spotifyButtonView.centerYAnchor),
-            spotifyButtonImage.centerXAnchor.constraint(equalTo: spotifyButtonView.centerXAnchor),
-            
-            spotifyButton.topAnchor.constraint(equalTo: spotifyButtonView.topAnchor),
-            spotifyButton.bottomAnchor.constraint(equalTo: spotifyButtonView.bottomAnchor),
-            spotifyButton.rightAnchor.constraint(equalTo: spotifyButtonView.rightAnchor),
-            spotifyButton.leftAnchor.constraint(equalTo: spotifyButtonView.leftAnchor),
+//            spotifyButtonView.widthAnchor.constraint(equalToConstant: 60),
+//
+//            spotifyButtonImage.widthAnchor.constraint(equalToConstant: 40),
+//            spotifyButtonImage.heightAnchor.constraint(equalToConstant: 40),
+//            spotifyButtonImage.centerYAnchor.constraint(equalTo: spotifyButtonView.centerYAnchor),
+//            spotifyButtonImage.centerXAnchor.constraint(equalTo: spotifyButtonView.centerXAnchor),
+//
+//            spotifyButton.topAnchor.constraint(equalTo: spotifyButtonView.topAnchor),
+//            spotifyButton.bottomAnchor.constraint(equalTo: spotifyButtonView.bottomAnchor),
+//            spotifyButton.rightAnchor.constraint(equalTo: spotifyButtonView.rightAnchor),
+//            spotifyButton.leftAnchor.constraint(equalTo: spotifyButtonView.leftAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -296,7 +296,32 @@ final class PostViewController: UIViewController, Instantiable {
     }
     
     @objc private func searchYoutube(_ sender: Any) {
-        print("b")
+        let alertController = UIAlertController(
+            title: "YouTubeから検索", message: nil, preferredStyle: UIAlertController.Style.alert)
+
+        let cancelAction = UIAlertAction(
+            title: "cancel", style: UIAlertAction.Style.cancel,
+            handler: { action in
+                print("close")
+        })
+        let doneAction = UIAlertAction(title: "ok", style: .default, handler: { [weak alertController] action in
+            if let textFields = alertController?.textFields, let text = textFields.first!.text, let url = URL(string: text) {
+                let youTubeClient = YouTubeClient(url: text)
+                let thumbnailUrl = youTubeClient.getThumbnailUrl()
+                self.movieThumbnailImageView.loadImageAsynchronously(url: thumbnailUrl)
+                self.postType = .youtube(url)
+            }
+        })
+        alertController.addTextField(configurationHandler: {(text: UITextField!) -> Void in
+            text.text = ""
+            text.placeholder = "URLを入力"
+            text.keyboardType = .URL
+            text.tag = 1
+        })
+        alertController.addAction(cancelAction)
+        alertController.addAction(doneAction)
+
+        self.present(alertController, animated: true, completion: nil)
     }
     
     @objc private func searchSpotify(_ sender: Any) {
