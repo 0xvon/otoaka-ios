@@ -17,6 +17,16 @@ final class BandDetailHeaderView: UIView {
         dateFormatter.dateFormat = "YYYY年"
         return dateFormatter
     }()
+    
+    private var listener: (ListenType) -> Void = { listenType in }
+    func listen(_ listener: @escaping (ListenType) -> Void) {
+        self.listener = listener
+    }
+    
+    enum ListenType {
+        case play
+        case seeMoreCharts
+    }
 
     private var horizontalScrollView: UIScrollView!
     private var bandInformationView: UIView!
@@ -348,7 +358,7 @@ final class BandDetailHeaderView: UIView {
     }
 
     private func play() {
-        print("play")
+        self.listener(.play)
     }
 
     @objc private func nextPage() {
@@ -358,7 +368,7 @@ final class BandDetailHeaderView: UIView {
     }
 
     @objc private func seeMoreButtonTapped(_ sender: UIButton) {
-        print("see more")
+        self.listener(.seeMoreCharts)
     }
 
     @objc private func twitterButtonTapped(_ sender: UIButton) {

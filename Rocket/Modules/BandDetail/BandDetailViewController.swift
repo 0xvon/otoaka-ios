@@ -117,6 +117,15 @@ final class BandDetailViewController: UIViewController, Instantiable {
     func setup() {
         view.backgroundColor = style.color.background.get()
         headerView.inject(input: input)
+        headerView.listen { listenType in
+            switch listenType {
+            case .play:
+                print("play")
+            case .seeMoreCharts:
+                let vc = ChartListViewController(dependencyProvider: self.dependencyProvider, input: self.input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
 
         verticalScrollView.refreshControl = UIRefreshControl()
         verticalScrollView.refreshControl?.addTarget(
