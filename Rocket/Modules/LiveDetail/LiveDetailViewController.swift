@@ -510,6 +510,7 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc private func seeMoreContents(_ sender: UIButton) {
-        print("see more")
+        let vc = BandContentsListViewController(dependencyProvider: dependencyProvider, input: input.hostGroup)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }

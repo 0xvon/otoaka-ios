@@ -7,6 +7,7 @@
 
 import Endpoint
 import UIKit
+import SafariServices
 
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group
@@ -505,7 +506,14 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return min(1, self.lives.count)
+        switch tableView {
+        case self.liveTableView:
+            return min(1, self.lives.count)
+        case self.contentsTableView:
+            return 1
+        default:
+            return 0
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -589,6 +597,12 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let vc = LiveDetailViewController(
                 dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
+        case self.contentsTableView:
+            let url = URL(string: "https://youtu.be/T_27VmK1vmc")
+            if let url = url {
+                let safari = SFSafariViewController(url: url)
+                present(safari, animated: true, completion: nil)
+            }
         default:
             print("hello")
         }
@@ -596,10 +610,12 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc private func seeMoreLive(_ sender: UIButton) {
-        print("see more live")
+        let vc = LiveListViewController(dependencyProvider: self.dependencyProvider, input: self.input)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func seeMoreContents(_ sender: UIButton) {
-        print("see more contents")
+        let vc = BandContentsListViewController(dependencyProvider: dependencyProvider, input: input)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
