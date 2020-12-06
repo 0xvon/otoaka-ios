@@ -480,7 +480,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func createShare() {
-        print("create share")
+        let shareLiveText: String = "\(input.name)がオススメだよ！！\n\n via @rocketforband "
+        let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/id1500148347")!
+        let shareImage: UIImage = UIImage(url: input.artworkURL!.absoluteString)
+        
+        let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
+        
+        self.present(activityViewController, animated: true, completion: nil)
     }
 
     func likeButtonColor() {

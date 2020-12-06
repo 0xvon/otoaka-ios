@@ -196,23 +196,23 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 constant: 0
             )
 
-            createMessageView = CreateButton(input: UIImage(named: "mail")!)
-            createMessageView.layer.cornerRadius = 30
-            createMessageView.translatesAutoresizingMaskIntoConstraints = false
-            createMessageView.listen {
-                self.createMessage()
-            }
-            creationView.addSubview(createMessageView)
+//            createMessageView = CreateButton(input: UIImage(named: "mail")!)
+//            createMessageView.layer.cornerRadius = 30
+//            createMessageView.translatesAutoresizingMaskIntoConstraints = false
+//            createMessageView.listen {
+//                self.createMessage()
+//            }
+//            creationView.addSubview(createMessageView)
 
-            createMessageViewBottomConstraint = NSLayoutConstraint(
-                item: createMessageView!,
-                attribute: .bottom,
-                relatedBy: .equal,
-                toItem: creationView,
-                attribute: .bottom,
-                multiplier: 1,
-                constant: 0
-            )
+//            createMessageViewBottomConstraint = NSLayoutConstraint(
+//                item: createMessageView!,
+//                attribute: .bottom,
+//                relatedBy: .equal,
+//                toItem: creationView,
+//                attribute: .bottom,
+//                multiplier: 1,
+//                constant: 0
+//            )
 
             openButtonView = CreateButton(input: UIImage(named: "plus")!)
             openButtonView.layer.cornerRadius = 30
@@ -224,7 +224,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             creationView.addSubview(openButtonView)
 
             creationButtonConstraintItems = [
-                createMessageViewBottomConstraint,
+//                createMessageViewBottomConstraint,
                 createShareViewBottomConstraint,
                 editLiveViewBottomConstraint,
             ]
@@ -241,9 +241,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
                 openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
 
-                createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-                createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-                createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+//                createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+//                createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+//                createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
 
                 createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
                 createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
@@ -274,23 +274,23 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 constant: 0
             )
 
-            createMessageView = CreateButton(input: UIImage(named: "mail")!)
-            createMessageView.layer.cornerRadius = 30
-            createMessageView.translatesAutoresizingMaskIntoConstraints = false
-            createMessageView.listen {
-                self.createMessage()
-            }
-            creationView.addSubview(createMessageView)
-
-            createMessageViewBottomConstraint = NSLayoutConstraint(
-                item: createMessageView!,
-                attribute: .bottom,
-                relatedBy: .equal,
-                toItem: creationView,
-                attribute: .bottom,
-                multiplier: 1,
-                constant: 0
-            )
+//            createMessageView = CreateButton(input: UIImage(named: "mail")!)
+//            createMessageView.layer.cornerRadius = 30
+//            createMessageView.translatesAutoresizingMaskIntoConstraints = false
+//            createMessageView.listen {
+//                self.createMessage()
+//            }
+//            creationView.addSubview(createMessageView)
+//
+//            createMessageViewBottomConstraint = NSLayoutConstraint(
+//                item: createMessageView!,
+//                attribute: .bottom,
+//                relatedBy: .equal,
+//                toItem: creationView,
+//                attribute: .bottom,
+//                multiplier: 1,
+//                constant: 0
+//            )
 
             openButtonView = CreateButton(input: UIImage(named: "plus")!)
             openButtonView.layer.cornerRadius = 30
@@ -302,7 +302,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             creationView.addSubview(openButtonView)
 
             creationButtonConstraintItems = [
-                createMessageViewBottomConstraint,
+//                createMessageViewBottomConstraint,
                 createShareViewBottomConstraint,
             ]
 
@@ -428,7 +428,14 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     func createShare() {
-        print("create share")
+        let shareLiveText: String = "\(input.hostGroup.name)主催の\(input.title)に集まれ！！\n\n via @rocketforband "
+        let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/id1500148347")!
+        let shareImage: UIImage = UIImage(url: input.artworkURL!.absoluteString)
+        
+        let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
+        
+        self.present(activityViewController, animated: true, completion: nil)
     }
 
     func editLive() {
