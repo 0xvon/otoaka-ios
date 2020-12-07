@@ -17,28 +17,41 @@ final class BandViewController: UIViewController, Instantiable {
     var input: Input!
     var dependencyProvider: LoggedInDependencyProvider!
 
-    @IBOutlet weak var pageTitleStackViewLeadingConstraint: NSLayoutConstraint!
-    @IBOutlet weak var contentsPageTitleView: TitleLabelView!
-    @IBOutlet weak var livePageTitleView: TitleLabelView!
-    @IBOutlet weak var chartsPageTitleView: TitleLabelView!
-    @IBOutlet weak var bandsPageTitleView: TitleLabelView!
     @IBOutlet weak var horizontalScrollView: UIScrollView!
     @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var contentsPageButton: UIButton!
-    @IBOutlet weak var livePageButton: UIButton!
-    @IBOutlet weak var chartsPageButton: UIButton!
-    @IBOutlet weak var bandsPageButton: UIButton!
-
+    
+    private var pageStackView: UIStackView!
+    private var pageTitleStackViewLeadingConstraint: NSLayoutConstraint!
+    private var contentsView: UIView!
     private var contentsTableView: UITableView!
+    private var contentsPageTitleView: TitleLabelView!
+    private var contentsPageButton: UIButton!
+    private var liveView: UIView!
     private var liveTableView: UITableView!
+    private var livePageTitleView: TitleLabelView!
+    private var livePageButton: UIButton!
+    private var chartsView: UIView!
     private var chartsTableView: UITableView!
+    private var chartsPageTitleView: TitleLabelView!
+    private var chartsPageButton: UIButton!
+    private var bandsView: UIView!
     private var bandsTableView: UITableView!
+    private var bandsPageTitleView: TitleLabelView!
+    private var bandsPageButton: UIButton!
     private var iconMenu: UIBarButtonItem!
 
     var lives: [Live] = []
     //    var contents = []
     var bands: [Group] = []
     var charts: [ChannelDetail.ChannelItem] = []
+    var pageItems: [PageItem] = []
+    
+    struct PageItem {
+        let page: UIView
+        let pageButton: UIButton
+        let tebleView: UITableView
+        let pageTitle: TitleLabelView
+    }
 
     private var isOpened: Bool = false
     private var creationView: UIView!
@@ -119,11 +132,28 @@ final class BandViewController: UIViewController, Instantiable {
         searchBar.searchTextField.placeholder = "バンド・ライブを探す"
         searchBar.searchTextField.textColor = style.color.main.get()
         searchBar.delegate = self
+        
+        pageStackView = UIStackView()
+        pageStackView.translatesAutoresizingMaskIntoConstraints = false
+        pageStackView.axis = .horizontal
+        pageStackView.spacing = 16
+        pageStackView.distribution = .equalSpacing
+        self.view.addSubview(pageStackView)
+        
+        pageTitleStackViewLeadingConstraint = NSLayoutConstraint(
+            item: pageStackView!,
+            attribute: .left,
+            relatedBy: .equal,
+            toItem: self.view,
+            attribute: .left,
+            multiplier: 1,
+            constant: 16
+        )
+        self.view.addConstraint(pageTitleStackViewLeadingConstraint)
 
-        let contentsView = UIView()
+        contentsView = UIView()
         contentsView.translatesAutoresizingMaskIntoConstraints = false
         contentsView.backgroundColor = style.color.background.get()
-        horizontalScrollView.addSubview(contentsView)
 
         contentsTableView = UITableView()
         contentsTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -136,16 +166,19 @@ final class BandViewController: UIViewController, Instantiable {
         contentsTableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
-        contentsView.addSubview(contentsTableView)
 
         contentsTableView.refreshControl = UIRefreshControl()
         contentsTableView.refreshControl?.addTarget(
             self, action: #selector(refreshContents(sender:)), for: .valueChanged)
+        
+        contentsPageTitleView = TitleLabelView(input: (title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get()))
+        contentsPageTitleView.translatesAutoresizingMaskIntoConstraints = false
+        contentsPageButton = UIButton()
+        contentsPageButton.translatesAutoresizingMaskIntoConstraints = false
 
-        let liveView = UIView()
+        liveView = UIView()
         liveView.translatesAutoresizingMaskIntoConstraints = false
         liveView.backgroundColor = style.color.background.get()
-        horizontalScrollView.addSubview(liveView)
 
         liveTableView = UITableView()
         liveTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -157,16 +190,19 @@ final class BandViewController: UIViewController, Instantiable {
         liveTableView.dataSource = self
         liveTableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
-        liveView.addSubview(liveTableView)
 
         liveTableView.refreshControl = UIRefreshControl()
         liveTableView.refreshControl?.addTarget(
             self, action: #selector(refreshLive(sender:)), for: .valueChanged)
+        
+        livePageTitleView = TitleLabelView(input: (title: "LIVE", font: style.font.regular.get(), color: style.color.main.get()))
+        livePageTitleView.translatesAutoresizingMaskIntoConstraints = false
+        livePageButton = UIButton()
+        livePageButton.translatesAutoresizingMaskIntoConstraints = false
 
-        let chartsView = UIView()
+        chartsView = UIView()
         chartsView.translatesAutoresizingMaskIntoConstraints = false
         chartsView.backgroundColor = style.color.background.get()
-        horizontalScrollView.addSubview(chartsView)
 
         chartsTableView = UITableView()
         chartsTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -178,16 +214,19 @@ final class BandViewController: UIViewController, Instantiable {
         chartsTableView.dataSource = self
         chartsTableView.register(
             UINib(nibName: "TrackCell", bundle: nil), forCellReuseIdentifier: "TrackCell")
-        chartsView.addSubview(chartsTableView)
 
         chartsTableView.refreshControl = UIRefreshControl()
         chartsTableView.refreshControl?.addTarget(
             self, action: #selector(refreshChart(sender:)), for: .valueChanged)
 
-        let bandsView = UIView()
+        bandsView = UIView()
         bandsView.translatesAutoresizingMaskIntoConstraints = false
         bandsView.backgroundColor = style.color.background.get()
-        horizontalScrollView.addSubview(bandsView)
+        
+        chartsPageTitleView = TitleLabelView(input: (title: "CHARTS", font: style.font.regular.get(), color: style.color.main.get()))
+        chartsPageTitleView.translatesAutoresizingMaskIntoConstraints = false
+        chartsPageButton = UIButton()
+        chartsPageButton.translatesAutoresizingMaskIntoConstraints = false
 
         bandsTableView = UITableView()
         bandsTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -199,25 +238,17 @@ final class BandViewController: UIViewController, Instantiable {
         bandsTableView.dataSource = self
         bandsTableView.register(
             UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
-        bandsView.addSubview(bandsTableView)
 
         bandsTableView.refreshControl = UIRefreshControl()
         bandsTableView.refreshControl?.addTarget(
             self, action: #selector(refreshBand(sender:)), for: .valueChanged)
-
-        contentsPageTitleView.inject(
-            input: (title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get())
-        )
-        contentsPageTitleView.bringSubviewToFront(contentsPageButton)
-        livePageTitleView.inject(
-            input: (title: "LIVE", font: style.font.regular.get(), color: style.color.main.get()))
-        livePageTitleView.bringSubviewToFront(livePageButton)
-        chartsPageTitleView.inject(
-            input: (title: "CHARTS", font: style.font.regular.get(), color: style.color.main.get()))
-        chartsPageTitleView.bringSubviewToFront(chartsPageButton)
-        bandsPageTitleView.inject(
-            input: (title: "BANDS", font: style.font.regular.get(), color: style.color.main.get()))
-        bandsPageTitleView.bringSubviewToFront(bandsPageButton)
+        
+        bandsPageTitleView = TitleLabelView(input: (title: "BANDS", font: style.font.regular.get(), color: style.color.main.get()))
+        bandsPageTitleView.translatesAutoresizingMaskIntoConstraints = false
+        bandsPageButton = UIButton()
+        bandsPageButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        setupPages()
 
         let icon: UIButton = UIButton(type: .custom)
         icon.translatesAutoresizingMaskIntoConstraints = false
@@ -230,59 +261,55 @@ final class BandViewController: UIViewController, Instantiable {
         iconMenu = UIBarButtonItem(customView: icon)
         self.navigationItem.leftBarButtonItem = iconMenu
 
-        let constraint = [
-            contentsView.leftAnchor.constraint(equalTo: horizontalScrollView.leftAnchor),
-            contentsView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
-            contentsView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
-            contentsView.centerYAnchor.constraint(equalTo: horizontalScrollView.centerYAnchor),
-            contentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
-
-            liveView.leftAnchor.constraint(equalTo: contentsView.rightAnchor),
-            liveView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
-            liveView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
-            liveView.centerYAnchor.constraint(equalTo: horizontalScrollView.centerYAnchor),
-            liveView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
-
-            chartsView.leftAnchor.constraint(equalTo: liveView.rightAnchor),
-            chartsView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
-            chartsView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
-            chartsView.centerYAnchor.constraint(equalTo: horizontalScrollView.centerYAnchor),
-            chartsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
-
-            bandsView.leftAnchor.constraint(equalTo: chartsView.rightAnchor),
-            bandsView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
-            bandsView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
-            bandsView.centerYAnchor.constraint(equalTo: horizontalScrollView.centerYAnchor),
-            bandsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
-
-            contentsTableView.leftAnchor.constraint(equalTo: contentsView.leftAnchor, constant: 16),
-            contentsTableView.rightAnchor.constraint(
-                equalTo: contentsView.rightAnchor, constant: -16),
-            contentsTableView.topAnchor.constraint(equalTo: contentsView.topAnchor, constant: 56),
-            contentsTableView.bottomAnchor.constraint(
-                equalTo: contentsView.bottomAnchor, constant: -16),
-
-            liveTableView.leftAnchor.constraint(equalTo: liveView.leftAnchor, constant: 16),
-            liveTableView.rightAnchor.constraint(equalTo: liveView.rightAnchor, constant: -16),
-            liveTableView.topAnchor.constraint(equalTo: liveView.topAnchor, constant: 56),
-            liveTableView.bottomAnchor.constraint(equalTo: liveView.bottomAnchor, constant: -16),
-
-            chartsTableView.leftAnchor.constraint(equalTo: chartsView.leftAnchor, constant: 16),
-            chartsTableView.rightAnchor.constraint(equalTo: chartsView.rightAnchor, constant: -16),
-            chartsTableView.topAnchor.constraint(equalTo: chartsView.topAnchor, constant: 56),
-            chartsTableView.bottomAnchor.constraint(
-                equalTo: chartsView.bottomAnchor, constant: -16),
-
-            bandsTableView.leftAnchor.constraint(equalTo: bandsView.leftAnchor, constant: 16),
-            bandsTableView.rightAnchor.constraint(equalTo: bandsView.rightAnchor, constant: -16),
-            bandsTableView.topAnchor.constraint(equalTo: bandsView.topAnchor, constant: 56),
-            bandsTableView.bottomAnchor.constraint(equalTo: bandsView.bottomAnchor, constant: -16),
+        let constraints = [
+            pageStackView.topAnchor.constraint(equalTo: self.searchBar.bottomAnchor, constant: 16),
+            pageStackView.heightAnchor.constraint(equalToConstant: 40),
 
             iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
             iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
         ]
-        NSLayoutConstraint.activate(constraint)
+        NSLayoutConstraint.activate(constraints)
         initializeItems()
+    }
+    
+    private func setupPages() {
+        pageItems = [
+            PageItem(page: contentsView, pageButton: contentsPageButton, tebleView: contentsTableView, pageTitle: contentsPageTitleView),
+            PageItem(page: liveView, pageButton: livePageButton, tebleView: liveTableView, pageTitle: livePageTitleView),
+            PageItem(page: chartsView, pageButton: chartsPageButton, tebleView: chartsTableView, pageTitle: chartsPageTitleView),
+            PageItem(page: bandsView, pageButton: bandsPageButton, tebleView: bandsTableView, pageTitle: bandsPageTitleView),
+        ]
+        
+        for (index, item) in pageItems.enumerated() {
+            self.horizontalScrollView.addSubview(item.page)
+            item.page.addSubview(item.tebleView)
+            
+            pageStackView.addArrangedSubview(item.pageTitle)
+            item.pageTitle.addSubview(item.pageButton)
+            item.pageButton.addTarget(self, action: #selector(pageButtonTapped(_:)), for: .touchUpInside)
+            item.pageButton.tag = index
+            
+            let constraints = [
+                item.page.leftAnchor.constraint(equalTo: (index == 0) ? horizontalScrollView.leftAnchor : pageItems[index - 1].page.rightAnchor),
+                item.page.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
+                item.page.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
+                item.page.centerYAnchor.constraint(equalTo: horizontalScrollView.centerYAnchor),
+                item.page.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+                
+                item.tebleView.leftAnchor.constraint(equalTo: item.page.leftAnchor, constant: 16),
+                item.tebleView.rightAnchor.constraint(
+                    equalTo: item.page.rightAnchor, constant: -16),
+                item.tebleView.topAnchor.constraint(equalTo: item.page.topAnchor, constant: 56),
+                item.tebleView.bottomAnchor.constraint(
+                    equalTo: item.page.bottomAnchor, constant: -16),
+                
+                item.pageButton.topAnchor.constraint(equalTo: item.pageTitle.topAnchor),
+                item.pageButton.bottomAnchor.constraint(equalTo: item.pageTitle.bottomAnchor),
+                item.pageButton.rightAnchor.constraint(equalTo: item.pageTitle.rightAnchor),
+                item.pageButton.leftAnchor.constraint(equalTo: item.pageTitle.leftAnchor),
+            ]
+            NSLayoutConstraint.activate(constraints)
+        }
     }
 
     private func setupCreation() {
@@ -467,29 +494,10 @@ final class BandViewController: UIViewController, Instantiable {
         let vc = CreateLiveViewController(dependencyProvider: self.dependencyProvider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
     }
-
-    @IBAction func contentsPageButtonTapped(_ sender: Any) {
+    
+    @objc func pageButtonTapped(_ sender: UIButton) {
         UIScrollView.animate(withDuration: 0.3) {
-            self.horizontalScrollView.contentOffset.x = 0
-        }
-    }
-
-    @IBAction func livePageButtonTapped(_ sender: Any) {
-        UIScrollView.animate(withDuration: 0.3) {
-            self.horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width
-        }
-    }
-
-    @IBAction func chartsPageButtonTapped(_ sender: Any) {
-        UIScrollView.animate(withDuration: 0.3) {
-            self.horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width * 2
-        }
-
-    }
-
-    @IBAction func bandsPageButtonTapped(_ sender: Any) {
-        UIScrollView.animate(withDuration: 0.3) {
-            self.horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width * 3
+            self.horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width * CGFloat(sender.tag)
         }
     }
 
@@ -629,10 +637,8 @@ extension BandViewController: UIScrollViewDelegate {
                 Int(
                     (scrollView.contentOffset.x + UIScreen.main.bounds.width / 2)
                         / UIScreen.main.bounds.width
-                ), 3)
-            var titleViews: [TitleLabelView] = [
-                contentsPageTitleView, livePageTitleView, chartsPageTitleView, bandsPageTitleView,
-            ]
+                ), self.pageItems.count - 1)
+            var titleViews: [TitleLabelView] = pageItems.map { $0.pageTitle }
             titleViews[pageIndex].changeStyle(
                 font: style.font.xlarge.get(), color: style.color.main.get())
             titleViews.remove(at: pageIndex)
