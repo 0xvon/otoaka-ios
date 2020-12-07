@@ -23,6 +23,7 @@ struct LoggedInDependencyProvider {
 struct DependencyProvider {
     var auth: AWSCognitoAuth
     var apiClient: APIClient
+    var youTubeDataApiClient: YouTubeDataAPIClient
     var s3Bucket: String
 }
 
@@ -63,7 +64,8 @@ extension DependencyProvider {
         let auth = AWSCognitoAuth(forKey: cognitoAuthKey)
         let wrapper = CognitoAuthWrapper(awsCognitoAuth: auth)
         let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: wrapper)
-        return DependencyProvider(auth: auth, apiClient: apiClient, s3Bucket: config.s3Bucket)
+        let youTubeDataApiClient = YouTubeDataAPIClient(baseUrl: URL(string: "https://www.googleapis.com/youtube/v3")!, apiKey: config.youTubeApiKey)
+        return DependencyProvider(auth: auth, apiClient: apiClient, youTubeDataApiClient: youTubeDataApiClient, s3Bucket: config.s3Bucket)
     }
 }
 

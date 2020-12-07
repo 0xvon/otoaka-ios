@@ -13,7 +13,7 @@ class BandViewModel {
     enum Output {
         //        case getContents(String)
         case getLives([Endpoint.Live])
-        //        case getCharts(String)
+        case getCharts([ChannelDetail.ChannelItem])
         case getBands([Group])
         case reserveTicket(Endpoint.Ticket)
         case error(Error)
@@ -21,10 +21,12 @@ class BandViewModel {
 
     let auth: AWSCognitoAuth
     let apiClient: APIClient
+    let youTubeDataApiClient: YouTubeDataAPIClient
     let outputHandler: (Output) -> Void
 
-    init(apiClient: APIClient, auth: AWSCognitoAuth, outputHander: @escaping (Output) -> Void) {
+    init(apiClient: APIClient, youTubeDataApiClient: YouTubeDataAPIClient, auth: AWSCognitoAuth, outputHander: @escaping (Output) -> Void) {
         self.apiClient = apiClient
+        self.youTubeDataApiClient = youTubeDataApiClient
         self.auth = auth
         self.outputHandler = outputHander
     }
@@ -64,7 +66,19 @@ class BandViewModel {
     }
 
     func getCharts() {
-
+        let request = Empty()
+        var uri = ListChannel.URI()
+        uri.key = youTubeDataApiClient.getApiKey()
+        uri.channelId = "UCxjXU89x6owat9dA8Z-bzdw"
+        uri.part = "snippet"
+        youTubeDataApiClient.request(ListChannel.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getCharts(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
     }
 
     func reserveTicket(liveId: Live.ID) {

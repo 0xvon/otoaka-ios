@@ -23,4 +23,5 @@ protocol Config {
     static var spotifyClientId: String { get }
     static var spotifyClientSecret: String { get }
     static var spotifyRedirectUri: String { get }
+    static var youTubeApiKey: String { get }
 }

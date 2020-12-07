@@ -38,6 +38,7 @@ final class BandViewController: UIViewController, Instantiable {
     var lives: [Live] = []
     //    var contents = []
     var bands: [Group] = []
+    var charts: [ChannelDetail.ChannelItem] = []
 
     private var isOpened: Bool = false
     private var creationView: UIView!
@@ -51,6 +52,7 @@ final class BandViewController: UIViewController, Instantiable {
 
     lazy var viewModel = BandViewModel(
         apiClient: dependencyProvider.apiClient,
+        youTubeDataApiClient: dependencyProvider.youTubeDataApiClient,
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
@@ -63,6 +65,11 @@ final class BandViewController: UIViewController, Instantiable {
                 DispatchQueue.main.async {
                     self.bands = groups
                     self.bandsTableView.reloadData()
+                }
+            case .getCharts(let charts):
+                DispatchQueue.main.async {
+                    self.charts = charts
+                    self.chartsTableView.reloadData()
                 }
             case .reserveTicket(let ticket):
                 DispatchQueue.main.async {
@@ -407,6 +414,7 @@ final class BandViewController: UIViewController, Instantiable {
     func initializeItems() {
         viewModel.getLives()
         viewModel.getGroups()
+        viewModel.getCharts()
     }
 
     @objc private func refreshContents(sender: UIRefreshControl) {
@@ -419,6 +427,7 @@ final class BandViewController: UIViewController, Instantiable {
     }
 
     @objc private func refreshChart(sender: UIRefreshControl) {
+        viewModel.getCharts()
         sender.endRefreshing()
     }
 
@@ -512,7 +521,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         case self.liveTableView:
             return self.lives.count
         case self.chartsTableView:
-            return 10
+            return self.charts.count
         case self.bandsTableView:
             return self.bands.count
         default:
@@ -587,6 +596,12 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         case self.contentsTableView:
             let url = URL(string: "https://youtu.be/T_27VmK1vmc")
             if let url = url {
+                let safari = SFSafariViewController(url: url)
+                present(safari, animated: true, completion: nil)
+            }
+        case self.chartsTableView:
+            let videoId = self.charts[indexPath.section].id.videoId
+            if let url = URL(string: "https://youtu.be/\(videoId)") {
                 let safari = SFSafariViewController(url: url)
                 present(safari, animated: true, completion: nil)
             }
