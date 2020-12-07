@@ -135,6 +135,7 @@ public struct ChannelDetail: Codable {
         public var kind: String
         public var etag: String
         public var id: ItemId
+        public var snippet: ItemSnippet
         
         public struct ItemId: Codable {
             public var kind: String

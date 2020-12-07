@@ -13,7 +13,7 @@ final class ChartListViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var charts: [String] = []
+    var charts: [ChannelDetail.ChannelItem] = []
     private var chartTableView: UITableView!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -113,8 +113,8 @@ extension ChartListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let chart = self.charts[indexPath.section]
-        let cell = tableView.reuse(TrackCell.self, input: (), for: indexPath)
+        let chart = self.charts[indexPath.section]
+        let cell = tableView.reuse(TrackCell.self, input: chart, for: indexPath)
         return cell
     }
 

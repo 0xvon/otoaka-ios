@@ -570,7 +570,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             }
             return cell
         case self.chartsTableView:
-            let cell = tableView.reuse(TrackCell.self, input: (), for: indexPath)
+            let chart = self.charts[indexPath.section]
+            let cell = tableView.reuse(TrackCell.self, input: chart, for: indexPath)
             return cell
         case self.bandsTableView:
             let band = self.bands[indexPath.section]

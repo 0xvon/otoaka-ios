@@ -8,7 +8,7 @@
 import UIKit
 
 final class TrackCell: UITableViewCell, ReusableCell {
-    typealias Input = Void
+    typealias Input = ChannelDetail.ChannelItem
     static var reusableIdentifier: String { "TrackCell" }
     var input: Input!
 
@@ -27,17 +27,17 @@ final class TrackCell: UITableViewCell, ReusableCell {
 
     func setup() {
         backgroundColor = style.color.background.get()
-        trackTitleLabel.text = "不可逆リプレイス"
+        trackTitleLabel.text = input.snippet.title
         trackTitleLabel.font = style.font.xlarge.get()
         trackTitleLabel.textColor = style.color.main.get()
 
-        releasedYearLabel.text = "2016年"
+        releasedYearLabel.text = "20xx年"
         releasedYearLabel.font = style.font.small.get()
         releasedYearLabel.textColor = style.color.main.get()
 
         playImageView.image = UIImage(named: "play")
 
-        artWorkImageView.image = UIImage(named: "track")
+        artWorkImageView.loadImageAsynchronously(url: URL(string: input.snippet.thumbnails.high.url))
         artWorkImageView.layer.opacity = 0.6
         artWorkImageView.layer.cornerRadius = 16
         artWorkImageView.layer.borderWidth = 1
@@ -47,7 +47,7 @@ final class TrackCell: UITableViewCell, ReusableCell {
         bandThumbnailView.image = UIImage(named: "band")
         bandThumbnailView.layer.cornerRadius = 30
 
-        bandNameLabel.text = "MY FIRST STORY"
+        bandNameLabel.text = input.snippet.channelTitle
         bandNameLabel.font = style.font.regular.get()
         bandNameLabel.textColor = style.color.main.get()
 

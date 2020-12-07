@@ -11,7 +11,7 @@ import Endpoint
 
 class ChartListViewModel {
     enum Output {
-        case getCharts([String])
+        case getCharts([ChannelDetail.ChannelItem])
         case error(Error)
     }
 
