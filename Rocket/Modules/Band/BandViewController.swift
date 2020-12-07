@@ -136,7 +136,7 @@ final class BandViewController: UIViewController, Instantiable {
         pageStackView = UIStackView()
         pageStackView.translatesAutoresizingMaskIntoConstraints = false
         pageStackView.axis = .horizontal
-        pageStackView.spacing = 16
+        pageStackView.spacing = 8
         pageStackView.distribution = .equalSpacing
         self.view.addSubview(pageStackView)
         
