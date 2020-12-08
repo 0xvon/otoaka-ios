@@ -254,6 +254,7 @@ final class BandDetailHeaderView: UIView {
         biographyTextView.isScrollEnabled = true
         biographyTextView.textColor = style.color.main.get()
         biographyTextView.backgroundColor = .clear
+        biographyTextView.isEditable = false
         biographyTextView.font = style.font.regular.get()
         biographyView.addSubview(biographyTextView)
         biographyTextView.text = input.biography
