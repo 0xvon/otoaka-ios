@@ -41,13 +41,12 @@ class YouTubeClient {
     }
     
     struct YouTubeURI: CodableURL {
-        @StaticPath("/", "watch") public var prefix: Void
+        @StaticPath("watch") public var prefix: Void
         @Query public var v: String
         public init() {}
     }
 
     struct YouTubeShorterURI: CodableURL {
-        @StaticPath("/") public var prefix: Void
         @DynamicPath public var v: String
         public init() {}
     }

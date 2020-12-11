@@ -14,7 +14,7 @@ final class BandContentsListViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var contents: [String] = []
+    var contents: [GroupFeed] = []
     private var contentsTableView: UITableView!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -114,15 +114,15 @@ extension BandContentsListViewController: UITableViewDelegate, UITableViewDataSo
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let chart = self.charts[indexPath.section]
-        let cell = tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+        let content = self.contents[indexPath.section]
+        let cell = tableView.reuse(BandContentsCell.self, input: content, for: indexPath)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let chart = self.charts[indexPath.section]
-        let url = URL(string: "https://youtu.be/T_27VmK1vmc")
-        if let url = url {
+        let content = self.contents[indexPath.section]
+        switch content.feedType {
+        case .youtube(let url):
             let safari = SFSafariViewController(url: url)
             present(safari, animated: true, completion: nil)
         }

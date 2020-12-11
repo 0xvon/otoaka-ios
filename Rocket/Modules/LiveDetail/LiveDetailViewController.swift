@@ -22,6 +22,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     var userType: UserType!
     var performers: [Group] = []
+    var feeds: [GroupFeed] = []
     
     @IBOutlet weak var liveDetailHeader: LiveDetailHeaderView!
     @IBOutlet weak var likeButtonView: ReactionButtonView!
@@ -81,6 +82,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                     self.hasTicket = liveDetail.hasTicket
                     self.inject()
                 }
+            case .getGroupFeeds(let feeds):
+                DispatchQueue.main.async {
+                    self.feeds = feeds
+                    self.contentsTableView.reloadData()
+                }
             case .getHostGroup(let hostGroup):
                 DispatchQueue.main.async {
                     self.userType = hostGroup.isMember ? .performer : self.userType
@@ -130,6 +136,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         }
         
         viewModel.getLive()
+        viewModel.getGroupFeed(groupId: input.hostGroup.id)
         if self.userType != .fan {
             viewModel.getHostGroup()
         }
@@ -434,6 +441,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
 
     @objc private func refreshLive(sender: UIRefreshControl) {
         viewModel.getLive()
+        viewModel.getHostGroup()
+        viewModel.getGroupFeed(groupId: input.hostGroup.id)
         sender.endRefreshing()
     }
 
@@ -525,7 +534,7 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return min(1, self.feeds.count)
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -566,7 +575,8 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+        let feed = self.feeds[indexPath.section]
+        return tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

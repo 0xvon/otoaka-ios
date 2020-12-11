@@ -22,6 +22,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var input: Input!
     var isFollowing: Bool!
     var lives: [Live] = []
+    var feeds: [GroupFeed] = []
     var followers:[User] = []
     var isLiked: Bool = false
     var userType: UserType!
@@ -71,6 +72,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 DispatchQueue.main.async {
                     self.lives = lives
                     self.liveTableView.reloadData()
+                }
+            case .getGroupFeeds(let feeds):
+                DispatchQueue.main.async {
+                    self.feeds = feeds
+                    self.contentsTableView.reloadData()
                 }
             case .getFollowers(let users):
                 DispatchQueue.main.async {
@@ -159,6 +165,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
         liveTableView.tableFooterView = UIView(frame: .zero)
         viewModel.getGroup()
+        viewModel.getGroupFeed()
         viewModel.getGroupLives()
         viewModel.getFollowers()
 
@@ -428,6 +435,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     @objc private func refreshBand(sender: UIRefreshControl) {
         viewModel.getGroup()
         viewModel.getFollowers()
+        viewModel.getGroupFeed()
+        viewModel.getGroupLives()
         sender.endRefreshing()
     }
 
@@ -536,7 +545,7 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         case self.liveTableView:
             return min(1, self.lives.count)
         case self.contentsTableView:
-            return 1
+            return min(1, self.feeds.count)
         default:
             return 0
         }
@@ -609,7 +618,8 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
             return cell
         case self.contentsTableView:
-            let cell = tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+            let feed = self.feeds[indexPath.section]
+            let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
             return cell
         default:
             return UITableViewCell()
@@ -624,8 +634,9 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
                 dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
         case self.contentsTableView:
-            let url = URL(string: "https://youtu.be/T_27VmK1vmc")
-            if let url = url {
+            let feed = self.feeds[indexPath.section]
+            switch feed.feedType {
+            case .youtube(let url):
                 let safari = SFSafariViewController(url: url)
                 present(safari, animated: true, completion: nil)
             }

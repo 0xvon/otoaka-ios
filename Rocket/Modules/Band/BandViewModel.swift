@@ -11,11 +11,11 @@ import UIKit
 
 class BandViewModel {
     enum Output {
-        //        case getContents(String)
-        case getLives([Endpoint.LiveFeed])
+        case getContents([GroupFeed])
+        case getLives([LiveFeed])
         case getCharts([ChannelDetail.ChannelItem])
         case getBands([Group])
-        case reserveTicket(Endpoint.Ticket)
+        case reserveTicket(Ticket)
         case error(Error)
     }
 
@@ -32,7 +32,17 @@ class BandViewModel {
     }
 
     func getContents() {
-
+        var uri = GetFollowingGroupFeeds.URI()
+        uri.page = 1
+        uri.per = 100
+        apiClient.request(GetFollowingGroupFeeds.self, request: Empty(), uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getContents(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
     }
 
     func getLives() {

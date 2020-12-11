@@ -13,6 +13,7 @@ class BandDetailViewModel {
     enum Output {
         case getGroup(GetGroup.Response)
         case getGroupLives([Live])
+        case getGroupFeeds([GroupFeed])
         case getFollowers([User])
         case follow
         case unfollow
@@ -110,6 +111,22 @@ class BandDetailViewModel {
             switch result {
             case .success(let users):
                 self.outputHandler(.getFollowers(users.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func getGroupFeed() {
+        var uri = GetGroupFeed.URI()
+        uri.groupId = self.group.id
+        uri.per = 1
+        uri.page = 1
+        let request = Empty()
+        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getGroupFeeds(res.items))
             case .failure(let error):
                 self.outputHandler(.error(error))
             }

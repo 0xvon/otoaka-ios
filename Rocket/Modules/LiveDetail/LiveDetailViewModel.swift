@@ -12,6 +12,7 @@ import Foundation
 class LiveDetailViewModel {
     enum Output {
         case getLive(LiveDetail)
+        case getGroupFeeds([GroupFeed])
         case toggleFollow(Int)
         case reserveTicket(Ticket)
         case getHostGroup(GetGroup.Response)
@@ -100,6 +101,22 @@ class LiveDetailViewModel {
             switch result {
             case .success(let res):
                 self.outputHandler(.reserveTicket(res))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func getGroupFeed(groupId: Group.ID) {
+        var uri = GetGroupFeed.URI()
+        uri.groupId = groupId
+        uri.per = 1
+        uri.page = 1
+        let request = Empty()
+        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getGroupFeeds(res.items))
             case .failure(let error):
                 self.outputHandler(.error(error))
             }

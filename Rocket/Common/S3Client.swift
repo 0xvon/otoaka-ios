@@ -20,10 +20,10 @@ class S3Client {
 
     public func uploadImage(image: UIImage?, callback: @escaping ((String?, String?) -> Void)) {
         let transferUtility = AWSS3TransferUtility.default()
-        let key = "\(UUID()).png"
-        let contentType = "application/png"
+        let key = "\(UUID()).jpeg"
+        let contentType = "application/jpeg"
         let im: UIImage = image ?? UIImage(named: "band")!
-        guard let pngData = im.pngData() else {
+        guard let pngData = im.jpegData(compressionQuality: 0.25) else {
             callback(nil, "cannot convert image to png data")
             return
         }

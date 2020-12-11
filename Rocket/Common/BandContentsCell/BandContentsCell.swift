@@ -6,11 +6,18 @@
 //
 
 import UIKit
+import Endpoint
 
 class BandContentsCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "BandContentsCell" }
-    typealias Input = Void
+    typealias Input = GroupFeed
     var input: Input!
+    
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY/MM/dd"
+        return dateFormatter
+    }()
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
@@ -26,14 +33,19 @@ class BandContentsCell: UITableViewCell, ReusableCell {
 
     func setup() {
         backgroundColor = style.color.background.get()
-        let thumbnail = URL(string: "https://i.ytimg.com/vi/T_27VmK1vmc/hqdefault.jpg")
-        thumbnailImageView.loadImageAsynchronously(url: thumbnail)
+        
+        switch input.feedType {
+        case .youtube(let url):
+            let youTubeClient = YouTubeClient(url: url.absoluteString)
+            let thumbnail = youTubeClient.getThumbnailUrl()
+            thumbnailImageView.loadImageAsynchronously(url: thumbnail)
+        }
         thumbnailImageView.layer.opacity = 0.6
         thumbnailImageView.layer.cornerRadius = 16
         thumbnailImageView.layer.borderWidth = 1
         thumbnailImageView.layer.borderColor = style.color.main.get().cgColor
 
-        titleLabel.text = "STORY TELLER TOUR 2020 OSAKA"
+        titleLabel.text = input.text
         titleLabel.font = style.font.large.get()
         titleLabel.textColor = style.color.main.get()
         titleLabel.lineBreakMode = .byWordWrapping
@@ -41,15 +53,15 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         titleLabel.adjustsFontSizeToFitWidth = false
         titleLabel.sizeToFit()
 
-        dateLabel.text = "2020/09/01"
+        dateLabel.text = dateFormatter.string(from: input.createdAt)
         dateLabel.font = style.font.small.get()
         dateLabel.textColor = style.color.main.get()
 
-        numOfViewers.text = "300,000 views"
+        numOfViewers.text = ""
         numOfViewers.font = style.font.small.get()
         numOfViewers.textColor = style.color.main.get()
 
-        timeLabel.text = "4:32"
+        timeLabel.text = ""
         timeLabel.font = style.font.small.get()
         timeLabel.textColor = style.color.main.get()
 

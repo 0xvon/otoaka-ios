@@ -41,7 +41,7 @@ final class BandViewController: UIViewController, Instantiable {
     private var iconMenu: UIBarButtonItem!
 
     var lives: [LiveFeed] = []
-    //    var contents = []
+    var feeds: [GroupFeed] = []
     var bands: [Group] = []
     var charts: [ChannelDetail.ChannelItem] = []
     var pageItems: [PageItem] = []
@@ -69,10 +69,14 @@ final class BandViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
+            case .getContents(let feeds):
+                DispatchQueue.main.async {
+                    self.feeds = feeds
+                    self.contentsTableView.reloadData()
+                }
             case .getLives(let lives):
                 DispatchQueue.main.async {
                     self.lives = lives
-                    print(lives.count)
                     self.liveTableView.reloadData()
                 }
             case .getBands(let groups):
@@ -440,12 +444,14 @@ final class BandViewController: UIViewController, Instantiable {
     }
 
     func initializeItems() {
+        viewModel.getContents()
         viewModel.getLives()
         viewModel.getGroups()
         viewModel.getCharts()
     }
 
     @objc private func refreshContents(sender: UIRefreshControl) {
+        viewModel.getContents()
         sender.endRefreshing()
     }
 
@@ -526,7 +532,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         switch tableView {
         case self.contentsTableView:
-            return 10
+            return self.feeds.count
         case self.liveTableView:
             return self.lives.count
         case self.chartsTableView:
@@ -566,7 +572,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tableView {
         case self.contentsTableView:
-            let cell = tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
+            let feed = self.feeds[indexPath.section]
+            let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
             return cell
         case self.liveTableView:
             let live = self.lives[indexPath.section].live
@@ -604,8 +611,9 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
                 dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
         case self.contentsTableView:
-            let url = URL(string: "https://youtu.be/T_27VmK1vmc")
-            if let url = url {
+            let feed = self.feeds[indexPath.section]
+            switch feed.feedType {
+            case .youtube(let url):
                 let safari = SFSafariViewController(url: url)
                 present(safari, animated: true, completion: nil)
             }

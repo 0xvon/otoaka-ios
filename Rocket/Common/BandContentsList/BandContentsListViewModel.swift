@@ -11,7 +11,7 @@ import Endpoint
 
 class BandContentsListViewModel {
     enum Output {
-        case getContents([String])
+        case getContents([GroupFeed])
         case error(Error)
     }
 
@@ -31,7 +31,19 @@ class BandContentsListViewModel {
     }
     
     func getContents() {
-        
+        var uri = GetGroupFeed.URI()
+        uri.groupId = self.group.id
+        uri.per = 1
+        uri.page = 1
+        let request = Empty()
+        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getContents(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
     }
 }
 
