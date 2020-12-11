@@ -13,22 +13,26 @@ class LiveDetailViewModel {
     enum Output {
         case getLive(LiveDetail)
         case toggleFollow(Int)
+        case reserveTicket(Ticket)
+        case likeLive
         case error(Error)
     }
 
     let auth: AWSCognitoAuth
+    let live: Live
     let apiClient: APIClient
     let outputHandler: (Output) -> Void
 
-    init(apiClient: APIClient, auth: AWSCognitoAuth, outputHander: @escaping (Output) -> Void) {
+    init(apiClient: APIClient, auth: AWSCognitoAuth, live: Live, outputHander: @escaping (Output) -> Void) {
         self.apiClient = apiClient
         self.auth = auth
+        self.live = live
         self.outputHandler = outputHander
     }
 
-    func getLive(liveId: Live.ID) {
+    func getLive() {
         var uri = GetLive.URI()
-        uri.liveId = liveId
+        uri.liveId = self.live.id
         let req = Empty()
         apiClient.request(GetLive.self, request: req, uri: uri) { result in
             switch result {
@@ -58,6 +62,30 @@ class LiveDetailViewModel {
             switch result {
             case .success(_):
                 self.outputHandler(.toggleFollow(cellIndex))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func likeLive() {
+        let request = LikeLive.Request(liveId: self.live.id)
+        apiClient.request(LikeLive.self, request: request) { result in
+            switch result {
+            case .success(_):
+                self.outputHandler(.likeLive)
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func reserveTicket() {
+        let request = ReserveTicket.Request(liveId: live.id)
+        apiClient.request(ReserveTicket.self, request: request) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.reserveTicket(res))
             case .failure(let error):
                 self.outputHandler(.error(error))
             }

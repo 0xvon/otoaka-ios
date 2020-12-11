@@ -71,6 +71,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     lazy var viewModel = LiveDetailViewModel(
         apiClient: dependencyProvider.apiClient,
         auth: dependencyProvider.auth,
+        live: input,
         outputHander: { output in
             switch output {
             case .getLive(let liveDetail):
@@ -78,6 +79,16 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                     self.input = liveDetail.live
                     self.isLiked = liveDetail.isLiked
                     self.hasTicket = liveDetail.hasTicket
+                    self.inject()
+                }
+            case .reserveTicket(let ticket):
+                DispatchQueue.main.async {
+                    self.hasTicket = true
+                    self.inject()
+                }
+            case .likeLive:
+                DispatchQueue.main.async {
+                    self.isLiked = true
                     self.inject()
                 }
             case .toggleFollow(let index):
@@ -112,6 +123,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         buyTicketButtonView.listen {
             self.buyTicketButtonTapped()
         }
+        
+        viewModel.getLive()
         
         switch input.style {
         case .oneman(let performer):
@@ -150,6 +163,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     private func setupCreation() {
+        if let creationView = creationView {
+            creationView.removeFromSuperview()
+        }
         creationView = UIView()
         creationView.backgroundColor = .clear
         creationView.translatesAutoresizingMaskIntoConstraints = false
@@ -408,7 +424,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     @objc private func refreshLive(sender: UIRefreshControl) {
-        viewModel.getLive(liveId: input.id)
+        viewModel.getLive()
         sender.endRefreshing()
     }
 
@@ -474,7 +490,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     private func likeButtonTapped() {
-        print("like")
+        if isLiked {
+            print("you already liked")
+        } else {
+            self.viewModel.likeLive()
+        }
     }
 
     private func commentButtonTapped() {
@@ -482,7 +502,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     private func buyTicketButtonTapped() {
-        print("buy ticket")
+        if self.hasTicket {
+            print("you already reserved ticket")
+        } else {
+            viewModel.reserveTicket()
+        }
     }
 }
 

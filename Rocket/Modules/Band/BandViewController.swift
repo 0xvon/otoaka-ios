@@ -72,6 +72,7 @@ final class BandViewController: UIViewController, Instantiable {
             case .getLives(let lives):
                 DispatchQueue.main.async {
                     self.lives = lives
+                    print(lives.count)
                     self.liveTableView.reloadData()
                 }
             case .getBands(let groups):
