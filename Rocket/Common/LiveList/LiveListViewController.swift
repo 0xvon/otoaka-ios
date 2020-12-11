@@ -18,7 +18,7 @@ final class LiveListViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var lives: [LiveFeed] = []
+    var lives: [Live] = []
     private var liveTableView: UITableView!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -38,7 +38,12 @@ final class LiveListViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
-            case .getLives(let lives):
+            case .getLives(let liveFeeds):
+                DispatchQueue.main.async {
+                    self.lives = liveFeeds.map { $0.live }
+                    self.liveTableView.reloadData()
+                }
+            case .searchLive(let lives):
                 DispatchQueue.main.async {
                     self.lives = lives
                     self.liveTableView.reloadData()
@@ -118,13 +123,13 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = self.lives[indexPath.section].live
+        let live = self.lives[indexPath.section]
         let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = self.lives[indexPath.section].live
+        let live = self.lives[indexPath.section]
         let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)

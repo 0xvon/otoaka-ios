@@ -12,6 +12,7 @@ import Endpoint
 class LiveListViewModel {
     enum Output {
         case getLives([LiveFeed])
+        case searchLive([Live])
         case error(Error)
     }
 
@@ -45,8 +46,20 @@ class LiveListViewModel {
         }
     }
     
-    func searchLive() {
-        
+    func searchLive(query: String) {
+        var uri = SearchLive.URI()
+        uri.page = 1
+        uri.per = 100
+        uri.term = query
+        let request = SearchLive.Request()
+        apiClient.request(SearchLive.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.searchLive(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
     }
 }
 
