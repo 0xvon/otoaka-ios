@@ -40,7 +40,7 @@ final class BandViewController: UIViewController, Instantiable {
     private var bandsPageButton: UIButton!
     private var iconMenu: UIBarButtonItem!
 
-    var lives: [Live] = []
+    var lives: [LiveFeed] = []
     //    var contents = []
     var bands: [Group] = []
     var charts: [ChannelDetail.ChannelItem] = []
@@ -86,7 +86,7 @@ final class BandViewController: UIViewController, Instantiable {
                 }
             case .reserveTicket(let ticket):
                 DispatchQueue.main.async {
-                    if let index = self.lives.firstIndex(where: { $0.id == ticket.live.id }) {
+                    if let index = self.lives.firstIndex(where: { $0.live.id == ticket.live.id }) {
                         self.lives.remove(at: index)
                     }
                     self.liveTableView.reloadData()
@@ -568,7 +568,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.reuse(BandContentsCell.self, input: (), for: indexPath)
             return cell
         case self.liveTableView:
-            let live = self.lives[indexPath.section]
+            let live = self.lives[indexPath.section].live
             let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
             cell.listen { [weak self] in
                 self?.listenButtonTapped(cellIndex: indexPath.section)
@@ -598,7 +598,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
                 dependencyProvider: self.dependencyProvider, input: band)
             self.navigationController?.pushViewController(vc, animated: true)
         case self.liveTableView:
-            let live = self.lives[indexPath.section]
+            let live = self.lives[indexPath.section].live
             let vc = LiveDetailViewController(
                 dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
@@ -625,7 +625,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     private func buyTicketButtonTapped(cellIndex: Int) {
-        let live = self.lives[cellIndex]
+        let live = self.lives[cellIndex].live
         viewModel.reserveTicket(liveId: live.id)
     }
 }

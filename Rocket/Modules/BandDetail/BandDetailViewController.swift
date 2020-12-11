@@ -20,6 +20,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
+    var isFollowing: Bool!
     var lives: [Live] = []
     var followers:[User] = []
     var isLiked: Bool = false
@@ -52,9 +53,18 @@ final class BandDetailViewController: UIViewController, Instantiable {
         group: self.input,
         outputHander: { output in
             switch output {
-            case .getGroup(let group):
+            case .getGroup(let response):
                 DispatchQueue.main.async {
-                    self.input = group
+                    self.input = response.group
+                    self.isFollowing = response.isFollowing
+                    switch self.dependencyProvider.user.role {
+                    case .fan(_):
+                        self.userType = .fan
+                    default:
+                        self.userType = response.isMember ? .member : .group
+                    }
+                    self.setupLikeView()
+                    self.setupCreation()
                     self.inject()
                 }
             case .getGroupLives(let lives):
@@ -148,6 +158,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         liveTableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
         liveTableView.tableFooterView = UIView(frame: .zero)
+        viewModel.getGroup()
         viewModel.getGroupLives()
         viewModel.getFollowers()
 
@@ -166,6 +177,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     private func setupCreation() {
+        if let creationView = creationView {
+            creationView.removeFromSuperview()
+        }
         creationView = UIView()
         creationView.backgroundColor = .clear
         creationView.translatesAutoresizingMaskIntoConstraints = false

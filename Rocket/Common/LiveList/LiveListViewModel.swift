@@ -11,7 +11,7 @@ import Endpoint
 
 class LiveListViewModel {
     enum Output {
-        case getLives([Live])
+        case getLives([LiveFeed])
         case error(Error)
     }
 

@@ -90,8 +90,12 @@ final class ReactionButtonView: UIView {
         NSLayoutConstraint.activate(constraints)
     }
     
-    func setItem(text: String, image: UIImage) {
+    func setItem(text: String, image: UIImage?) {
         self.numOfReaction.text = text
+        self.reactionImageView.image = image
+    }
+    
+    func updateImage(image: UIImage?) {
         self.reactionImageView.image = image
     }
 

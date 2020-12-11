@@ -11,7 +11,7 @@ import Foundation
 
 class LiveDetailViewModel {
     enum Output {
-        case getLive(Live)
+        case getLive(LiveDetail)
         case toggleFollow(Int)
         case error(Error)
     }

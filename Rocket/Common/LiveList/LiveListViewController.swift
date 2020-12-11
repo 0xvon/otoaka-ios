@@ -13,7 +13,7 @@ final class LiveListViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var lives: [Live] = []
+    var lives: [LiveFeed] = []
     private var liveTableView: UITableView!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -113,13 +113,13 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = self.lives[indexPath.section]
+        let live = self.lives[indexPath.section].live
         let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = self.lives[indexPath.section]
+        let live = self.lives[indexPath.section].live
         let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)

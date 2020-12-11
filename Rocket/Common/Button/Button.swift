@@ -92,6 +92,10 @@ final class Button: UIView, InputAppliable {
         ]
         NSLayoutConstraint.activate(constraints)
     }
+    
+    func setText(text: String) {
+        self.buttonTitleLabel.text = text
+    }
 
     @objc private func touchUpInside() {
         self.listener()

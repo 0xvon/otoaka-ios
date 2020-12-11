@@ -11,7 +11,7 @@ import Foundation
 
 class BandDetailViewModel {
     enum Output {
-        case getGroup(Group)
+        case getGroup(GetGroup.Response)
         case getGroupLives([Live])
         case getFollowers([User])
         case follow

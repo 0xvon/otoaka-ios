@@ -12,7 +12,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
 
     typealias Input = Live
     var dependencyProvider: LoggedInDependencyProvider!
-    var input: Input!
+    var input: Live!
+    var isLiked: Bool!
+    var hasTicket: Bool!
     enum UserType {
         case fan
         case group
@@ -44,6 +46,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
+        self.isLiked = false
+        self.hasTicket = false
         switch dependencyProvider.user.role {
         case .artist(_):
             self.userType = .performer
@@ -69,9 +73,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
-            case .getLive(let live):
+            case .getLive(let liveDetail):
                 DispatchQueue.main.async {
-                    self.input = live
+                    self.input = liveDetail.live
+                    self.isLiked = liveDetail.isLiked
+                    self.hasTicket = liveDetail.hasTicket
                     self.inject()
                 }
             case .toggleFollow(let index):
@@ -139,6 +145,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     func inject() {
         liveDetailHeader.update(
             input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: []))
+        self.ticketButtonStyle()
+        self.likeButtonViewStyle()
     }
 
     private func setupCreation() {
@@ -380,6 +388,22 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             NSLayoutConstraint.activate(constraints)
         case .none:
             break
+        }
+    }
+
+    private func ticketButtonStyle() {
+        if self.hasTicket {
+            self.buyTicketButtonView.setText(text: "予約済")
+        } else {
+            self.buyTicketButtonView.setText(text: "￥1,500")
+        }
+    }
+    
+    private func likeButtonViewStyle() {
+        if self.isLiked {
+            self.likeButtonView.updateImage(image: UIImage(named: "heart_fill"))
+        } else {
+            self.likeButtonView.updateImage(image: UIImage(named: "heart"))
         }
     }
 
