@@ -50,7 +50,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         self.hasTicket = false
         switch dependencyProvider.user.role {
         case .artist(_):
-            self.userType = .performer
+            self.userType = .group
         case .fan(_):
             self.userType = .fan
         }
@@ -79,6 +79,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                     self.input = liveDetail.live
                     self.isLiked = liveDetail.isLiked
                     self.hasTicket = liveDetail.hasTicket
+                    self.inject()
+                }
+            case .getHostGroup(let hostGroup):
+                DispatchQueue.main.async {
+                    self.userType = hostGroup.isMember ? .performer : self.userType
                     self.inject()
                 }
             case .reserveTicket(let ticket):
@@ -125,6 +130,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         }
         
         viewModel.getLive()
+        if self.userType != .fan {
+            viewModel.getHostGroup()
+        }
         
         switch input.style {
         case .oneman(let performer):
@@ -160,6 +168,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: []))
         self.ticketButtonStyle()
         self.likeButtonViewStyle()
+        self.setupCreation()
     }
 
     private func setupCreation() {
@@ -342,9 +351,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
                 openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
 
-                createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-                createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-                createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+//                createMessageView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+//                createMessageView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+//                createMessageView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
 
                 createShareView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
                 createShareView.widthAnchor.constraint(equalTo: creationView.widthAnchor),

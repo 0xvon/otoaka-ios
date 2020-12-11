@@ -14,6 +14,7 @@ class LiveDetailViewModel {
         case getLive(LiveDetail)
         case toggleFollow(Int)
         case reserveTicket(Ticket)
+        case getHostGroup(GetGroup.Response)
         case likeLive
         case error(Error)
     }
@@ -38,6 +39,19 @@ class LiveDetailViewModel {
             switch result {
             case .success(let res):
                 self.outputHandler(.getLive(res))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func getHostGroup() {
+        var uri = GetGroup.URI()
+        uri.groupId = self.live.hostGroup.id
+        apiClient.request(GetGroup.self, request: Empty(), uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getHostGroup(res))
             case .failure(let error):
                 self.outputHandler(.error(error))
             }
