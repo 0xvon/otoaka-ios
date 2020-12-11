@@ -509,10 +509,15 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     private func likeButtonTapped() {
-        if self.isLiked {
-            viewModel.unfollowGroup()
+        if case .member = self.userType {
+            let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.input.id))
+            self.navigationController?.pushViewController(vc, animated: true)
         } else {
-            viewModel.followGroup()
+            if self.isLiked {
+                viewModel.unfollowGroup()
+            } else {
+                viewModel.followGroup()
+            }
         }
     }
 

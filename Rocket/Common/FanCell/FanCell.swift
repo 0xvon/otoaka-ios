@@ -32,10 +32,12 @@ final class FanCell: UITableViewCell, ReusableCell {
         
         fanNameLabel.text = input.name
         fanNameLabel.font = style.font.large.get()
+        fanNameLabel.backgroundColor = style.color.background.get()
         fanNameLabel.textColor = style.color.main.get()
         
         biographyTextView.text = input.biography
         biographyTextView.font = style.font.regular.get()
+        biographyTextView.backgroundColor = style.color.background.get()
         biographyTextView.textColor = style.color.main.get()
     }
 }

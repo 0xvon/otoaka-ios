@@ -67,7 +67,7 @@ final class UserListViewController: UIViewController, Instantiable {
         fanTableView.delegate = self
         fanTableView.dataSource = self
         fanTableView.register(
-            UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+            UINib(nibName: "FanCell", bundle: nil), forCellReuseIdentifier: "FanCell")
         self.view.addSubview(fanTableView)
         
         fanTableView.refreshControl = UIRefreshControl()
@@ -85,7 +85,7 @@ final class UserListViewController: UIViewController, Instantiable {
     }
     
     func getLives() {
-        viewModel.getFans()
+        viewModel.getFans(inputType: input)
     }
     
     @objc private func refreshFan(sender: UIRefreshControl) {

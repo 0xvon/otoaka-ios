@@ -30,7 +30,24 @@ class UserListViewModel {
         self.outputHandler = outputHander
     }
     
-    func getFans() {
-        
+    func getFans(inputType: UserListViewController.InputType) {
+        switch inputType {
+        case .followers(let groupId):
+            var uri = GroupFollowers.URI()
+            uri.id = groupId
+            uri.page = 1
+            uri.per = 100
+            let req = Empty()
+            apiClient.request(GroupFollowers.self, request: req, uri: uri) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.getFans(res.items))
+                case .failure(let error):
+                    self.outputHandler(.error(error))
+                }
+            }
+        default:
+            print("hello")
+        }
     }
 }
