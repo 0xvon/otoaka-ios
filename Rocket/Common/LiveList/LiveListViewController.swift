@@ -9,7 +9,12 @@ import UIKit
 import Endpoint
 
 final class LiveListViewController: UIViewController, Instantiable {
-    typealias Input = Group
+    typealias Input = ListType
+    
+    enum ListType {
+        case groupLive(Group)
+        case searchResult(String)
+    }
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
@@ -29,7 +34,7 @@ final class LiveListViewController: UIViewController, Instantiable {
     
     lazy var viewModel = LiveListViewModel(
         apiClient: dependencyProvider.apiClient,
-        group: input,
+        type: input,
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {

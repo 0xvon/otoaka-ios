@@ -9,33 +9,20 @@ import UIKit
 
 final class SearchViewController: UIViewController, Instantiable {
     typealias Input = Void
-    var dependencyProvider: DependencyProvider!
+    var dependencyProvider: LoggedInDependencyProvider!
 
     enum Choice {
         case live
         case band
     }
 
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy年MM月dd日"
-        return dateFormatter
-    }()
-
     private var choice: Choice = .live
-    private var prefectures = Components().prefectures
-    private var prefecturePicker: UIPickerView!
-    private var prefectureTextFieldView: TextFieldView!
-    private var dateTextFieldView: TextFieldView!
-    private var bandSettingView: UIView!
-    private var liveSettingView: UIView!
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var liveChoiceView: UIView!
     @IBOutlet weak var bandChoiceView: UIView!
-    @IBOutlet weak var settingView: UIView!
 
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
 
         super.init(nibName: nil, bundle: nil)
@@ -52,11 +39,6 @@ final class SearchViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = style.color.background.get()
-
-        prefecturePicker = UIPickerView()
-        prefecturePicker.translatesAutoresizingMaskIntoConstraints = false
-        prefecturePicker.dataSource = self
-        prefecturePicker.delegate = self
 
         searchBar.delegate = self
         searchBar.barTintColor = style.color.background.get()
@@ -102,51 +84,6 @@ final class SearchViewController: UIViewController, Instantiable {
             self, action: #selector(bandChoiceButtonTapped(_:)), for: .touchUpInside)
         bandChoiceView.addSubview(bandChoiceButton)
 
-        bandSettingView = UIView()
-        bandSettingView.backgroundColor = style.color.background.get()
-        bandSettingView.translatesAutoresizingMaskIntoConstraints = false
-        settingView.addSubview(bandSettingView)
-
-        let hometownView = UIView()
-        hometownView.translatesAutoresizingMaskIntoConstraints = false
-        bandSettingView.addSubview(hometownView)
-
-        let mapImageView = UIImageView()
-        mapImageView.translatesAutoresizingMaskIntoConstraints = false
-        mapImageView.image = UIImage(named: "map")
-        hometownView.addSubview(mapImageView)
-
-        prefectureTextFieldView = TextFieldView(input: (placeholder: "出身地", maxLength: 20))
-        prefectureTextFieldView.selectInputView(inputView: prefecturePicker)
-        prefectureTextFieldView.translatesAutoresizingMaskIntoConstraints = false
-        prefectureTextFieldView.backgroundColor = .clear
-        hometownView.addSubview(prefectureTextFieldView)
-
-        liveSettingView = UIView()
-        liveSettingView.backgroundColor = style.color.background.get()
-        liveSettingView.translatesAutoresizingMaskIntoConstraints = false
-        settingView.addSubview(liveSettingView)
-
-        let calendarView = UIView()
-        calendarView.translatesAutoresizingMaskIntoConstraints = false
-        liveSettingView.addSubview(calendarView)
-
-        let calendarImageView = UIImageView()
-        calendarImageView.translatesAutoresizingMaskIntoConstraints = false
-        calendarImageView.image = UIImage(named: "calendar")
-        calendarView.addSubview(calendarImageView)
-
-        let datePicker = UIDatePicker()
-        datePicker.translatesAutoresizingMaskIntoConstraints = false
-        datePicker.date = Date()
-        datePicker.datePickerMode = .date
-        datePicker.addTarget(
-            self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
-        datePicker.tintColor = style.color.main.get()
-        datePicker.backgroundColor = .clear
-
-        calendarView.addSubview(datePicker)
-
         toggleSetting()
 
         let constraints = [
@@ -175,47 +112,6 @@ final class SearchViewController: UIViewController, Instantiable {
             bandChoiceButton.bottomAnchor.constraint(equalTo: bandChoiceView.bottomAnchor),
             bandChoiceButton.rightAnchor.constraint(equalTo: bandChoiceView.rightAnchor),
             bandChoiceButton.leftAnchor.constraint(equalTo: bandChoiceView.leftAnchor),
-
-            bandSettingView.leftAnchor.constraint(equalTo: settingView.leftAnchor),
-            bandSettingView.rightAnchor.constraint(equalTo: settingView.rightAnchor),
-            bandSettingView.topAnchor.constraint(equalTo: settingView.topAnchor),
-            bandSettingView.bottomAnchor.constraint(equalTo: settingView.bottomAnchor),
-
-            calendarImageView.widthAnchor.constraint(equalToConstant: 30),
-            calendarImageView.heightAnchor.constraint(equalToConstant: 30),
-            calendarImageView.centerYAnchor.constraint(equalTo: calendarView.centerYAnchor),
-            calendarImageView.leftAnchor.constraint(equalTo: calendarView.leftAnchor, constant: 16),
-
-            datePicker.leftAnchor.constraint(equalTo: calendarImageView.rightAnchor, constant: 16),
-            datePicker.rightAnchor.constraint(equalTo: calendarView.rightAnchor, constant: -16),
-            datePicker.centerYAnchor.constraint(equalTo: calendarView.centerYAnchor),
-
-            calendarView.leftAnchor.constraint(equalTo: liveSettingView.leftAnchor),
-            calendarView.rightAnchor.constraint(equalTo: liveSettingView.rightAnchor),
-            calendarView.topAnchor.constraint(equalTo: liveSettingView.topAnchor),
-            calendarView.heightAnchor.constraint(equalToConstant: 60),
-
-            mapImageView.widthAnchor.constraint(equalToConstant: 30),
-            mapImageView.heightAnchor.constraint(equalToConstant: 30),
-            mapImageView.centerYAnchor.constraint(equalTo: hometownView.centerYAnchor),
-            mapImageView.leftAnchor.constraint(equalTo: hometownView.leftAnchor, constant: 16),
-
-            prefectureTextFieldView.leftAnchor.constraint(
-                equalTo: mapImageView.rightAnchor, constant: 16),
-            prefectureTextFieldView.rightAnchor.constraint(
-                equalTo: hometownView.rightAnchor, constant: -16),
-            prefectureTextFieldView.centerYAnchor.constraint(equalTo: hometownView.centerYAnchor),
-            prefectureTextFieldView.heightAnchor.constraint(equalToConstant: 30),
-
-            hometownView.leftAnchor.constraint(equalTo: bandSettingView.leftAnchor),
-            hometownView.rightAnchor.constraint(equalTo: bandSettingView.rightAnchor),
-            hometownView.topAnchor.constraint(equalTo: bandSettingView.topAnchor),
-            hometownView.heightAnchor.constraint(equalToConstant: 60),
-
-            liveSettingView.leftAnchor.constraint(equalTo: settingView.leftAnchor),
-            liveSettingView.rightAnchor.constraint(equalTo: settingView.rightAnchor),
-            liveSettingView.topAnchor.constraint(equalTo: settingView.topAnchor),
-            liveSettingView.bottomAnchor.constraint(equalTo: settingView.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -228,12 +124,10 @@ final class SearchViewController: UIViewController, Instantiable {
             bandChoiceView.layer.borderWidth = 0
             liveChoiceView.layer.borderWidth = 1
             liveChoiceView.layer.borderColor = style.color.main.get().cgColor
-            settingView.bringSubviewToFront(liveSettingView)
         case .band:
             liveChoiceView.layer.borderWidth = 0
             bandChoiceView.layer.borderWidth = 1
             bandChoiceView.layer.borderColor = style.color.main.get().cgColor
-            settingView.bringSubviewToFront(bandSettingView)
         }
     }
 
@@ -253,26 +147,14 @@ final class SearchViewController: UIViewController, Instantiable {
 
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        switch self.choice {
+        case .band:
+            let vc = BandListViewController(dependencyProvider: dependencyProvider, input: .searchResults(searchBar.text!))
+            self.navigationController?.pushViewController(vc, animated: true)
+        case .live:
+            let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: .searchResult(searchBar.text!))
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
         searchBar.resignFirstResponder()
-    }
-}
-
-extension SearchViewController: UIPickerViewDataSource, UIPickerViewDelegate {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return prefectures.count
-    }
-
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
-        -> String?
-    {
-        return prefectures[row]
-    }
-
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        prefectureTextFieldView.setText(text: prefectures[row])
     }
 }

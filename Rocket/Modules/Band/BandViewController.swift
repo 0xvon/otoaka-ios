@@ -18,7 +18,6 @@ final class BandViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider!
 
     @IBOutlet weak var horizontalScrollView: UIScrollView!
-    @IBOutlet weak var searchBar: UISearchBar!
     
     private var pageStackView: UIStackView!
     private var pageTitleStackViewLeadingConstraint: NSLayoutConstraint!
@@ -132,11 +131,6 @@ final class BandViewController: UIViewController, Instantiable {
     func setup() {
         horizontalScrollView.delegate = self
         horizontalScrollView.backgroundColor = style.color.background.get()
-
-        searchBar.barTintColor = style.color.background.get()
-        searchBar.searchTextField.placeholder = "バンド・ライブを探す"
-        searchBar.searchTextField.textColor = style.color.main.get()
-        searchBar.delegate = self
         
         pageStackView = UIStackView()
         pageStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -267,7 +261,7 @@ final class BandViewController: UIViewController, Instantiable {
         self.navigationItem.leftBarButtonItem = iconMenu
 
         let constraints = [
-            pageStackView.topAnchor.constraint(equalTo: self.searchBar.bottomAnchor, constant: 16),
+            pageStackView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 16),
             pageStackView.heightAnchor.constraint(equalToConstant: 40),
 
             iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
@@ -657,16 +651,6 @@ extension BandViewController: UIScrollViewDelegate {
             pageTitleStackViewLeadingConstraint.constant = CGFloat(
                 16 - (scrollView.contentOffset.x / UIScreen.main.bounds.width * 60))
         }
-    }
-}
-
-extension BandViewController: UISearchBarDelegate {
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-
-        let vc = SearchViewController(
-            dependencyProvider: self.dependencyProvider.provider, input: ())
-        self.navigationController?.pushViewController(vc, animated: true)
-        searchBar.endEditing(true)
     }
 }
 

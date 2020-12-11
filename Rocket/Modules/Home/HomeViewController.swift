@@ -94,25 +94,33 @@ final class HomeViewController: UITabBarController, Instantiable {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let bandViewController = BandViewController(
             dependencyProvider: loggedInProvider, input: self.input)
-        let vc1 = UINavigationController(rootViewController: bandViewController)
-        vc1.tabBarItem = UITabBarItem(
+        let bandVC = UINavigationController(rootViewController: bandViewController)
+        bandVC.tabBarItem = UITabBarItem(
             title: "Home", image: UIImage(named: "musicIcon"),
             selectedImage: UIImage(named: "selectedMusicIcon"))
-        vc1.navigationBar.tintColor = style.color.main.get()
-        vc1.navigationBar.barTintColor = .clear
+        bandVC.navigationBar.tintColor = style.color.main.get()
+        bandVC.navigationBar.barTintColor = .clear
         bandViewController.signout {
             self.checkSignupStatus()
         }
+        
+        let searchViewCotnroller = SearchViewController(dependencyProvider: loggedInProvider, input: ())
+        let searchVC = UINavigationController(rootViewController: searchViewCotnroller)
+        searchVC.tabBarItem = UITabBarItem(
+            title: "Search", image: UIImage(named: "searchIcon"),
+            selectedImage: UIImage(named: "selectedSearchIcon"))
+        searchVC.navigationBar.tintColor = style.color.main.get()
+        searchVC.navigationBar.barTintColor = .clear
 
         let ticketViewController = TicketViewController(
             dependencyProvider: loggedInProvider, input: ())
-        let vc2 = UINavigationController(rootViewController: ticketViewController)
-        vc2.tabBarItem = UITabBarItem(
+        let ticketVC = UINavigationController(rootViewController: ticketViewController)
+        ticketVC.tabBarItem = UITabBarItem(
             title: "Ticket", image: UIImage(named: "ticketIcon"),
             selectedImage: UIImage(named: "selectedTicketIcon"))
-        vc2.navigationBar.tintColor = style.color.main.get()
-        vc2.navigationBar.barTintColor = .clear
-        return [vc1, vc2]
+        ticketVC.navigationBar.tintColor = style.color.main.get()
+        ticketVC.navigationBar.barTintColor = .clear
+        return [bandVC, ticketVC, searchVC]
     }
     private func promptAlertViewController(with message: String) {
         let alertController = UIAlertController(

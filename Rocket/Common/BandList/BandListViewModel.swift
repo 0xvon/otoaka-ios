@@ -63,7 +63,19 @@ class BandListViewModel {
     }
     
     func searchGroups(query: String) {
-        
+        let req = Empty()
+        var uri = SearchGroup.URI()
+        uri.page = 1
+        uri.per = 100
+        uri.term = query
+        apiClient.request(SearchGroup.self, request: req, uri: uri) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.searchGroups(res.items))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
     }
 
 }

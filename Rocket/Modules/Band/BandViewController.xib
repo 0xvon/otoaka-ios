@@ -12,7 +12,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandViewController" customModule="Rocket" customModuleProvider="target">
             <connections>
                 <outlet property="horizontalScrollView" destination="lei-An-07T" id="1b8-ws-RJR"/>
-                <outlet property="searchBar" destination="GsN-Z1-yr6" id="MOU-ZU-hJD"/>
                 <outlet property="view" destination="iN0-l3-epB" id="Snd-II-OqA"/>
             </connections>
         </placeholder>
@@ -22,23 +21,16 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lei-An-07T">
-                    <rect key="frame" x="0.0" y="100" width="414" height="600"/>
+                    <rect key="frame" x="0.0" y="44" width="414" height="656"/>
                 </scrollView>
-                <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="GsN-Z1-yr6">
-                    <rect key="frame" x="0.0" y="44" width="414" height="56"/>
-                    <textInputTraits key="textInputTraits"/>
-                </searchBar>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="lei-An-07T" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="4x3-Qo-gl2"/>
                 <constraint firstItem="lei-An-07T" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="9zv-OF-J55"/>
-                <constraint firstItem="GsN-Z1-yr6" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="EDE-ES-mxR"/>
                 <constraint firstItem="lei-An-07T" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="Ms2-sm-UGK"/>
-                <constraint firstItem="GsN-Z1-yr6" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="OnY-Nj-mGk"/>
-                <constraint firstItem="GsN-Z1-yr6" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="SPH-3h-Kch"/>
-                <constraint firstItem="lei-An-07T" firstAttribute="top" secondItem="GsN-Z1-yr6" secondAttribute="bottom" id="Y2L-MF-hEq"/>
+                <constraint firstItem="lei-An-07T" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="eEW-9R-D2P"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="-145" y="66"/>

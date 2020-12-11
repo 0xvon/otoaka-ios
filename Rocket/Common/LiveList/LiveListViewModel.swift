@@ -16,16 +16,16 @@ class LiveListViewModel {
     }
 
     let auth: AWSCognitoAuth
-    let group: Group
+    let type: LiveListViewController.ListType
     let apiClient: APIClient
     let outputHandler: (Output) -> Void
 
     init(
-        apiClient: APIClient, group: Group, auth: AWSCognitoAuth,
+        apiClient: APIClient, type: LiveListViewController.ListType, auth: AWSCognitoAuth,
         outputHander: @escaping (Output) -> Void
     ) {
         self.apiClient = apiClient
-        self.group = group
+        self.type = type
         self.auth = auth
         self.outputHandler = outputHander
     }
@@ -43,6 +43,10 @@ class LiveListViewModel {
                 self.outputHandler(.error(error))
             }
         }
+    }
+    
+    func searchLive() {
+        
     }
 }
 
