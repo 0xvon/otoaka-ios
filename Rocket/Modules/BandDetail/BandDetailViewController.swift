@@ -20,11 +20,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var isFollowing: Bool!
     var lives: [Live] = []
     var feeds: [GroupFeed] = []
     var followers:[User] = []
-    var isLiked: Bool = false
+    var isFollowing: Bool = false
     var userType: UserType!
 
     @IBOutlet weak var headerView: BandDetailHeaderView!
@@ -78,22 +77,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     self.feeds = feeds
                     self.contentsTableView.reloadData()
                 }
-            case .getFollowers(let users):
-                DispatchQueue.main.async {
-                    self.followers = users
-                    self.isLiked = users.contains { $0.id == self.dependencyProvider.user.id }
-                    self.setupLikeView()
-                }
             case .follow:
                 DispatchQueue.main.async {
-                    self.isLiked.toggle()
+                    self.isFollowing.toggle()
                     self.followers.append(self.dependencyProvider.user)
                     self.setupLikeView()
                     self.likeButtonColor()
                 }
             case .unfollow:
                 DispatchQueue.main.async {
-                    self.isLiked.toggle()
+                    self.isFollowing.toggle()
                     self.followers = self.followers.filter { $0.id != self.dependencyProvider.user.id }
                     self.setupLikeView()
                     self.likeButtonColor()
@@ -166,8 +159,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         liveTableView.tableFooterView = UIView(frame: .zero)
         viewModel.getGroup()
         viewModel.getGroupFeed()
-        viewModel.getGroupLives()
-        viewModel.getFollowers()
+        viewModel.getGroupLive()
 
         contentsTableView.delegate = self
         contentsTableView.dataSource = self
@@ -179,7 +171,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
     
     private func setupLikeView() {
-        let image: UIImage = self.isLiked ? UIImage(named: "heart_fill")! : UIImage(named: "heart")!
+        let image: UIImage = self.isFollowing ? UIImage(named: "heart_fill")! : UIImage(named: "heart")!
         self.likeButtonView.setItem(text: "\(self.followers.count)", image: image)
     }
 
@@ -434,9 +426,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     @objc private func refreshGroups(sender: UIRefreshControl) {
         viewModel.getGroup()
-        viewModel.getFollowers()
         viewModel.getGroupFeed()
-        viewModel.getGroupLives()
+        viewModel.getGroupLive()
         sender.endRefreshing()
     }
 
@@ -522,7 +513,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.input.id))
             self.navigationController?.pushViewController(vc, animated: true)
         } else {
-            if self.isLiked {
+            if self.isFollowing {
                 viewModel.unfollowGroup()
             } else {
                 viewModel.followGroup()
