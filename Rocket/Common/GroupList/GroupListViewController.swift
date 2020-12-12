@@ -8,12 +8,12 @@
 import UIKit
 import Endpoint
 
-final class BandListViewController: UIViewController, Instantiable {
+final class GroupListViewController: UIViewController, Instantiable {
     typealias Input = BandListType
     
     enum BandListType {
-        case memberships
-        case followingGroups
+        case memberships(User.ID)
+        case followingGroups(User.ID)
         case searchResults(String)
     }
 
@@ -22,9 +22,9 @@ final class BandListViewController: UIViewController, Instantiable {
     var groups: [Group] = []
     private var groupTableView: UITableView!
 
-    lazy var viewModel = BandListViewModel(
+    lazy var viewModel = GroupListViewModel(
         apiClient: dependencyProvider.apiClient,
-        userId: dependencyProvider.user.id,
+        type: input,
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
@@ -35,10 +35,20 @@ final class BandListViewController: UIViewController, Instantiable {
                 }
             case .followingGroups(let groups):
                 DispatchQueue.main.async {
+                    self.groups += groups
+                    self.groupTableView.reloadData()
+                }
+            case .refreshFollowingGroups(let groups):
+                DispatchQueue.main.async {
                     self.groups = groups
                     self.groupTableView.reloadData()
                 }
             case .searchGroups(let groups):
+                DispatchQueue.main.async {
+                    self.groups += groups
+                    self.groupTableView.reloadData()
+                }
+            case .refreshSearchGroups(let groups):
                 DispatchQueue.main.async {
                     self.groups = groups
                     self.groupTableView.reloadData()
@@ -82,7 +92,7 @@ final class BandListViewController: UIViewController, Instantiable {
         
         groupTableView.refreshControl = UIRefreshControl()
         groupTableView.refreshControl?.addTarget(
-            self, action: #selector(refreshBand(sender:)), for: .valueChanged)
+            self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         self.getGroups()
         
         let constraints: [NSLayoutConstraint] = [
@@ -100,20 +110,29 @@ final class BandListViewController: UIViewController, Instantiable {
             viewModel.getMemberships()
         case .followingGroups:
             viewModel.getFollowingGroups()
-        case .searchResults(let query):
-            viewModel.searchGroups(query: query)
+        case .searchResults(_):
+            viewModel.searchGroups()
         case .none:
             break
         }
     }
     
-    @objc private func refreshBand(sender: UIRefreshControl) {
-        self.getGroups()
+    @objc private func refreshGroups(sender: UIRefreshControl) {
+        switch self.input {
+        case .memberships:
+            viewModel.getMemberships()
+        case .followingGroups:
+            viewModel.refreshFollowingGroups()
+        case .searchResults(_):
+            viewModel.refreshSearchGroups()
+        case .none:
+            break
+        }
         sender.endRefreshing()
     }
 }
 
-extension BandListViewController: UITableViewDelegate, UITableViewDataSource {
+extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
@@ -149,5 +168,11 @@ extension BandListViewController: UITableViewDelegate, UITableViewDataSource {
             dependencyProvider: self.dependencyProvider, input: band)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if (self.groups.count - indexPath.section) == 2 && self.groups.count % per == 0 {
+            self.getGroups()
+        }
     }
 }

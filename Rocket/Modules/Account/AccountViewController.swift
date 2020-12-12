@@ -121,7 +121,7 @@ final class AccountViewController: UIViewController, Instantiable {
     }
 
     private func memberships() {
-        let vc = BandListViewController(dependencyProvider: dependencyProvider, input: .memberships)
+        let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .memberships(dependencyProvider.user.id))
         let nav = UINavigationController(rootViewController: vc)
         present(nav, animated: true, completion: nil)
     }

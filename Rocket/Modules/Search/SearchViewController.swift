@@ -149,7 +149,7 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         switch self.choice {
         case .band:
-            let vc = BandListViewController(dependencyProvider: dependencyProvider, input: .searchResults(searchBar.text!))
+            let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .searchResults(searchBar.text!))
             self.navigationController?.pushViewController(vc, animated: true)
         case .live:
             let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: .searchResult(searchBar.text!))

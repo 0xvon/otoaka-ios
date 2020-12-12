@@ -72,7 +72,7 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
         
         contentsTableView.refreshControl = UIRefreshControl()
         contentsTableView.refreshControl?.addTarget(
-            self, action: #selector(refreshBand(sender:)), for: .valueChanged)
+            self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         viewModel.getGroupFeeds()
         
         let constraints: [NSLayoutConstraint] = [
@@ -84,7 +84,7 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate(constraints)
     }
     
-    @objc private func refreshBand(sender: UIRefreshControl) {
+    @objc private func refreshGroups(sender: UIRefreshControl) {
         viewModel.refreshGroupFeeds()
         sender.endRefreshing()
     }

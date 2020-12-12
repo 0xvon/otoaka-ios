@@ -146,7 +146,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         verticalScrollView.refreshControl = UIRefreshControl()
         verticalScrollView.refreshControl?.addTarget(
-            self, action: #selector(refreshBand(sender:)), for: .valueChanged)
+            self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
 
         likeButtonView.inject(input: (text: "10,000", image: UIImage(named: "heart")))
         likeButtonView.listen {
@@ -432,7 +432,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         headerView.update(input: input)
     }
 
-    @objc private func refreshBand(sender: UIRefreshControl) {
+    @objc private func refreshGroups(sender: UIRefreshControl) {
         viewModel.getGroup()
         viewModel.getFollowers()
         viewModel.getGroupFeed()

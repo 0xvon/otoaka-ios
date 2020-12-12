@@ -66,7 +66,7 @@ final class ChartListViewController: UIViewController, Instantiable {
         
         chartTableView.refreshControl = UIRefreshControl()
         chartTableView.refreshControl?.addTarget(
-            self, action: #selector(refreshBand(sender:)), for: .valueChanged)
+            self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         self.getCharts()
         
         let constraints: [NSLayoutConstraint] = [
@@ -82,7 +82,7 @@ final class ChartListViewController: UIViewController, Instantiable {
         viewModel.getCharts()
     }
     
-    @objc private func refreshBand(sender: UIRefreshControl) {
+    @objc private func refreshGroups(sender: UIRefreshControl) {
         self.getCharts()
         sender.endRefreshing()
     }

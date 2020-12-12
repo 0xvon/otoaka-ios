@@ -76,7 +76,7 @@ final class LiveListViewController: UIViewController, Instantiable {
         
         liveTableView.refreshControl = UIRefreshControl()
         liveTableView.refreshControl?.addTarget(
-            self, action: #selector(refreshBand(sender:)), for: .valueChanged)
+            self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         self.getLives()
         
         let constraints: [NSLayoutConstraint] = [
@@ -92,7 +92,7 @@ final class LiveListViewController: UIViewController, Instantiable {
         viewModel.getLives()
     }
     
-    @objc private func refreshBand(sender: UIRefreshControl) {
+    @objc private func refreshGroups(sender: UIRefreshControl) {
         self.getLives()
         sender.endRefreshing()
     }
