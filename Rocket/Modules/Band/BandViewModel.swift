@@ -24,13 +24,23 @@ class BandViewModel {
     let youTubeDataApiClient: YouTubeDataAPIClient
     let outputHandler: (Output) -> Void
     
-    var bandPagenation: Pagenation = Pagenation<GetAllGroups>(requestUri: GetAllGroups.URI(), event: .isInitial)
+    let bandPaginationRequest: PaginationRequest<GetAllGroups>
 
     init(apiClient: APIClient, youTubeDataApiClient: YouTubeDataAPIClient, auth: AWSCognitoAuth, outputHander: @escaping (Output) -> Void) {
         self.apiClient = apiClient
+        self.bandPaginationRequest = PaginationRequest<GetAllGroups>(apiClient: apiClient)
         self.youTubeDataApiClient = youTubeDataApiClient
         self.auth = auth
         self.outputHandler = outputHander
+        
+        self.bandPaginationRequest.subscribe { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getBands(res.items))
+            case .failure(let err):
+                self.outputHandler(.error(err))
+            }
+        }
     }
 
     func getContents() {
@@ -63,41 +73,7 @@ class BandViewModel {
     }
 
     func getGroups(isNext: Bool = true) {
-        if !isNext && bandPagenation.event != .isLoading { bandPagenation.event = .isInitial }
-        
-        print(bandPagenation.event)
-        
-        switch bandPagenation.event {
-        case .isInitial:
-            bandPagenation.requestUri.page = 1
-            bandPagenation.requestUri.per = per
-            bandPagenation.event = .isLoading
-            
-            apiClient.request(GetAllGroups.self, request: Empty(), uri: bandPagenation.requestUri) { result in
-                switch result {
-                case .success(let res):
-                    self.bandPagenation.event = .isFinished
-                    self.outputHandler(.getBands(res.items))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
-            }
-        case .isFinished:
-            bandPagenation.requestUri.per += 1
-            bandPagenation.event = .isLoading
-            
-            apiClient.request(GetAllGroups.self, request: Empty(), uri: bandPagenation.requestUri) { result in
-                switch result {
-                case .success(let res):
-                    self.bandPagenation.event = .isFinished
-                    self.outputHandler(.getBands(res.items))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
-            }
-        default:
-            break
-        }
+        bandPaginationRequest.next(isNext: isNext)
     }
 
     func getCharts() {
