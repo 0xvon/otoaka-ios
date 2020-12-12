@@ -7,8 +7,8 @@
 
 import Endpoint
 
-class PaginationRequest<E: EndpointProtocol> {
-    private var uri: PaginationQuery
+class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Request == Empty {
+    private var uri: E.URI
     private var event: Event
     private var apiClient: APIClient
     private var subscribers: [(Result<E.Response, Error>) -> Void] = []
@@ -21,7 +21,7 @@ class PaginationRequest<E: EndpointProtocol> {
     
     init(apiClient: APIClient) {
         self.apiClient = apiClient
-        self.uri = E.URI() as! PaginationQuery
+        self.uri = E.URI()
         self.event = .isInitial
         
         self.initialize()
@@ -50,14 +50,14 @@ class PaginationRequest<E: EndpointProtocol> {
         switch self.event {
         case .isInitial:
             self.event = .isLoading
-            apiClient.request(E.self, request: Empty() as! E.Request, uri: self.uri as! E.URI) { result in
+            apiClient.request(E.self, request: Empty(), uri: self.uri) { result in
                 self.event = .isFinished
                 self.notify(result)
             }
         case .isFinished:
             self.uri.per += 1
             self.event = .isLoading
-            apiClient.request(E.self, request: Empty() as! E.Request, uri: self.uri as! E.URI) { result in
+            apiClient.request(E.self, request: Empty(), uri: self.uri) { result in
                 self.event = .isFinished
                 self.notify(result)
             }
