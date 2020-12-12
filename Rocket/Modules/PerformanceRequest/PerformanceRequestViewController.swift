@@ -32,6 +32,11 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
             switch output {
             case .getRequests(let requests):
                 DispatchQueue.main.async {
+                    self.requests += requests
+                    self.requestTableView.reloadData()
+                }
+            case .refreshRequests(let requests):
+                DispatchQueue.main.async {
                     self.requests = requests
                     self.requestTableView.reloadData()
                 }
@@ -61,6 +66,10 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
         requestTableView.showsVerticalScrollIndicator = false
         requestTableView.delegate = self
         requestTableView.dataSource = self
+        requestTableView.backgroundColor = .clear
+        requestTableView.refreshControl = UIRefreshControl()
+        requestTableView.refreshControl?.addTarget(
+            self, action: #selector(refreshPerformanceRequests(_:)), for: .valueChanged)
         requestTableView.register(
             UINib(nibName: "PerformanceRequestCell", bundle: nil),
             forCellReuseIdentifier: "PerformanceRequestCell")
@@ -78,6 +87,11 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
 
     func replyPerformanceRequest(request: PerformanceRequest, accept: Bool, cellIndex: Int) {
         viewModel.replyRequest(requestId: request.id, accept: accept, cellIndex: cellIndex)
+    }
+    
+    @objc func refreshPerformanceRequests(_ sender: UIRefreshControl) {
+        viewModel.refreshRequests()
+        sender.endRefreshing()
     }
 }
 
@@ -134,6 +148,11 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.showAlertView(cellIndex: indexPath.section)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if (self.requests.count - indexPath.section) == 2 && self.requests.count % per == 0 {
+            self.viewModel.getRequests()
+        }
     }
 
     private func viewBandPage(cellIndex: Int) {
