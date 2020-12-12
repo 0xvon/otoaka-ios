@@ -15,6 +15,7 @@ class BandViewModel {
         case getLives([LiveFeed])
         case getCharts([ChannelDetail.ChannelItem])
         case getBands([Group])
+        case refreshBands([Group])
         case reserveTicket(Ticket)
         case error(Error)
     }
@@ -35,9 +36,11 @@ class BandViewModel {
         
         self.bandPaginationRequest.subscribe { result in
             switch result {
-            case .success(let res):
+            case .initial(let res):
+                self.outputHandler(.refreshBands(res.items))
+            case .next(let res):
                 self.outputHandler(.getBands(res.items))
-            case .failure(let err):
+            case .error(let err):
                 self.outputHandler(.error(err))
             }
         }

@@ -59,7 +59,7 @@ struct style {
     }
 }
 
-let per = 5
+let per = 20
 
 struct Components {
     let prefectures = [

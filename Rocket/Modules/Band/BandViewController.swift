@@ -83,6 +83,11 @@ final class BandViewController: UIViewController, Instantiable {
                     self.bands += groups
                     self.bandsTableView.reloadData()
                 }
+            case .refreshBands(let groups):
+                DispatchQueue.main.async {
+                    self.bands = groups
+                    self.bandsTableView.reloadData()
+                }
             case .getCharts(let charts):
                 DispatchQueue.main.async {
                     self.charts = charts
@@ -461,8 +466,6 @@ final class BandViewController: UIViewController, Instantiable {
 
     @objc private func refreshBand(sender: UIRefreshControl) {
         viewModel.getGroups(isNext: false)
-        self.bands = []
-        self.bandsTableView.reloadData()
         sender.endRefreshing()
     }
 
