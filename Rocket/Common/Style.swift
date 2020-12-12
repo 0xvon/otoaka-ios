@@ -59,6 +59,8 @@ struct style {
     }
 }
 
+let per = 5
+
 struct Components {
     let prefectures = [
         "東京都",

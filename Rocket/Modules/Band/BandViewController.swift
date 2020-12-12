@@ -80,7 +80,7 @@ final class BandViewController: UIViewController, Instantiable {
                 }
             case .getBands(let groups):
                 DispatchQueue.main.async {
-                    self.bands = groups
+                    self.bands += groups
                     self.bandsTableView.reloadData()
                 }
             case .getCharts(let charts):
@@ -460,7 +460,9 @@ final class BandViewController: UIViewController, Instantiable {
     }
 
     @objc private func refreshBand(sender: UIRefreshControl) {
-        viewModel.getGroups()
+        viewModel.getGroups(isNext: false)
+        self.bands = []
+        self.bandsTableView.reloadData()
         sender.endRefreshing()
     }
 
@@ -630,6 +632,17 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     private func buyTicketButtonTapped(cellIndex: Int) {
         let live = self.lives[cellIndex].live
         viewModel.reserveTicket(liveId: live.id)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        switch tableView {
+        case self.bandsTableView:
+            if (self.bands.count - indexPath.section) == 2 {
+                self.viewModel.getGroups()
+            }
+        default:
+            break
+        }
     }
 }
 
