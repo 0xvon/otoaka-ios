@@ -9,12 +9,12 @@ import UIKit
 import SafariServices
 import Endpoint
 
-final class BandContentsListViewController: UIViewController, Instantiable {
+final class GroupFeedListViewController: UIViewController, Instantiable {
     typealias Input = Group
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var contents: [GroupFeed] = []
+    var feeds: [GroupFeed] = []
     private var contentsTableView: UITableView!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -28,15 +28,20 @@ final class BandContentsListViewController: UIViewController, Instantiable {
         fatalError("init(coder:) has not been implemented")
     }
     
-    lazy var viewModel = BandContentsListViewModel(
+    lazy var viewModel = GroupFeedListViewModel(
         apiClient: dependencyProvider.apiClient,
         group: input,
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
-            case .getContents(let contents):
+            case .getGroupFeeds(let feeds):
                 DispatchQueue.main.async {
-                    self.contents = contents
+                    self.feeds += feeds
+                    self.contentsTableView.reloadData()
+                }
+            case .refreshGroupFeeds(let feeds):
+                DispatchQueue.main.async {
+                    self.feeds = feeds
                     self.contentsTableView.reloadData()
                 }
             case .error(let error):
@@ -68,7 +73,7 @@ final class BandContentsListViewController: UIViewController, Instantiable {
         contentsTableView.refreshControl = UIRefreshControl()
         contentsTableView.refreshControl?.addTarget(
             self, action: #selector(refreshBand(sender:)), for: .valueChanged)
-        self.getContents()
+        viewModel.getGroupFeeds()
         
         let constraints: [NSLayoutConstraint] = [
             contentsTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
@@ -79,23 +84,19 @@ final class BandContentsListViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate(constraints)
     }
     
-    func getContents() {
-        viewModel.getContents()
-    }
-    
     @objc private func refreshBand(sender: UIRefreshControl) {
-        self.getContents()
+        viewModel.refreshGroupFeeds()
         sender.endRefreshing()
     }
 }
 
-extension BandContentsListViewController: UITableViewDelegate, UITableViewDataSource {
+extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 1
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 10
+        return self.feeds.count
         
     }
 
@@ -114,18 +115,24 @@ extension BandContentsListViewController: UITableViewDelegate, UITableViewDataSo
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let content = self.contents[indexPath.section]
+        let content = self.feeds[indexPath.section]
         let cell = tableView.reuse(BandContentsCell.self, input: content, for: indexPath)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let content = self.contents[indexPath.section]
+        let content = self.feeds[indexPath.section]
         switch content.feedType {
         case .youtube(let url):
             let safari = SFSafariViewController(url: url)
             present(safari, animated: true, completion: nil)
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if (self.feeds.count - indexPath.section) == 2 && self.feeds.count % per == 0 {
+            self.viewModel.getGroupFeeds()
+        }
     }
 }

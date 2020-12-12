@@ -652,7 +652,7 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc private func seeMoreContents(_ sender: UIButton) {
-        let vc = BandContentsListViewController(dependencyProvider: dependencyProvider, input: input)
+        let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: input)
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

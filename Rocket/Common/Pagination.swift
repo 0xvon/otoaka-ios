@@ -25,9 +25,9 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
         case error(Error)
     }
     
-    init(apiClient: APIClient) {
+    init(apiClient: APIClient, uri: E.URI = E.URI()) {
         self.apiClient = apiClient
-        self.uri = E.URI()
+        self.uri = uri
         self.state = .isInitial
         
         self.initialize()
