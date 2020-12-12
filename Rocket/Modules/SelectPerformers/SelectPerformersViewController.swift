@@ -11,7 +11,7 @@ import Endpoint
 final class SelectPerformersViewController: UIViewController, Instantiable {
     typealias Input = [Group]
     var dependencyProvider: LoggedInDependencyProvider!
-    var selectedBands: [Group] = []
+    var selectedGroups: [Group] = []
     var searchResults: [Group] = []
     
     private var groupTableView: UITableView!
@@ -28,6 +28,11 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
                     self.searchResults = groups
                     self.groupTableView.reloadData()
                 }
+            case .paginate(let groups):
+                DispatchQueue.main.async {
+                    self.searchResults += groups
+                    self.groupTableView.reloadData()
+                }
             case .error(let error):
                 print(error)
             }
@@ -36,7 +41,7 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.selectedBands = input
+        self.selectedGroups = input
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -70,6 +75,9 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
         groupTableView.separatorStyle = .none
         groupTableView.backgroundColor = style.color.background.get()
         groupTableView.allowsMultipleSelection = true
+        groupTableView.refreshControl = UIRefreshControl()
+        groupTableView.refreshControl?.addTarget(
+            self, action: #selector(refreshGroup(_:)), for: .valueChanged)
         groupTableView.register(
             UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
         self.view.addSubview(groupTableView)
@@ -116,7 +124,12 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
     
     private func okButtonTapped() {
         self.dismiss(animated: true, completion: nil)
-        self.listener(self.selectedBands)
+        self.listener(self.selectedGroups)
+    }
+    
+    @objc func refreshGroup(_ sender: UIRefreshControl) {
+        self.viewModel.refreshSearchGroup()
+        sender.endRefreshing()
     }
 }
 
@@ -148,7 +161,7 @@ extension SelectPerformersViewController: UITableViewDelegate, UITableViewDataSo
         let band = self.searchResults[indexPath.section]
         let cell = tableView.reuse(BandCell.self, input: band, for: indexPath)
         cell.selectionStyle = .none
-        if self.selectedBands.contains(where: { $0.id == band.id }) {
+        if self.selectedGroups.contains(where: { $0.id == band.id }) {
             tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
             cell.accessoryType = .checkmark
         } else {
@@ -160,14 +173,20 @@ extension SelectPerformersViewController: UITableViewDelegate, UITableViewDataSo
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let band = self.searchResults[indexPath.section]
-        self.selectedBands.append(band)
+        self.selectedGroups.append(band)
         tableView.reloadData()
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let band = self.searchResults[indexPath.section]
-        self.selectedBands = self.selectedBands.filter { $0.id != band.id }
+        self.selectedGroups = self.selectedGroups.filter { $0.id != band.id }
         tableView.reloadData()
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if (self.searchResults.count - indexPath.section) == 2 && self.searchResults.count % per == 0 {
+            self.viewModel.paginateGroup()
+        }
     }
 }
 

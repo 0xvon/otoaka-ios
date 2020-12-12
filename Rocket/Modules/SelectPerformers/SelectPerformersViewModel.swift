@@ -11,6 +11,7 @@ import AWSCognitoAuth
 
 class SelectPerformersViewModel {
     enum Output {
+        case paginate([Group])
         case search([Group])
         case error(Error)
     }
@@ -18,6 +19,8 @@ class SelectPerformersViewModel {
     let apiClient: APIClient
     let s3Client: S3Client
     let outputHandler: (Output) -> Void
+    
+    var searchGroupPaginationRequest: PaginationRequest<SearchGroup>? = nil
 
     init(
         apiClient: APIClient, s3Bucket: String, outputHander: @escaping (Output) -> Void
@@ -25,21 +28,33 @@ class SelectPerformersViewModel {
         self.apiClient = apiClient
         self.s3Client = S3Client(s3Bucket: s3Bucket)
         self.outputHandler = outputHander
+        
+        searchGroupPaginationRequest?.subscribe { result in
+            switch result {
+            case .initial(let res):
+                self.outputHandler(.search(res.items))
+            case .next(let res):
+                self.outputHandler(.paginate(res.items))
+            case .error(let err):
+                self.outputHandler(.error(err))
+            }
+        }
     }
     
     func searchGroup(query: String) {
-        var uri = GetAllGroups.URI()
-        uri.page = 1
-        uri.per = 1000
-        let req = Empty()
-        apiClient.request(GetAllGroups.self, request: req, uri: uri) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.search(res.items))
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
-        }
+        var uri = SearchGroup.URI()
+        uri.term = query
+        searchGroupPaginationRequest = PaginationRequest<SearchGroup>(apiClient: apiClient, uri: uri)
+        
+        searchGroupPaginationRequest?.next()
+    }
+    
+    func paginateGroup() {
+        searchGroupPaginationRequest?.next()
+    }
+    
+    func refreshSearchGroup() {
+        searchGroupPaginationRequest?.next(isNext: false)
     }
 }
 
