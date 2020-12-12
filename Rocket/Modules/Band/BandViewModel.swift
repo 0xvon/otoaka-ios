@@ -11,11 +11,13 @@ import UIKit
 
 class BandViewModel {
     enum Output {
-        case getContents([GroupFeed])
+        case getGroupFeeds([GroupFeed])
+        case refreshGroupFeeds([GroupFeed])
         case getLives([LiveFeed])
+        case refreshLives([LiveFeed])
         case getCharts([ChannelDetail.ChannelItem])
-        case getBands([Group])
-        case refreshBands([Group])
+        case getGroups([Group])
+        case refreshGroups([Group])
         case reserveTicket(Ticket)
         case error(Error)
     }
@@ -25,59 +27,78 @@ class BandViewModel {
     let youTubeDataApiClient: YouTubeDataAPIClient
     let outputHandler: (Output) -> Void
     
-    let bandPaginationRequest: PaginationRequest<GetAllGroups>
+    let groupPaginationRequest: PaginationRequest<GetAllGroups>
+    let livePaginationRequest: PaginationRequest<GetUpcomingLives>
+    let groupFeedsPaginationRequest: PaginationRequest<GetFollowingGroupFeeds>
 
     init(apiClient: APIClient, youTubeDataApiClient: YouTubeDataAPIClient, auth: AWSCognitoAuth, outputHander: @escaping (Output) -> Void) {
         self.apiClient = apiClient
-        self.bandPaginationRequest = PaginationRequest<GetAllGroups>(apiClient: apiClient)
+        self.groupPaginationRequest = PaginationRequest<GetAllGroups>(apiClient: apiClient)
+        self.groupFeedsPaginationRequest = PaginationRequest<GetFollowingGroupFeeds>(apiClient: apiClient)
+        self.livePaginationRequest = PaginationRequest<GetUpcomingLives>(apiClient: apiClient)
         self.youTubeDataApiClient = youTubeDataApiClient
         self.auth = auth
         self.outputHandler = outputHander
         
-        self.bandPaginationRequest.subscribe { result in
+        self.groupPaginationRequest.subscribe { result in
             switch result {
             case .initial(let res):
-                self.outputHandler(.refreshBands(res.items))
+                self.outputHandler(.refreshGroups(res.items))
             case .next(let res):
-                self.outputHandler(.getBands(res.items))
+                self.outputHandler(.getGroups(res.items))
+            case .error(let err):
+                self.outputHandler(.error(err))
+            }
+        }
+        
+        self.livePaginationRequest.subscribe { result in
+            switch result {
+            case .initial(let res):
+                self.outputHandler(.refreshLives(res.items))
+            case .next(let res):
+                self.outputHandler(.getLives(res.items))
+            case .error(let err):
+                self.outputHandler(.error(err))
+            }
+        }
+        
+        self.groupFeedsPaginationRequest.subscribe { result in
+            switch result {
+            case .initial(let res):
+                self.outputHandler(.refreshGroupFeeds(res.items))
+            case .next(let res):
+                self.outputHandler(.getGroupFeeds(res.items))
             case .error(let err):
                 self.outputHandler(.error(err))
             }
         }
     }
+    
+    func getGroups() {
+        groupPaginationRequest.next()
+    }
+    
+    func refreshGroups() {
+        groupPaginationRequest.next(isNext: false)
+    }
 
-    func getContents() {
-        var uri = GetFollowingGroupFeeds.URI()
-        uri.page = 1
-        uri.per = 100
-        apiClient.request(GetFollowingGroupFeeds.self, request: Empty(), uri: uri) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.getContents(res.items))
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
-        }
+    func getGroupFeeds() {
+        groupFeedsPaginationRequest.next()
+    }
+    
+    func refreshGroupFeeds() {
+        groupFeedsPaginationRequest.next(isNext: false)
     }
 
     func getLives() {
-        var uri = GetUpcomingLives.URI()
-        uri.page = 1
-        uri.per = 1000
-        let req = Empty()
-        apiClient.request(GetUpcomingLives.self, request: req, uri: uri) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.getLives(res.items))
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
-        }
+        livePaginationRequest.next()
+    }
+    
+    func refreshLives() {
+        livePaginationRequest.next(isNext: false)
     }
 
-    func getGroups(isNext: Bool = true) {
-        bandPaginationRequest.next(isNext: isNext)
-    }
+    
 
     func getCharts() {
 //        let request = Empty()

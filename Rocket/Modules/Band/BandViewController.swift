@@ -33,15 +33,15 @@ final class BandViewController: UIViewController, Instantiable {
     private var chartsTableView: UITableView!
     private var chartsPageTitleView: TitleLabelView!
     private var chartsPageButton: UIButton!
-    private var bandsView: UIView!
-    private var bandsTableView: UITableView!
-    private var bandsPageTitleView: TitleLabelView!
-    private var bandsPageButton: UIButton!
+    private var groupsView: UIView!
+    private var groupTableView: UITableView!
+    private var groupPageTitleView: TitleLabelView!
+    private var groupPageButton: UIButton!
     private var iconMenu: UIBarButtonItem!
 
     var lives: [LiveFeed] = []
     var feeds: [GroupFeed] = []
-    var bands: [Group] = []
+    var groups: [Group] = []
     var charts: [ChannelDetail.ChannelItem] = []
     var pageItems: [PageItem] = []
     
@@ -68,25 +68,35 @@ final class BandViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
-            case .getContents(let feeds):
+            case .getGroupFeeds(let feeds):
+                DispatchQueue.main.async {
+                    self.feeds += feeds
+                    self.contentsTableView.reloadData()
+                }
+            case .refreshGroupFeeds(let feeds):
                 DispatchQueue.main.async {
                     self.feeds = feeds
                     self.contentsTableView.reloadData()
                 }
             case .getLives(let lives):
                 DispatchQueue.main.async {
+                    self.lives += lives
+                    self.liveTableView.reloadData()
+                }
+            case .refreshLives(let lives):
+                DispatchQueue.main.async {
                     self.lives = lives
                     self.liveTableView.reloadData()
                 }
-            case .getBands(let groups):
+            case .getGroups(let groups):
                 DispatchQueue.main.async {
-                    self.bands += groups
-                    self.bandsTableView.reloadData()
+                    self.groups += groups
+                    self.groupTableView.reloadData()
                 }
-            case .refreshBands(let groups):
+            case .refreshGroups(let groups):
                 DispatchQueue.main.async {
-                    self.bands = groups
-                    self.bandsTableView.reloadData()
+                    self.groups = groups
+                    self.groupTableView.reloadData()
                 }
             case .getCharts(let charts):
                 DispatchQueue.main.async {
@@ -223,34 +233,34 @@ final class BandViewController: UIViewController, Instantiable {
         chartsTableView.refreshControl?.addTarget(
             self, action: #selector(refreshChart(sender:)), for: .valueChanged)
 
-        bandsView = UIView()
-        bandsView.translatesAutoresizingMaskIntoConstraints = false
-        bandsView.backgroundColor = style.color.background.get()
+        groupsView = UIView()
+        groupsView.translatesAutoresizingMaskIntoConstraints = false
+        groupsView.backgroundColor = style.color.background.get()
         
         chartsPageTitleView = TitleLabelView(input: (title: "CHARTS", font: style.font.regular.get(), color: style.color.main.get()))
         chartsPageTitleView.translatesAutoresizingMaskIntoConstraints = false
         chartsPageButton = UIButton()
         chartsPageButton.translatesAutoresizingMaskIntoConstraints = false
 
-        bandsTableView = UITableView()
-        bandsTableView.translatesAutoresizingMaskIntoConstraints = false
-        bandsTableView.showsVerticalScrollIndicator = false
-        bandsTableView.tableFooterView = UIView(frame: .zero)
-        bandsTableView.separatorStyle = .none
-        bandsTableView.backgroundColor = style.color.background.get()
-        bandsTableView.delegate = self
-        bandsTableView.dataSource = self
-        bandsTableView.register(
+        groupTableView = UITableView()
+        groupTableView.translatesAutoresizingMaskIntoConstraints = false
+        groupTableView.showsVerticalScrollIndicator = false
+        groupTableView.tableFooterView = UIView(frame: .zero)
+        groupTableView.separatorStyle = .none
+        groupTableView.backgroundColor = style.color.background.get()
+        groupTableView.delegate = self
+        groupTableView.dataSource = self
+        groupTableView.register(
             UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
 
-        bandsTableView.refreshControl = UIRefreshControl()
-        bandsTableView.refreshControl?.addTarget(
-            self, action: #selector(refreshBand(sender:)), for: .valueChanged)
+        groupTableView.refreshControl = UIRefreshControl()
+        groupTableView.refreshControl?.addTarget(
+            self, action: #selector(refreshGroup(sender:)), for: .valueChanged)
         
-        bandsPageTitleView = TitleLabelView(input: (title: "BANDS", font: style.font.regular.get(), color: style.color.main.get()))
-        bandsPageTitleView.translatesAutoresizingMaskIntoConstraints = false
-        bandsPageButton = UIButton()
-        bandsPageButton.translatesAutoresizingMaskIntoConstraints = false
+        groupPageTitleView = TitleLabelView(input: (title: "BANDS", font: style.font.regular.get(), color: style.color.main.get()))
+        groupPageTitleView.translatesAutoresizingMaskIntoConstraints = false
+        groupPageButton = UIButton()
+        groupPageButton.translatesAutoresizingMaskIntoConstraints = false
         
         setupPages()
 
@@ -281,7 +291,7 @@ final class BandViewController: UIViewController, Instantiable {
             PageItem(page: contentsView, pageButton: contentsPageButton, tebleView: contentsTableView, pageTitle: contentsPageTitleView),
             PageItem(page: liveView, pageButton: livePageButton, tebleView: liveTableView, pageTitle: livePageTitleView),
             PageItem(page: chartsView, pageButton: chartsPageButton, tebleView: chartsTableView, pageTitle: chartsPageTitleView),
-            PageItem(page: bandsView, pageButton: bandsPageButton, tebleView: bandsTableView, pageTitle: bandsPageTitleView),
+            PageItem(page: groupsView, pageButton: groupPageButton, tebleView: groupTableView, pageTitle: groupPageTitleView),
         ]
         
         for (index, item) in pageItems.enumerated() {
@@ -443,19 +453,19 @@ final class BandViewController: UIViewController, Instantiable {
     }
 
     func initializeItems() {
-        viewModel.getContents()
+        viewModel.getGroupFeeds()
         viewModel.getLives()
         viewModel.getGroups()
         viewModel.getCharts()
     }
 
     @objc private func refreshContents(sender: UIRefreshControl) {
-        viewModel.getContents()
+        viewModel.refreshGroupFeeds()
         sender.endRefreshing()
     }
 
     @objc private func refreshLive(sender: UIRefreshControl) {
-        viewModel.getLives()
+        viewModel.refreshLives()
         sender.endRefreshing()
     }
 
@@ -464,8 +474,8 @@ final class BandViewController: UIViewController, Instantiable {
         sender.endRefreshing()
     }
 
-    @objc private func refreshBand(sender: UIRefreshControl) {
-        viewModel.getGroups(isNext: false)
+    @objc private func refreshGroup(sender: UIRefreshControl) {
+        viewModel.refreshGroups()
         sender.endRefreshing()
     }
 
@@ -536,8 +546,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             return self.lives.count
         case self.chartsTableView:
             return self.charts.count
-        case self.bandsTableView:
-            return self.bands.count
+        case self.groupTableView:
+            return self.groups.count
         default:
             return 10
         }
@@ -561,7 +571,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             return 300
         case self.chartsTableView:
             return 400
-        case self.bandsTableView:
+        case self.groupTableView:
             return 250
         default:
             return 100
@@ -588,8 +598,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             let chart = self.charts[indexPath.section]
             let cell = tableView.reuse(TrackCell.self, input: chart, for: indexPath)
             return cell
-        case self.bandsTableView:
-            let band = self.bands[indexPath.section]
+        case self.groupTableView:
+            let band = self.groups[indexPath.section]
             let cell = tableView.reuse(BandCell.self, input: band, for: indexPath)
             return cell
         default:
@@ -599,8 +609,8 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView {
-        case self.bandsTableView:
-            let band = self.bands[indexPath.section]
+        case self.groupTableView:
+            let band = self.groups[indexPath.section]
             let vc = BandDetailViewController(
                 dependencyProvider: self.dependencyProvider, input: band)
             self.navigationController?.pushViewController(vc, animated: true)
@@ -639,8 +649,16 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         switch tableView {
-        case self.bandsTableView:
-            if (self.bands.count - indexPath.section) == 2 {
+        case self.contentsTableView:
+            if (self.feeds.count - indexPath.section) == 2 && self.feeds.count % per == 0 {
+                self.viewModel.getGroupFeeds()
+            }
+        case self.liveTableView:
+            if (self.lives.count - indexPath.section) == 2 && self.lives.count % per == 0 {
+                self.viewModel.getLives()
+            }
+        case self.groupTableView:
+            if (self.groups.count - indexPath.section) == 2 && self.groups.count % per == 0 {
                 self.viewModel.getGroups()
             }
         default:
