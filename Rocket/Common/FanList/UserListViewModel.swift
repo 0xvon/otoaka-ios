@@ -11,7 +11,8 @@ import AWSCognitoAuth
 
 class UserListViewModel {
     enum Output {
-        case getFans([User])
+        case getFollowers([User])
+        case refreshFollowers([User])
         case error(Error)
     }
 
@@ -19,6 +20,8 @@ class UserListViewModel {
     let input: UserListViewController.InputType
     let apiClient: APIClient
     let outputHandler: (Output) -> Void
+    
+    var groupFollowersPaginationRequest: PaginationRequest<GroupFollowers>? = nil
 
     init(
         apiClient: APIClient, input: UserListViewController.InputType, auth: AWSCognitoAuth,
@@ -28,26 +31,33 @@ class UserListViewModel {
         self.input = input
         self.auth = auth
         self.outputHandler = outputHander
-    }
-    
-    func getFans(inputType: UserListViewController.InputType) {
-        switch inputType {
+        
+        switch input {
         case .followers(let groupId):
             var uri = GroupFollowers.URI()
             uri.id = groupId
-            uri.page = 1
-            uri.per = 100
-            let req = Empty()
-            apiClient.request(GroupFollowers.self, request: req, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.getFans(res.items))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
-            }
+            self.groupFollowersPaginationRequest = PaginationRequest<GroupFollowers>(apiClient: apiClient, uri: uri)
         default:
-            print("hello")
+            break
         }
+        
+        self.groupFollowersPaginationRequest?.subscribe { result in
+            switch result {
+            case .initial(let res):
+                self.outputHandler(.refreshFollowers(res.items))
+            case .next(let res):
+                self.outputHandler(.getFollowers(res.items))
+            case .error(let err):
+                self.outputHandler(.error(err))
+            }
+        }
+    }
+    
+    func getFollowers() {
+        groupFollowersPaginationRequest?.next()
+    }
+    
+    func refreshFollowers() {
+        groupFollowersPaginationRequest?.next(isNext: false)
     }
 }

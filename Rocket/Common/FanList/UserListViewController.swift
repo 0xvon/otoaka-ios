@@ -39,7 +39,12 @@ final class UserListViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
-            case .getFans(let users):
+            case .getFollowers(let users):
+                DispatchQueue.main.async {
+                    self.users += users
+                    self.fanTableView.reloadData()
+                }
+            case .refreshFollowers(let users):
                 DispatchQueue.main.async {
                     self.users = users
                     self.fanTableView.reloadData()
@@ -73,7 +78,7 @@ final class UserListViewController: UIViewController, Instantiable {
         fanTableView.refreshControl = UIRefreshControl()
         fanTableView.refreshControl?.addTarget(
             self, action: #selector(refreshFan(sender:)), for: .valueChanged)
-        self.getLives()
+        self.getUsers()
         
         let constraints: [NSLayoutConstraint] = [
             fanTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
@@ -84,12 +89,16 @@ final class UserListViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate(constraints)
     }
     
-    func getLives() {
-        viewModel.getFans(inputType: input)
+    func getUsers() {
+        viewModel.getFollowers()
+    }
+    
+    func refreshUsers() {
+        viewModel.refreshFollowers()
     }
     
     @objc private func refreshFan(sender: UIRefreshControl) {
-        self.getLives()
+        self.refreshUsers()
         sender.endRefreshing()
     }
 }
@@ -127,5 +136,11 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        let fan = self.fans[indexPath.section]
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if (self.users.count - indexPath.section) == 2 && self.users.count % per == 0 {
+            self.getUsers()
+        }
     }
 }
