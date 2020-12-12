@@ -21,10 +21,10 @@ final class BandViewController: UIViewController, Instantiable {
     
     private var pageStackView: UIStackView!
     private var pageTitleStackViewLeadingConstraint: NSLayoutConstraint!
-    private var contentsView: UIView!
-    private var contentsTableView: UITableView!
-    private var contentsPageTitleView: TitleLabelView!
-    private var contentsPageButton: UIButton!
+    private var groupFeedsView: UIView!
+    private var groupFeedTableView: UITableView!
+    private var groupFeedPageTitleView: TitleLabelView!
+    private var groupFeedPageButton: UIButton!
     private var liveView: UIView!
     private var liveTableView: UITableView!
     private var livePageTitleView: TitleLabelView!
@@ -56,8 +56,8 @@ final class BandViewController: UIViewController, Instantiable {
     private var creationView: UIView!
     private var creationViewHeightConstraint: NSLayoutConstraint!
     private var openButtonView: CreateButton!
-    private var createContentsView: CreateButton!
-    private var createContentsViewBottomConstraint: NSLayoutConstraint!
+    private var createGroupFeedView: CreateButton!
+    private var createGroupFeedViewBottomConstraint: NSLayoutConstraint!
     private var createLiveView: CreateButton!
     private var createLiveViewBottomConstraint: NSLayoutConstraint!
     private var creationButtonConstraintItems: [NSLayoutConstraint] = []
@@ -71,12 +71,12 @@ final class BandViewController: UIViewController, Instantiable {
             case .getGroupFeeds(let feeds):
                 DispatchQueue.main.async {
                     self.feeds += feeds
-                    self.contentsTableView.reloadData()
+                    self.groupFeedTableView.reloadData()
                 }
             case .refreshGroupFeeds(let feeds):
                 DispatchQueue.main.async {
                     self.feeds = feeds
-                    self.contentsTableView.reloadData()
+                    self.groupFeedTableView.reloadData()
                 }
             case .getLives(let lives):
                 DispatchQueue.main.async {
@@ -165,30 +165,30 @@ final class BandViewController: UIViewController, Instantiable {
         )
         self.view.addConstraint(pageTitleStackViewLeadingConstraint)
 
-        contentsView = UIView()
-        contentsView.translatesAutoresizingMaskIntoConstraints = false
-        contentsView.backgroundColor = style.color.background.get()
+        groupFeedsView = UIView()
+        groupFeedsView.translatesAutoresizingMaskIntoConstraints = false
+        groupFeedsView.backgroundColor = style.color.background.get()
 
-        contentsTableView = UITableView()
-        contentsTableView.translatesAutoresizingMaskIntoConstraints = false
-        contentsTableView.showsVerticalScrollIndicator = false
-        contentsTableView.tableFooterView = UIView(frame: .zero)
-        contentsTableView.separatorStyle = .none
-        contentsTableView.backgroundColor = style.color.background.get()
-        contentsTableView.delegate = self
-        contentsTableView.dataSource = self
-        contentsTableView.register(
+        groupFeedTableView = UITableView()
+        groupFeedTableView.translatesAutoresizingMaskIntoConstraints = false
+        groupFeedTableView.showsVerticalScrollIndicator = false
+        groupFeedTableView.tableFooterView = UIView(frame: .zero)
+        groupFeedTableView.separatorStyle = .none
+        groupFeedTableView.backgroundColor = style.color.background.get()
+        groupFeedTableView.delegate = self
+        groupFeedTableView.dataSource = self
+        groupFeedTableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
 
-        contentsTableView.refreshControl = UIRefreshControl()
-        contentsTableView.refreshControl?.addTarget(
-            self, action: #selector(refreshContents(sender:)), for: .valueChanged)
+        groupFeedTableView.refreshControl = UIRefreshControl()
+        groupFeedTableView.refreshControl?.addTarget(
+            self, action: #selector(refreshGroupFeeds(sender:)), for: .valueChanged)
         
-        contentsPageTitleView = TitleLabelView(input: (title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get()))
-        contentsPageTitleView.translatesAutoresizingMaskIntoConstraints = false
-        contentsPageButton = UIButton()
-        contentsPageButton.translatesAutoresizingMaskIntoConstraints = false
+        groupFeedPageTitleView = TitleLabelView(input: (title: "FEEDS", font: style.font.xlarge.get(), color: style.color.main.get()))
+        groupFeedPageTitleView.translatesAutoresizingMaskIntoConstraints = false
+        groupFeedPageButton = UIButton()
+        groupFeedPageButton.translatesAutoresizingMaskIntoConstraints = false
 
         liveView = UIView()
         liveView.translatesAutoresizingMaskIntoConstraints = false
@@ -288,7 +288,7 @@ final class BandViewController: UIViewController, Instantiable {
     
     private func setupPages() {
         pageItems = [
-            PageItem(page: contentsView, pageButton: contentsPageButton, tebleView: contentsTableView, pageTitle: contentsPageTitleView),
+            PageItem(page: groupFeedsView, pageButton: groupFeedPageButton, tebleView: groupFeedTableView, pageTitle: groupFeedPageTitleView),
             PageItem(page: liveView, pageButton: livePageButton, tebleView: liveTableView, pageTitle: livePageTitleView),
             PageItem(page: chartsView, pageButton: chartsPageButton, tebleView: chartsTableView, pageTitle: chartsPageTitleView),
             PageItem(page: groupsView, pageButton: groupPageButton, tebleView: groupTableView, pageTitle: groupPageTitleView),
@@ -361,16 +361,16 @@ final class BandViewController: UIViewController, Instantiable {
             constant: 0
         )
 
-        createContentsView = CreateButton(input: UIImage(named: "music")!)
-        createContentsView.layer.cornerRadius = 30
-        createContentsView.translatesAutoresizingMaskIntoConstraints = false
-        createContentsView.listen {
+        createGroupFeedView = CreateButton(input: UIImage(named: "music")!)
+        createGroupFeedView.layer.cornerRadius = 30
+        createGroupFeedView.translatesAutoresizingMaskIntoConstraints = false
+        createGroupFeedView.listen {
             self.createContents()
         }
-        creationView.addSubview(createContentsView)
+        creationView.addSubview(createGroupFeedView)
 
-        createContentsViewBottomConstraint = NSLayoutConstraint(
-            item: createContentsView!,
+        createGroupFeedViewBottomConstraint = NSLayoutConstraint(
+            item: createGroupFeedView!,
             attribute: .bottom,
             relatedBy: .equal,
             toItem: creationView,
@@ -389,7 +389,7 @@ final class BandViewController: UIViewController, Instantiable {
         creationView.addSubview(openButtonView)
 
         creationButtonConstraintItems = [
-            createContentsViewBottomConstraint,
+            createGroupFeedViewBottomConstraint,
             createLiveViewBottomConstraint,
         ]
 
@@ -405,9 +405,9 @@ final class BandViewController: UIViewController, Instantiable {
             openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
             openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
 
-            createContentsView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-            createContentsView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-            createContentsView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
+            createGroupFeedView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
+            createGroupFeedView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
+            createGroupFeedView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
 
             createLiveView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
             createLiveView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
@@ -459,7 +459,7 @@ final class BandViewController: UIViewController, Instantiable {
         viewModel.getCharts()
     }
 
-    @objc private func refreshContents(sender: UIRefreshControl) {
+    @objc private func refreshGroupFeeds(sender: UIRefreshControl) {
         viewModel.refreshGroupFeeds()
         sender.endRefreshing()
     }
@@ -540,7 +540,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
         switch tableView {
-        case self.contentsTableView:
+        case self.groupFeedTableView:
             return self.feeds.count
         case self.liveTableView:
             return self.lives.count
@@ -565,7 +565,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch tableView {
-        case self.contentsTableView:
+        case self.groupFeedTableView:
             return 200
         case self.liveTableView:
             return 300
@@ -580,7 +580,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tableView {
-        case self.contentsTableView:
+        case self.groupFeedTableView:
             let feed = self.feeds[indexPath.section]
             let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
             return cell
@@ -619,7 +619,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             let vc = LiveDetailViewController(
                 dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
-        case self.contentsTableView:
+        case self.groupFeedTableView:
             let feed = self.feeds[indexPath.section]
             switch feed.feedType {
             case .youtube(let url):
@@ -649,7 +649,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         switch tableView {
-        case self.contentsTableView:
+        case self.groupFeedTableView:
             if (self.feeds.count - indexPath.section) == 2 && self.feeds.count % per == 0 {
                 self.viewModel.getGroupFeeds()
             }
@@ -683,7 +683,7 @@ extension BandViewController: UIScrollViewDelegate {
                 $0.changeStyle(font: style.font.regular.get(), color: style.color.main.get())
             }
             pageTitleStackViewLeadingConstraint.constant = CGFloat(
-                16 - (scrollView.contentOffset.x / UIScreen.main.bounds.width * 60))
+                16 - (scrollView.contentOffset.x / UIScreen.main.bounds.width * 50))
         }
     }
 }
