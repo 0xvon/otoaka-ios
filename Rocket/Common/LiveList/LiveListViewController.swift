@@ -38,12 +38,22 @@ final class LiveListViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
-            case .getLives(let liveFeeds):
+            case .getGroupLives(let lives):
                 DispatchQueue.main.async {
-                    self.lives = liveFeeds.map { $0.live }
+                    self.lives += lives
+                    self.liveTableView.reloadData()
+                }
+            case .refreshGroupLives(let lives):
+                DispatchQueue.main.async {
+                    self.lives = lives
                     self.liveTableView.reloadData()
                 }
             case .searchLive(let lives):
+                DispatchQueue.main.async {
+                    self.lives += lives
+                    self.liveTableView.reloadData()
+                }
+            case .refreshSearchLive(let lives):
                 DispatchQueue.main.async {
                     self.lives = lives
                     self.liveTableView.reloadData()
@@ -89,11 +99,29 @@ final class LiveListViewController: UIViewController, Instantiable {
     }
     
     func getLives() {
-        viewModel.getLives()
+        switch input {
+        case .groupLive(_):
+            self.viewModel.getGroupLives()
+        case .searchResult(_):
+            self.viewModel.searchLive()
+        case .none:
+            break
+        }
+    }
+    
+    func refreshLives() {
+        switch input {
+        case .groupLive(_):
+            self.viewModel.refreshGroupLives()
+        case .searchResult(_):
+            self.viewModel.refreshSearchLive()
+        case .none:
+            break
+        }
     }
     
     @objc private func refreshGroups(sender: UIRefreshControl) {
-        self.getLives()
+        self.refreshLives()
         sender.endRefreshing()
     }
 }
@@ -133,6 +161,12 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
         let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if (self.lives.count - indexPath.section) == 2 && self.lives.count % per == 0 {
+            self.getLives()
+        }
     }
 }
 

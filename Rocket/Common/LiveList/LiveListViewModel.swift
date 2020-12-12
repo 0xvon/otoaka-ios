@@ -11,8 +11,10 @@ import Endpoint
 
 class LiveListViewModel {
     enum Output {
-        case getLives([LiveFeed])
+        case getGroupLives([Live])
+        case refreshGroupLives([Live])
         case searchLive([Live])
+        case refreshSearchLive([Live])
         case error(Error)
     }
 
@@ -20,6 +22,9 @@ class LiveListViewModel {
     let type: LiveListViewController.ListType
     let apiClient: APIClient
     let outputHandler: (Output) -> Void
+    
+    var getGroupLivesPaginationRequest: PaginationRequest<GetGroupLives>? = nil
+    var searchLivePaginationRequest: PaginationRequest<SearchLive>? = nil
 
     init(
         apiClient: APIClient, type: LiveListViewController.ListType, auth: AWSCognitoAuth,
@@ -29,37 +34,55 @@ class LiveListViewModel {
         self.type = type
         self.auth = auth
         self.outputHandler = outputHander
-    }
-    
-    func getLives() {
-        var uri = GetUpcomingLives.URI()
-        uri.page = 1
-        uri.per = 1000
-        let req = Empty()
-        apiClient.request(GetUpcomingLives.self, request: req, uri: uri) { result in
+        
+        switch type {
+        case .groupLive(let group):
+            var uri = GetGroupLives.URI()
+            uri.groupId = group.id
+            getGroupLivesPaginationRequest = PaginationRequest<GetGroupLives>(apiClient: apiClient, uri: uri)
+        case .searchResult(let query):
+            var uri = SearchLive.URI()
+            uri.term = query
+            searchLivePaginationRequest = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
+        }
+        
+        getGroupLivesPaginationRequest?.subscribe { result in
             switch result {
-            case .success(let res):
-                self.outputHandler(.getLives(res.items))
-            case .failure(let error):
-                self.outputHandler(.error(error))
+            case .initial(let res):
+                self.outputHandler(.refreshGroupLives(res.items))
+            case .next(let res):
+                self.outputHandler(.getGroupLives(res.items))
+            case .error(let err):
+                self.outputHandler(.error(err))
             }
         }
-    }
-    
-    func searchLive(query: String) {
-        var uri = SearchLive.URI()
-        uri.page = 1
-        uri.per = 100
-        uri.term = query
-        let request = SearchLive.Request()
-        apiClient.request(SearchLive.self, request: request, uri: uri) { result in
+        
+        searchLivePaginationRequest?.subscribe { result in
             switch result {
-            case .success(let res):
+            case .initial(let res):
+                self.outputHandler(.refreshSearchLive(res.items))
+            case .next(let res):
                 self.outputHandler(.searchLive(res.items))
-            case .failure(let error):
-                self.outputHandler(.error(error))
+            case .error(let err):
+                self.outputHandler(.error(err))
             }
         }
+    }
+    
+    func getGroupLives() {
+        getGroupLivesPaginationRequest?.next()
+    }
+    
+    func refreshGroupLives() {
+        getGroupLivesPaginationRequest?.next(isNext: false)
+    }
+    
+    func searchLive() {
+        searchLivePaginationRequest?.next()
+    }
+    
+    func refreshSearchLive() {
+        searchLivePaginationRequest?.next(isNext: false)
     }
 }
 
