@@ -57,10 +57,25 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                 }
             case .getHostGroups(let groups):
                 DispatchQueue.main.async {
-                    self.hostGroup = groups[0]
-                    self.hostGroupInputView.setText(text: self.hostGroup.name)
-                    self.hostGroups = groups
-                    self.hostGroupPickerView.reloadAllComponents()
+                    if groups.isEmpty {
+                        let alertController = UIAlertController(
+                            title: "バンドに所属していません", message: "先にバンドを作成するかバンドに所属してください", preferredStyle: UIAlertController.Style.alert)
+
+                        let cancelAction = UIAlertAction(
+                            title: "OK", style: UIAlertAction.Style.cancel,
+                            handler: { action in
+                                self.navigationController?.popViewController(animated: true)
+                            })
+                        alertController.addAction(cancelAction)
+
+                        self.present(alertController, animated: true, completion: nil)
+                    } else {
+                        self.hostGroup = groups[0]
+                        self.hostGroupInputView.setText(text: self.hostGroup.name)
+                        self.hostGroups = groups
+                        self.hostGroupPickerView.reloadAllComponents()
+                    }
+                    
                 }
             case .error(let error):
                 print(error)
