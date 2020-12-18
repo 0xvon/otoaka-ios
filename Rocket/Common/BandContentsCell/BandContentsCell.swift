@@ -21,8 +21,7 @@ class BandContentsCell: UITableViewCell, ReusableCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var numOfViewers: UILabel!
-    @IBOutlet weak var timeLabel: UILabel!
+    @IBOutlet weak var artistNameLabel: UILabel!
     @IBOutlet weak var thumbnailImageView: UIImageView!
     @IBOutlet weak var playImageView: UIImageView!
 
@@ -56,14 +55,10 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         dateLabel.text = dateFormatter.string(from: input.createdAt)
         dateLabel.font = style.font.small.get()
         dateLabel.textColor = style.color.main.get()
-
-        numOfViewers.text = ""
-        numOfViewers.font = style.font.small.get()
-        numOfViewers.textColor = style.color.main.get()
-
-        timeLabel.text = ""
-        timeLabel.font = style.font.small.get()
-        timeLabel.textColor = style.color.main.get()
+        
+        artistNameLabel.text = "taro"
+        artistNameLabel.font = style.font.regular.get()
+        artistNameLabel.textColor = style.color.main.get()
 
         playImageView.image = UIImage(named: "play")
     }
