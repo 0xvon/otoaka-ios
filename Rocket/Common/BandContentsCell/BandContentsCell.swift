@@ -24,6 +24,9 @@ class BandContentsCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var artistNameLabel: UILabel!
     @IBOutlet weak var thumbnailImageView: UIImageView!
     @IBOutlet weak var playImageView: UIImageView!
+    
+    private var commentView: UIView!
+    private var commentReactionView: ReactionButtonView!
 
     func inject(input: Input) {
         self.input = input
@@ -59,7 +62,33 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         artistNameLabel.text = "taro"
         artistNameLabel.font = style.font.regular.get()
         artistNameLabel.textColor = style.color.main.get()
+        
+        commentView = UIView()
+        commentView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(commentView)
+        
+        commentReactionView = ReactionButtonView(input: (text: "1000", image: UIImage(named: "comment")))
+        commentReactionView.translatesAutoresizingMaskIntoConstraints = false
+        commentView.addSubview(commentReactionView)
+        
+        let constraints = [
+            commentView.leftAnchor.constraint(equalTo: artistNameLabel.leftAnchor),
+            commentView.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
+            commentView.rightAnchor.constraint(equalTo: dateLabel.leftAnchor, constant: 48),
+            commentView.heightAnchor.constraint(equalToConstant: 24),
+            
+            commentReactionView.topAnchor.constraint(equalTo: commentView.topAnchor),
+            commentReactionView.bottomAnchor.constraint(equalTo: commentView.bottomAnchor),
+            commentReactionView.rightAnchor.constraint(equalTo: commentView.rightAnchor),
+            commentReactionView.leftAnchor.constraint(equalTo: commentView.leftAnchor),
+
+        ]
+        NSLayoutConstraint.activate(constraints)
 
         playImageView.image = UIImage(named: "play")
+    }
+    
+    func comment(_ listener: @escaping () -> Void) {
+        commentReactionView.listen(listener)
     }
 }

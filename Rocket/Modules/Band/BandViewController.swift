@@ -583,6 +583,9 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         case self.groupFeedTableView:
             let feed = self.feeds[indexPath.section]
             let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
+            cell.comment { [weak self] in
+                self?.feedCommentButtonTapped(cellIndex: indexPath.section)
+            }
             return cell
         case self.liveTableView:
             let live = self.lives[indexPath.section].live
@@ -645,6 +648,12 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     private func buyTicketButtonTapped(cellIndex: Int) {
         let live = self.lives[cellIndex].live
         viewModel.reserveTicket(liveId: live.id)
+    }
+    
+    private func feedCommentButtonTapped(cellIndex: Int) {
+        let feed = self.feeds[cellIndex]
+        let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
+        present(vc, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
