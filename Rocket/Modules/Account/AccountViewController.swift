@@ -112,7 +112,11 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
-        present(vc, animated: true, completion: nil)
+        let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.barTintColor = .clear
+        
+        present(nav, animated: true, completion: nil)
     }
     
     private func createBand() {
@@ -123,6 +127,9 @@ final class AccountViewController: UIViewController, Instantiable {
     private func memberships() {
         let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .memberships(dependencyProvider.user.id))
         let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.barTintColor = .clear
+        
         present(nav, animated: true, completion: nil)
     }
 

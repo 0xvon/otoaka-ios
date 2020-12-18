@@ -629,7 +629,10 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             switch feed.feedType {
             case .youtube(let url):
                 let safari = SFSafariViewController(url: url)
+//                safari.delegate = self
+                safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
+                self.navigationController?.pushViewController(safari, animated: true)
             }
         default:
             print("hello")
@@ -647,3 +650,9 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
+
+//extension BandDetailViewController: SFSafariViewControllerDelegate {
+//    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+//        print("hello")
+//    }
+//}

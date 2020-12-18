@@ -18,13 +18,13 @@ class S3Client {
         self.s3Bucket = s3Bucket
     }
 
-    public func uploadImage(image: UIImage?, callback: @escaping ((String?, String?) -> Void)) {
+    public func uploadImage(image: UIImage?, callback: @escaping ((Result<String, Error>) -> Void)) {
         let transferUtility = AWSS3TransferUtility.default()
         let key = "\(UUID()).jpeg"
         let contentType = "application/jpeg"
         let im: UIImage = image ?? UIImage(named: "band")!
         guard let pngData = im.jpegData(compressionQuality: 0.25) else {
-            callback(nil, "cannot convert image to png data")
+            callback(.failure(S3Error.invalidUrl("failed to convert image to data")))
             return
         }
 
@@ -33,9 +33,9 @@ class S3Client {
             (task, error) -> Void in
             DispatchQueue.main.async {
                 if let error = error {
-                    callback(nil, error.localizedDescription)
+                    callback(.failure(error))
                 }
-                callback("https://\(self.s3Bucket).s3-ap-northeast-1.amazonaws.com/\(key)", nil)
+                callback(.success("https://\(self.s3Bucket).s3-ap-northeast-1.amazonaws.com/\(key)"))
             }
         }
 
@@ -48,7 +48,7 @@ class S3Client {
             completionHandler: completionHandler
         ).continueWith { task in
             if let error = task.error {
-                callback(nil, error.localizedDescription)
+                callback(.failure(error))
             }
 
             if let _ = task.result {
@@ -61,7 +61,7 @@ class S3Client {
         }
     }
     
-    public func uploadMovie(url: URL, asset: PHAsset, callback: @escaping ((String?, String?) -> Void)) {
+    public func uploadMovie(url: URL, asset: PHAsset, callback: @escaping ((Result<String, Error>) -> Void)) {
         let transferUtility = AWSS3TransferUtility.default()
         let key = "\(UUID()).mp4"
         let contentType = "movie/mp4"
@@ -69,7 +69,7 @@ class S3Client {
         PHImageManager().requestExportSession(forVideo: asset, options: nil, exportPreset: "AVAssetExportPresetLowQuality") { session, data in
             
             guard let session = session else {
-                callback(nil, "session not found")
+                callback(.failure(S3Error.invalidUrl("session not found")))
                 return
             }
             
@@ -87,9 +87,9 @@ class S3Client {
                     (task, error) -> Void in
                     DispatchQueue.main.async {
                         if let error = error {
-                            callback(nil, error.localizedDescription)
+                            callback(.failure(error))
                         }
-                        callback("https://\(self.s3Bucket).s3-ap-northeast-1.amazonaws.com/\(key)", nil)
+                        callback(.success("https://\(self.s3Bucket).s3-ap-northeast-1.amazonaws.com/\(key)"))
                     }
                 }
                 
@@ -102,7 +102,7 @@ class S3Client {
                     completionHandler: completionHandler
                 ).continueWith { task in
                     if let error = task.error {
-                        callback(nil, error.localizedDescription)
+                        callback(.failure(error))
                     }
 
                     if let _ = task.result {

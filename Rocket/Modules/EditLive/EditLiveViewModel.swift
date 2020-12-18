@@ -51,21 +51,27 @@ class EditLiveViewModel {
         title: String, liveId: Endpoint.Live.ID, livehouse: String, openAt: Date?, startAt: Date?,
         endAt: Date?, thumbnail: UIImage?
     ) {
-        self.s3Client.uploadImage(image: thumbnail) { [apiClient] (imageUrl, error) in
-            var uri = EditLive.URI()
-            uri.id = liveId
+        self.s3Client.uploadImage(image: thumbnail) { [apiClient] result in
+            switch result {
+            case .success(let imageUrl):
+                var uri = EditLive.URI()
+                uri.id = liveId
 
-            let req = EditLive.Request(
-                title: title, artworkURL: URL(string: imageUrl!), openAt: openAt, startAt: startAt,
-                endAt: endAt)
-            apiClient.request(EditLive.self, request: req, uri: uri) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.editLive(res))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
+                let req = EditLive.Request(
+                    title: title, artworkURL: URL(string: imageUrl), openAt: openAt, startAt: startAt,
+                    endAt: endAt)
+                apiClient.request(EditLive.self, request: req, uri: uri) { result in
+                    switch result {
+                    case .success(let res):
+                        self.outputHandler(.editLive(res))
+                    case .failure(let error):
+                        self.outputHandler(.error(error))
+                    }
                 }
+            case .failure(let error):
+                self.outputHandler(.error(error))
             }
+            
         }
     }
 }
