@@ -7,6 +7,7 @@
 
 import Endpoint
 import UIKit
+import SafariServices
 
 final class BandDetailHeaderView: UIView {
     typealias Input = Group
@@ -26,6 +27,8 @@ final class BandDetailHeaderView: UIView {
     enum ListenType {
         case play
         case seeMoreCharts
+        case youtube(URL)
+        case twitter(URL)
     }
 
     private var horizontalScrollView: UIScrollView!
@@ -146,12 +149,14 @@ final class BandDetailHeaderView: UIView {
         mapBadgeView = BadgeView(
             input: (text: input.hometown ?? "不明", image: UIImage(named: "map")))
         bandInformationView.addSubview(mapBadgeView)
-
+        
         labelBadgeView = BadgeView(input: (text: "Intact Records", image: UIImage(named: "record")))
+        labelBadgeView.isHidden = true
         bandInformationView.addSubview(labelBadgeView)
 
         productionBadgeView = BadgeView(
             input: (text: "Japan Music Systems", image: UIImage(named: "production")))
+        productionBadgeView.isHidden = true
         bandInformationView.addSubview(productionBadgeView)
 
         arrowButton = UIButton()
@@ -230,6 +235,7 @@ final class BandDetailHeaderView: UIView {
         stackView.addArrangedSubview(youtubeButton)
 
         appleMusicButton = UIButton()
+        appleMusicButton.isHidden = true
         appleMusicButton.translatesAutoresizingMaskIntoConstraints = false
         appleMusicButton.contentHorizontalAlignment = .fill
         appleMusicButton.contentVerticalAlignment = .fill
@@ -240,6 +246,7 @@ final class BandDetailHeaderView: UIView {
         stackView.addArrangedSubview(appleMusicButton)
 
         spotifyButton = UIButton()
+        spotifyButton.isHidden = true
         spotifyButton.translatesAutoresizingMaskIntoConstraints = false
         spotifyButton.contentHorizontalAlignment = .fill
         spotifyButton.contentVerticalAlignment = .fill
@@ -373,11 +380,19 @@ final class BandDetailHeaderView: UIView {
     }
 
     @objc private func twitterButtonTapped(_ sender: UIButton) {
-        print("twitter")
+        if let twitterId = input.twitterId {
+            if let url = URL(string: "https://twitter.com/\(twitterId)") {
+                self.listener(.twitter(url))
+            }
+        }
     }
-
+    
     @objc private func youtubeButtonTapped(_ sender: UIButton) {
-        print("youtube")
+        if let youtubeChannelId = input.youtubeChannelId {
+            if let url = URL(string: "https://youtu.be/\(youtubeChannelId)") {
+                self.listener(.youtube(url))
+            }
+        }
     }
 
     @objc private func appleMusicButtonTapped(_ sender: UIButton) {

@@ -135,6 +135,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .seeMoreCharts:
                 let vc = ChartListViewController(dependencyProvider: self.dependencyProvider, input: self.input)
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .youtube(let url):
+                let safari = SFSafariViewController(url: url)
+                safari.dismissButtonStyle = .close
+                self.present(safari, animated: true, completion: nil)
+            case .twitter(let url):
+                let safari = SFSafariViewController(url: url)
+                safari.dismissButtonStyle = .close
+                self.present(safari, animated: true, completion: nil)
             }
         }
 

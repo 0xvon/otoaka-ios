@@ -6,7 +6,6 @@
 //
 
 import Endpoint
-import Foundation
 import UIKit
 
 class CreateBandViewModel {

@@ -167,7 +167,7 @@ final class EditBandViewController: UIViewController, Instantiable {
         profileImageTitle.textColor = style.color.main.get()
         thumbnailInputView.addSubview(profileImageTitle)
 
-        updateButton = Button(input: (text: "プロフィール更新", image: nil))
+        updateButton = Button(input: (text: "バンド更新", image: nil))
         updateButton.translatesAutoresizingMaskIntoConstraints = false
         updateButton.layer.cornerRadius = 25
         updateButton.listen {

@@ -32,17 +32,21 @@ final class CreateBandViewController: UIViewController, Instantiable {
     let hometowns = Components().prefectures
     let years = Components().years
 
-    @IBOutlet weak var groupNameInputView: TextFieldView!
-    @IBOutlet weak var groupEnglishNameInputView: TextFieldView!
-    @IBOutlet weak var biographyInputView: InputTextView!
-    @IBOutlet weak var sinceInputView: TextFieldView!
-    @IBOutlet weak var hometownInputView: TextFieldView!
-    @IBOutlet weak var artworkInputView: UIView!
-    @IBOutlet weak var registerButton: Button!
-
+    private var verticalScrollView: UIScrollView!
+    private var mainView: UIView!
+    private var mainViewHeightConstraint: NSLayoutConstraint!
+    private var displayNameInputView: TextFieldView!
+    private var englishNameInputView: TextFieldView!
+    private var biographyInputView: InputTextView!
+    private var sinceInputView: TextFieldView!
+    private var sincePickerView: UIPickerView!
+    private var hometownInputView: TextFieldView!
+    private var hometownPickerView: UIPickerView!
+    private var youTubeIdInputView: TextFieldView!
+    private var twitterIdInputView: TextFieldView!
+    private var thumbnailInputView: UIView!
     private var profileImageView: UIImageView!
-    private var hometownPicker: UIPickerView!
-    private var yearPicker: UIPickerView!
+    private var registerButton: Button!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -64,39 +68,86 @@ final class CreateBandViewController: UIViewController, Instantiable {
         self.view.backgroundColor = style.color.background.get()
         self.navigationController?.setNavigationBarHidden(false, animated: true)
 
-        groupNameInputView.inject(input: (placeholder: "バンド名", maxLength: 20))
-        groupEnglishNameInputView.inject(input: (placeholder: "English Name", maxLength: 40))
-        groupEnglishNameInputView.keyboardType(true)
-        sinceInputView.inject(input: (placeholder: "結成年", maxLength: 12))
-        sinceInputView.setText(text: years[0])
-        yearPicker = UIPickerView()
-        yearPicker.translatesAutoresizingMaskIntoConstraints = false
-        yearPicker.dataSource = self
-        yearPicker.delegate = self
-        sinceInputView.selectInputView(inputView: yearPicker)
-        hometownInputView.inject(input: (placeholder: "出身地", maxLength: 12))
-        hometownInputView.setText(text: hometowns[0])
-        hometownPicker = UIPickerView()
-        hometownPicker.translatesAutoresizingMaskIntoConstraints = false
-        hometownPicker.dataSource = self
-        hometownPicker.delegate = self
-        hometownInputView.selectInputView(inputView: hometownPicker)
+        verticalScrollView = UIScrollView()
+        verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
+        verticalScrollView.backgroundColor = .clear
+        verticalScrollView.showsVerticalScrollIndicator = false
+        self.view.addSubview(verticalScrollView)
+
+        mainView = UIView()
+        mainView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.backgroundColor = style.color.background.get()
+        verticalScrollView.addSubview(mainView)
+
+        mainViewHeightConstraint = NSLayoutConstraint(
+            item: mainView!,
+            attribute: .height,
+            relatedBy: .equal,
+            toItem: nil,
+            attribute: .height,
+            multiplier: 1,
+            constant: 1200
+        )
+        mainView.addConstraint(mainViewHeightConstraint)
+
+        displayNameInputView = TextFieldView(input: (placeholder:"バンド名", maxLength: 20))
+        displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(displayNameInputView)
+
+        englishNameInputView = TextFieldView(input: (placeholder:"English Name", maxLength: 40))
+        englishNameInputView.keyboardType(true)
+        englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(englishNameInputView)
+
+        biographyInputView = InputTextView(input: (text: "bio", maxLength: 200))
+        biographyInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(biographyInputView)
+
+        sinceInputView = TextFieldView(input: (placeholder: "結成年", maxLength: 20))
+        sinceInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(sinceInputView)
+
+        sincePickerView = UIPickerView()
+        sincePickerView.translatesAutoresizingMaskIntoConstraints = false
+        sincePickerView.dataSource = self
+        sincePickerView.delegate = self
+        sinceInputView.selectInputView(inputView: sincePickerView)
+
+        hometownInputView = TextFieldView(input: (placeholder: "出身地", maxLength: 20))
+        hometownInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(hometownInputView)
+
+        hometownPickerView = UIPickerView()
+        hometownPickerView.translatesAutoresizingMaskIntoConstraints = false
+        hometownPickerView.dataSource = self
+        hometownPickerView.delegate = self
+        hometownInputView.selectInputView(inputView: hometownPickerView)
+    
+        youTubeIdInputView = TextFieldView(input: (placeholder: "YouTube Channel ID(スキップ可)", maxLength: 16))
+        youTubeIdInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(youTubeIdInputView)
+        
+        twitterIdInputView = TextFieldView(input: (placeholder: "Twitter ID(@を省略して入力してください)", maxLength: 20))
+        twitterIdInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(twitterIdInputView)
+
+        thumbnailInputView = UIView()
+        thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(thumbnailInputView)
 
         profileImageView = UIImageView()
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.cornerRadius = 60
         profileImageView.clipsToBounds = true
-        profileImageView.contentMode = .scaleAspectFill
         profileImageView.image = UIImage(named: "band")
-        artworkInputView.addSubview(profileImageView)
-
-        biographyInputView.inject(input: (text: "bio", maxLength: 200))
+        profileImageView.contentMode = .scaleAspectFill
+        thumbnailInputView.addSubview(profileImageView)
 
         let changeProfileImageButton = UIButton()
         changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
         changeProfileImageButton.addTarget(
             self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
-        artworkInputView.addSubview(changeProfileImageButton)
+        thumbnailInputView.addSubview(changeProfileImageButton)
 
         let profileImageTitle = UILabel()
         profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
@@ -104,29 +155,100 @@ final class CreateBandViewController: UIViewController, Instantiable {
         profileImageTitle.textAlignment = .center
         profileImageTitle.font = style.font.regular.get()
         profileImageTitle.textColor = style.color.main.get()
-        artworkInputView.addSubview(profileImageTitle)
+        thumbnailInputView.addSubview(profileImageTitle)
 
-        registerButton.inject(input: (text: "バンドを作成", image: nil))
+        registerButton = Button(input: (text: "バンド作成", image: nil))
+        registerButton.translatesAutoresizingMaskIntoConstraints = false
+        registerButton.layer.cornerRadius = 25
         registerButton.listen {
             self.register()
         }
+        mainView.addSubview(registerButton)
 
-        let constraints = [
+        let constraints: [NSLayoutConstraint] = [
+            verticalScrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            verticalScrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            verticalScrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            verticalScrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+
+            mainView.topAnchor.constraint(equalTo: verticalScrollView.topAnchor),
+            mainView.bottomAnchor.constraint(equalTo: verticalScrollView.bottomAnchor),
+            mainView.rightAnchor.constraint(equalTo: verticalScrollView.rightAnchor),
+            mainView.leftAnchor.constraint(equalTo: verticalScrollView.leftAnchor),
+            mainView.centerXAnchor.constraint(equalTo: verticalScrollView.centerXAnchor),
+
+            displayNameInputView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 48),
+            displayNameInputView.rightAnchor.constraint(
+                equalTo: mainView.rightAnchor, constant: -16),
+            displayNameInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            displayNameInputView.heightAnchor.constraint(equalToConstant: 50),
+
+            englishNameInputView.topAnchor.constraint(
+                equalTo: displayNameInputView.bottomAnchor, constant: 48),
+            englishNameInputView.rightAnchor.constraint(
+                equalTo: mainView.rightAnchor, constant: -16),
+            englishNameInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            englishNameInputView.heightAnchor.constraint(equalToConstant: 50),
+
+            biographyInputView.topAnchor.constraint(
+                equalTo: englishNameInputView.bottomAnchor, constant: 48),
+            biographyInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
+            biographyInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            biographyInputView.heightAnchor.constraint(equalToConstant: 200),
+
+            sinceInputView.topAnchor.constraint(
+                equalTo: biographyInputView.bottomAnchor, constant: 48),
+            sinceInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
+            sinceInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            sinceInputView.heightAnchor.constraint(equalToConstant: 50),
+
+            hometownInputView.topAnchor.constraint(
+                equalTo: sinceInputView.bottomAnchor, constant: 48),
+            hometownInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
+            hometownInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            hometownInputView.heightAnchor.constraint(equalToConstant: 50),
+            
+            youTubeIdInputView.topAnchor.constraint(
+                equalTo: hometownInputView.bottomAnchor, constant: 48),
+            youTubeIdInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
+            youTubeIdInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            youTubeIdInputView.heightAnchor.constraint(equalToConstant: 50),
+            
+            twitterIdInputView.topAnchor.constraint(
+                equalTo: youTubeIdInputView.bottomAnchor, constant: 48),
+            twitterIdInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
+            twitterIdInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            twitterIdInputView.heightAnchor.constraint(equalToConstant: 50),
+
+            thumbnailInputView.widthAnchor.constraint(equalToConstant: 120),
+            thumbnailInputView.heightAnchor.constraint(equalToConstant: 150),
+            thumbnailInputView.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
+            thumbnailInputView.topAnchor.constraint(
+                equalTo: twitterIdInputView.bottomAnchor, constant: 48),
+
             profileImageView.widthAnchor.constraint(equalToConstant: 120),
             profileImageView.heightAnchor.constraint(equalToConstant: 120),
-            profileImageView.topAnchor.constraint(equalTo: artworkInputView.topAnchor),
-            profileImageView.rightAnchor.constraint(equalTo: artworkInputView.rightAnchor),
-            profileImageView.leftAnchor.constraint(equalTo: artworkInputView.leftAnchor),
+            profileImageView.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
+            profileImageView.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
+            profileImageView.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
 
             changeProfileImageButton.widthAnchor.constraint(equalToConstant: 120),
             changeProfileImageButton.heightAnchor.constraint(equalToConstant: 120),
-            changeProfileImageButton.topAnchor.constraint(equalTo: artworkInputView.topAnchor),
-            changeProfileImageButton.rightAnchor.constraint(equalTo: artworkInputView.rightAnchor),
-            changeProfileImageButton.leftAnchor.constraint(equalTo: artworkInputView.leftAnchor),
+            changeProfileImageButton.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
+            changeProfileImageButton.rightAnchor.constraint(
+                equalTo: thumbnailInputView.rightAnchor),
+            changeProfileImageButton.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
 
-            profileImageTitle.leftAnchor.constraint(equalTo: artworkInputView.leftAnchor),
-            profileImageTitle.rightAnchor.constraint(equalTo: artworkInputView.rightAnchor),
-            profileImageTitle.bottomAnchor.constraint(equalTo: artworkInputView.bottomAnchor),
+            profileImageTitle.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
+            profileImageTitle.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
+            profileImageTitle.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
+
+            registerButton.widthAnchor.constraint(equalToConstant: 300),
+            registerButton.heightAnchor.constraint(equalToConstant: 50),
+            registerButton.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
+            registerButton.topAnchor.constraint(
+                equalTo: thumbnailInputView.bottomAnchor, constant: 54),
+
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -141,8 +263,8 @@ final class CreateBandViewController: UIViewController, Instantiable {
     }
 
     private func register() {
-        guard let groupName = groupNameInputView.getText() else { return }
-        guard let groupEnglishName = groupEnglishNameInputView.getText() else { return }
+        guard let groupName = displayNameInputView.getText() else { return }
+        guard let groupEnglishName = englishNameInputView.getText() else { return }
         let biography = biographyInputView.getText()
         let artworkImage = profileImageView.image
         let dateFormatter = DateFormatter()
@@ -188,9 +310,9 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
         -> String?
     {
         switch pickerView {
-        case self.hometownPicker:
+        case self.hometownPickerView:
             return hometowns[row]
-        case self.yearPicker:
+        case self.sincePickerView:
             return years[row]
         default:
             return "yo"
@@ -199,9 +321,9 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch pickerView {
-        case self.hometownPicker:
+        case self.hometownPickerView:
             return hometowns.count
-        case self.yearPicker:
+        case self.sincePickerView:
             return years.count
         default:
             return 1
@@ -210,10 +332,10 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView {
-        case self.hometownPicker:
+        case self.hometownPickerView:
             let text = hometowns[row]
             hometownInputView.setText(text: text)
-        case self.yearPicker:
+        case self.sincePickerView:
             let text = years[row]
             sinceInputView.setText(text: text)
         default:
