@@ -57,7 +57,7 @@ final class PostViewController: UIViewController, Instantiable {
             switch output {
             case .post(let feed):
                 DispatchQueue.main.async {
-                    self.navigationController?.popViewController(animated: true)
+                    self.dismiss(animated: true, completion: nil)
                 }
             case .error(let error):
                 print(error)
@@ -188,6 +188,7 @@ final class PostViewController: UIViewController, Instantiable {
         sectionView.addSubview(stackView)
         
         let movieButtonView = UIView()
+        movieButtonView.isHidden = true
         movieButtonView.backgroundColor = .clear
         stackView.addArrangedSubview(movieButtonView)
         
@@ -283,6 +284,8 @@ final class PostViewController: UIViewController, Instantiable {
         if let userInfo = notification.userInfo {
             if let keyboard = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
                 resizePostView(keyboardRect: keyboard.cgRectValue)
+            } else {
+                resizePostView(keyboardRect: CGRect(x: 0, y: 0, width: 0, height: 0))
             }
                 
         }
@@ -332,7 +335,6 @@ final class PostViewController: UIViewController, Instantiable {
     }
 
     @objc private func post(_ sender: Any) {
-        print("post")
         self.viewModel.post(postType: self.postType, text: self.textView.text ?? "")
     }
     

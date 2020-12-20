@@ -503,7 +503,10 @@ final class BandViewController: UIViewController, Instantiable {
 
     func createContents() {
         let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
-        self.navigationController?.pushViewController(vc, animated: true)
+        let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.barTintColor = .clear
+        present(nav, animated: true, completion: nil)
     }
 
     func createLive() {
