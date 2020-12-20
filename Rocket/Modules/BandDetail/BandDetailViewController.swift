@@ -22,8 +22,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var input: Input!
     var lives: [Live] = []
     var feeds: [ArtistFeed] = []
-    var followers:[User] = []
     var isFollowing: Bool = false
+    var followersCount: Int = 0
     var userType: UserType!
 
     @IBOutlet weak var headerView: BandDetailHeaderView!
@@ -57,6 +57,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 DispatchQueue.main.async {
                     self.input = response.group
                     self.isFollowing = response.isFollowing
+                    self.followersCount = response.followersCount
                     switch self.dependencyProvider.user.role {
                     case .fan(_):
                         self.userType = .fan
@@ -80,14 +81,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .follow:
                 DispatchQueue.main.async {
                     self.isFollowing.toggle()
-                    self.followers.append(self.dependencyProvider.user)
+                    self.followersCount += 1
                     self.setupLikeView()
                     self.likeButtonColor()
                 }
             case .unfollow:
                 DispatchQueue.main.async {
                     self.isFollowing.toggle()
-                    self.followers = self.followers.filter { $0.id != self.dependencyProvider.user.id }
+                    self.followersCount -= 1
                     self.setupLikeView()
                     self.likeButtonColor()
                 }
@@ -141,7 +142,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         verticalScrollView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
 
-        likeButtonView.inject(input: (text: "10,000", image: UIImage(named: "heart")))
+        likeButtonView.inject(input: (text: "", image: UIImage(named: "heart")))
         likeButtonView.listen {
             self.likeButtonTapped()
         }
@@ -173,7 +174,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     
     private func setupLikeView() {
         let image: UIImage = self.isFollowing ? UIImage(named: "heart_fill")! : UIImage(named: "heart")!
-        self.likeButtonView.setItem(text: "\(self.followers.count)", image: image)
+        self.likeButtonView.setItem(text: "\(self.followersCount)", image: image)
     }
 
     private func setupCreation() {
