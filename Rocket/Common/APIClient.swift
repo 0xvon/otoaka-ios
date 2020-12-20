@@ -35,15 +35,15 @@ class APIClient {
 
     public func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
-        uri: E.URI = E.URI(),
+        uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) where E.Request == Empty {
-        request(E.self, request: Empty(), uri: uri, callback: callback)
+        request(E.self, request: Empty(), uri: uri, file: file, line: line, callback: callback)
     }
 
     public func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
-        request: E.Request, uri: E.URI = E.URI(),
+        request: E.Request, uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) {
         let url: URL
@@ -58,7 +58,7 @@ class APIClient {
             switch result {
             case .success(let idToken):
                 self.request(
-                    endpoint, request: request, url: url, idToken: idToken, callback: callback)
+                    endpoint, request: request, url: url, idToken: idToken, file: file, line: line, callback: callback)
             case .failure(let error):
                 callback(.failure(error))
             }
@@ -67,7 +67,7 @@ class APIClient {
 
     private func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
-        request: E.Request, url: URL, idToken: String,
+        request: E.Request, url: URL, idToken: String, file: StaticString, line: UInt,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) {
         print(url)
@@ -105,6 +105,7 @@ class APIClient {
                     }
                 }
             } catch let error {
+                print("\(file):\(line): \(E.self) \(error)")
                 callback(.failure(error))
                 return
             }
