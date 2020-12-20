@@ -49,6 +49,9 @@
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jcN-Qi-Srz" customClass="ReactionButtonView" customModule="Rocket" customModuleProvider="target">
                                             <rect key="frame" x="88" y="0.0" width="136" height="48"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="az6-9M-HxI"/>
+                                            </constraints>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhZ-nE-XHh" customClass="Button" customModule="Rocket" customModuleProvider="target">
                                             <rect key="frame" x="232" y="0.0" width="150" height="48"/>
@@ -70,10 +73,10 @@
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstItem="Juf-Iz-Eis" firstAttribute="leading" secondItem="bJH-Ft-AOx" secondAttribute="leading" id="0R5-7N-hI0"/>
-                                <constraint firstAttribute="trailing" secondItem="7bo-7i-bZy" secondAttribute="trailing" constant="16" id="1K5-Mz-Ah2"/>
                                 <constraint firstAttribute="trailing" secondItem="kYY-ZV-EDv" secondAttribute="trailing" constant="16" id="3Ni-ui-40g"/>
                                 <constraint firstAttribute="height" constant="1026" id="C3W-nX-ijL"/>
                                 <constraint firstItem="7bo-7i-bZy" firstAttribute="top" secondItem="Juf-Iz-Eis" secondAttribute="bottom" constant="12" id="LJn-ED-KbU"/>
+                                <constraint firstAttribute="trailing" secondItem="7bo-7i-bZy" secondAttribute="trailing" constant="16" id="SQu-yb-Ze6"/>
                                 <constraint firstItem="kYY-ZV-EDv" firstAttribute="top" secondItem="7bo-7i-bZy" secondAttribute="bottom" constant="24" id="jXn-SR-i4Y"/>
                                 <constraint firstItem="kYY-ZV-EDv" firstAttribute="leading" secondItem="bJH-Ft-AOx" secondAttribute="leading" constant="16" id="q3E-hG-C0u"/>
                                 <constraint firstItem="Juf-Iz-Eis" firstAttribute="top" secondItem="bJH-Ft-AOx" secondAttribute="top" id="tfR-B4-gMo"/>

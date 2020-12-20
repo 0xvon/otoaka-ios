@@ -542,9 +542,9 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         switch tableView {
         case self.liveTableView:
-            return min(1, self.lives.count)
+            return 1
         case self.contentsTableView:
-            return min(1, self.feeds.count)
+            return 1
         default:
             return 0
         }
@@ -613,10 +613,20 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch tableView {
         case self.liveTableView:
+            if self.lives.isEmpty {
+                let view = UITableViewCell()
+                view.backgroundColor = .clear
+                return view
+            }
             let live = self.lives[indexPath.section]
             let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
             return cell
         case self.contentsTableView:
+            if self.feeds.isEmpty {
+                let view = UITableViewCell()
+                view.backgroundColor = .clear
+                return view
+            }
             let feed = self.feeds[indexPath.section]
             let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
             return cell

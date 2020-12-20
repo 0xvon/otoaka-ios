@@ -125,10 +125,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             self.likeButtonTapped()
         }
 
-        commentButtonView.inject(input: (text: "500", image: UIImage(named: "comment")))
-        commentButtonView.listen {
-            self.commentButtonTapped()
-        }
+//        commentButtonView.isHidden = true
+//        commentButtonView.inject(input: (text: "500", image: UIImage(named: "comment")))
+//        commentButtonView.listen {
+//            self.commentButtonTapped()
+//        }
 
         buyTicketButtonView.inject(input: (text: "￥1,500", image: UIImage(named: "ticket")))
         buyTicketButtonView.listen {
@@ -534,7 +535,7 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return min(1, self.feeds.count)
+        return 1
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -575,6 +576,11 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if self.feeds.isEmpty {
+            let view = UITableViewCell()
+            view.backgroundColor = .clear
+            return view
+        }
         let feed = self.feeds[indexPath.section]
         return tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
     }
