@@ -273,6 +273,8 @@ final class CreateBandViewController: UIViewController, Instantiable {
         guard let sinceInput = sinceInputView.getText() else { return }
         let since: Date? = dateFormatter.date(from: sinceInput)
         let hometown = hometownInputView.getText()
+        let youtubeChannelId = youTubeIdInputView.getText()
+        let twitterId = twitterIdInputView.getText()
 
         viewModel.create(
             name: groupName,
@@ -280,8 +282,8 @@ final class CreateBandViewController: UIViewController, Instantiable {
             biography: biography,
             since: since,
             artwork: artworkImage,
-            youtubeChannelId: nil,
-            twitterId: nil,
+            youtubeChannelId: youtubeChannelId,
+            twitterId: twitterId,
             hometown: hometown
         )
     }

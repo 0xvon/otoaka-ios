@@ -24,6 +24,7 @@ final class PostViewController: UIViewController, Instantiable {
     private var sectionStackView: UIStackView!
     private var postButton: UIButton!
     private var movieThumbnailImageView: UIImageView!
+    private var cancelMovieButton: UIButton!
     
     private var postType: PostType = .movie(nil, nil)
     private let maxLength = 140
@@ -109,6 +110,19 @@ final class PostViewController: UIViewController, Instantiable {
         movieThumbnailImageView.clipsToBounds = true
         postView.addSubview(movieThumbnailImageView)
         
+        cancelMovieButton = UIButton()
+        cancelMovieButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelMovieButton.setTitleColor(style.color.main.get(), for: .normal)
+        cancelMovieButton.setTitleColor(style.color.subBackground.get(), for: .highlighted)
+        cancelMovieButton.setTitle("✗", for: .normal)
+        cancelMovieButton.addTarget(self, action: #selector(cancelMovie(_:)), for: .touchUpInside)
+        cancelMovieButton.isHidden = true
+        cancelMovieButton.titleLabel?.font = style.font.large.get()
+        cancelMovieButton.layer.cornerRadius = 12
+        cancelMovieButton.layer.borderWidth = 1
+        cancelMovieButton.layer.borderColor = style.color.main.get().cgColor
+        postView.addSubview(cancelMovieButton)
+        
         numOfTextLable = UILabel()
         numOfTextLable.translatesAutoresizingMaskIntoConstraints = false
         numOfTextLable.text = "140"
@@ -134,6 +148,7 @@ final class PostViewController: UIViewController, Instantiable {
         postButton = UIButton()
         postButton.translatesAutoresizingMaskIntoConstraints = false
         postButton.setTitleColor(style.color.main.get(), for: .normal)
+        postButton.setTitleColor(style.color.subBackground.get(), for: .highlighted)
         postButton.setTitle("post", for: .normal)
         postButton.addTarget(self, action: #selector(post(_:)), for: .touchUpInside)
         postButton.titleLabel?.font = style.font.large.get()
@@ -168,6 +183,11 @@ final class PostViewController: UIViewController, Instantiable {
             movieThumbnailImageView.rightAnchor.constraint(equalTo: postView.rightAnchor, constant: -16),
             movieThumbnailImageView.bottomAnchor.constraint(equalTo: numOfTextLable.topAnchor, constant: -16),
             movieThumbnailImageView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
+            
+            cancelMovieButton.topAnchor.constraint(equalTo: movieThumbnailImageView.topAnchor, constant: -12),
+            cancelMovieButton.rightAnchor.constraint(equalTo: movieThumbnailImageView.rightAnchor, constant: 12),
+            cancelMovieButton.widthAnchor.constraint(equalToConstant: 24),
+            cancelMovieButton.heightAnchor.constraint(equalToConstant: 24),
             
             sectionBorderView.rightAnchor.constraint(equalTo: sectionView.rightAnchor),
             sectionBorderView.leftAnchor.constraint(equalTo: sectionView.leftAnchor),
@@ -315,6 +335,7 @@ final class PostViewController: UIViewController, Instantiable {
                 let youTubeClient = YouTubeClient(url: text)
                 let thumbnailUrl = youTubeClient.getThumbnailUrl()
                 self.movieThumbnailImageView.loadImageAsynchronously(url: thumbnailUrl)
+                self.cancelMovieButton.isHidden = false
                 self.postType = .youtube(url)
             }
         })
@@ -336,6 +357,12 @@ final class PostViewController: UIViewController, Instantiable {
 
     @objc private func post(_ sender: Any) {
         self.viewModel.post(postType: self.postType, text: self.textView.text ?? "")
+    }
+    
+    @objc private func cancelMovie(_ sender: UIButton) {
+        self.postType = .movie(nil, nil)
+        self.movieThumbnailImageView.image = nil
+        self.cancelMovieButton.isHidden = true
     }
     
     func resizePostView(keyboardRect: CGRect) {
@@ -362,6 +389,7 @@ extension PostViewController: UIImagePickerControllerDelegate, UINavigationContr
         if let asset = info[.phAsset] as? PHAsset {
             let thumbnail = generateThumbnailFromVideo(videoUrl!.absoluteURL!)
             movieThumbnailImageView.image = thumbnail
+            cancelMovieButton.isHidden = false
             self.postType = .movie(videoUrl?.absoluteURL, asset)
             self.dismiss(animated: true, completion: nil)
         }
