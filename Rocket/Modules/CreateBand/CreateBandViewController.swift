@@ -123,7 +123,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         hometownPickerView.delegate = self
         hometownInputView.selectInputView(inputView: hometownPickerView)
     
-        youTubeIdInputView = TextFieldView(input: (placeholder: "YouTube Channel ID(スキップ可)", maxLength: 16))
+        youTubeIdInputView = TextFieldView(input: (placeholder: "YouTube Channel ID(スキップ可)", maxLength: 40))
         youTubeIdInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(youTubeIdInputView)
         

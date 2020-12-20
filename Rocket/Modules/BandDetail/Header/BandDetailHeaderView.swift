@@ -389,7 +389,7 @@ final class BandDetailHeaderView: UIView {
     
     @objc private func youtubeButtonTapped(_ sender: UIButton) {
         if let youtubeChannelId = input.youtubeChannelId {
-            if let url = URL(string: "https://youtu.be/\(youtubeChannelId)") {
+            if let url = URL(string: "https://www.youtube.com/channel/\(youtubeChannelId)") {
                 self.listener(.youtube(url))
             }
         }

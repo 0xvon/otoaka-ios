@@ -45,7 +45,7 @@ final class EditBandViewController: UIViewController, Instantiable {
             switch output {
             case .editGroup(let group):
                 DispatchQueue.main.async {
-                    self.dismiss(animated: true, completion: nil)
+                    self.navigationController?.popViewController(animated: true)
                 }
             case .error(let error):
                 print(error)
@@ -131,12 +131,14 @@ final class EditBandViewController: UIViewController, Instantiable {
         hometownPickerView.delegate = self
         hometownInputView.selectInputView(inputView: hometownPickerView)
     
-        youTubeIdInputView = TextFieldView(input: (placeholder: "YouTube Channel ID(スキップ可)", maxLength: 16))
+        youTubeIdInputView = TextFieldView(input: (placeholder: "YouTube Channel ID(スキップ可)", maxLength: 40))
         youTubeIdInputView.translatesAutoresizingMaskIntoConstraints = false
+        youTubeIdInputView.setText(text: input.youtubeChannelId ?? "")
         mainView.addSubview(youTubeIdInputView)
         
         twitterIdInputView = TextFieldView(input: (placeholder: "Twitter ID(@を省略して入力してください)", maxLength: 20))
         twitterIdInputView.translatesAutoresizingMaskIntoConstraints = false
+        twitterIdInputView.setText(text: input.twitterId ?? "")
         mainView.addSubview(twitterIdInputView)
 
         thumbnailInputView = UIView()
@@ -281,6 +283,9 @@ final class EditBandViewController: UIViewController, Instantiable {
         let since = dateFormatter.date(from: sinceInputView.getText()!)
         let youtubeChannelId = youTubeIdInputView.getText()
         let twitterId = twitterIdInputView.getText()
+        
+        print(youtubeChannelId)
+        print(twitterId)
 
         viewModel.editGroup(
             id: input.id, name: displayName, englishName: englishName, biography: biography,

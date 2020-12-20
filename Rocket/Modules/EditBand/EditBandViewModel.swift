@@ -33,12 +33,25 @@ class EditBandViewModel {
         id: Group.ID, name: String, englishName: String, biography: String?, since: Date?,
         thumbnail: UIImage?, youtubeChannelId: String?, twitterId: String?, hometown: String?
     ) {
-        let imageUrl: String = "aaa"
-
-        var uri = EditGroup.URI()
-        uri.id = id
-        let request = EditGroup.Request(
-            name: name, englishName: englishName, biography: biography, since: since,
-            artworkURL: URL(string: imageUrl), twitterId: twitterId, youtubeChannelId: youtubeChannelId, hometown: hometown)
+        self.s3Client.uploadImage(image: thumbnail) { [apiClient] result in
+            switch result {
+            case .success(let imageUrl):
+                let req = EditGroup.Request(
+                    name: name, englishName: englishName, biography: biography, since: since,
+                    artworkURL: URL(string: imageUrl), twitterId: twitterId, youtubeChannelId: youtubeChannelId, hometown: hometown)
+                var uri = EditGroup.URI()
+                uri.id = id
+                apiClient.request(EditGroup.self, request: req, uri: uri) { result in
+                    switch result {
+                    case .success(let res):
+                        self.outputHandler(.editGroup(res))
+                    case .failure(let error):
+                        self.outputHandler(.error(error))
+                    }
+                }
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
     }
 }
