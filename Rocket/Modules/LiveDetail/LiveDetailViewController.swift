@@ -102,6 +102,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                     self.isLiked = true
                     self.inject()
                 }
+            case .unlikeLive:
+                DispatchQueue.main.async {
+                    self.isLiked = false
+                    self.inject()
+                }
             case .toggleFollow(let index):
                 DispatchQueue.main.async {
                     print(index)
@@ -510,7 +515,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
 
     private func likeButtonTapped() {
         if isLiked {
-            print("you already liked")
+            self.viewModel.unlikeLive()
         } else {
             self.viewModel.likeLive()
         }

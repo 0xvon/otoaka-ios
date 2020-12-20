@@ -65,7 +65,7 @@ final class LiveDetailHeaderView: UIView {
         let date: String =
             (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
         dateBadgeView.updateText(text: date)
-        mapBadgeView.updateText(text: "代々木公園")
+        mapBadgeView.updateText(text: input.live.liveHouse ?? "会場未定")
     }
 
     func inject(input: Input) {
@@ -85,7 +85,7 @@ final class LiveDetailHeaderView: UIView {
         let date: String =
             (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
         dateBadgeView.updateText(text: date)
-        mapBadgeView.updateText(text: "代々木公園")
+        mapBadgeView.updateText(text: input.live.liveHouse ?? "会場未定")
     }
 
     func setup() {
@@ -147,11 +147,13 @@ final class LiveDetailHeaderView: UIView {
         bandNameLabel.adjustsFontSizeToFitWidth = false
         bandNameLabel.sizeToFit()
         liveInformationView.addSubview(bandNameLabel)
+        let date: String =
+            (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
 
-        dateBadgeView = BadgeView(input: (text: "時間未定", image: UIImage(named: "calendar")))
+        dateBadgeView = BadgeView(input: (text: date, image: UIImage(named: "calendar")))
         liveInformationView.addSubview(dateBadgeView)
 
-        mapBadgeView = BadgeView(input: (text: "代々木公園", image: UIImage(named: "map")))
+        mapBadgeView = BadgeView(input: (text: input.live.liveHouse ?? "会場未定", image: UIImage(named: "map")))
         liveInformationView.addSubview(mapBadgeView)
 
         arrowButton = UIButton()

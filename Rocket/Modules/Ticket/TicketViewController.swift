@@ -12,7 +12,7 @@ import UIKit
 final class TicketViewController: UIViewController, Instantiable {
 
     typealias Input = Void
-    let lives: [LiveFeed] = []
+    var tickets: [Ticket] = []
 
     var dependencyProvider: LoggedInDependencyProvider!
 
@@ -27,6 +27,28 @@ final class TicketViewController: UIViewController, Instantiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    lazy var viewModel = TicketViewModel(
+        apiClient: dependencyProvider.apiClient,
+        user: dependencyProvider.user,
+        outputHander: { output in
+            switch output {
+            
+            case .refreshMyTickets(let tickets):
+                DispatchQueue.main.async {
+                    self.tickets = tickets
+                    self.ticketsTableView.reloadData()
+                }
+            case .getMyTickets(let tickets):
+                DispatchQueue.main.async {
+                    self.tickets += tickets
+                    self.ticketsTableView.reloadData()
+                }
+            case .error(let error):
+                print(error)
+            }
+        }
+    )
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,12 +63,27 @@ final class TicketViewController: UIViewController, Instantiable {
         ticketsTableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
         ticketsTableView.backgroundColor = .clear
+        
+        ticketsTableView.refreshControl = UIRefreshControl()
+        ticketsTableView.refreshControl?.addTarget(
+            self, action: #selector(refreshMyTickets(sender:)), for: .valueChanged)
+        
+        self.getMyTickets()
+    }
+    
+    private func getMyTickets() {
+        viewModel.getMyTickets()
+    }
+    
+    @objc private func refreshMyTickets(sender: UIRefreshControl) {
+        viewModel.refreshMyTickets()
+        sender.endRefreshing()
     }
 }
 
 extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.lives.count
+        return self.tickets.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -54,7 +91,7 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = self.lives[indexPath.section].live
+        let live = self.tickets[indexPath.section].live
         let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
         cell.listen { [weak self] in
             self?.listenButtonTapped(cellIndex: indexPath.section)
@@ -94,10 +131,16 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = self.lives[indexPath.section].live
+        let live = self.tickets[indexPath.section].live
         let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if (self.tickets.count - indexPath.section) == 2 && self.tickets.count % per == 0 {
+            self.getMyTickets()
+        }
     }
 
     private func listenButtonTapped(cellIndex: Int) {

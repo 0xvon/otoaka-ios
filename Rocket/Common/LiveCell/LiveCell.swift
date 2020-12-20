@@ -75,10 +75,12 @@ class LiveCell: UITableViewCell, ReusableCell {
         let date: String =
             (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
 
+        buyTicketButtonView.isHidden = true
         buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(named: "ticket")))
+        listenButtonView.isHidden = true
         listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
         dateView.inject(input: (text: date, image: UIImage(named: "calendar")))
-        placeView.inject(input: (text: "代々木公園", image: UIImage(named: "map")))
+        placeView.inject(input: (text: input.liveHouse ?? "会場未定", image: UIImage(named: "map")))
     }
 
     override func prepareForReuse() {

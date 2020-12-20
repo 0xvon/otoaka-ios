@@ -29,13 +29,16 @@ class BandBannerCell: UITableViewCell, ReusableCell {
     }
 
     func setup() {
+        likeButtonView.isHidden  = true
         likeButtonView.inject(input: (text: "10000", image: UIImage(named: "heart")))
+        listenButtonView.isHidden = true
         listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
         selectionStyle = .none
 
         bandImageView.loadImageAsynchronously(url: input.artworkURL)
         bandImageView.layer.cornerRadius = 30
         bandImageView.layer.borderWidth = 1
+        bandImageView.contentMode = .scaleAspectFill
         bandImageView.layer.borderColor = style.color.main.get().cgColor
         bandImageView.clipsToBounds = true
 

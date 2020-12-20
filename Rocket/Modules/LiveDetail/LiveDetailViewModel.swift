@@ -17,6 +17,7 @@ class LiveDetailViewModel {
         case reserveTicket(Ticket)
         case getHostGroup(GetGroup.Response)
         case likeLive
+        case unlikeLive
         case error(Error)
     }
 
@@ -89,6 +90,18 @@ class LiveDetailViewModel {
             switch result {
             case .success(_):
                 self.outputHandler(.likeLive)
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func unlikeLive() {
+        let request = UnlikeLive.Request(liveId: self.live.id)
+        apiClient.request(UnlikeLive.self, request: request) { result in
+            switch result {
+            case .success(_):
+                self.outputHandler(.unlikeLive)
             case .failure(let error):
                 self.outputHandler(.error(error))
             }

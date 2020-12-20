@@ -89,7 +89,7 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
         let date: String =
             (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
         dateBadgeLabel.inject(input: (text: date, image: UIImage(named: "calendar")))
-        livehouseBadgeView.inject(input: (text: "代々木公園", image: UIImage(named: "map")))
+        livehouseBadgeView.inject(input: (text: input.live.liveHouse ?? "会場未定", image: UIImage(named: "map")))
         ticketBadgeView.inject(input: (text: "￥1500", image: UIImage(named: "ticket")))
     }
 
