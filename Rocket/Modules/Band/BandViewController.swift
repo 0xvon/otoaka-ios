@@ -289,9 +289,9 @@ final class BandViewController: UIViewController, Instantiable {
     private func setupPages() {
         pageItems = [
             PageItem(page: groupFeedsView, pageButton: groupFeedPageButton, tebleView: groupFeedTableView, pageTitle: groupFeedPageTitleView),
-            PageItem(page: liveView, pageButton: livePageButton, tebleView: liveTableView, pageTitle: livePageTitleView),
-            PageItem(page: chartsView, pageButton: chartsPageButton, tebleView: chartsTableView, pageTitle: chartsPageTitleView),
             PageItem(page: groupsView, pageButton: groupPageButton, tebleView: groupTableView, pageTitle: groupPageTitleView),
+            PageItem(page: liveView, pageButton: livePageButton, tebleView: liveTableView, pageTitle: livePageTitleView),
+//            PageItem(page: chartsView, pageButton: chartsPageButton, tebleView: chartsTableView, pageTitle: chartsPageTitleView),
         ]
         
         for (index, item) in pageItems.enumerated() {
