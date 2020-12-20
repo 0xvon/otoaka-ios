@@ -25,6 +25,7 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
             switch output {
             case .search(let groups):
                 DispatchQueue.main.async {
+                    print(groups)
                     self.searchResults = groups
                     self.groupTableView.reloadData()
                 }
@@ -193,6 +194,7 @@ extension SelectPerformersViewController: UITableViewDelegate, UITableViewDataSo
 extension SelectPerformersViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if let text = searchBar.text {
+            print(text)
             self.viewModel.searchGroup(query: text)
         }
     }

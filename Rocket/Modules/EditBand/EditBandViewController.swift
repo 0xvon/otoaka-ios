@@ -283,9 +283,6 @@ final class EditBandViewController: UIViewController, Instantiable {
         let since = dateFormatter.date(from: sinceInputView.getText()!)
         let youtubeChannelId = youTubeIdInputView.getText()
         let twitterId = twitterIdInputView.getText()
-        
-        print(youtubeChannelId)
-        print(twitterId)
 
         viewModel.editGroup(
             id: input.id, name: displayName, englishName: englishName, biography: biography,

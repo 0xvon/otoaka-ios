@@ -19,7 +19,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
     private var liveTitleInputView: TextFieldView!
     private var livehouseInputView: TextFieldView!
     private var livehousePickerView: UIPickerView!
-    private var partnerInputView: TextFieldView!
+//    private var partnerInputView: TextFieldView!
     private var openTimeInputView: UIDatePicker!
     private var startTimeInputView: UIDatePicker!
     private var endTimeInputView: UIDatePicker!
@@ -119,16 +119,16 @@ final class EditLiveViewController: UIViewController, Instantiable {
         livehousePickerView.delegate = self
         livehouseInputView.selectInputView(inputView: livehousePickerView)
 
-        partnerInputView = TextFieldView(input: (placeholder: "対バン相手を追加する", maxLength: 20))
-        switch input.style {
-        case .battle(let performers):
-            let text = performers.map { $0.name }.joined(separator: ",")
-            partnerInputView.setText(text: text)
-        default:
-            partnerInputView.setText(text: input.hostGroup.name)
-        }
-        partnerInputView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(partnerInputView)
+//        partnerInputView = TextFieldView(input: (placeholder: "対バン相手を追加する", maxLength: 20))
+//        switch input.style {
+//        case .battle(let performers):
+//            let text = performers.map { $0.name }.joined(separator: ",")
+//            partnerInputView.setText(text: text)
+//        default:
+//            partnerInputView.setText(text: input.hostGroup.name)
+//        }
+//        partnerInputView.translatesAutoresizingMaskIntoConstraints = false
+//        mainView.addSubview(partnerInputView)
         
         let partnerInputButton = UIButton()
         partnerInputButton.translatesAutoresizingMaskIntoConstraints = false
@@ -257,21 +257,21 @@ final class EditLiveViewController: UIViewController, Instantiable {
             livehouseInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
             livehouseInputView.heightAnchor.constraint(equalToConstant: 50),
 
-            partnerInputView.topAnchor.constraint(
-                equalTo: livehouseInputView.bottomAnchor, constant: 24),
-            partnerInputView.rightAnchor.constraint(
-                equalTo: mainView.rightAnchor, constant: -16),
-            partnerInputView.leftAnchor.constraint(
-                equalTo: mainView.leftAnchor, constant: 16),
-            partnerInputView.heightAnchor.constraint(equalToConstant: 50),
-            
-            partnerInputButton.topAnchor.constraint(equalTo: partnerInputView.topAnchor),
-            partnerInputButton.bottomAnchor.constraint(equalTo: partnerInputView.bottomAnchor),
-            partnerInputButton.rightAnchor.constraint(equalTo: partnerInputView.rightAnchor),
-            partnerInputButton.leftAnchor.constraint(equalTo: partnerInputView.leftAnchor),
+//            partnerInputView.topAnchor.constraint(
+//                equalTo: livehouseInputView.bottomAnchor, constant: 24),
+//            partnerInputView.rightAnchor.constraint(
+//                equalTo: mainView.rightAnchor, constant: -16),
+//            partnerInputView.leftAnchor.constraint(
+//                equalTo: mainView.leftAnchor, constant: 16),
+//            partnerInputView.heightAnchor.constraint(equalToConstant: 50),
+//
+//            partnerInputButton.topAnchor.constraint(equalTo: partnerInputView.topAnchor),
+//            partnerInputButton.bottomAnchor.constraint(equalTo: partnerInputView.bottomAnchor),
+//            partnerInputButton.rightAnchor.constraint(equalTo: partnerInputView.rightAnchor),
+//            partnerInputButton.leftAnchor.constraint(equalTo: partnerInputView.leftAnchor),
 
             openTimeLabel.topAnchor.constraint(
-                equalTo: partnerInputView.bottomAnchor, constant: 24),
+                equalTo: livehouseInputView.bottomAnchor, constant: 24),
             openTimeLabel.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
             openTimeLabel.heightAnchor.constraint(equalToConstant: 50),
 
@@ -340,8 +340,8 @@ final class EditLiveViewController: UIViewController, Instantiable {
         let vc = SelectPerformersViewController(dependencyProvider: dependencyProvider, input: self.partnerGroups)
         vc.listen { groups in
             self.partnerGroups = groups
-            let text = groups.map { $0.name }.joined(separator: ",")
-            self.partnerInputView.setText(text: text)
+//            let text = groups.map { $0.name }.joined(separator: ",")
+//            self.partnerInputView.setText(text: text)
         }
         present(vc, animated: true, completion: nil)
     }

@@ -36,9 +36,9 @@ class PerformanceRequestViewModel {
         getPerformanceRequestsPaginationRequest.subscribe { result in
             switch result {
             case .initial(let res):
-                self.outputHandler(.refreshRequests(res.items))
+                self.outputHandler(.refreshRequests(res.items.filter { $0.status == .pending }))
             case .next(let res):
-                self.outputHandler(.getRequests(res.items))
+                self.outputHandler(.getRequests(res.items.filter { $0.status == .pending }))
             case .error(let err):
                 self.outputHandler(.error(err))
             }

@@ -32,7 +32,7 @@ class PostViewModel {
 
     func post(postType: PostViewController.PostType, text: String) {
         switch postType {
-        case .movie(let _, let _):
+        case .movie(_, _):
             break
 //            if let url = url, let asset = asset {
 //                print("yo")

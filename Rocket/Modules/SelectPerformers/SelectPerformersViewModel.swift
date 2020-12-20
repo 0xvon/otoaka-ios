@@ -28,6 +28,12 @@ class SelectPerformersViewModel {
         self.apiClient = apiClient
         self.s3Client = S3Client(s3Bucket: s3Bucket)
         self.outputHandler = outputHander
+    }
+    
+    func searchGroup(query: String) {
+        var uri = SearchGroup.URI()
+        uri.term = query
+        searchGroupPaginationRequest = PaginationRequest<SearchGroup>(apiClient: apiClient, uri: uri)
         
         searchGroupPaginationRequest?.subscribe { result in
             switch result {
@@ -39,12 +45,6 @@ class SelectPerformersViewModel {
                 self.outputHandler(.error(err))
             }
         }
-    }
-    
-    func searchGroup(query: String) {
-        var uri = SearchGroup.URI()
-        uri.term = query
-        searchGroupPaginationRequest = PaginationRequest<SearchGroup>(apiClient: apiClient, uri: uri)
         
         searchGroupPaginationRequest?.next()
     }

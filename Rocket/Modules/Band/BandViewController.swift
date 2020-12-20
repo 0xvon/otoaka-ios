@@ -140,7 +140,7 @@ final class BandViewController: UIViewController, Instantiable {
     }
 
     override func viewDidLayoutSubviews() {
-        horizontalScrollView.contentSize.width = UIScreen.main.bounds.width * 4
+        horizontalScrollView.contentSize.width = UIScreen.main.bounds.width * CGFloat(pageItems.count)
     }
 
     func setup() {

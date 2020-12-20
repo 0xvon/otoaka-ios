@@ -147,14 +147,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             viewModel.getHostGroup()
         }
         
-        switch input.style {
-        case .oneman(let performer):
-            self.performers = [performer]
-        case .battle(let performers):
-            self.performers = performers
-        case .festival(let performers):
-            self.performers = performers
-        }
+        injectPerformers()
         liveDetailHeader.inject(
             input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: self.performers))
         liveDetailHeader.pushToBandViewController = { [weak self] vc in
@@ -177,11 +170,23 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     func inject() {
-        liveDetailHeader.update(
-            input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: []))
         self.ticketButtonStyle()
+        self.injectPerformers()
         self.likeButtonViewStyle()
         self.setupCreation()
+        liveDetailHeader.update(
+            input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: self.performers))
+    }
+    
+    func injectPerformers() {
+        switch input.style {
+        case .oneman(let performer):
+            self.performers = [performer]
+        case .battle(let performers):
+            self.performers = performers
+        case .festival(let performers):
+            self.performers = performers
+        }
     }
 
     private func setupCreation() {
