@@ -11,8 +11,8 @@ import Endpoint
 
 class GroupFeedListViewModel {
     enum Output {
-        case getGroupFeeds([GroupFeed])
-        case refreshGroupFeeds([GroupFeed])
+        case getGroupFeeds([ArtistFeed])
+        case refreshGroupFeeds([ArtistFeed])
         case error(Error)
     }
 

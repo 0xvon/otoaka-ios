@@ -31,7 +31,7 @@ class EditBandViewModel {
 
     func editGroup(
         id: Group.ID, name: String, englishName: String, biography: String?, since: Date?,
-        thumbnail: UIImage?, hometown: String?
+        thumbnail: UIImage?, youtubeChannelId: String?, twitterId: String?, hometown: String?
     ) {
         let imageUrl: String = "aaa"
 
@@ -39,6 +39,6 @@ class EditBandViewModel {
         uri.id = id
         let request = EditGroup.Request(
             name: name, englishName: englishName, biography: biography, since: since,
-            artworkURL: URL(string: imageUrl), hometown: hometown)
+            artworkURL: URL(string: imageUrl), twitterId: twitterId, youtubeChannelId: youtubeChannelId, hometown: hometown)
     }
 }

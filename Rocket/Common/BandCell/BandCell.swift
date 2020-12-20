@@ -45,8 +45,11 @@ final class BandCell: UITableViewCell, ReusableCell {
         bandName.font = style.font.xlarge.get()
         bandName.textColor = style.color.main.get()
 
+        productionBadgeView.isHidden = true
         productionBadgeView.inject(
             input: (text: "Japan Music Systems", image: UIImage(named: "production")))
+        
+        labelBadgeView.isHidden = true
         labelBadgeView.inject(input: (text: "Intact Records", image: UIImage(named: "record")))
         let startYear: String =
             (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"

@@ -158,6 +158,8 @@ final class CreateBandViewController: UIViewController, Instantiable {
             biography: biography,
             since: since,
             artwork: artworkImage,
+            youtubeChannelId: nil,
+            twitterId: nil,
             hometown: hometown
         )
     }

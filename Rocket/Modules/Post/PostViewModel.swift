@@ -11,8 +11,7 @@ import AWSCognitoAuth
 
 class PostViewModel {
     enum Output {
-        case post(GroupFeed)
-        case getMemberships([Group])
+        case post(ArtistFeed)
         case error(Error)
     }
 
@@ -31,9 +30,9 @@ class PostViewModel {
         self.outputHandler = outputHander
     }
 
-    func post(postType: PostViewController.PostType, text: String, groupId: Group.ID) {
+    func post(postType: PostViewController.PostType, text: String) {
         switch postType {
-        case .movie(let url, let asset):
+        case .movie(let _, let _):
             break
 //            if let url = url, let asset = asset {
 //                print("yo")
@@ -49,28 +48,14 @@ class PostViewModel {
         case .spotify(let url):
             print(url!)
         case .youtube(let url):
-            let request = CreateGroupFeed.Request(text: text, feedType: .youtube(url!), groupId: groupId)
-            apiClient.request(CreateGroupFeed.self, request: request) { result in
+            let request = CreateArtistFeed.Request(text: text, feedType: .youtube(url!))
+            apiClient.request(CreateArtistFeed.self, request: request) { result in
                 switch result {
                 case .success(let res):
                     self.outputHandler(.post(res))
                 case .failure(let error):
                     self.outputHandler(.error(error))
                 }
-            }
-        }
-    }
-    
-    func getMemberships() {
-        let request = Empty()
-        var uri = Endpoint.GetMemberships.URI()
-        uri.artistId = self.user.id
-        apiClient.request(GetMemberships.self, request: request, uri: uri) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.getMemberships(res))
-            case .failure(let error):
-                self.outputHandler(.error(error))
             }
         }
     }

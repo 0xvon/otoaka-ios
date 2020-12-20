@@ -81,7 +81,7 @@ final class HomeViewController: UITabBarController, Instantiable {
             switch result {
             case .success(let user):
                 DispatchQueue.main.async {
-//                    guard self.shouldSetTabViewControllers else { return }
+                    guard self.shouldSetTabViewControllers else { return }
                     self.shouldSetTabViewControllers = false
                     self.setViewControllers(instantiateTabs(with: user), animated: true)
                 }

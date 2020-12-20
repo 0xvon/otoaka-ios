@@ -12,7 +12,7 @@ import Foundation
 class LiveDetailViewModel {
     enum Output {
         case getLive(LiveDetail)
-        case getGroupFeeds([GroupFeed])
+        case getGroupFeeds([ArtistFeed])
         case toggleFollow(Int)
         case reserveTicket(Ticket)
         case getHostGroup(GetGroup.Response)

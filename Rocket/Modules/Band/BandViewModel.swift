@@ -11,8 +11,8 @@ import UIKit
 
 class BandViewModel {
     enum Output {
-        case getGroupFeeds([GroupFeed])
-        case refreshGroupFeeds([GroupFeed])
+        case getGroupFeeds([ArtistFeed])
+        case refreshGroupFeeds([ArtistFeed])
         case getLives([LiveFeed])
         case refreshLives([LiveFeed])
         case getCharts([ChannelDetail.ChannelItem])

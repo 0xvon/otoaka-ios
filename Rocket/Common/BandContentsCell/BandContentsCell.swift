@@ -10,7 +10,7 @@ import Endpoint
 
 class BandContentsCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "BandContentsCell" }
-    typealias Input = GroupFeed
+    typealias Input = ArtistFeed
     var input: Input!
     
     let dateFormatter: DateFormatter = {
@@ -59,7 +59,7 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         dateLabel.font = style.font.small.get()
         dateLabel.textColor = style.color.main.get()
         
-        artistNameLabel.text = "taro"
+        artistNameLabel.text = input.author.name
         artistNameLabel.font = style.font.regular.get()
         artistNameLabel.textColor = style.color.main.get()
         

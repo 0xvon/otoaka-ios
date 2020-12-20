@@ -40,7 +40,7 @@ final class BandViewController: UIViewController, Instantiable {
     private var iconMenu: UIBarButtonItem!
 
     var lives: [LiveFeed] = []
-    var feeds: [GroupFeed] = []
+    var feeds: [ArtistFeed] = []
     var groups: [Group] = []
     var charts: [ChannelDetail.ChannelItem] = []
     var pageItems: [PageItem] = []
@@ -627,6 +627,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             switch feed.feedType {
             case .youtube(let url):
                 let safari = SFSafariViewController(url: url)
+                safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
             }
         case self.chartsTableView:

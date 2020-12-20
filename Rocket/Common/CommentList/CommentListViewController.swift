@@ -12,12 +12,12 @@ final class CommentListViewController: UIViewController, Instantiable {
     typealias Input = ListType
     
     enum ListType {
-        case feedComment(GroupFeed)
+        case feedComment(ArtistFeed)
     }
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var comments: [String] = []
+    var comments: [ArtistFeedComment] = []
     private var commentTableView: UITableView!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -39,11 +39,18 @@ final class CommentListViewController: UIViewController, Instantiable {
             switch output {
             case .getFeedComments(let comments):
                 DispatchQueue.main.async {
-                    print(comments)
+                    self.comments += comments
+                    self.commentTableView.reloadData()
                 }
             case .refreshFeedComments(let comments):
                 DispatchQueue.main.async {
-                    print(comments)
+                    self.comments = comments
+                    self.commentTableView.reloadData()
+                }
+            case .postComment(let comment):
+                DispatchQueue.main.async {
+                    self.comments = [comment] + self.comments
+                    self.commentTableView.reloadData()
                 }
             case .error(let error):
                 print(error)
@@ -115,8 +122,7 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 10
-        
+        return max(1, self.comments.count)
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -184,8 +190,13 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let comment = self.comments[indexPath.section]
-        let cell = tableView.reuse(CommentCell.self, input: "", for: indexPath)
+        if self.comments.isEmpty {
+            let view = UITableViewCell()
+            view.backgroundColor = .clear
+            return view
+        }
+        let comment = self.comments[indexPath.section]
+        let cell = tableView.reuse(CommentCell.self, input: comment, for: indexPath)
         return cell
     }
 
@@ -200,7 +211,7 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     private func comment(text: String) {
-        print(text)
+        viewModel.postFeedComment(text: text)
     }
 }
 

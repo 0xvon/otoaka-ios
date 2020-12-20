@@ -21,7 +21,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
     var lives: [Live] = []
-    var feeds: [GroupFeed] = []
+    var feeds: [ArtistFeed] = []
     var followers:[User] = []
     var isFollowing: Bool = false
     var userType: UserType!
@@ -146,6 +146,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             self.likeButtonTapped()
         }
 
+        commentButtonView.isHidden = true
         commentButtonView.inject(input: (text: "500", image: UIImage(named: "comment")))
         commentButtonView.listen {
             self.commentButtonTapped()
@@ -509,15 +510,21 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     private func likeButtonTapped() {
-        if case .member = self.userType {
-            let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.input.id))
-            self.navigationController?.pushViewController(vc, animated: true)
+//        if case .member = self.userType {
+//            let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.input.id))
+//            self.navigationController?.pushViewController(vc, animated: true)
+//        } else {
+//            if self.isFollowing {
+//                viewModel.unfollowGroup()
+//            } else {
+//                viewModel.followGroup()
+//            }
+//        }
+        
+        if self.isFollowing {
+            viewModel.unfollowGroup()
         } else {
-            if self.isFollowing {
-                viewModel.unfollowGroup()
-            } else {
-                viewModel.followGroup()
-            }
+            viewModel.followGroup()
         }
     }
 
@@ -629,10 +636,8 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             switch feed.feedType {
             case .youtube(let url):
                 let safari = SFSafariViewController(url: url)
-//                safari.delegate = self
                 safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
-                self.navigationController?.pushViewController(safari, animated: true)
             }
         default:
             print("hello")

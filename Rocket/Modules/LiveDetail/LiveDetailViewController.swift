@@ -22,7 +22,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     var userType: UserType!
     var performers: [Group] = []
-    var feeds: [GroupFeed] = []
+    var feeds: [ArtistFeed] = []
     
     @IBOutlet weak var liveDetailHeader: LiveDetailHeaderView!
     @IBOutlet weak var likeButtonView: ReactionButtonView!

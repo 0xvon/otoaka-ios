@@ -14,7 +14,7 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var feeds: [GroupFeed] = []
+    var feeds: [ArtistFeed] = []
     private var contentsTableView: UITableView!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -125,6 +125,7 @@ extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSourc
         switch content.feedType {
         case .youtube(let url):
             let safari = SFSafariViewController(url: url)
+            safari.dismissButtonStyle = .close
             present(safari, animated: true, completion: nil)
         }
         tableView.deselectRow(at: indexPath, animated: true)

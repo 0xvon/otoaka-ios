@@ -27,7 +27,6 @@ final class PostViewController: UIViewController, Instantiable {
     
     private var postType: PostType = .movie(nil, nil)
     private let maxLength = 140
-    private var groups: [Group] = []
 
     enum PostType {
         case movie(URL?, PHAsset?)
@@ -59,10 +58,6 @@ final class PostViewController: UIViewController, Instantiable {
             case .post(let feed):
                 DispatchQueue.main.async {
                     self.navigationController?.popViewController(animated: true)
-                }
-            case .getMemberships(let groups):
-                DispatchQueue.main.async {
-                    self.groups = groups
                 }
             case .error(let error):
                 print(error)
@@ -182,7 +177,6 @@ final class PostViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate(constraints)
         
         textView.becomeFirstResponder()
-        viewModel.getMemberships()
     }
     
     func setupSectionView () {
@@ -339,7 +333,7 @@ final class PostViewController: UIViewController, Instantiable {
 
     @objc private func post(_ sender: Any) {
         print("post")
-        self.viewModel.post(postType: self.postType, text: self.textView.text ?? "", groupId: self.groups[0].id)
+        self.viewModel.post(postType: self.postType, text: self.textView.text ?? "")
     }
     
     func resizePostView(keyboardRect: CGRect) {

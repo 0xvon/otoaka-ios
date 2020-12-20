@@ -31,6 +31,8 @@ final class EditBandViewController: UIViewController, Instantiable {
     private var sincePickerView: UIPickerView!
     private var hometownInputView: TextFieldView!
     private var hometownPickerView: UIPickerView!
+    private var youTubeIdInputView: TextFieldView!
+    private var twitterIdInputView: TextFieldView!
     private var thumbnailInputView: UIView!
     private var profileImageView: UIImageView!
     private var updateButton: Button!
@@ -88,7 +90,7 @@ final class EditBandViewController: UIViewController, Instantiable {
             toItem: nil,
             attribute: .height,
             multiplier: 1,
-            constant: 1000
+            constant: 1200
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
@@ -128,6 +130,14 @@ final class EditBandViewController: UIViewController, Instantiable {
         hometownPickerView.dataSource = self
         hometownPickerView.delegate = self
         hometownInputView.selectInputView(inputView: hometownPickerView)
+    
+        youTubeIdInputView = TextFieldView(input: (placeholder: "YouTube Channel ID(スキップ可)", maxLength: 16))
+        youTubeIdInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(youTubeIdInputView)
+        
+        twitterIdInputView = TextFieldView(input: (placeholder: "Twitter ID(@を省略して入力してください)", maxLength: 20))
+        twitterIdInputView.translatesAutoresizingMaskIntoConstraints = false
+        mainView.addSubview(twitterIdInputView)
 
         thumbnailInputView = UIView()
         thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -207,12 +217,24 @@ final class EditBandViewController: UIViewController, Instantiable {
             hometownInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             hometownInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
             hometownInputView.heightAnchor.constraint(equalToConstant: 50),
+            
+            youTubeIdInputView.topAnchor.constraint(
+                equalTo: hometownInputView.bottomAnchor, constant: 48),
+            youTubeIdInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
+            youTubeIdInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            youTubeIdInputView.heightAnchor.constraint(equalToConstant: 50),
+            
+            twitterIdInputView.topAnchor.constraint(
+                equalTo: youTubeIdInputView.bottomAnchor, constant: 48),
+            twitterIdInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
+            twitterIdInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            twitterIdInputView.heightAnchor.constraint(equalToConstant: 50),
 
             thumbnailInputView.widthAnchor.constraint(equalToConstant: 120),
             thumbnailInputView.heightAnchor.constraint(equalToConstant: 150),
             thumbnailInputView.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
             thumbnailInputView.topAnchor.constraint(
-                equalTo: hometownInputView.bottomAnchor, constant: 48),
+                equalTo: twitterIdInputView.bottomAnchor, constant: 48),
 
             profileImageView.widthAnchor.constraint(equalToConstant: 120),
             profileImageView.heightAnchor.constraint(equalToConstant: 120),
@@ -257,11 +279,13 @@ final class EditBandViewController: UIViewController, Instantiable {
         let thumbnail = profileImageView.image
         let hometown = hometownInputView.getText()
         let since = dateFormatter.date(from: sinceInputView.getText()!)
+        let youtubeChannelId = youTubeIdInputView.getText()
+        let twitterId = twitterIdInputView.getText()
 
         viewModel.editGroup(
             id: input.id, name: displayName, englishName: englishName, biography: biography,
             since: since,
-            thumbnail: thumbnail, hometown: hometown)
+            thumbnail: thumbnail, youtubeChannelId: youtubeChannelId, twitterId: twitterId, hometown: hometown)
     }
 }
 

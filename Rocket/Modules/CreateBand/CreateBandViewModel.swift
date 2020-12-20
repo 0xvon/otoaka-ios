@@ -27,14 +27,14 @@ class CreateBandViewModel {
 
     func create(
         name: String, englishName: String?, biography: String?,
-        since: Date?, artwork: UIImage?, hometown: String?
+        since: Date?, artwork: UIImage?, youtubeChannelId: String?, twitterId: String?, hometown: String?
     ) {
         self.s3Client.uploadImage(image: artwork) { [apiClient] result in
             switch result {
             case .success(let imageUrl):
                 let req = CreateGroup.Request(
                     name: name, englishName: englishName, biography: biography, since: since,
-                    artworkURL: URL(string: imageUrl), hometown: hometown)
+                    artworkURL: URL(string: imageUrl),twitterId: twitterId, youtubeChannelId: youtubeChannelId, hometown: hometown)
                 apiClient.request(CreateGroup.self, request: req) { result in
                     switch result {
                     case .success(let res):
