@@ -97,7 +97,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     self.showInviteCode(invitationCode: invitation.id)
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )
@@ -168,6 +170,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         }
 
         liveTableView.delegate = self
+        liveTableView.separatorStyle = .none
         liveTableView.dataSource = self
         liveTableView.backgroundColor = style.color.background.get()
         liveTableView.register(
@@ -178,6 +181,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         viewModel.getGroupLive()
 
         contentsTableView.delegate = self
+        contentsTableView.separatorStyle = .none
         contentsTableView.dataSource = self
         contentsTableView.backgroundColor = style.color.background.get()
         contentsTableView.tableFooterView = UIView(frame: .zero)
@@ -646,11 +650,13 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch tableView {
         case self.liveTableView:
+            if self.lives.isEmpty { break }
             let live = self.lives[indexPath.section]
             let vc = LiveDetailViewController(
                 dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
         case self.contentsTableView:
+            if self.feeds.isEmpty { break }
             let feed = self.feeds[indexPath.section]
             switch feed.feedType {
             case .youtube(let url):

@@ -61,7 +61,9 @@ final class PostViewController: UIViewController, Instantiable {
                     self.dismiss(animated: true, completion: nil)
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

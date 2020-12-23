@@ -31,7 +31,9 @@ final class AuthViewController: UIViewController, Instantiable {
                     }
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

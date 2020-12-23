@@ -20,7 +20,9 @@ final class LiveViewController: UIViewController, Instantiable {
                 self.lives = lives
                 self.liveTableView.reloadData()
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

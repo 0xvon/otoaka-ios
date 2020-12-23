@@ -42,7 +42,9 @@ final class AccountViewController: UIViewController, Instantiable {
         outputHander: { output in
             switch output {
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

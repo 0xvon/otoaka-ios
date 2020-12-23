@@ -48,7 +48,9 @@ final class EditBandViewController: UIViewController, Instantiable {
                     self.navigationController?.popViewController(animated: true)
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

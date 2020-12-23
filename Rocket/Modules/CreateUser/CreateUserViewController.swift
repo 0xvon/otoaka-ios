@@ -38,7 +38,9 @@ final class CreateUserViewController: UIViewController, Instantiable {
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

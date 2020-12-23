@@ -46,7 +46,9 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
                     self.requestTableView.reloadData()
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

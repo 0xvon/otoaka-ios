@@ -22,7 +22,9 @@ final class CreateBandViewController: UIViewController, Instantiable {
                     self.dismiss(animated: true)
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

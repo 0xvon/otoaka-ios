@@ -118,7 +118,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                     print(index)
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )
@@ -201,9 +203,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             forCellReuseIdentifier: "BandContentsCell")
         contentsTableView.backgroundColor = style.color.background.get()
         scrollableView.addSubview(contentsTableView)
-        
-        scrollableView.bringSubviewToFront(numOfParticipantView)
-        
+                
         let constraints = [
             reactionStackView.topAnchor.constraint(equalTo: liveDetailHeader.bottomAnchor, constant: 12),
             reactionStackView.rightAnchor.constraint(equalTo: scrollableView.rightAnchor, constant: -16),

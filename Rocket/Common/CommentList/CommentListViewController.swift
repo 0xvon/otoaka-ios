@@ -53,7 +53,9 @@ final class CommentListViewController: UIViewController, Instantiable {
                     self.commentTableView.reloadData()
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )

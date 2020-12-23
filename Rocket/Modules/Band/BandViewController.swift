@@ -111,7 +111,9 @@ final class BandViewController: UIViewController, Instantiable {
                     self.liveTableView.reloadData()
                 }
             case .error(let error):
-                print(error)
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
             }
         }
     )
@@ -488,7 +490,9 @@ final class BandViewController: UIViewController, Instantiable {
                 ]) {
                     granted, error in
                     if let error = error {
-                        print(error)
+                        DispatchQueue.main.async {
+                            self.showAlert(title: "エラー", message: error.localizedDescription)
+                        }
                         return
                     }
                     guard granted else { return }
