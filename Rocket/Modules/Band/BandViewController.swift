@@ -586,7 +586,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         case self.groupFeedTableView:
             let feed = self.feeds[indexPath.section]
             let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
-            cell.comment { [weak self] in
+            cell.comment { [weak self] _ in
                 self?.feedCommentButtonTapped(cellIndex: indexPath.section)
             }
             return cell

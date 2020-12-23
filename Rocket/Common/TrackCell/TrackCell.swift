@@ -52,13 +52,23 @@ final class TrackCell: UITableViewCell, ReusableCell {
         bandNameLabel.textColor = style.color.main.get()
 
         likeButtonView.inject(input: (text: "1,000,000", image: UIImage(named: "heart")))
-        likeButtonView.listen {
-            self.like()
+        likeButtonView.listen { type in
+            switch type {
+            case .reaction:
+                self.like()
+            case .num:
+                self.num()
+            }
+            
         }
     }
 
     private func like() {
         print("like")
+    }
+    
+    private func num() {
+        print("num")
     }
 
 }

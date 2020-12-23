@@ -151,13 +151,19 @@ final class BandDetailViewController: UIViewController, Instantiable {
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
 
         likeButtonView.inject(input: (text: "", image: UIImage(named: "heart")))
-        likeButtonView.listen {
-            self.likeButtonTapped()
+        likeButtonView.listen { type in
+            switch type {
+            case .reaction:
+                self.likeButtonTapped()
+            case .num:
+                self.numOfLikeButtonTapped()
+            }
+            
         }
 
         commentButtonView.isHidden = true
         commentButtonView.inject(input: (text: "500", image: UIImage(named: "comment")))
-        commentButtonView.listen {
+        commentButtonView.listen { _ in
             self.commentButtonTapped()
         }
 
@@ -519,22 +525,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     private func likeButtonTapped() {
-//        if case .member = self.userType {
-//            let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.input.id))
-//            self.navigationController?.pushViewController(vc, animated: true)
-//        } else {
-//            if self.isFollowing {
-//                viewModel.unfollowGroup()
-//            } else {
-//                viewModel.followGroup()
-//            }
-//        }
-        
         if self.isFollowing {
             viewModel.unfollowGroup()
         } else {
             viewModel.followGroup()
         }
+    }
+    
+    private func numOfLikeButtonTapped() {
+        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.input.id))
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
     private func commentButtonTapped() {

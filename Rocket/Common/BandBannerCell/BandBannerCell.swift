@@ -55,7 +55,7 @@ class BandBannerCell: UITableViewCell, ReusableCell {
         listenButtonView.listen(listener)
     }
 
-    func like(_ listener: @escaping () -> Void) {
+    func like(_ listener: @escaping (ReactionButtonView.ListenerType) -> Void) {
         likeButtonView.listen(listener)
     }
 }

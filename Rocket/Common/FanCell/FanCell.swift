@@ -27,7 +27,7 @@ final class FanCell: UITableViewCell, ReusableCell {
         
         fanArtworkImageView.loadImageAsynchronously(url: URL(string: input.thumbnailURL!)!)
         fanArtworkImageView.clipsToBounds = true
-        fanArtworkImageView.layer.cornerRadius = 50
+        fanArtworkImageView.layer.cornerRadius = 30
         fanArtworkImageView.contentMode = .scaleAspectFill
         
         fanNameLabel.text = input.name

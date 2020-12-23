@@ -88,7 +88,7 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         playImageView.image = UIImage(named: "play")
     }
     
-    func comment(_ listener: @escaping () -> Void) {
+    func comment(_ listener: @escaping (ReactionButtonView.ListenerType) -> Void) {
         commentReactionView.listen(listener)
     }
 }

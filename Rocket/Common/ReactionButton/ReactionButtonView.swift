@@ -15,7 +15,8 @@ final class ReactionButtonView: UIView {
 
     var input: Input!
 
-    private var button: UIButton!
+    private var reactionButton: UIButton!
+    private var numButton: UIButton!
     private var reactionImageView: UIImageView!
     private var numOfReaction: UILabel!
 
@@ -59,10 +60,15 @@ final class ReactionButtonView: UIView {
         numOfReaction.font = style.font.small.get()
         numOfReaction.textAlignment = .left
 
-        button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(button)
-        button.addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
+        reactionButton = UIButton()
+        reactionButton.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(reactionButton)
+        reactionButton.addTarget(self, action: #selector(reactionButtonTapped), for: .touchUpInside)
+        
+        numButton = UIButton()
+        numButton.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(numButton)
+        numButton.addTarget(self, action: #selector(numButtonTapped), for: .touchUpInside)
 
         let constraints = [
             topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -78,14 +84,19 @@ final class ReactionButtonView: UIView {
             reactionImageView.heightAnchor.constraint(equalTo: reactionImageView.widthAnchor),
 
             numOfReaction.leftAnchor.constraint(
-                equalTo: reactionImageView.rightAnchor, constant: 4),
+                equalTo: reactionImageView.rightAnchor, constant: 8),
             numOfReaction.rightAnchor.constraint(equalTo: rightAnchor, constant: 8),
             numOfReaction.centerYAnchor.constraint(equalTo: centerYAnchor),
 
-            button.topAnchor.constraint(equalTo: topAnchor),
-            button.bottomAnchor.constraint(equalTo: bottomAnchor),
-            button.leftAnchor.constraint(equalTo: leftAnchor),
-            button.rightAnchor.constraint(equalTo: rightAnchor),
+            reactionButton.topAnchor.constraint(equalTo: reactionImageView.topAnchor),
+            reactionButton.bottomAnchor.constraint(equalTo: reactionImageView.bottomAnchor),
+            reactionButton.leftAnchor.constraint(equalTo: reactionImageView.leftAnchor),
+            reactionButton.rightAnchor.constraint(equalTo: reactionImageView.rightAnchor),
+            
+            numButton.topAnchor.constraint(equalTo: numOfReaction.topAnchor),
+            numButton.bottomAnchor.constraint(equalTo: numOfReaction.bottomAnchor),
+            numButton.leftAnchor.constraint(equalTo: numOfReaction.leftAnchor),
+            numButton.rightAnchor.constraint(equalTo: numOfReaction.rightAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -98,13 +109,26 @@ final class ReactionButtonView: UIView {
     func updateImage(image: UIImage?) {
         self.reactionImageView.image = image
     }
-
-    @objc private func touchUpInside() {
-        self.listener()
+    
+    func updateText(text: String) {
+        self.numOfReaction.text = text
     }
 
-    private var listener: () -> Void = {}
-    func listen(_ listener: @escaping () -> Void) {
+    @objc private func reactionButtonTapped() {
+        self.listener(.reaction)
+    }
+    
+    @objc private func numButtonTapped() {
+        self.listener(.num)
+    }
+    
+    enum ListenerType {
+        case num
+        case reaction
+    }
+
+    private var listener: (ListenerType) -> Void = { type in }
+    func listen(_ listener: @escaping (ListenerType) -> Void) {
         self.listener = listener
     }
 }

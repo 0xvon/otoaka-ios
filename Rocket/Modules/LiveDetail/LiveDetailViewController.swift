@@ -15,6 +15,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     var input: Live!
     var isLiked: Bool!
     var hasTicket: Bool!
+    var participants: Int = 0
     enum UserType {
         case fan
         case group
@@ -25,14 +26,17 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     var feeds: [ArtistFeed] = []
     
     @IBOutlet weak var liveDetailHeader: LiveDetailHeaderView!
-    @IBOutlet weak var likeButtonView: ReactionButtonView!
-    @IBOutlet weak var commentButtonView: ReactionButtonView!
-    @IBOutlet weak var buyTicketButtonView: Button!
+    
     @IBOutlet weak var scrollableView: UIView!
-    @IBOutlet weak var contentsTableView: UITableView!
     @IBOutlet weak var verticalScrollView: UIScrollView!
 
     private var isOpened: Bool = false
+    private var reactionStackView: UIStackView!
+    private var likeButtonView: ReactionButtonView!
+    private var commentButtonView: ReactionButtonView!
+    private var buyTicketButtonView: Button!
+    private var numOfParticipantView: ReactionButtonView!
+    private var contentsTableView: UITableView!
     private var creationView: UIView!
     private var creationViewHeightConstraint: NSLayoutConstraint!
     private var openButtonView: CreateButton!
@@ -79,6 +83,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 DispatchQueue.main.async {
                     self.input = liveDetail.live
                     self.isLiked = liveDetail.isLiked
+                    self.participants = liveDetail.participants
                     self.hasTicket = liveDetail.hasTicket
                     self.inject()
                 }
@@ -95,6 +100,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .reserveTicket(let ticket):
                 DispatchQueue.main.async {
                     self.hasTicket = true
+                    self.participants += 1
                     self.inject()
                 }
             case .likeLive:
@@ -124,22 +130,47 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         verticalScrollView.refreshControl = UIRefreshControl()
         verticalScrollView.refreshControl?.addTarget(
             self, action: #selector(refreshLive(sender:)), for: .valueChanged)
+        
+        reactionStackView = UIStackView()
+        reactionStackView.translatesAutoresizingMaskIntoConstraints = false
+        reactionStackView.axis = .horizontal
+        reactionStackView.distribution = .fill
+        scrollableView.addSubview(reactionStackView)
 
-        likeButtonView.inject(input: (text: "10000", image: UIImage(named: "heart")))
-        likeButtonView.listen {
-            self.likeButtonTapped()
+        likeButtonView = ReactionButtonView(input: (text: "10000", image: UIImage(named: "heart")))
+        likeButtonView.translatesAutoresizingMaskIntoConstraints = false
+        likeButtonView.listen { type in
+            switch type {
+            case .reaction:
+                self.likeButtonTapped()
+            case .num:
+                self.numOfLikeButtonTapped()
+            }
         }
-
-//        commentButtonView.isHidden = true
-//        commentButtonView.inject(input: (text: "500", image: UIImage(named: "comment")))
+        reactionStackView.addArrangedSubview(likeButtonView)
+        
+        commentButtonView = ReactionButtonView(input: (text: "", image: nil))
+        commentButtonView.translatesAutoresizingMaskIntoConstraints = false
+        reactionStackView.addArrangedSubview(commentButtonView)
 //        commentButtonView.listen {
 //            self.commentButtonTapped()
 //        }
 
-        buyTicketButtonView.inject(input: (text: "￥1,500", image: UIImage(named: "ticket")))
+        buyTicketButtonView = Button(input: (text: "￥1,500", image: UIImage(named: "ticket")))
+        buyTicketButtonView.translatesAutoresizingMaskIntoConstraints = false
+        buyTicketButtonView.layer.cornerRadius = 24
         buyTicketButtonView.listen {
             self.buyTicketButtonTapped()
         }
+        reactionStackView.addArrangedSubview(buyTicketButtonView)
+        
+        numOfParticipantView = ReactionButtonView(input: (text: "", image: nil))
+        numOfParticipantView.translatesAutoresizingMaskIntoConstraints = false
+        numOfParticipantView.listen { _ in
+
+            self.numOfParticipantsButtonTapped()
+        }
+        scrollableView.addSubview(numOfParticipantView)
         
         viewModel.getLive()
         viewModel.getGroupFeed(groupId: input.hostGroup.id)
@@ -160,12 +191,42 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             self?.likeBand(cellIndex: cellIndex)
         }
 
+        contentsTableView = UITableView(frame: .zero, style: .grouped)
+        contentsTableView.translatesAutoresizingMaskIntoConstraints = false
         contentsTableView.delegate = self
+        contentsTableView.separatorStyle = .none
         contentsTableView.dataSource = self
         contentsTableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
         contentsTableView.backgroundColor = style.color.background.get()
+        scrollableView.addSubview(contentsTableView)
+        
+        scrollableView.bringSubviewToFront(numOfParticipantView)
+        
+        let constraints = [
+            reactionStackView.topAnchor.constraint(equalTo: liveDetailHeader.bottomAnchor, constant: 12),
+            reactionStackView.rightAnchor.constraint(equalTo: scrollableView.rightAnchor, constant: -16),
+            reactionStackView.leftAnchor.constraint(equalTo: scrollableView.leftAnchor, constant: 16),
+            
+            likeButtonView.widthAnchor.constraint(equalToConstant: 80),
+            
+            commentButtonView.widthAnchor.constraint(greaterThanOrEqualToConstant: 80),
+            
+            buyTicketButtonView.widthAnchor.constraint(equalToConstant: 150),
+            buyTicketButtonView.heightAnchor.constraint(equalToConstant: 48),
+            
+            numOfParticipantView.topAnchor.constraint(equalTo: reactionStackView.bottomAnchor, constant: 4),
+            numOfParticipantView.widthAnchor.constraint(equalToConstant: 80),
+            numOfParticipantView.heightAnchor.constraint(equalToConstant: 24),
+            numOfParticipantView.centerXAnchor.constraint(equalTo: buyTicketButtonView.centerXAnchor),
+            
+            contentsTableView.leftAnchor.constraint(equalTo: scrollableView.leftAnchor, constant: 16),
+            contentsTableView.rightAnchor.constraint(equalTo: scrollableView.rightAnchor, constant: -16),
+            contentsTableView.topAnchor.constraint(equalTo: reactionStackView.bottomAnchor, constant: 48),
+            contentsTableView.heightAnchor.constraint(equalToConstant: 300),
+        ]
+        NSLayoutConstraint.activate(constraints)
 
     }
 
@@ -176,6 +237,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         self.setupCreation()
         liveDetailHeader.update(
             input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: self.performers))
+        numOfParticipantView.updateText(text: "\(self.participants)人予約済み")
     }
     
     func injectPerformers() {
@@ -442,6 +504,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         }
     }
     
+    private func numOfParticipantsButtonTapped() {
+        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .tickets(input.id))
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
     private func likeButtonViewStyle() {
         if self.isLiked {
             self.likeButtonView.updateImage(image: UIImage(named: "heart_fill"))
@@ -516,6 +583,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     private func likeBand(cellIndex: Int) {
         viewModel.followGroup(groupId: self.performers[cellIndex].id, cellIndex: cellIndex)
+    }
+    
+    private func numOfLikeButtonTapped() {
+//        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: )
     }
 
     private func likeButtonTapped() {

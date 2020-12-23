@@ -18,6 +18,7 @@ final class LiveDetailHeaderView: UIView {
     var input: Input!
     var listen: ((Int) -> Void)?
     var like: ((Int) -> Void)?
+    var numOfLike: ((Int) -> Void)?
     var pushToBandViewController: ((UIViewController) -> Void)?
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -280,8 +281,14 @@ extension LiveDetailHeaderView: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = input.groups[indexPath.section]
         let cell = tableView.reuse(BandBannerCell.self, input: group, for: indexPath)
-        cell.like { [weak self] in
-            self?.like?(indexPath.section)
+        cell.like { [weak self] type in
+            switch type {
+            case .reaction:
+                self?.like?(indexPath.section)
+            case .num:
+                self?.numOfLike?(indexPath.section)
+            }
+            
         }
         cell.listen { [weak self] in
             self?.listen?(indexPath.section)

@@ -11,10 +11,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="LiveDetailViewController" customModule="Rocket" customModuleProvider="target">
             <connections>
-                <outlet property="buyTicketButtonView" destination="bhZ-nE-XHh" id="Mgm-N1-4RB"/>
-                <outlet property="commentButtonView" destination="jcN-Qi-Srz" id="R2C-O7-fUl"/>
-                <outlet property="contentsTableView" destination="kYY-ZV-EDv" id="95P-be-Hql"/>
-                <outlet property="likeButtonView" destination="Cgy-fc-UFe" id="APl-nl-rPL"/>
                 <outlet property="liveDetailHeader" destination="Juf-Iz-Eis" id="BVN-MA-ZKg"/>
                 <outlet property="scrollableView" destination="bJH-Ft-AOx" id="MhX-nW-mG8"/>
                 <outlet property="verticalScrollView" destination="eVc-ff-POa" id="15a-NN-1i6"/>
@@ -38,50 +34,13 @@
                                         <constraint firstAttribute="height" constant="225" id="nRb-kc-lp7"/>
                                     </constraints>
                                 </view>
-                                <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="7bo-7i-bZy">
-                                    <rect key="frame" x="16" y="237" width="382" height="48"/>
-                                    <subviews>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cgy-fc-UFe" customClass="ReactionButtonView" customModule="Rocket" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="80" height="48"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="80" id="UaU-i5-b2l"/>
-                                            </constraints>
-                                        </view>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jcN-Qi-Srz" customClass="ReactionButtonView" customModule="Rocket" customModuleProvider="target">
-                                            <rect key="frame" x="88" y="0.0" width="136" height="48"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="az6-9M-HxI"/>
-                                            </constraints>
-                                        </view>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bhZ-nE-XHh" customClass="Button" customModule="Rocket" customModuleProvider="target">
-                                            <rect key="frame" x="232" y="0.0" width="150" height="48"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="48" id="KmW-7R-MUZ"/>
-                                                <constraint firstAttribute="width" constant="150" id="dda-AY-0Ek"/>
-                                            </constraints>
-                                        </view>
-                                    </subviews>
-                                </stackView>
-                                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="kYY-ZV-EDv">
-                                    <rect key="frame" x="16" y="309" width="382" height="262"/>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="262" id="wmx-iY-cw3"/>
-                                    </constraints>
-                                </tableView>
                             </subviews>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstItem="Juf-Iz-Eis" firstAttribute="leading" secondItem="bJH-Ft-AOx" secondAttribute="leading" id="0R5-7N-hI0"/>
-                                <constraint firstAttribute="trailing" secondItem="kYY-ZV-EDv" secondAttribute="trailing" constant="16" id="3Ni-ui-40g"/>
                                 <constraint firstAttribute="height" constant="1026" id="C3W-nX-ijL"/>
-                                <constraint firstItem="7bo-7i-bZy" firstAttribute="top" secondItem="Juf-Iz-Eis" secondAttribute="bottom" constant="12" id="LJn-ED-KbU"/>
-                                <constraint firstAttribute="trailing" secondItem="7bo-7i-bZy" secondAttribute="trailing" constant="16" id="SQu-yb-Ze6"/>
-                                <constraint firstItem="kYY-ZV-EDv" firstAttribute="top" secondItem="7bo-7i-bZy" secondAttribute="bottom" constant="24" id="jXn-SR-i4Y"/>
-                                <constraint firstItem="kYY-ZV-EDv" firstAttribute="leading" secondItem="bJH-Ft-AOx" secondAttribute="leading" constant="16" id="q3E-hG-C0u"/>
                                 <constraint firstItem="Juf-Iz-Eis" firstAttribute="top" secondItem="bJH-Ft-AOx" secondAttribute="top" id="tfR-B4-gMo"/>
                                 <constraint firstAttribute="trailing" secondItem="Juf-Iz-Eis" secondAttribute="trailing" id="xya-3M-vGR"/>
-                                <constraint firstItem="7bo-7i-bZy" firstAttribute="leading" secondItem="bJH-Ft-AOx" secondAttribute="leading" constant="16" id="y89-Va-J7D"/>
                             </constraints>
                         </view>
                     </subviews>
