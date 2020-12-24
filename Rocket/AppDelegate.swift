@@ -15,7 +15,7 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    let dependencyProvider: DependencyProvider = .make()
+    let dependencyProvider: DependencyProvider = .make(config: DevelopmentConfig.self)
 
     func application(
         _ application: UIApplication,

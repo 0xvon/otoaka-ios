@@ -14,7 +14,7 @@
 	<string>6.0</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Rocketにカメラロールへのアクセスを許可します</string>
-	<key>LSApplicationQueriesSchemas</key>
+	<key>LSApplicationQueriesSchemas</key>
 	<string>spotify</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
