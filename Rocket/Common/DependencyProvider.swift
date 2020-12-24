@@ -64,7 +64,7 @@ extension DependencyProvider {
         let auth = AWSCognitoAuth(forKey: cognitoAuthKey)
         let wrapper = CognitoAuthWrapper(awsCognitoAuth: auth)
         let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: wrapper)
-        let youTubeDataApiClient = YouTubeDataAPIClient(baseUrl: URL(string: "https://www.googleapis.com/youtube/v3")!, apiKey: config.youTubeApiKey)
+        let youTubeDataApiClient = YouTubeDataAPIClient(baseUrl: URL(string: "https://www.googleapis.com")!, apiKey: config.youTubeApiKey)
         return DependencyProvider(auth: auth, apiClient: apiClient, youTubeDataApiClient: youTubeDataApiClient, s3Bucket: config.s3Bucket)
     }
 }

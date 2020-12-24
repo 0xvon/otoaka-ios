@@ -87,6 +87,7 @@ class YouTubeDataAPIClient {
                         let response: E.Response = try decoder.decode(E.Response.self, from: data)
                         callback(.success(response))
                     } else {
+                        print(httpResponse.statusCode)
                         let errorMessage = try decoder.decode(String.self, from: data)
                         callback(
                             .failure(
@@ -113,6 +114,8 @@ public struct ListChannel: EndpointProtocol {
         @Query public var channelId: String
         @Query public var part: String
         @Query public var key: String
+        @Query public var maxResults: Int?
+        @Query public var order: String?
         public init() {}
     }
     public static let method: HTTPMethod = .get
@@ -121,8 +124,9 @@ public struct ListChannel: EndpointProtocol {
 public struct ChannelDetail: Codable {
     public var kind: String
     public var etag: String
-    public var nextPageToken: String
-    public var regionCode: String
+    public var nextPageToken: String?
+    public var prevPageToken: String?
+    public var regionCode: String?
     public var pageInfo: PageInfo
     public var items: [ChannelItem]
     
@@ -144,13 +148,13 @@ public struct ChannelDetail: Codable {
         
         public struct ItemSnippet: Codable {
             public var publishedAt: Date
-            public var channelId: String
-            public var title: String
-            public var description: String
+            public var channelId: String?
+            public var title: String?
+            public var description: String?
             public var thumbnails: Tumbnails
             public var channelTitle: String
-            public var liveBroadcastContent: String
-            public var publishTime: Date
+            public var liveBroadcastContent: String?
+            public var publishTime: Date?
                 
             public struct Tumbnails: Codable {
                 public var `default`: ThumbnailItem

@@ -22,6 +22,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var input: Input!
     var lives: [Live] = []
     var feeds: [ArtistFeed] = []
+    var groupItem: ChannelDetail.ChannelItem? = nil
     var isFollowing: Bool = false
     var followersCount: Int = 0
     var userType: UserType!
@@ -49,6 +50,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     lazy var viewModel = BandDetailViewModel(
         apiClient: dependencyProvider.apiClient,
+        youTubeDataAPIClient: dependencyProvider.youTubeDataApiClient,
         auth: dependencyProvider.auth,
         group: self.input,
         outputHander: { output in
@@ -66,6 +68,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     }
                     self.setupLikeView()
                     self.setupCreation()
+                    self.inject()
+                }
+            case .getChart(let items):
+                DispatchQueue.main.async {
+                    self.groupItem = items.first
                     self.inject()
                 }
             case .getGroupLives(let lives):
@@ -129,11 +136,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     func setup() {
         view.backgroundColor = style.color.background.get()
-        headerView.inject(input: input)
+        headerView.inject(input: (group: input, groupItem: self.groupItem))
         headerView.listen { listenType in
             switch listenType {
-            case .play:
-                print("play")
+            case .play(let url):
+                let safari = SFSafariViewController(url: url)
+                safari.dismissButtonStyle = .close
+                self.present(safari, animated: true, completion: nil)
             case .seeMoreCharts:
                 let vc = ChartListViewController(dependencyProvider: self.dependencyProvider, input: self.input)
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -179,6 +188,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         viewModel.getGroup()
         viewModel.getGroupFeed()
         viewModel.getGroupLive()
+        viewModel.getChart()
 
         contentsTableView.delegate = self
         contentsTableView.separatorStyle = .none
@@ -441,7 +451,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func inject() {
-        headerView.update(input: input)
+        headerView.update(input: (group: input, groupItem: self.groupItem))
     }
 
     @objc private func refreshGroups(sender: UIRefreshControl) {

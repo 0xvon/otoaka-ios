@@ -14,6 +14,7 @@ class BandDetailViewModel {
         case getGroup(GetGroup.Response)
         case getGroupLives([Live])
         case getGroupFeeds([ArtistFeed])
+        case getChart([ChannelDetail.ChannelItem])
         case follow
         case unfollow
         case inviteGroup(InviteGroup.Invitation)
@@ -22,14 +23,16 @@ class BandDetailViewModel {
 
     let auth: AWSCognitoAuth
     let apiClient: APIClient
+    let youTubeDataAPIClient: YouTubeDataAPIClient
     let group: Group
     let outputHandler: (Output) -> Void
 
     init(
-        apiClient: APIClient, auth: AWSCognitoAuth, group: Group,
+        apiClient: APIClient, youTubeDataAPIClient: YouTubeDataAPIClient, auth: AWSCognitoAuth, group: Group,
         outputHander: @escaping (Output) -> Void
     ) {
         self.apiClient = apiClient
+        self.youTubeDataAPIClient = youTubeDataAPIClient
         self.auth = auth
         self.group = group
         self.outputHandler = outputHander
@@ -112,6 +115,26 @@ class BandDetailViewModel {
                 self.outputHandler(.getGroupFeeds(res.items))
             case .failure(let error):
                 self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func getChart() {
+        if let youtubeChannelId = self.group.youtubeChannelId {
+            let request = Empty()
+            var uri = ListChannel.URI()
+            uri.key = youTubeDataAPIClient.getApiKey()
+            uri.channelId = youtubeChannelId
+            uri.part = "snippet"
+            uri.maxResults = 1
+            uri.order = "viewCount"
+            youTubeDataAPIClient.request(ListChannel.self, request: request, uri: uri) { result in
+                switch result {
+                case .success(let res):
+                    self.outputHandler(.getChart(res.items))
+                case .failure(let error):
+                    self.outputHandler(.error(error))
+                }
             }
         }
     }

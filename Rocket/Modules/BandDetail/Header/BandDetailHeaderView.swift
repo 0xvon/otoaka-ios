@@ -10,7 +10,10 @@ import UIKit
 import SafariServices
 
 final class BandDetailHeaderView: UIView {
-    typealias Input = Group
+    typealias Input = (
+        group: Group,
+        groupItem: ChannelDetail.ChannelItem?
+    )
 
     var input: Input!
     let dateFormatter: DateFormatter = {
@@ -25,7 +28,7 @@ final class BandDetailHeaderView: UIView {
     }
     
     enum ListenType {
-        case play
+        case play(URL)
         case seeMoreCharts
         case youtube(URL)
         case twitter(URL)
@@ -68,14 +71,20 @@ final class BandDetailHeaderView: UIView {
     func update(input: Input) {
         self.input = input
 
-        bandImageView.loadImageAsynchronously(url: input.artworkURL)
-        bandNameLabel.text = input.name
+        bandImageView.loadImageAsynchronously(url: input.group.artworkURL)
+        bandNameLabel.text = input.group.name
         let startYear: String =
-            (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"
+            (input.group.since != nil) ? dateFormatter.string(from: input.group.since!) : "不明"
         dateBadgeView.updateText(text: startYear)
-        mapBadgeView.updateText(text: input.hometown ?? "不明")
+        mapBadgeView.updateText(text: input.group.hometown ?? "不明")
         artworkImageView.image = UIImage(named: "track")
-        biographyTextView.text = input.biography
+        biographyTextView.text = input.group.biography
+        if let groupItem = input.groupItem {
+            artworkImageView.loadImageAsynchronously(url: URL(string: groupItem.snippet.thumbnails.high.url))
+            playButton.isHidden = false
+            releasedDataLabel.text = self.dateFormatter.string(from: groupItem.snippet.publishedAt)
+            trackNameLabel.text = groupItem.snippet.title
+        }
     }
 
     func inject(input: Input) {
@@ -95,7 +104,7 @@ final class BandDetailHeaderView: UIView {
 
         bandImageView = UIImageView()
         bandImageView.translatesAutoresizingMaskIntoConstraints = false
-        bandImageView.loadImageAsynchronously(url: input.artworkURL)
+        bandImageView.loadImageAsynchronously(url: input.group.artworkURL)
         bandImageView.contentMode = .scaleAspectFill
         bandImageView.layer.opacity = 0.6
         bandImageView.clipsToBounds = true
@@ -133,7 +142,7 @@ final class BandDetailHeaderView: UIView {
 
         bandNameLabel = UILabel()
         bandNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        bandNameLabel.text = input.name
+        bandNameLabel.text = input.group.name
         bandNameLabel.font = style.font.xlarge.get()
         bandNameLabel.textColor = style.color.main.get()
         bandNameLabel.lineBreakMode = .byWordWrapping
@@ -142,12 +151,12 @@ final class BandDetailHeaderView: UIView {
         bandNameLabel.sizeToFit()
         bandInformationView.addSubview(bandNameLabel)
         let startYear: String =
-            (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"
+            (input.group.since != nil) ? dateFormatter.string(from: input.group.since!) : "不明"
         dateBadgeView = BadgeView(input: (text: startYear, image: UIImage(named: "calendar")))
         bandInformationView.addSubview(dateBadgeView)
 
         mapBadgeView = BadgeView(
-            input: (text: input.hometown ?? "不明", image: UIImage(named: "map")))
+            input: (text: input.group.hometown ?? "不明", image: UIImage(named: "map")))
         bandInformationView.addSubview(mapBadgeView)
         
         labelBadgeView = BadgeView(input: (text: "Intact Records", image: UIImage(named: "record")))
@@ -170,13 +179,14 @@ final class BandDetailHeaderView: UIView {
 
         artworkImageView = UIImageView()
         artworkImageView.translatesAutoresizingMaskIntoConstraints = false
-        artworkImageView.image = UIImage(named: "track")
+        artworkImageView.image = nil
         artworkImageView.layer.cornerRadius = 10
         artworkImageView.contentMode = .scaleAspectFill
         artworkImageView.clipsToBounds = true
         trackInformationView.addSubview(artworkImageView)
 
         playButton = Button(input: (text: "再生", image: UIImage(named: "play")))
+        playButton.isHidden = true
         playButton.layer.cornerRadius = 18
         playButton.translatesAutoresizingMaskIntoConstraints = false
         playButton.listen {
@@ -186,19 +196,20 @@ final class BandDetailHeaderView: UIView {
 
         trackNameLabel = UILabel()
         trackNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        trackNameLabel.text = "不可逆リプレイス"
+        trackNameLabel.text = ""
         trackNameLabel.font = style.font.regular.get()
         trackNameLabel.textColor = style.color.main.get()
         trackInformationView.addSubview(trackNameLabel)
 
         releasedDataLabel = UILabel()
         releasedDataLabel.translatesAutoresizingMaskIntoConstraints = false
-        releasedDataLabel.text = "2016年"
+        releasedDataLabel.text = ""
         releasedDataLabel.font = style.font.regular.get()
         releasedDataLabel.textColor = style.color.main.get()
         trackInformationView.addSubview(releasedDataLabel)
 
         seeMoreTracksButton = UIButton()
+        seeMoreTracksButton.isHidden = true
         seeMoreTracksButton.translatesAutoresizingMaskIntoConstraints = false
         seeMoreTracksButton.setTitle("もっと見る", for: .normal)
         seeMoreTracksButton.setTitleColor(style.color.main.get(), for: .normal)
@@ -264,7 +275,7 @@ final class BandDetailHeaderView: UIView {
         biographyTextView.isEditable = false
         biographyTextView.font = style.font.regular.get()
         biographyView.addSubview(biographyTextView)
-        biographyTextView.text = input.biography
+        biographyTextView.text = input.group.biography
 
         let constraints = [
             topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -336,6 +347,7 @@ final class BandDetailHeaderView: UIView {
 
             trackNameLabel.leftAnchor.constraint(equalTo: playButton.leftAnchor),
             trackNameLabel.topAnchor.constraint(equalTo: playButton.bottomAnchor, constant: 8),
+            trackNameLabel.rightAnchor.constraint(equalTo: trackInformationView.rightAnchor, constant: -16),
 
             releasedDataLabel.leftAnchor.constraint(equalTo: playButton.leftAnchor),
             releasedDataLabel.topAnchor.constraint(
@@ -366,7 +378,9 @@ final class BandDetailHeaderView: UIView {
     }
 
     private func play() {
-        self.listener(.play)
+        if let groupItem = input.groupItem {
+            self.listener(.play(URL(string: "https://youtube.com/watch?v=\(groupItem.id.videoId)")!))
+        }
     }
 
     @objc private func nextPage() {
@@ -380,7 +394,7 @@ final class BandDetailHeaderView: UIView {
     }
 
     @objc private func twitterButtonTapped(_ sender: UIButton) {
-        if let twitterId = input.twitterId {
+        if let twitterId = input.group.twitterId {
             if let url = URL(string: "https://twitter.com/\(twitterId)") {
                 self.listener(.twitter(url))
             }
@@ -388,7 +402,7 @@ final class BandDetailHeaderView: UIView {
     }
     
     @objc private func youtubeButtonTapped(_ sender: UIButton) {
-        if let youtubeChannelId = input.youtubeChannelId {
+        if let youtubeChannelId = input.group.youtubeChannelId {
             if let url = URL(string: "https://www.youtube.com/channel/\(youtubeChannelId)") {
                 self.listener(.youtube(url))
             }
