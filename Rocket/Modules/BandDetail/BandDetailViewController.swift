@@ -520,7 +520,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func createMessage() {
-        print("create message")
+        if let twitterId = input.twitterId {
+            let safari = SFSafariViewController(url: URL(string: "https://twitter.com/\(twitterId)")!)
+            safari.dismissButtonStyle = .close
+            present(safari, animated: true, completion: nil)
+        }
     }
 
     func createShare() {

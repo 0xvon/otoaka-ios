@@ -77,7 +77,6 @@ final class BandDetailHeaderView: UIView {
             (input.group.since != nil) ? dateFormatter.string(from: input.group.since!) : "不明"
         dateBadgeView.updateText(text: startYear)
         mapBadgeView.updateText(text: input.group.hometown ?? "不明")
-        artworkImageView.image = UIImage(named: "track")
         biographyTextView.text = input.group.biography
         if let groupItem = input.groupItem {
             artworkImageView.loadImageAsynchronously(url: URL(string: groupItem.snippet.thumbnails.high.url))
