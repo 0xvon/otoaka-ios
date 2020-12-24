@@ -498,7 +498,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     
     private func showInviteCode(invitationCode: String) {
         let alertController = UIAlertController(
-            title: "招待コード", message: invitationCode, preferredStyle: UIAlertController.Style.alert)
+            title: "招待コード", message: nil, preferredStyle: UIAlertController.Style.alert)
 
         let cancelAction = UIAlertAction(
             title: "OK", style: UIAlertAction.Style.cancel,
@@ -506,7 +506,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 print("close")
             })
         alertController.addAction(cancelAction)
-
+        
+        alertController.addTextField(configurationHandler: {(text: UITextField!) -> Void in
+//            text.isUserInteractionEnabled = false
+            text.delegate = self
+            text.text = invitationCode
+        })
+        
         self.present(alertController, animated: true, completion: nil)
     }
     
@@ -701,6 +707,12 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         let feed = self.feeds[0]
         let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
         present(vc, animated: true, completion: nil)
+    }
+}
+
+extension BandDetailViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        return false
     }
 }
 
