@@ -92,20 +92,20 @@ final class CreateBandViewController: UIViewController, Instantiable {
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
-        displayNameInputView = TextFieldView(input: (placeholder:"バンド名", maxLength: 20))
+        displayNameInputView = TextFieldView(input: (section: "バンド名", text: nil, maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(displayNameInputView)
 
-        englishNameInputView = TextFieldView(input: (placeholder:"English Name", maxLength: 40))
+        englishNameInputView = TextFieldView(input: (section: "English Name", text: nil, maxLength: 40))
         englishNameInputView.keyboardType(true)
         englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(englishNameInputView)
 
-        biographyInputView = InputTextView(input: (text: "bio", maxLength: 200))
+        biographyInputView = InputTextView(input: (section: "bio", text: nil, maxLength: 200))
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(biographyInputView)
 
-        sinceInputView = TextFieldView(input: (placeholder: "結成年", maxLength: 20))
+        sinceInputView = TextFieldView(input: (section: "結成年", text: nil, maxLength: 20))
         sinceInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(sinceInputView)
 
@@ -115,7 +115,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         sincePickerView.delegate = self
         sinceInputView.selectInputView(inputView: sincePickerView)
 
-        hometownInputView = TextFieldView(input: (placeholder: "出身地", maxLength: 20))
+        hometownInputView = TextFieldView(input: (section: "出身地", text: nil,  maxLength: 20))
         hometownInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(hometownInputView)
 
@@ -125,11 +125,11 @@ final class CreateBandViewController: UIViewController, Instantiable {
         hometownPickerView.delegate = self
         hometownInputView.selectInputView(inputView: hometownPickerView)
     
-        youTubeIdInputView = TextFieldView(input: (placeholder: "YouTube Channel ID(スキップ可)", maxLength: 40))
+        youTubeIdInputView = TextFieldView(input: (section: "YouTube Channel ID(スキップ可)",text: nil,  maxLength: 40))
         youTubeIdInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(youTubeIdInputView)
         
-        twitterIdInputView = TextFieldView(input: (placeholder: "Twitter ID(@を省略して入力してください)", maxLength: 20))
+        twitterIdInputView = TextFieldView(input: (section: "Twitter ID(@を省略して入力してください)", text: nil, maxLength: 20))
         twitterIdInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(twitterIdInputView)
 
@@ -183,14 +183,14 @@ final class CreateBandViewController: UIViewController, Instantiable {
             displayNameInputView.rightAnchor.constraint(
                 equalTo: mainView.rightAnchor, constant: -16),
             displayNameInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            displayNameInputView.heightAnchor.constraint(equalToConstant: 50),
+            displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             englishNameInputView.topAnchor.constraint(
                 equalTo: displayNameInputView.bottomAnchor, constant: 48),
             englishNameInputView.rightAnchor.constraint(
                 equalTo: mainView.rightAnchor, constant: -16),
             englishNameInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            englishNameInputView.heightAnchor.constraint(equalToConstant: 50),
+            englishNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             biographyInputView.topAnchor.constraint(
                 equalTo: englishNameInputView.bottomAnchor, constant: 48),
@@ -202,25 +202,25 @@ final class CreateBandViewController: UIViewController, Instantiable {
                 equalTo: biographyInputView.bottomAnchor, constant: 48),
             sinceInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             sinceInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            sinceInputView.heightAnchor.constraint(equalToConstant: 50),
+            sinceInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             hometownInputView.topAnchor.constraint(
                 equalTo: sinceInputView.bottomAnchor, constant: 48),
             hometownInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             hometownInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            hometownInputView.heightAnchor.constraint(equalToConstant: 50),
+            hometownInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
             
             youTubeIdInputView.topAnchor.constraint(
                 equalTo: hometownInputView.bottomAnchor, constant: 48),
             youTubeIdInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             youTubeIdInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            youTubeIdInputView.heightAnchor.constraint(equalToConstant: 50),
+            youTubeIdInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
             
             twitterIdInputView.topAnchor.constraint(
                 equalTo: youTubeIdInputView.bottomAnchor, constant: 48),
             twitterIdInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             twitterIdInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            twitterIdInputView.heightAnchor.constraint(equalToConstant: 50),
+            twitterIdInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             thumbnailInputView.widthAnchor.constraint(equalToConstant: 120),
             thumbnailInputView.heightAnchor.constraint(equalToConstant: 150),

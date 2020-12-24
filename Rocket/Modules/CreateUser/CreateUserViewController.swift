@@ -122,7 +122,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         fanInputs.translatesAutoresizingMaskIntoConstraints = false
         profileInputView.addSubview(fanInputs)
 
-        nameInputView = TextFieldView(input: (placeholder: "表示名", maxLength: 20))
+        nameInputView = TextFieldView(input: (section: "表示名", text: nil, maxLength: 20))
         nameInputView.translatesAutoresizingMaskIntoConstraints = false
         fanInputs.addSubview(nameInputView)
 
@@ -131,11 +131,11 @@ final class CreateUserViewController: UIViewController, Instantiable {
         bandInputs.translatesAutoresizingMaskIntoConstraints = false
         profileInputView.addSubview(bandInputs)
 
-        artistNameInputView = TextFieldView(input: (placeholder: "表示名", maxLength: 20))
+        artistNameInputView = TextFieldView(input: (section: "表示名", text: nil, maxLength: 20))
         artistNameInputView.translatesAutoresizingMaskIntoConstraints = false
         bandInputs.addSubview(artistNameInputView)
 
-        partInputView = TextFieldView(input: (placeholder: "パート", maxLength: 20))
+        partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
         partInputView.setText(text: parts[0])
         partInputView.translatesAutoresizingMaskIntoConstraints = false
         bandInputs.addSubview(partInputView)
@@ -210,7 +210,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
             nameInputView.topAnchor.constraint(equalTo: fanInputs.topAnchor, constant: 16),
             nameInputView.rightAnchor.constraint(equalTo: fanInputs.rightAnchor, constant: -16),
             nameInputView.leftAnchor.constraint(equalTo: fanInputs.leftAnchor, constant: 16),
-            nameInputView.heightAnchor.constraint(equalToConstant: 50),
+            nameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             bandInputs.topAnchor.constraint(equalTo: profileInputView.topAnchor),
             bandInputs.bottomAnchor.constraint(equalTo: profileInputView.bottomAnchor),
@@ -221,13 +221,13 @@ final class CreateUserViewController: UIViewController, Instantiable {
             artistNameInputView.rightAnchor.constraint(
                 equalTo: bandInputs.rightAnchor, constant: -16),
             artistNameInputView.leftAnchor.constraint(equalTo: bandInputs.leftAnchor, constant: 16),
-            artistNameInputView.heightAnchor.constraint(equalToConstant: 50),
+            artistNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             partInputView.topAnchor.constraint(
                 equalTo: artistNameInputView.bottomAnchor, constant: 32),
             partInputView.rightAnchor.constraint(equalTo: bandInputs.rightAnchor, constant: -16),
             partInputView.leftAnchor.constraint(equalTo: bandInputs.leftAnchor, constant: 16),
-            partInputView.heightAnchor.constraint(equalToConstant: 50),
+            partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             profileImageView.widthAnchor.constraint(equalToConstant: 120),
             profileImageView.heightAnchor.constraint(equalToConstant: 120),

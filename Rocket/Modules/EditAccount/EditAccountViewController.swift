@@ -81,12 +81,11 @@ final class EditAccountViewController: UIViewController, Instantiable {
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
-        displayNameInputView = TextFieldView(input: (placeholder: "表示名", maxLength: 20))
+        displayNameInputView = TextFieldView(input: (section: "表示名", text: dependencyProvider.user.name, maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
-        displayNameInputView.setText(text: dependencyProvider.user.name)
         mainView.addSubview(displayNameInputView)
 
-        biographyInputView = InputTextView(input: (text: dependencyProvider.user.biography ?? "bio", maxLength: 200) )
+        biographyInputView = InputTextView(input: (section: "bio", text: dependencyProvider.user.biography, maxLength: 200) )
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(biographyInputView)
 
@@ -144,7 +143,7 @@ final class EditAccountViewController: UIViewController, Instantiable {
             displayNameInputView.rightAnchor.constraint(
                 equalTo: mainView.rightAnchor, constant: -16),
             displayNameInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            displayNameInputView.heightAnchor.constraint(equalToConstant: 50),
+            displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             biographyInputView.topAnchor.constraint(
                 equalTo: displayNameInputView.bottomAnchor, constant: 32),
@@ -189,7 +188,7 @@ final class EditAccountViewController: UIViewController, Instantiable {
     func setupPartInput() {
         switch dependencyProvider.user.role {
         case .artist(let artist):
-            partInputView = TextFieldView(input: (placeholder:"パート", maxLength: 20))
+            partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
             partInputView.translatesAutoresizingMaskIntoConstraints = false
             partInputView.setText(text: artist.part)
             mainView.addSubview(partInputView)

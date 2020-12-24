@@ -71,7 +71,7 @@ final class InvitationViewController: UIViewController, Instantiable {
             createBandButton.addTarget(self, action: #selector(createBand(_:)), for: .touchUpInside)
         }
 
-        invitationView.inject(input: (placeholder: "招待コード", maxLength: 60))
+        invitationView.inject(input: (section: "招待コード", text: nil, maxLength: 60))
         registerButtonView.inject(input: (text: "登録", image: nil))
         registerButtonView.listen {
             self.register()

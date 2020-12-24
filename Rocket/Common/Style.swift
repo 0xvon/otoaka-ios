@@ -60,6 +60,7 @@ struct style {
 }
 
 let per = 20
+let textFieldHeight: CGFloat = 60
 
 struct Components {
     let prefectures = [

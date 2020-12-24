@@ -126,7 +126,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
-        hostGroupInputView = TextFieldView(input: (placeholder: "主催バンド", maxLength: 20))
+        hostGroupInputView = TextFieldView(input: (section: "主催バンド", text: nil,  maxLength: 20))
         hostGroupInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(hostGroupInputView)
 
@@ -136,11 +136,11 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         hostGroupPickerView.delegate = self
         hostGroupInputView.selectInputView(inputView: hostGroupPickerView)
 
-        liveTitleInputView = TextFieldView(input: (placeholder: "タイトル", maxLength: 32))
+        liveTitleInputView = TextFieldView(input: (section: "タイトル", text: nil, maxLength: 32))
         liveTitleInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(liveTitleInputView)
 
-        liveStyleInputView = TextFieldView(input: (placeholder: "形式", maxLength: 20))
+        liveStyleInputView = TextFieldView(input: (section: "形式", text: nil, maxLength: 20))
         liveStyleInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(liveStyleInputView)
 
@@ -150,7 +150,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         liveStylePickerView.delegate = self
         liveStyleInputView.selectInputView(inputView: liveStylePickerView)
 
-        livehouseInputView = TextFieldView(input: (placeholder: "会場", maxLength: 40))
+        livehouseInputView = TextFieldView(input: (section: "会場", text: nil, maxLength: 40))
         livehouseInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(livehouseInputView)
 
@@ -160,7 +160,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         livehousePickerView.delegate = self
         livehouseInputView.selectInputView(inputView: livehousePickerView)
 
-        partnerInputView = TextFieldView(input: (placeholder: "対バン相手を追加する", maxLength: 20))
+        partnerInputView = TextFieldView(input: (section: "対バン相手を追加する", text: nil, maxLength: 20))
         partnerInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(partnerInputView)
         
@@ -277,25 +277,25 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             hostGroupInputView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 16),
             hostGroupInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             hostGroupInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            hostGroupInputView.heightAnchor.constraint(equalToConstant: 50),
+            hostGroupInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             liveTitleInputView.topAnchor.constraint(
                 equalTo: hostGroupInputView.bottomAnchor, constant: 24),
             liveTitleInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             liveTitleInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            liveTitleInputView.heightAnchor.constraint(equalToConstant: 50),
+            liveTitleInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             liveStyleInputView.topAnchor.constraint(
                 equalTo: liveTitleInputView.bottomAnchor, constant: 24),
             liveStyleInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             liveStyleInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            liveStyleInputView.heightAnchor.constraint(equalToConstant: 50),
+            liveStyleInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             livehouseInputView.topAnchor.constraint(
                 equalTo: liveStyleInputView.bottomAnchor, constant: 24),
             livehouseInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             livehouseInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            livehouseInputView.heightAnchor.constraint(equalToConstant: 50),
+            livehouseInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             partnerInputView.topAnchor.constraint(
                 equalTo: livehouseInputView.bottomAnchor, constant: 24),
@@ -303,7 +303,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                 equalTo: mainView.rightAnchor, constant: -16),
             partnerInputView.leftAnchor.constraint(
                 equalTo: mainView.leftAnchor, constant: 16),
-            partnerInputView.heightAnchor.constraint(equalToConstant: 50),
+            partnerInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
             
             partnerInputButton.topAnchor.constraint(equalTo: partnerInputView.topAnchor),
             partnerInputButton.bottomAnchor.constraint(equalTo: partnerInputView.bottomAnchor),
@@ -313,33 +313,33 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             openTimeLabel.topAnchor.constraint(
                 equalTo: partnerInputView.bottomAnchor, constant: 24),
             openTimeLabel.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            openTimeLabel.heightAnchor.constraint(equalToConstant: 50),
+            openTimeLabel.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             openTimeInputView.topAnchor.constraint(equalTo: openTimeLabel.topAnchor),
             openTimeInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             openTimeInputView.leftAnchor.constraint(
                 equalTo: openTimeLabel.rightAnchor, constant: 16),
-            openTimeInputView.heightAnchor.constraint(equalToConstant: 50),
+            openTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             startTimeLabel.topAnchor.constraint(
                 equalTo: openTimeInputView.bottomAnchor, constant: 24),
             startTimeLabel.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            startTimeLabel.heightAnchor.constraint(equalToConstant: 50),
+            startTimeLabel.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             startTimeInputView.topAnchor.constraint(equalTo: startTimeLabel.topAnchor),
             startTimeInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             startTimeInputView.leftAnchor.constraint(
                 equalTo: startTimeLabel.rightAnchor, constant: 16),
-            startTimeInputView.heightAnchor.constraint(equalToConstant: 50),
+            startTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             endTimeLabel.topAnchor.constraint(equalTo: startTimeLabel.bottomAnchor, constant: 24),
             endTimeLabel.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            endTimeLabel.heightAnchor.constraint(equalToConstant: 50),
+            endTimeLabel.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             endTimeInputView.topAnchor.constraint(equalTo: endTimeLabel.topAnchor),
             endTimeInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             endTimeInputView.leftAnchor.constraint(equalTo: endTimeLabel.rightAnchor, constant: 16),
-            endTimeInputView.heightAnchor.constraint(equalToConstant: 50),
+            endTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             thumbnailInputView.topAnchor.constraint(
                 equalTo: endTimeInputView.bottomAnchor, constant: 48),

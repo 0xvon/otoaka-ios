@@ -10,11 +10,13 @@ import UIKit
 final class TextFieldView: UIView {
 
     typealias Input = (
-        placeholder: String,
+        section: String,
+        text: String?,
         maxLength: Int
     )
     var input: Input!
 
+    private var section: UILabel!
     private var textField: UITextField!
     private var underLine: UIView!
 
@@ -43,6 +45,13 @@ final class TextFieldView: UIView {
         contentView.layer.opacity = 0.8
         translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        section = UILabel()
+        section.translatesAutoresizingMaskIntoConstraints = false
+        section.text = input.section
+        section.font = style.font.regular.get()
+        section.textColor = style.color.sub.get()
+        contentView.addSubview(section)
 
         textField = UITextField()
         textField.returnKeyType = .done
@@ -50,10 +59,11 @@ final class TextFieldView: UIView {
         textField.delegate = self
         textField.textColor = style.color.main.get()
         textField.font = style.font.regular.get()
-        textField.placeholder = self.input.placeholder
-        textField.attributedPlaceholder = NSAttributedString(
-            string: self.input.placeholder,
-            attributes: [NSAttributedString.Key.foregroundColor: style.color.main.get()])
+//        textField.placeholder = self.input.placeholder
+//        textField.attributedPlaceholder = NSAttributedString(
+//            string: self.input.placeholder,
+//            attributes: [NSAttributedString.Key.foregroundColor: style.color.main.get()])
+        textField.text = input.text
         textField.borderStyle = .none
         contentView.addSubview(textField)
 
@@ -67,10 +77,14 @@ final class TextFieldView: UIView {
             bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             leftAnchor.constraint(equalTo: contentView.leftAnchor),
             rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            
+            section.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            section.topAnchor.constraint(equalTo: contentView.topAnchor),
+            section.rightAnchor.constraint(equalTo: contentView.rightAnchor),
 
             textField.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             textField.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            textField.topAnchor.constraint(equalTo: contentView.topAnchor),
+            textField.topAnchor.constraint(equalTo: section.bottomAnchor),
             textField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
             underLine.leftAnchor.constraint(equalTo: contentView.leftAnchor),

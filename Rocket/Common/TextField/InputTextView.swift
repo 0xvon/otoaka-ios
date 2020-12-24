@@ -10,12 +10,14 @@ import UIKit
 final class InputTextView: UIView {
 
     typealias Input = (
-        text: String,
+        section: String,
+        text: String?,
         maxLength: Int
     )
     var input: Input!
 
     private var textView: UITextView!
+    private var section: UILabel!
     private var underLine: UIView!
 
     init(input: Input) {
@@ -43,6 +45,13 @@ final class InputTextView: UIView {
         contentView.layer.opacity = 0.8
         translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
+        
+        section = UILabel()
+        section.translatesAutoresizingMaskIntoConstraints = false
+        section.text = input.section
+        section.textColor = style.color.sub.get()
+        section.font = style.font.regular.get()
+        contentView.addSubview(section)
 
         textView = UITextView()
         textView.returnKeyType = .done
@@ -50,7 +59,7 @@ final class InputTextView: UIView {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textColor = style.color.main.get()
         textView.font = style.font.regular.get()
-        textView.text = self.input.text
+        textView.text = input.text
         contentView.addSubview(textView)
 
         underLine = UIView()
@@ -63,10 +72,14 @@ final class InputTextView: UIView {
             bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             leftAnchor.constraint(equalTo: contentView.leftAnchor),
             rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            
+            section.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            section.topAnchor.constraint(equalTo: contentView.topAnchor),
+            section.rightAnchor.constraint(equalTo: contentView.rightAnchor),
 
             textView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             textView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            textView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            textView.topAnchor.constraint(equalTo: section.bottomAnchor),
             textView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
 
             underLine.leftAnchor.constraint(equalTo: contentView.leftAnchor),
