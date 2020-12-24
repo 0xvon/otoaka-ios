@@ -32,7 +32,9 @@ class CommentCell: UITableViewCell, ReusableCell {
     func setup() {
         backgroundColor = style.color.background.get()
         
-        thumbnailImageView.image = UIImage(named: "band")
+        if let thumbnailUrl = input.author.thumbnailURL {
+            thumbnailImageView.loadImageAsynchronously(url: URL(string: thumbnailUrl))
+        }
         thumbnailImageView.clipsToBounds = true
         thumbnailImageView.contentMode = .scaleAspectFill
         thumbnailImageView.layer.cornerRadius = 32

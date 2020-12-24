@@ -655,6 +655,9 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             }
             let feed = self.feeds[indexPath.section]
             let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
+            cell.comment { [weak self] _ in
+                self?.seeCommentButtonTapped()
+            }
             return cell
         default:
             return UITableViewCell()
@@ -692,6 +695,12 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     @objc private func seeMoreContents(_ sender: UIButton) {
         let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: input)
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func seeCommentButtonTapped() {
+        let feed = self.feeds[0]
+        let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
+        present(vc, animated: true, completion: nil)
     }
 }
 

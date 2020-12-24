@@ -7,6 +7,7 @@
 
 import Endpoint
 import UIKit
+import SafariServices
 
 final class LiveDetailViewController: UIViewController, Instantiable {
 
@@ -663,11 +664,28 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
             return view
         }
         let feed = self.feeds[indexPath.section]
-        return tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
+        let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
+        cell.comment { [weak self] _ in
+            self?.seeCommentButtonTapped()
+        }
+        return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let content = self.feeds[indexPath.section]
+        switch content.feedType {
+        case .youtube(let url):
+            let safari = SFSafariViewController(url: url)
+            safari.dismissButtonStyle = .close
+            present(safari, animated: true, completion: nil)
+        }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    private func seeCommentButtonTapped() {
+        let feed = self.feeds[0]
+        let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
+        present(vc, animated: true, completion: nil)
     }
 
     @objc private func seeMoreContents(_ sender: UIButton) {
