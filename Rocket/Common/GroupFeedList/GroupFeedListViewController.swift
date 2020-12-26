@@ -14,7 +14,7 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
-    var feeds: [ArtistFeed] = []
+    var feeds: [ArtistFeedSummary] = []
     private var contentsTableView: UITableView!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {

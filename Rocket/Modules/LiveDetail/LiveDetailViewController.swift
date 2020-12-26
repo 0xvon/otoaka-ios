@@ -11,11 +11,13 @@ import SafariServices
 
 final class LiveDetailViewController: UIViewController, Instantiable {
 
-    typealias Input = Live
+    typealias Input = (
+        live: Live,
+        ticket: Ticket?
+    )
     var dependencyProvider: LoggedInDependencyProvider!
-    var input: Live!
+    var input: Input!
     var isLiked: Bool!
-    var hasTicket: Bool!
     var participants: Int = 0
     enum UserType {
         case fan
@@ -24,7 +26,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     var userType: UserType!
     var performers: [Group] = []
-    var feeds: [ArtistFeed] = []
+    var feeds: [ArtistFeedSummary] = []
     
     @IBOutlet weak var liveDetailHeader: LiveDetailHeaderView!
     
@@ -53,7 +55,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         self.dependencyProvider = dependencyProvider
         self.input = input
         self.isLiked = false
-        self.hasTicket = false
         switch dependencyProvider.user.role {
         case .artist(_):
             self.userType = .group
@@ -77,15 +78,16 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     lazy var viewModel = LiveDetailViewModel(
         apiClient: dependencyProvider.apiClient,
         auth: dependencyProvider.auth,
-        live: input,
+        live: input.live,
         outputHander: { output in
             switch output {
             case .getLive(let liveDetail):
                 DispatchQueue.main.async {
-                    self.input = liveDetail.live
+                    self.input.live = liveDetail.live
+                    self.input.ticket = liveDetail.ticket
                     self.isLiked = liveDetail.isLiked
                     self.participants = liveDetail.participants
-                    self.hasTicket = liveDetail.hasTicket
+                    self.input.ticket = liveDetail.ticket
                     self.inject()
                 }
             case .getGroupFeeds(let feeds):
@@ -100,8 +102,14 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 }
             case .reserveTicket(let ticket):
                 DispatchQueue.main.async {
-                    self.hasTicket = true
+                    self.input.ticket = ticket
                     self.participants += 1
+                    self.inject()
+                }
+            case .refundTicket(let ticket):
+                DispatchQueue.main.async {
+                    self.input.ticket = ticket
+                    self.participants -= 1
                     self.inject()
                 }
             case .likeLive:
@@ -140,16 +148,16 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         reactionStackView.distribution = .fill
         scrollableView.addSubview(reactionStackView)
 
-        likeButtonView = ReactionButtonView(input: (text: "10000", image: UIImage(named: "heart")))
+        likeButtonView = ReactionButtonView(input: (text: "", image: nil))
         likeButtonView.translatesAutoresizingMaskIntoConstraints = false
-        likeButtonView.listen { type in
-            switch type {
-            case .reaction:
-                self.likeButtonTapped()
-            case .num:
-                self.numOfLikeButtonTapped()
-            }
-        }
+//        likeButtonView.listen { type in
+//            switch type {
+//            case .reaction:
+//                self.likeButtonTapped()
+//            case .num:
+//                self.numOfLikeButtonTapped()
+//            }
+//        }
         reactionStackView.addArrangedSubview(likeButtonView)
         
         commentButtonView = ReactionButtonView(input: (text: "", image: nil))
@@ -159,7 +167,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
 //            self.commentButtonTapped()
 //        }
 
-        buyTicketButtonView = Button(input: (text: "￥1,500", image: UIImage(named: "ticket")))
+        buyTicketButtonView = Button(input: (text: "￥\(input.live.price)", image: UIImage(named: "ticket")))
         buyTicketButtonView.translatesAutoresizingMaskIntoConstraints = false
         buyTicketButtonView.layer.cornerRadius = 24
         buyTicketButtonView.listen {
@@ -176,20 +184,20 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         scrollableView.addSubview(numOfParticipantView)
         
         viewModel.getLive()
-        viewModel.getGroupFeed(groupId: input.hostGroup.id)
+        viewModel.getGroupFeed(groupId: input.live.hostGroup.id)
         if self.userType != .fan {
             viewModel.getHostGroup()
         }
         
         injectPerformers()
         liveDetailHeader.inject(
-            input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: self.performers))
+            input: (dependencyProvider: self.dependencyProvider, live: self.input.live, groups: self.performers))
         liveDetailHeader.pushToBandViewController = { [weak self] vc in
             self?.navigationController?.pushViewController(vc, animated: true)
         }
-        liveDetailHeader.listen = { [weak self] cellIndex in
-            print("listen \(cellIndex) band")
-        }
+//        liveDetailHeader.listen = { [weak self] cellIndex in
+//            print("listen \(cellIndex) band")
+//        }
         liveDetailHeader.like = { [weak self] cellIndex in
             self?.likeBand(cellIndex: cellIndex)
         }
@@ -237,12 +245,12 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         self.likeButtonViewStyle()
         self.setupCreation()
         liveDetailHeader.update(
-            input: (dependencyProvider: self.dependencyProvider, live: self.input, groups: self.performers))
+            input: (dependencyProvider: self.dependencyProvider, live: self.input.live, groups: self.performers))
         numOfParticipantView.updateText(text: "\(self.participants)人予約済み")
     }
     
     func injectPerformers() {
-        switch input.style {
+        switch input.live.style {
         case .oneman(let performer):
             self.performers = [performer]
         case .battle(let performers):
@@ -498,30 +506,35 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     private func ticketButtonStyle() {
-        if self.hasTicket {
-            self.buyTicketButtonView.setText(text: "予約済")
+        if let ticket = self.input.ticket {
+            switch ticket.status {
+            case .reserved:
+                self.buyTicketButtonView.setText(text: "予約済")
+            case .refunded:
+                self.buyTicketButtonView.setText(text: "￥\(input.live.price)")
+            }
         } else {
-            self.buyTicketButtonView.setText(text: "￥1,500")
+            self.buyTicketButtonView.setText(text: "￥\(input.live.price)")
         }
     }
     
     private func numOfParticipantsButtonTapped() {
-        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .tickets(input.id))
+        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .tickets(input.live.id))
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func likeButtonViewStyle() {
-        if self.isLiked {
-            self.likeButtonView.updateImage(image: UIImage(named: "heart_fill"))
-        } else {
-            self.likeButtonView.updateImage(image: UIImage(named: "heart"))
-        }
+//        if self.isLiked {
+//            self.likeButtonView.updateImage(image: UIImage(named: "heart_fill"))
+//        } else {
+//            self.likeButtonView.updateImage(image: UIImage(named: "heart"))
+//        }
     }
 
     @objc private func refreshLive(sender: UIRefreshControl) {
         viewModel.getLive()
         viewModel.getHostGroup()
-        viewModel.getGroupFeed(groupId: input.hostGroup.id)
+        viewModel.getGroupFeed(groupId: input.live.hostGroup.id)
         sender.endRefreshing()
     }
 
@@ -565,9 +578,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     func createShare() {
-        let shareLiveText: String = "\(input.hostGroup.name)主催の\(input.title)に集まれ！！\n\n via @rocketforband "
+        let shareLiveText: String = "\(input.live.hostGroup.name)主催の\(input.live.title)に集まれ！！\n\n via @rocketforband "
         let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/id1500148347")!
-        let shareImage: UIImage = UIImage(url: input.artworkURL!.absoluteString)
+        let shareImage: UIImage = UIImage(url: input.live.artworkURL!.absoluteString)
         
         let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
         let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
@@ -576,7 +589,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     func editLive() {
-        let vc = EditLiveViewController(dependencyProvider: dependencyProvider, input: input)
+        let vc = EditLiveViewController(dependencyProvider: dependencyProvider, input: input.live)
         self.navigationController?.pushViewController(vc, animated: true)
         self.isOpened.toggle()
         self.open(isOpened: self.isOpened)
@@ -603,8 +616,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
 
     private func buyTicketButtonTapped() {
-        if self.hasTicket {
-            print("you already reserved ticket")
+        if let ticket = self.input.ticket, ticket.status == .reserved {
+            viewModel.refundTicket(ticketId: ticket.id)
         } else {
             viewModel.reserveTicket()
         }
@@ -672,12 +685,14 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let content = self.feeds[indexPath.section]
-        switch content.feedType {
-        case .youtube(let url):
-            let safari = SFSafariViewController(url: url)
-            safari.dismissButtonStyle = .close
-            present(safari, animated: true, completion: nil)
+        if !feeds.isEmpty {
+            let content = self.feeds[indexPath.section]
+            switch content.feedType {
+            case .youtube(let url):
+                let safari = SFSafariViewController(url: url)
+                safari.dismissButtonStyle = .close
+                present(safari, animated: true, completion: nil)
+            }
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -689,7 +704,7 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc private func seeMoreContents(_ sender: UIButton) {
-        let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: input.hostGroup)
+        let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: input.live.hostGroup)
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

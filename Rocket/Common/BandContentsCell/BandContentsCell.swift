@@ -10,7 +10,7 @@ import Endpoint
 
 class BandContentsCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "BandContentsCell" }
-    typealias Input = ArtistFeed
+    typealias Input = ArtistFeedSummary
     var input: Input!
     
     let dateFormatter: DateFormatter = {
@@ -67,7 +67,7 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         commentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(commentView)
         
-        commentReactionView = ReactionButtonView(input: (text: "1000", image: UIImage(named: "comment")))
+        commentReactionView = ReactionButtonView(input: (text: "\(input.commentCount)", image: UIImage(named: "comment")))
         commentReactionView.translatesAutoresizingMaskIntoConstraints = false
         commentView.addSubview(commentReactionView)
         

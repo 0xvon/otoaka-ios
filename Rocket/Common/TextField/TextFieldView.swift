@@ -95,8 +95,8 @@ final class TextFieldView: UIView {
         NSLayoutConstraint.activate(constraints)
     }
     
-    func keyboardType(_ alphabet: Bool) {
-        textField.keyboardType = alphabet ? .alphabet : .default
+    func keyboardType(_ type: UIKeyboardType = .default) {
+        textField.keyboardType = type
     }
 
     func underLineColor() {

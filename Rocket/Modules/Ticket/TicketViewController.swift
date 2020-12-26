@@ -133,8 +133,8 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = self.tickets[indexPath.section].live
-        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
+        let ticket = self.tickets[indexPath.section]
+        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: (live: ticket.live, ticket: ticket))
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }

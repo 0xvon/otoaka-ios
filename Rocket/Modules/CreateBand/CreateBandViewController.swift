@@ -88,7 +88,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
             toItem: nil,
             attribute: .height,
             multiplier: 1,
-            constant: 1200
+            constant: 1500
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
@@ -97,7 +97,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         mainView.addSubview(displayNameInputView)
 
         englishNameInputView = TextFieldView(input: (section: "English Name", text: nil, maxLength: 40))
-        englishNameInputView.keyboardType(true)
+        englishNameInputView.keyboardType(.alphabet)
         englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(englishNameInputView)
 

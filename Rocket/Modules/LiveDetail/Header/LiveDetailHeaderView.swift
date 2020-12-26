@@ -216,7 +216,7 @@ final class LiveDetailHeaderView: UIView {
             mapBadgeView.bottomAnchor.constraint(equalTo: dateBadgeView.topAnchor, constant: -8),
             mapBadgeView.leftAnchor.constraint(
                 equalTo: liveInformationView.leftAnchor, constant: 16),
-            mapBadgeView.widthAnchor.constraint(equalToConstant: 160),
+            mapBadgeView.widthAnchor.constraint(equalToConstant: 300),
             mapBadgeView.heightAnchor.constraint(equalToConstant: 30),
 
             arrowButton.rightAnchor.constraint(

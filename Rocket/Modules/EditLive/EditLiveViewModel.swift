@@ -48,7 +48,7 @@ class EditLiveViewModel {
     }
 
     func editLive(
-        title: String, liveId: Endpoint.Live.ID, livehouse: String, openAt: Date?, startAt: Date?,
+        title: String, liveId: Endpoint.Live.ID, livehouse: String?, openAt: Date?, startAt: Date?,
         endAt: Date?, thumbnail: UIImage?
     ) {
         self.s3Client.uploadImage(image: thumbnail) { [apiClient] result in
@@ -58,7 +58,7 @@ class EditLiveViewModel {
                 uri.id = liveId
 
                 let req = EditLive.Request(
-                    title: title, artworkURL: URL(string: imageUrl), openAt: openAt, startAt: startAt,
+                    title: title, artworkURL: URL(string: imageUrl), liveHouse: livehouse, openAt: openAt, startAt: startAt,
                     endAt: endAt)
                 apiClient.request(EditLive.self, request: req, uri: uri) { result in
                     switch result {

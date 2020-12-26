@@ -12,9 +12,10 @@ import Foundation
 class LiveDetailViewModel {
     enum Output {
         case getLive(LiveDetail)
-        case getGroupFeeds([ArtistFeed])
+        case getGroupFeeds([ArtistFeedSummary])
         case toggleFollow(Int)
         case reserveTicket(Ticket)
+        case refundTicket(Ticket)
         case getHostGroup(GetGroup.Response)
         case likeLive
         case unlikeLive
@@ -114,6 +115,18 @@ class LiveDetailViewModel {
             switch result {
             case .success(let res):
                 self.outputHandler(.reserveTicket(res))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
+    }
+    
+    func refundTicket(ticketId: Ticket.ID) {
+        let request = RefundTicket.Request(ticketId: ticketId)
+        apiClient.request(RefundTicket.self, request: request) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.refundTicket(res))
             case .failure(let error):
                 self.outputHandler(.error(error))
             }

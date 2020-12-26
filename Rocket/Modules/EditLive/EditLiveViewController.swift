@@ -374,7 +374,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
 
     func createLive() {
         guard let title: String = liveTitleInputView.getText() else { return }
-        guard let livehouse = livehouseInputView.getText() else { return }
+        let livehouse = livehouseInputView.getText()
         viewModel.editLive(
             title: title, liveId: input.id, livehouse: livehouse, openAt: openTimeInputView.date,
             startAt: startTimeInputView.date, endAt: endTimeInputView.date, thumbnail: self.thumbnail)

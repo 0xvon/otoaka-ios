@@ -13,7 +13,7 @@ class BandDetailViewModel {
     enum Output {
         case getGroup(GetGroup.Response)
         case getGroupLives([Live])
-        case getGroupFeeds([ArtistFeed])
+        case getGroupFeeds([ArtistFeedSummary])
         case getChart([ChannelDetail.ChannelItem])
         case follow
         case unfollow

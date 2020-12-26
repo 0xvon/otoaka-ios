@@ -21,7 +21,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider!
     var input: Input!
     var lives: [Live] = []
-    var feeds: [ArtistFeed] = []
+    var feeds: [ArtistFeedSummary] = []
     var groupItem: ChannelDetail.ChannelItem? = nil
     var isFollowing: Bool = false
     var followersCount: Int = 0
@@ -676,7 +676,7 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             if self.lives.isEmpty { break }
             let live = self.lives[indexPath.section]
             let vc = LiveDetailViewController(
-                dependencyProvider: self.dependencyProvider, input: live)
+                dependencyProvider: self.dependencyProvider, input: (live: live, ticket: nil))
             self.navigationController?.pushViewController(vc, animated: true)
         case self.contentsTableView:
             if self.feeds.isEmpty { break }

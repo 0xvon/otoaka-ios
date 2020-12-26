@@ -12,7 +12,7 @@ final class CommentListViewController: UIViewController, Instantiable {
     typealias Input = ListType
     
     enum ListType {
-        case feedComment(ArtistFeed)
+        case feedComment(ArtistFeedSummary)
     }
 
     var dependencyProvider: LoggedInDependencyProvider!

@@ -40,7 +40,7 @@ final class BandViewController: UIViewController, Instantiable {
     private var iconMenu: UIBarButtonItem!
 
     var lives: [LiveFeed] = []
-    var feeds: [ArtistFeed] = []
+    var feeds: [ArtistFeedSummary] = []
     var groups: [Group] = []
     var charts: [ChannelDetail.ChannelItem] = []
     var pageItems: [PageItem] = []
@@ -515,7 +515,7 @@ final class BandViewController: UIViewController, Instantiable {
 
     func createLive() {
         let vc = CreateLiveViewController(dependencyProvider: self.dependencyProvider, input: ())
-        self.navigationController?.pushViewController(vc, animated: true)
+        present(vc, animated: true, completion: nil)
     }
     
     @objc func pageButtonTapped(_ sender: UIButton) {
@@ -627,7 +627,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         case self.liveTableView:
             let live = self.lives[indexPath.section].live
             let vc = LiveDetailViewController(
-                dependencyProvider: self.dependencyProvider, input: live)
+                dependencyProvider: self.dependencyProvider, input: (live: live, ticket: nil))
             self.navigationController?.pushViewController(vc, animated: true)
         case self.groupFeedTableView:
             let feed = self.feeds[indexPath.section]

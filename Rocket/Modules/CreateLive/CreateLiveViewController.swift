@@ -20,6 +20,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     private var liveTitleInputView: TextFieldView!
     private var liveStyleInputView: TextFieldView!
     private var liveStylePickerView: UIPickerView!
+    private var livePriceInputView: TextFieldView!
     private var livehouseInputView: TextFieldView!
     private var livehousePickerView: UIPickerView!
     private var partnerInputView: TextFieldView!
@@ -122,7 +123,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             toItem: nil,
             attribute: .height,
             multiplier: 1,
-            constant: 1300
+            constant: 1400
         )
         mainView.addConstraint(mainViewHeightConstraint)
 
@@ -149,6 +150,11 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         liveStylePickerView.dataSource = self
         liveStylePickerView.delegate = self
         liveStyleInputView.selectInputView(inputView: liveStylePickerView)
+        
+        livePriceInputView = TextFieldView(input: (section: "チケット料金", text: nil, maxLength: 10))
+        livePriceInputView.translatesAutoresizingMaskIntoConstraints = false
+        livePriceInputView.keyboardType(.numberPad)
+        mainView.addSubview(livePriceInputView)
 
         livehouseInputView = TextFieldView(input: (section: "会場", text: nil, maxLength: 40))
         livehouseInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -290,9 +296,15 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             liveStyleInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             liveStyleInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
             liveStyleInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+            
+            livePriceInputView.topAnchor.constraint(
+                equalTo: liveStyleInputView.bottomAnchor, constant: 24),
+            livePriceInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
+            livePriceInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+            livePriceInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
             livehouseInputView.topAnchor.constraint(
-                equalTo: liveStyleInputView.bottomAnchor, constant: 24),
+                equalTo: livePriceInputView.bottomAnchor, constant: 24),
             livehouseInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
             livehouseInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
             livehouseInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
@@ -417,9 +429,10 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         guard let title: String = liveTitleInputView.getText() else { return }
         guard let livehouse = livehouseInputView.getText() else { return }
         guard let style = getLiveStyle() else { return }
+        guard let price = livePriceInputView.getText() else { return }
 
         viewModel.createLive(
-            title: title, style: style, hostGroupId: self.hostGroup.id, livehouse: livehouse,
+            title: title, style: style, price: Int(price) ?? 0, hostGroupId: self.hostGroup.id, livehouse: livehouse,
             openAt: openTimeInputView.date, startAt: startTimeInputView.date, endAt: endTimeInputView.date, thumbnail: self.thumbnail
         )
     }

@@ -28,4 +28,8 @@ class AccountViewModel {
         self.auth = auth
         self.outputHandler = outputHander
     }
+    
+    func getPerformanceRequest() {
+         
+    }
 }

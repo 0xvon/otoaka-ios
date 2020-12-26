@@ -60,14 +60,14 @@ class CreateLiveViewModel {
 //    }
 
     func createLive(
-        title: String, style: LiveStyleInput, hostGroupId: Endpoint.Group.ID, livehouse: String?,
+        title: String, style: LiveStyleInput, price: Int, hostGroupId: Endpoint.Group.ID, livehouse: String?,
         openAt: Date?, startAt: Date?, endAt: Date?, thumbnail: UIImage?
     ) {
         self.s3Client.uploadImage(image: thumbnail) { [apiClient] result in
             switch result {
             case .success(let imageUrl):
                 let req = CreateLive.Request(
-                    title: title, style: style, artworkURL: URL(string: imageUrl),
+                    title: title, style: style, price: price, artworkURL: URL(string: imageUrl),
                     hostGroupId: hostGroupId, liveHouse: livehouse,
                     openAt: openAt, startAt: startAt, endAt: endAt)
                 apiClient.request(CreateLive.self, request: req) { result in

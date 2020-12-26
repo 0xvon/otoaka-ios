@@ -95,6 +95,7 @@ class APIClient {
                         let response: E.Response = try decoder.decode(E.Response.self, from: data)
                         callback(.success(response))
                     } else {
+                        print("error response: \(httpResponse.statusCode)")
                         let errorMessage = try decoder.decode(String.self, from: data)
                         callback(
                             .failure(
