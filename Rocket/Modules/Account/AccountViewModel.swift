@@ -11,6 +11,7 @@ import UIKit
 
 class AccountViewModel {
     enum Output {
+        case getRequestCount(Int)
         case error(Error)
     }
 
@@ -30,6 +31,14 @@ class AccountViewModel {
     }
     
     func getPerformanceRequest() {
-         
+        let req = Empty()
+        apiClient.request(GetPendingRequestCount.self, request: req) { result in
+            switch result {
+            case .success(let res):
+                self.outputHandler(.getRequestCount(res.pendingRequestCount))
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+        }
     }
 }

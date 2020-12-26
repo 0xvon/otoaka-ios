@@ -12,6 +12,7 @@ final class AccountViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
     var items: [AccountSettingItem] = []
+    var pendingRequestCount = 0
 
     private var tableView: UITableView!
     private var profileSettingItem: AccountSettingItem!
@@ -41,6 +42,12 @@ final class AccountViewController: UIViewController, Instantiable {
         auth: dependencyProvider.auth,
         outputHander: { output in
             switch output {
+            case .getRequestCount(let count):
+                DispatchQueue.main.async {
+                    self.pendingRequestCount = count
+                    self.seeRequestsItem?.hasNotification = count > 0
+                    self.tableView.reloadData()
+                }
             case .error(let error):
                 DispatchQueue.main.async {
                     self.showAlert(title: "エラー", message: error.localizedDescription)
@@ -57,7 +64,7 @@ final class AccountViewController: UIViewController, Instantiable {
             hasNotification: false)
         seeRequestsItem = AccountSettingItem(
             title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
-            hasNotification: true)
+            hasNotification: self.pendingRequestCount > 0)
         membershipItem = AccountSettingItem(
             title: "所属バンド一覧", image: UIImage(named: "people"), action: self.memberships, hasNotification: false)
         createBandItem = AccountSettingItem(
@@ -67,6 +74,7 @@ final class AccountViewController: UIViewController, Instantiable {
             hasNotification: false)
 
         setAccountSetting()
+        viewModel.getPerformanceRequest()
 
         self.view.backgroundColor = style.color.subBackground.get()
         tableView = UITableView()
@@ -176,5 +184,5 @@ struct AccountSettingItem {
     let title: String
     let image: UIImage?
     let action: () -> Void
-    let hasNotification: Bool
+    var hasNotification: Bool
 }
