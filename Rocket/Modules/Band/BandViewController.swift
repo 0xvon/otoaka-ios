@@ -573,7 +573,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch tableView {
         case self.groupFeedTableView:
-            return 200
+            return 300
         case self.liveTableView:
             return 300
         case self.chartsTableView:

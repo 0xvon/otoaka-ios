@@ -206,6 +206,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         contentsTableView.translatesAutoresizingMaskIntoConstraints = false
         contentsTableView.delegate = self
         contentsTableView.separatorStyle = .none
+        contentsTableView.isScrollEnabled = false
         contentsTableView.dataSource = self
         contentsTableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
@@ -233,7 +234,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             contentsTableView.leftAnchor.constraint(equalTo: scrollableView.leftAnchor, constant: 16),
             contentsTableView.rightAnchor.constraint(equalTo: scrollableView.rightAnchor, constant: -16),
             contentsTableView.topAnchor.constraint(equalTo: reactionStackView.bottomAnchor, constant: 48),
-            contentsTableView.heightAnchor.constraint(equalToConstant: 300),
+            contentsTableView.heightAnchor.constraint(equalToConstant: 360),
         ]
         NSLayoutConstraint.activate(constraints)
 
@@ -663,7 +664,7 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        return 300
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

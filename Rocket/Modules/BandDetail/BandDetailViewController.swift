@@ -591,7 +591,7 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         case self.liveTableView:
             return 300
         case self.contentsTableView:
-            return 200
+            return 300
         default:
             return 100
         }

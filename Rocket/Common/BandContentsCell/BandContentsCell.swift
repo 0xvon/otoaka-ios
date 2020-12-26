@@ -86,6 +86,7 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         NSLayoutConstraint.activate(constraints)
 
         playImageView.image = UIImage(named: "play")
+        playImageView.layer.opacity = 0.6
     }
     
     func comment(_ listener: @escaping (ReactionButtonView.ListenerType) -> Void) {
