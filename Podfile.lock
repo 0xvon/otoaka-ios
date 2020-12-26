@@ -7,11 +7,13 @@ PODS:
   - AWSS3 (2.19.1):
     - AWSCore (= 2.19.1)
   - KeychainAccess (4.2.1)
+  - LicensePlist (3.0.5)
 
 DEPENDENCIES:
   - AWSCognitoAuth
   - AWSS3
   - KeychainAccess
+  - LicensePlist
 
 SPEC REPOS:
   trunk:
@@ -20,6 +22,7 @@ SPEC REPOS:
     - AWSCore
     - AWSS3
     - KeychainAccess
+    - LicensePlist
 
 SPEC CHECKSUMS:
   AWSCognitoAuth: 467aabe80c53d007ab8ed83add183724c23d3976
@@ -27,7 +30,8 @@ SPEC CHECKSUMS:
   AWSCore: 55c154ae27efc5c98bdc30a0eeea5a35d10a2ab5
   AWSS3: 2272253b098d07803af8dd20ce6ce7302bcffb47
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
+  LicensePlist: 11c638fa9dc22ddb5771cdf910242ae1ba2684da
 
-PODFILE CHECKSUM: ef5a5f17ffa792095274236ccdc0424c255cb3ac
+PODFILE CHECKSUM: 09f0781b4e2920400ff9e63f1e1119d7cb1130a2
 
 COCOAPODS: 1.10.0
