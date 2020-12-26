@@ -80,8 +80,8 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
         let constraints: [NSLayoutConstraint] = [
             contentsTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
             contentsTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            contentsTableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 32),
-            contentsTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -16),
+            contentsTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
+            contentsTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -16),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -113,12 +113,15 @@ extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSourc
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        return 300
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let content = self.feeds[indexPath.section]
         let cell = tableView.reuse(BandContentsCell.self, input: content, for: indexPath)
+        cell.comment { [weak self] _ in
+            self?.feedCommentButtonTapped(cellIndex: indexPath.section)
+        }
         return cell
     }
 
@@ -137,5 +140,11 @@ extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSourc
         if (self.feeds.count - indexPath.section) == 2 && self.feeds.count % per == 0 {
             self.viewModel.getGroupFeeds()
         }
+    }
+    
+    private func feedCommentButtonTapped(cellIndex: Int) {
+        let feed = self.feeds[cellIndex]
+        let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
+        present(vc, animated: true, completion: nil)
     }
 }

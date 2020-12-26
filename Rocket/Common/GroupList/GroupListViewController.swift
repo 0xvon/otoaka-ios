@@ -100,8 +100,8 @@ final class GroupListViewController: UIViewController, Instantiable {
         let constraints: [NSLayoutConstraint] = [
             groupTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
             groupTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            groupTableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 32),
-            groupTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -16),
+            groupTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
+            groupTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -16),
         ]
         NSLayoutConstraint.activate(constraints)
     }

@@ -86,7 +86,7 @@ final class UserListViewController: UIViewController, Instantiable {
             fanTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
             fanTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
             fanTableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 32),
-            fanTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -16),
+            fanTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -16),
         ]
         NSLayoutConstraint.activate(constraints)
     }
