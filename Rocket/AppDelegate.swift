@@ -27,6 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let viewController = HomeViewController(dependencyProvider: dependencyProvider, input: ())
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
+        
         return true
     }
 

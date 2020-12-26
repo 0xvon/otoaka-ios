@@ -11,6 +11,8 @@ target 'Rocket' do
   pod 'AWSS3'
   pod 'KeychainAccess'
   pod 'LicensePlist'
+  pod 'Firebase/Crashlytics'
+  pod 'Firebase/Analytics'
 
   target 'RocketTests' do
     inherit! :search_paths

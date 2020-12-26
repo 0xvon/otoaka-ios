@@ -30,11 +30,25 @@ class EditAccountViewModel {
     }
 
     func editAccount(
-        id: User.ID, name: String, biography: String?, thumbnail: UIImage?, role: RoleProperties
+        name: String, biography: String?, thumbnail: UIImage?, role: RoleProperties
     ) {
-        let imageUrl: String = "aaa"
-        let user = User(
-            id: id, name: name, biography: biography, thumbnailURL: imageUrl, role: role)
-        outputHandler(.editAccount(user))
+        self.s3Client.uploadImage(image: thumbnail) { [apiClient] result in
+            switch result {
+            case .success(let imageUrl):
+                let req = EditUserInfo.Request(
+                    name: name, biography: biography, thumbnailURL: imageUrl, role: role)
+                apiClient.request(EditUserInfo.self, request: req) { result in
+                    switch result {
+                    case .success(let res):
+                        self.outputHandler(.editAccount(res))
+                    case .failure(let error):
+                        self.outputHandler(.error(error))
+                    }
+                }
+            case .failure(let error):
+                self.outputHandler(.error(error))
+            }
+            
+        }
     }
 }

@@ -7,6 +7,7 @@
 
 import AWSCognitoAuth
 import AWSCore
+import Firebase
 import Endpoint
 import Foundation
 
@@ -61,6 +62,7 @@ extension DependencyProvider {
 
         let cognitoAuthKey = "dev.wall-of-death.Rocket.cognito-auth"
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: cognitoAuthKey)
+//        FirebaseApp.configure()
         let auth = AWSCognitoAuth(forKey: cognitoAuthKey)
         let wrapper = CognitoAuthWrapper(awsCognitoAuth: auth)
         let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: wrapper)

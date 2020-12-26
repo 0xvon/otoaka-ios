@@ -30,6 +30,92 @@ name: AWSS3, nameSpecified:
 body: The AWS Mobile SDK f…
 version: 2.19.1
 
+name: Firebase, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: Firebase, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: FirebaseAnalytics, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 7.1.0
+
+name: FirebaseAnalytics, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 7.1.0
+
+name: FirebaseCore, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: FirebaseCore, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: FirebaseCoreDiagnostics, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: FirebaseCoreDiagnostics, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: FirebaseCrashlytics, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: FirebaseCrashlytics, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: FirebaseInstallations, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: FirebaseInstallations, nameSpecified: 
+body: 
+                   …
+version: 7.1.0
+
+name: GoogleAppMeasurement, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 7.1.0
+
+name: GoogleAppMeasurement, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 7.1.0
+
+name: GoogleDataTransport, nameSpecified: 
+body: 
+                   …
+version: 8.0.1
+
+name: GoogleDataTransport, nameSpecified: 
+body: 
+                   …
+version: 8.0.1
+
+name: GoogleUtilities, nameSpecified: 
+body: 
+                   …
+version: 7.1.1
+
+name: GoogleUtilities, nameSpecified: 
+body: 
+                   …
+version: 7.1.1
+
 name: KeychainAccess, nameSpecified: 
 body: The MIT License (MIT…
 version: 4.2.1
@@ -49,6 +135,24 @@ body: MIT License
 
 Copyrig…
 version: 3.0.5
+
+name: nanopb, nameSpecified: 
+body: Copyright (c) 2011 P…
+version: 2.30906.0
+
+name: nanopb, nameSpecified: 
+body: Copyright (c) 2011 P…
+version: 2.30906.0
+
+name: PromisesObjC, nameSpecified: 
+body: 
+                   …
+version: 1.2.11
+
+name: PromisesObjC, nameSpecified: 
+body: 
+                   …
+version: 1.2.11
 
 name: CodableURL, nameSpecified: CodableURL, owner: kateinoigakukun, version: 0.3.1
 

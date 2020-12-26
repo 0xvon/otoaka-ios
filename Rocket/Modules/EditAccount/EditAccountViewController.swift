@@ -222,18 +222,19 @@ final class EditAccountViewController: UIViewController, Instantiable {
     }
 
     private func updateProfile() {
-        let displayName = displayNameInputView.getText() ?? ""
+        guard let displayName = displayNameInputView.getText() else { return }
         let biography = biographyInputView.getText()
         let thumbnail = profileImageView.image
+        
         switch dependencyProvider.user.role {
         case .artist(_):
             let part = partInputView.getText()!
             viewModel.editAccount(
-                id: dependencyProvider.user.id, name: displayName, biography: biography,
+                name: displayName, biography: biography,
                 thumbnail: thumbnail, role: .artist(Artist(part: part)))
         case .fan(_):
             viewModel.editAccount(
-                id: dependencyProvider.user.id, name: displayName, biography: biography,
+                name: displayName, biography: biography,
                 thumbnail: thumbnail, role: .fan(Fan()))
         }
     }

@@ -5,7 +5,7 @@ options:
   bundleIdPrefix: dev.wall-of-death
 packages:
   Endpoint:
-    path: Libraries/rocket-api/Endpoint
+    path: Libraries/rocket-api/Modules/Endpoint
 targets:
   Rocket:
     type: application
@@ -46,6 +46,12 @@ targets:
         script: |
           if [ -f '"${PODS_ROOT}/Target Support Files/Pods-Rocket/Pods-Rocket-resources.sh"' ]; then
             '"${PODS_ROOT}/Target Support Files/Pods-Rocket/Pods-Rocket-resources.sh"'
+          fi
+      - name: "License Plist"
+        path: /bin/sh
+        script: |
+          if [ $CONFIGURATION = "Debug" ]; then
+            ${PODS_ROOT}/LicensePlist/license-plist --output-path $PRODUCT_NAME/Settings.bundle --github-token YOUR_GITHUB_TOKEN
           fi
     dependencies:
       - framework: Pods_Rocket.framework
