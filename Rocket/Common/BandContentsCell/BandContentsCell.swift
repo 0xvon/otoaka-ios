@@ -67,6 +67,7 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         commentView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(commentView)
         
+        if let commentReactionView = commentReactionView { commentReactionView.removeFromSuperview() }
         commentReactionView = ReactionButtonView(input: (text: "\(input.commentCount)", image: UIImage(named: "comment")))
         commentReactionView.translatesAutoresizingMaskIntoConstraints = false
         commentView.addSubview(commentReactionView)

@@ -37,6 +37,7 @@ final class ReactionButtonView: UIView {
     }
 
     func setup() {
+        subviews.forEach { $0.removeFromSuperview() }
         backgroundColor = .clear
         let contentView = UIView(frame: self.frame)
         addSubview(contentView)
