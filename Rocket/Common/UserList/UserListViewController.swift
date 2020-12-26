@@ -14,7 +14,6 @@ final class UserListViewController: UIViewController, Instantiable {
     enum InputType {
         case followers(Group.ID)
         case tickets(Live.ID)
-        case comments(Group.ID)
     }
 
     var dependencyProvider: LoggedInDependencyProvider!
@@ -45,6 +44,16 @@ final class UserListViewController: UIViewController, Instantiable {
                     self.fanTableView.reloadData()
                 }
             case .refreshFollowers(let users):
+                DispatchQueue.main.async {
+                    self.users = users
+                    self.fanTableView.reloadData()
+                }
+            case .getParticipants(let users):
+                DispatchQueue.main.async {
+                    self.users += users
+                    self.fanTableView.reloadData()
+                }
+            case .refreshParticipants(let users):
                 DispatchQueue.main.async {
                     self.users = users
                     self.fanTableView.reloadData()
@@ -92,11 +101,25 @@ final class UserListViewController: UIViewController, Instantiable {
     }
     
     func getUsers() {
-        viewModel.getFollowers()
+        switch input {
+        case .followers(_):
+            viewModel.getFollowers()
+        case .tickets(_):
+            viewModel.getParticipants()
+        case .none:
+            break
+        }
     }
     
     func refreshUsers() {
-        viewModel.refreshFollowers()
+        switch input {
+        case .followers(_):
+            viewModel.refreshFollowers()
+        case .tickets(_):
+            viewModel.refreshParticipants()
+        case .none:
+            break
+        }
     }
     
     @objc private func refreshFan(sender: UIRefreshControl) {

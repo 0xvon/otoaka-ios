@@ -13,6 +13,8 @@ class UserListViewModel {
     enum Output {
         case getFollowers([User])
         case refreshFollowers([User])
+        case getParticipants([User])
+        case refreshParticipants([User])
         case error(Error)
     }
 
@@ -22,6 +24,7 @@ class UserListViewModel {
     let outputHandler: (Output) -> Void
     
     var groupFollowersPaginationRequest: PaginationRequest<GroupFollowers>? = nil
+    var liveParticipantsPaginationRequest: PaginationRequest<GetLiveParticipants>? = nil
 
     init(
         apiClient: APIClient, input: UserListViewController.InputType, auth: AWSCognitoAuth,
@@ -37,8 +40,10 @@ class UserListViewModel {
             var uri = GroupFollowers.URI()
             uri.id = groupId
             self.groupFollowersPaginationRequest = PaginationRequest<GroupFollowers>(apiClient: apiClient, uri: uri)
-        default:
-            break
+        case .tickets(let liveId):
+            var uri = GetLiveParticipants.URI()
+            uri.liveId = liveId
+            self.liveParticipantsPaginationRequest = PaginationRequest<GetLiveParticipants>(apiClient: apiClient, uri: uri)
         }
         
         self.groupFollowersPaginationRequest?.subscribe { result in
@@ -51,6 +56,17 @@ class UserListViewModel {
                 self.outputHandler(.error(err))
             }
         }
+        
+        self.liveParticipantsPaginationRequest?.subscribe { result in
+            switch result {
+            case .initial(let res):
+                self.outputHandler(.refreshParticipants(res.items))
+            case .next(let res):
+                self.outputHandler(.getParticipants(res.items))
+            case .error(let err):
+                self.outputHandler(.error(err))
+            }
+        }
     }
     
     func getFollowers() {
@@ -59,5 +75,13 @@ class UserListViewModel {
     
     func refreshFollowers() {
         groupFollowersPaginationRequest?.next(isNext: false)
+    }
+    
+    func getParticipants() {
+        liveParticipantsPaginationRequest?.next()
+    }
+    
+    func refreshParticipants() {
+        liveParticipantsPaginationRequest?.next(isNext: false)
     }
 }
