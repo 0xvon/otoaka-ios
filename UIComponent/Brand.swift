@@ -4,15 +4,17 @@ public enum Brand {
     // FIXME: Use `UIColor(dynamicProvider:)`
     public static func color(for color: Color) -> UIColor {
         switch color {
-        case .brand(.primary):            return #colorLiteral(red: 0.2862745098, green: 0.631372549, blue: 0.9725490196, alpha: 1) // #49A1F8
-        case .background(.primary):       return #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) // #000000
-        case .background(.button):        return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
-        case .background(.cell):          return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
-        case .background(.cellSelected):  return #colorLiteral(red: 0.2549019608, green: 0.2509803922, blue: 0.2705882353, alpha: 1) // #414045
-        case .background(.navigationBar): return #colorLiteral(red: 0.1568627451, green: 0.1568627451, blue: 0.1607843137, alpha: 1) // #282829
-        case .text(.primary):             return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
-        case .text(.button):              return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
-        case .text(.link):                return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
+        case .brand(.primary):             return #colorLiteral(red: 0.2862745098, green: 0.631372549, blue: 0.9725490196, alpha: 1) // #49A1F8
+        case .background(.primary):        return #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) // #000000
+        case .background(.button):         return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
+        case .background(.cell):           return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
+        case .background(.cellSelected):   return #colorLiteral(red: 0.2549019608, green: 0.2509803922, blue: 0.2705882353, alpha: 1) // #414045
+        case .background(.navigationBar):  return #colorLiteral(red: 0.1568627451, green: 0.1568627451, blue: 0.1607843137, alpha: 1) // #282829
+        case .background(.toggleSelected): return #colorLiteral(red: 0.2862745098, green: 0.631372549, blue: 0.9725490196, alpha: 1) // #49A1F8
+        case .text(.primary):              return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
+        case .text(.button):               return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
+        case .text(.link):                 return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
+        case .text(.toggle):               return #colorLiteral(red: 0.2862745098, green: 0.631372549, blue: 0.9725490196, alpha: 1) // #49A1F8
         }
     }
 
@@ -27,14 +29,15 @@ public enum Brand {
         }
 
         public enum BackgroundColor: CaseIterable {
-            case primary, button, cell, cellSelected, navigationBar
+            case primary, button, cell, cellSelected, navigationBar,
+                 toggleSelected
         }
         public enum TextColor: CaseIterable {
-            case primary, link, button
+            case primary, link, button, toggle
         }
     }
     
-    static func font(for typography: Typography) -> UIFont {
+    public static func font(for typography: Typography) -> UIFont {
         .systemFont(ofSize: fontSize(for: typography),
                     weight: fontWeight(for: typography))
     }

@@ -28,8 +28,6 @@ public final class PrimaryButton: UIButton {
         titleLabel?.font = Brand.font(for: .largeStrong)
         setTitleColor(Brand.color(for: .text(.button)), for: .normal)
         setTitleColor(Brand.color(for: .text(.button)).pressed(), for: .highlighted)
-
-        print(imageEdgeInsets)
         imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
     }
 

@@ -11,10 +11,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandDetailViewController" customModule="Rocket_Development" customModuleProvider="target">
             <connections>
-                <outlet property="commentButtonView" destination="lqm-IJ-L64" id="7kE-6M-SJ7"/>
                 <outlet property="contentsTableView" destination="HNk-Sr-seo" id="LWt-d4-69K"/>
+                <outlet property="followButton" destination="2V5-hm-XCj" id="UFG-UE-hWx"/>
+                <outlet property="followersSummaryView" destination="Flx-Oh-chm" id="6ka-bU-ocE"/>
                 <outlet property="headerView" destination="Y9D-z1-Lis" id="U9L-NT-87M"/>
-                <outlet property="likeButtonView" destination="L3a-GU-FLo" id="Qy3-LC-VTW"/>
                 <outlet property="liveTableView" destination="sQZ-gg-szN" id="58K-8R-WcF"/>
                 <outlet property="verticalScrollView" destination="LlA-XZ-xsc" id="EEU-kM-Guc"/>
                 <outlet property="view" destination="iN0-l3-epB" id="sAZ-nS-7DA"/>
@@ -38,29 +38,30 @@
                                     </constraints>
                                 </view>
                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="vjU-mj-h0h">
-                                    <rect key="frame" x="16" y="266" width="248" height="48"/>
+                                    <rect key="frame" x="16" y="266" width="208" height="44"/>
                                     <subviews>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L3a-GU-FLo" customClass="ReactionIndicatorButton" customModule="UIComponent">
-                                            <rect key="frame" x="0.0" y="0.0" width="120" height="48"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Flx-Oh-chm" customClass="FollowersSummaryView" customModule="UIComponent">
+                                            <rect key="frame" x="0.0" y="0.0" width="100" height="44"/>
                                         </view>
-                                        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lqm-IJ-L64" customClass="ReactionIndicatorButton" customModule="UIComponent">
-                                            <rect key="frame" x="128" y="0.0" width="120" height="48"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2V5-hm-XCj" customClass="ToggleButton" customModule="UIComponent">
+                                            <rect key="frame" x="108" y="0.0" width="100" height="44"/>
+                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="48" id="C57-iC-9Hu"/>
-                                                <constraint firstAttribute="width" constant="120" id="H4e-Ky-8On"/>
+                                                <constraint firstAttribute="height" constant="44" id="Za8-0Q-TdZ"/>
+                                                <constraint firstAttribute="width" constant="100" id="e2o-nP-rbN"/>
                                             </constraints>
                                         </view>
                                     </subviews>
                                 </stackView>
                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="sQZ-gg-szN">
-                                    <rect key="frame" x="16" y="338" width="383" height="362"/>
+                                    <rect key="frame" x="16" y="334" width="383" height="362"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="362" id="hyx-qA-2x0"/>
                                     </constraints>
                                 </tableView>
                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HNk-Sr-seo">
-                                    <rect key="frame" x="16" y="724" width="382" height="360"/>
+                                    <rect key="frame" x="16" y="720" width="382" height="360"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="360" id="ONB-CW-LaD"/>

@@ -28,12 +28,17 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var userType: UserType!
 
     @IBOutlet weak var headerView: BandDetailHeaderView!
-    @IBOutlet weak var likeButtonView: ReactionIndicatorButton!
-    @IBOutlet weak var commentButtonView: ReactionIndicatorButton!
     @IBOutlet weak var liveTableView: UITableView!
     @IBOutlet weak var contentsTableView: UITableView!
     @IBOutlet weak var verticalScrollView: UIScrollView!
-
+    @IBOutlet weak var followersSummaryView: FollowersSummaryView!
+    @IBOutlet weak var followButton: ToggleButton! {
+        didSet {
+            followButton.setTitle("フォロー", selected: false)
+            followButton.setTitle("フォロー中", selected: true)
+        }
+    }
+    
     private var isOpened: Bool = false
     private var creationView: UIView!
     private var creationViewHeightConstraint: NSLayoutConstraint!
@@ -161,22 +166,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
         verticalScrollView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
 
-        likeButtonView.inject(input: (text: "", image: UIImage(named: "heart")))
-        likeButtonView.listen { type in
-            switch type {
-            case .reaction:
-                self.likeButtonTapped()
-            case .num:
-                self.numOfLikeButtonTapped()
-            }
-            
-        }
-
-        commentButtonView.isHidden = true
-        commentButtonView.inject(input: (text: "500", image: UIImage(named: "comment")))
-        commentButtonView.listen { _ in
-            self.commentButtonTapped()
-        }
+//        likeButtonView.inject(input: (text: "", image: UIImage(named: "heart")))
+//        likeButtonView.listen { type in
+//            switch type {
+//            case .reaction:
+//                self.likeButtonTapped()
+//            case .num:
+//                self.numOfLikeButtonTapped()
+//            }
+//
+//        }
 
         liveTableView.delegate = self
         liveTableView.separatorStyle = .none
@@ -202,8 +201,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     
     private func setupLikeView() {
         let image: UIImage = self.isFollowing ? UIImage(named: "heart_fill")! : UIImage(named: "heart")!
-        self.likeButtonView.setTitle("\(self.followersCount)", for: .normal)
-        self.likeButtonView.setImage(image, for: .normal)
+//        self.likeButtonView.setTitle("\(self.followersCount)", for: .normal)
+//        self.likeButtonView.setImage(image, for: .normal)
     }
 
     private func setupCreation() {
