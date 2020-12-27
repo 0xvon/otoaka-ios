@@ -131,6 +131,7 @@ final class BandViewController: UIViewController, Instantiable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        fatalError("nyan")
         setup()
         switch dependencyProvider.user.role {
         case .artist(_):

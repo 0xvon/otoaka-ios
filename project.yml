@@ -10,6 +10,9 @@ targets:
   Rocket:
     type: application
     platform: iOS
+    scheme:
+      commandLineArguments:
+        "-FIRDebugEnabled": true
     settings:
       base:
         DEVELOPMENT_TEAM: 6WL9GUCS6V
@@ -53,6 +56,12 @@ targets:
           if [ $CONFIGURATION = "Debug" ]; then
             ${PODS_ROOT}/LicensePlist/license-plist --output-path $PRODUCT_NAME/Settings.bundle --github-token YOUR_GITHUB_TOKEN
           fi
+    postBuildScripts:
+      - name: "Crashlytics Logs"
+        path: /bin/sh
+        script: |
+          ${PODS_ROOT}/FirebaseCrashlytics/run
+        inputFiles: ['$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)']
     dependencies:
       - framework: Pods_Rocket.framework
         implicit: true
