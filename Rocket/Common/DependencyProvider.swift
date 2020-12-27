@@ -51,10 +51,10 @@ extension DependencyProvider {
         let cognitoConfiguration = AWSCognitoAuthConfiguration(
             appClientId: config.appClientId,
             appClientSecret: config.appClientSecret,
-            scopes: config.scopes,
-            signInRedirectUri: config.signInRedirectUri,
-            signOutRedirectUri: config.signOutRedirectUri,
-            webDomain: config.webDomain,
+            scopes: config.cognitoCcopes,
+            signInRedirectUri: config.cognitoSignInRedirectUri,
+            signOutRedirectUri: config.cognitoSignOutRedirectUri,
+            webDomain: config.cognitoWebDomain,
             identityProvider: nil,
             idpIdentifier: nil,
             userPoolIdForEnablingASF: config.userPoolIdForEnablingASF
