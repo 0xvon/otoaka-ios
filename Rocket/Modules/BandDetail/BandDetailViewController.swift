@@ -28,8 +28,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var userType: UserType!
 
     @IBOutlet weak var headerView: BandDetailHeaderView!
-    @IBOutlet weak var likeButtonView: ReactionButtonView!
-    @IBOutlet weak var commentButtonView: ReactionButtonView!
+    @IBOutlet weak var likeButtonView: ReactionIndicatorButton!
+    @IBOutlet weak var commentButtonView: ReactionIndicatorButton!
     @IBOutlet weak var liveTableView: UITableView!
     @IBOutlet weak var contentsTableView: UITableView!
     @IBOutlet weak var verticalScrollView: UIScrollView!

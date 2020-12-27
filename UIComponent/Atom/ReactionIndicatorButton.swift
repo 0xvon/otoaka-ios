@@ -7,7 +7,7 @@
 
 import UIKit
 
-public final class ReactionButtonView: UIButton {
+public final class ReactionIndicatorButton: UIButton {
     public typealias Input = (
         text: String,
         image: UIImage?
@@ -19,6 +19,10 @@ public final class ReactionButtonView: UIButton {
         self.inject(input: input)
     }
     
+    public init() {
+        super.init(frame: .zero)
+        setup()
+    }
     public init(text: String, icon: UIImage) {
         super.init(frame: .zero)
         setup()
@@ -36,9 +40,17 @@ public final class ReactionButtonView: UIButton {
         setImage(input.image, for: .normal)
         setTitle(input.text, for: .normal)
     }
+    
+    public override var intrinsicContentSize: CGSize {
+        let originalContentSize = super.intrinsicContentSize
+        let adjustedWidth = originalContentSize.width + titleEdgeInsets.left + titleEdgeInsets.right
+        let adjustedHeight = originalContentSize.width + titleEdgeInsets.top + titleEdgeInsets.bottom
+        return CGSize(width: adjustedWidth, height: adjustedHeight)
+    }
 
     func setup() {
-        backgroundColor = Brand.color(for: .background(.button))
+        layer.cornerRadius = bounds.height / 2
+        clipsToBounds = true
         setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
         setTitleColor(Brand.color(for: .text(.primary)).pressed(), for: .highlighted)
         titleLabel?.font = Brand.font(for: .small)
@@ -75,11 +87,28 @@ struct ReactionButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ViewWrapper(
-                view: ReactionButtonView(text: "¥1500", icon: BundleReference.image(named: "ticket"))
+                view: ReactionIndicatorButton(text: "1", icon: BundleReference.image(named: "ticket"))
             )
-            .previewLayout(.fixed(width: 150, height: 48))
+            ViewWrapper(
+                view: {
+                    let button = ReactionIndicatorButton(text: "1", icon: BundleReference.image(named: "ticket"))
+                    let container = UIView()
+                    container.addSubview(button)
+                    button.translatesAutoresizingMaskIntoConstraints = false
+                    NSLayoutConstraint.activate([
+                        button.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+                        button.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+                        button.leftAnchor.constraint(greaterThanOrEqualTo: container.leftAnchor),
+                        button.rightAnchor.constraint(greaterThanOrEqualTo: container.rightAnchor),
+                        button.topAnchor.constraint(greaterThanOrEqualTo: container.topAnchor),
+                        button.bottomAnchor.constraint(greaterThanOrEqualTo: container.bottomAnchor),
+                    ])
+                    return container
+                }()
+            )
         }
         .background(Color.blue)
+        .previewLayout(.fixed(width: 150, height: 48))
     }
 }
 #endif

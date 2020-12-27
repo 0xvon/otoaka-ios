@@ -15,7 +15,7 @@ final class TrackCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var trackTitleLabel: UILabel!
     @IBOutlet weak var releasedYearLabel: UILabel!
     @IBOutlet weak var bandNameLabel: UILabel!
-    @IBOutlet weak var likeButtonView: ReactionButtonView!
+    @IBOutlet weak var likeButtonView: ReactionIndicatorButton!
     @IBOutlet weak var artWorkImageView: UIImageView!
     @IBOutlet weak var playImageView: UIImageView!
     @IBOutlet weak var bandThumbnailView: UIImageView!

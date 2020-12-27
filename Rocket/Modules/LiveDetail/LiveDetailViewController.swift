@@ -35,10 +35,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
 
     private var isOpened: Bool = false
     private var reactionStackView: UIStackView!
-    private var likeButtonView: ReactionButtonView!
-    private var commentButtonView: ReactionButtonView!
+    private var likeButtonView: ReactionIndicatorButton!
+    private var commentButtonView: ReactionIndicatorButton!
     private var buyTicketButtonView: PrimaryButton!
-    private var numOfParticipantView: ReactionButtonView!
+    private var numOfParticipantView: ReactionIndicatorButton!
     private var contentsTableView: UITableView!
     private var creationView: UIView!
     private var creationViewHeightConstraint: NSLayoutConstraint!
@@ -148,7 +148,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         reactionStackView.distribution = .fill
         scrollableView.addSubview(reactionStackView)
 
-        likeButtonView = ReactionButtonView(input: (text: "", image: nil))
+        likeButtonView = ReactionIndicatorButton(input: (text: "", image: nil))
         likeButtonView.translatesAutoresizingMaskIntoConstraints = false
 //        likeButtonView.listen { type in
 //            switch type {
@@ -160,7 +160,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
 //        }
         reactionStackView.addArrangedSubview(likeButtonView)
         
-        commentButtonView = ReactionButtonView(input: (text: "", image: nil))
+        commentButtonView = ReactionIndicatorButton(input: (text: "", image: nil))
         commentButtonView.translatesAutoresizingMaskIntoConstraints = false
         reactionStackView.addArrangedSubview(commentButtonView)
 //        commentButtonView.listen {
@@ -176,7 +176,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         }
         reactionStackView.addArrangedSubview(buyTicketButtonView)
         
-        numOfParticipantView = ReactionButtonView(input: (text: "", image: nil))
+        numOfParticipantView = ReactionIndicatorButton(input: (text: "", image: nil))
         numOfParticipantView.translatesAutoresizingMaskIntoConstraints = false
         numOfParticipantView.listen { _ in
 

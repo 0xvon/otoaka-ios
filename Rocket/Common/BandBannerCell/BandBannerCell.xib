@@ -35,7 +35,7 @@
                         <constraint firstAttribute="height" constant="40" id="Zy9-Be-qi1"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L67-28-a6B" customClass="ReactionButtonView" customModule="Rocket_Development" customModuleProvider="target">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L67-28-a6B" customClass="ReactionIndicatorButton" customModule="UIComponent">
                     <rect key="frame" x="76" y="58" width="142" height="40"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="40" id="ctq-Vd-D0b"/>
