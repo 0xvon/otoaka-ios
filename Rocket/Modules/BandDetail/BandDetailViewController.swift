@@ -217,8 +217,24 @@ final class BandDetailViewController: UIViewController, Instantiable {
     @available(*, deprecated)
     func setupCreation() {
         let floatingController = dependencyProvider.viewHierarchy.floatingViewController
-        let editButtonItem = FloatingButtonItem(icon: UIImage(named: "edit")!)
-        floatingController.setFloatingButtonItems([editButtonItem])
+        let items: [FloatingButtonItem]
+        switch self.userType {
+        case .member:
+            let createEditView = FloatingButtonItem(icon: UIImage(named: "edit")!)
+            let inviteCodeView = FloatingButtonItem(icon: UIImage(named: "invitation")!)
+            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
+            items = [createEditView, inviteCodeView, createShareView]
+        case .group:
+            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
+            let createMessageView = FloatingButtonItem(icon: UIImage(named: "mail")!)
+            items = [createShareView, createMessageView]
+        case .fan:
+            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
+            items = [createShareView]
+        case .none:
+            items = []
+        }
+        floatingController.setFloatingButtonItems(items)
     }
     
     private func showInviteCode(invitationCode: String) {
