@@ -26,16 +26,17 @@ struct DependencyProvider {
     var apiClient: APIClient
     var youTubeDataApiClient: YouTubeDataAPIClient
     var s3Bucket: String
+    var viewHierarchy: ViewHierarchy
 }
 
 extension DependencyProvider {
 
     #if DEBUG
-        static func make() -> DependencyProvider {
-            .make(config: DevelopmentConfig.self)
+        static func make(windowScene: UIWindowScene) -> DependencyProvider {
+            .make(config: DevelopmentConfig.self, windowScene: windowScene)
         }
     #endif
-    static func make(config: Config.Type) -> DependencyProvider {
+    static func make(config: Config.Type, windowScene: UIWindowScene) -> DependencyProvider {
         let credentialProvider = AWSCognitoCredentialsProvider(
             regionType: .APNortheast1,
             identityPoolId: config.cognitoIdentityPoolId
@@ -67,7 +68,12 @@ extension DependencyProvider {
         let wrapper = CognitoAuthWrapper(awsCognitoAuth: auth)
         let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: wrapper)
         let youTubeDataApiClient = YouTubeDataAPIClient(baseUrl: URL(string: "https://www.googleapis.com")!, apiKey: config.youTubeApiKey)
-        return DependencyProvider(auth: auth, apiClient: apiClient, youTubeDataApiClient: youTubeDataApiClient, s3Bucket: config.s3Bucket)
+        return DependencyProvider(
+            auth: auth, apiClient: apiClient,
+            youTubeDataApiClient: youTubeDataApiClient,
+            s3Bucket: config.s3Bucket,
+            viewHierarchy: ViewHierarchy(windowScene: windowScene)
+        )
     }
 }
 

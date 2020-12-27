@@ -30,6 +30,7 @@ public final class FollowersSummaryView: UIStackView {
         alignment = .center
         addArrangedSubview(followersLabel)
         addArrangedSubview(followersNumberLabel)
+        followersLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
 
     public func updateNumber(_ number: Int) {
