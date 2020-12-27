@@ -1,6 +1,7 @@
 import UIKit
 
 public enum Brand {
+    // FIXME: Use `UIColor(dynamicProvider:)`
     public static func color(for color: Color) -> UIColor {
         switch color {
         case .brand(.primary):            return #colorLiteral(red: 0.2862745098, green: 0.631372549, blue: 0.9725490196, alpha: 1) // #49A1F8
@@ -10,7 +11,7 @@ public enum Brand {
         case .background(.cellSelected):  return #colorLiteral(red: 0.2549019608, green: 0.2509803922, blue: 0.2705882353, alpha: 1) // #414045
         case .background(.navigationBar): return #colorLiteral(red: 0.1568627451, green: 0.1568627451, blue: 0.1607843137, alpha: 1) // #282829
         case .text(.primary):             return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
-        case .text(.button):              return #colorLiteral(red: 0.2862745098, green: 0.631372549, blue: 0.9725490196, alpha: 1) // #49A1F8
+        case .text(.button):              return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
         case .text(.link):                return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
         }
     }
@@ -72,6 +73,25 @@ public enum Brand {
              xxlargeStrong, xlargeStrong, largeStrong,
              mediumStrong,
              smallStrong, xsmallStrong, xxsmallStrong
+    }
+}
+
+extension UIColor {
+    // MARK: Color variations
+
+    /// Pressed version of any color using Design System formula.
+    ///
+    /// The color returned is the same as overlaying a 20% alpha black onto the base color.
+    /// - note: If a pressed version of a color is explicitly defined as a constant, use that instead.
+    public func pressed() -> UIColor {
+        var r: CGFloat = 0.0
+        var g: CGFloat  = 0.0
+        var b: CGFloat = 0.0
+        var a: CGFloat  = 0.0
+        getRed(&r, green: &g, blue: &b, alpha: &a)
+
+        // blend #000000 alpha 0.1
+        return UIColor(red: r*0.9, green: g*0.9, blue: b*0.9, alpha: a * 0.9 + 0.1)
     }
 }
 

@@ -37,7 +37,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     private var reactionStackView: UIStackView!
     private var likeButtonView: ReactionButtonView!
     private var commentButtonView: ReactionButtonView!
-    private var buyTicketButtonView: Button!
+    private var buyTicketButtonView: PrimaryButton!
     private var numOfParticipantView: ReactionButtonView!
     private var contentsTableView: UITableView!
     private var creationView: UIView!
@@ -167,7 +167,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
 //            self.commentButtonTapped()
 //        }
 
-        buyTicketButtonView = Button(input: (text: "￥\(input.live.price)", image: UIImage(named: "ticket")))
+        buyTicketButtonView = PrimaryButton(text: "￥\(input.live.price)")
+        buyTicketButtonView.setImage(UIImage(named: "ticket"), for: .normal)
         buyTicketButtonView.translatesAutoresizingMaskIntoConstraints = false
         buyTicketButtonView.layer.cornerRadius = 24
         buyTicketButtonView.listen {
@@ -510,12 +511,12 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         if let ticket = self.input.ticket {
             switch ticket.status {
             case .reserved:
-                self.buyTicketButtonView.setText(text: "予約済")
+                self.buyTicketButtonView.setTitle("予約済", for: .normal)
             case .refunded:
-                self.buyTicketButtonView.setText(text: "￥\(input.live.price)")
+                self.buyTicketButtonView.setTitle("￥\(input.live.price)", for: .normal)
             }
         } else {
-            self.buyTicketButtonView.setText(text: "￥\(input.live.price)")
+            self.buyTicketButtonView.setTitle("￥\(input.live.price)", for: .normal)
         }
     }
     

@@ -35,7 +35,7 @@ final class EditBandViewController: UIViewController, Instantiable {
     private var twitterIdInputView: TextFieldView!
     private var thumbnailInputView: UIView!
     private var profileImageView: UIImageView!
-    private var updateButton: Button!
+    private var updateButton: PrimaryButton!
 
     lazy var viewModel = EditBandViewModel(
         apiClient: dependencyProvider.apiClient,
@@ -166,7 +166,7 @@ final class EditBandViewController: UIViewController, Instantiable {
         profileImageTitle.textColor = style.color.main.get()
         thumbnailInputView.addSubview(profileImageTitle)
 
-        updateButton = Button(input: (text: "バンド更新", image: nil))
+        updateButton = PrimaryButton(text: "バンド更新")
         updateButton.translatesAutoresizingMaskIntoConstraints = false
         updateButton.layer.cornerRadius = 25
         updateButton.listen {

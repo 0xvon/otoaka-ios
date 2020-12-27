@@ -29,7 +29,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     private var endTimeInputView: UIDatePicker!
     private var thumbnailInputView: UIView!
     private var thumbnailImageView: UIImageView!
-    private var createButton: Button!
+    private var createButton: PrimaryButton!
 
     var hostGroups: [Endpoint.Group] = []
     var liveStyles: [String] = Components().liveStyles
@@ -260,7 +260,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         thumbnailLabel.translatesAutoresizingMaskIntoConstraints = false
         thumbnailInputView.addSubview(thumbnailLabel)
 
-        createButton = Button(input: (text: "ライブを作成", image: nil))
+        createButton = PrimaryButton(text: "ライブを作成")
         createButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.layer.cornerRadius = 18
         createButton.listen {

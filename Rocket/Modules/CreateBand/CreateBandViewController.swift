@@ -48,7 +48,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
     private var twitterIdInputView: TextFieldView!
     private var thumbnailInputView: UIView!
     private var profileImageView: UIImageView!
-    private var registerButton: Button!
+    private var registerButton: PrimaryButton!
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -159,7 +159,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         profileImageTitle.textColor = style.color.main.get()
         thumbnailInputView.addSubview(profileImageTitle)
 
-        registerButton = Button(input: (text: "バンド作成", image: nil))
+        registerButton = PrimaryButton(text: "バンド作成")
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         registerButton.layer.cornerRadius = 25
         registerButton.listen {

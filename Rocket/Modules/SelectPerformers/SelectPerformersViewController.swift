@@ -16,7 +16,7 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
     
     private var groupTableView: UITableView!
     private var searchBar: UISearchBar!
-    private var okButton: Button!
+    private var okButton: PrimaryButton!
     
     lazy var viewModel = SelectPerformersViewModel(
         apiClient: dependencyProvider.apiClient,
@@ -90,7 +90,7 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
         okButtonView.backgroundColor = style.color.background.get()
         self.view.addSubview(okButtonView)
         
-        okButton = Button(input: (text: "ok", image: nil))
+        okButton = PrimaryButton(text: "ok")
         okButton.listen {
             self.okButtonTapped()
         }

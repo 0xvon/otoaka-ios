@@ -16,7 +16,12 @@ class BandBannerCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var bandImageView: UIImageView!
     @IBOutlet weak var bandNameLabel: UILabel!
     @IBOutlet weak var likeButtonView: ReactionButtonView!
-    @IBOutlet weak var listenButtonView: Button!
+    @IBOutlet weak var listenButtonView: PrimaryButton! {
+        didSet {
+            listenButtonView.setTitle("曲を聴く", for: .normal)
+            listenButtonView.setImage(UIImage(named: "play"), for: .normal)
+        }
+    }
 
     func inject(input: Input) {
         self.input = input
@@ -32,7 +37,6 @@ class BandBannerCell: UITableViewCell, ReusableCell {
         likeButtonView.isHidden  = true
         likeButtonView.inject(input: (text: "10000", image: UIImage(named: "heart")))
         listenButtonView.isHidden = true
-        listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
         selectionStyle = .none
 
         bandImageView.loadImageAsynchronously(url: input.artworkURL)

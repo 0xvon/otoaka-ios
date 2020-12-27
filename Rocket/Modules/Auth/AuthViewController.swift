@@ -67,7 +67,7 @@ final class AuthViewController: UIViewController, Instantiable {
         backgroundImageView.image = UIImage(named: "live")
         backgroundImageView.contentMode = .scaleAspectFill
 
-        signInButtonView.inject(input: (text: "サインイン", image: nil))
+        signInButtonView.setTitle("サインイン", for: .normal)
         signInButtonView.listen { [weak self] in
             self?.signInButtonTapped()
         }

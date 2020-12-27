@@ -1,3 +1,3 @@
 @_exported import UIComponent
 
-typealias Button = UIComponent.Button
+typealias Button = UIComponent.PrimaryButton

@@ -46,7 +46,7 @@ final class BandDetailHeaderView: UIView {
     private var bandImageView: UIImageView!
     private var arrowButton: UIButton!
     private var artworkImageView: UIImageView!
-    private var playButton: Button!
+    private var playButton: PrimaryButton!
     private var trackNameLabel: UILabel!
     private var releasedDataLabel: UILabel!
     private var seeMoreTracksButton: UIButton!
@@ -184,7 +184,8 @@ final class BandDetailHeaderView: UIView {
         artworkImageView.clipsToBounds = true
         trackInformationView.addSubview(artworkImageView)
 
-        playButton = Button(input: (text: "再生", image: UIImage(named: "play")))
+        playButton = PrimaryButton(text: "再生")
+        playButton.setImage(UIImage(named: "play"), for: .normal)
         playButton.isHidden = true
         playButton.layer.cornerRadius = 18
         playButton.translatesAutoresizingMaskIntoConstraints = false

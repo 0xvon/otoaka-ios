@@ -25,7 +25,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
     private var endTimeInputView: UIDatePicker!
     private var thumbnailInputView: UIView!
     private var thumbnailImageView: UIImageView!
-    private var createButton: Button!
+    private var createButton: PrimaryButton!
 
     var livehouses: [String] = Components().livehouses
 
@@ -225,7 +225,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
         thumbnailLabel.translatesAutoresizingMaskIntoConstraints = false
         thumbnailInputView.addSubview(thumbnailLabel)
 
-        createButton = Button(input: (text: "ライブを編集", image: nil))
+        createButton = PrimaryButton(text: "ライブを編集")
         createButton.translatesAutoresizingMaskIntoConstraints = false
         createButton.layer.cornerRadius = 18
         createButton.listen {

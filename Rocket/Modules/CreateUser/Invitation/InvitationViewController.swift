@@ -33,7 +33,7 @@ final class InvitationViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider
     var input: Input!
     @IBOutlet weak var invitationView: TextFieldView!
-    @IBOutlet weak var registerButtonView: Button!
+    @IBOutlet weak var registerButtonView: PrimaryButton!
     @IBOutlet weak var orLabel: UILabel!
     @IBOutlet weak var createBandButton: UIButton!
 
@@ -72,7 +72,7 @@ final class InvitationViewController: UIViewController, Instantiable {
         }
 
         invitationView.inject(input: (section: "招待コード", text: nil, maxLength: 60))
-        registerButtonView.inject(input: (text: "登録", image: nil))
+        registerButtonView.setTitle("登録", for: .normal)
         registerButtonView.listen {
             self.register()
         }

@@ -158,7 +158,7 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
             commentView.translatesAutoresizingMaskIntoConstraints = false
             view.backgroundColor = .clear
             view.addSubview(commentView)
-            let commentButton = Button(input: (text: "コメントを送信", image: nil))
+            let commentButton = PrimaryButton(text: "コメントを送信")
             commentButton.translatesAutoresizingMaskIntoConstraints = false
             commentButton.layer.cornerRadius = 25
             commentButton.listen {

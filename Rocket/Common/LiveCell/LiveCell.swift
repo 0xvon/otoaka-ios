@@ -23,8 +23,18 @@ class LiveCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var bandsLabel: UILabel!
     @IBOutlet weak var placeView: BadgeView!
     @IBOutlet weak var dateView: BadgeView!
-    @IBOutlet weak var listenButtonView: Button!
-    @IBOutlet weak var buyTicketButtonView: Button!
+    @IBOutlet weak var listenButtonView: PrimaryButton! {
+        didSet {
+            listenButtonView.setTitle("曲を聴く", for: .normal)
+            listenButtonView.setImage(UIImage(named: "play"), for: .normal)
+        }
+    }
+    @IBOutlet weak var buyTicketButtonView: PrimaryButton! {
+        didSet {
+            buyTicketButtonView.setTitle("チケット購入", for: .normal)
+            buyTicketButtonView.setImage(UIImage(named: "ticket"), for: .normal)
+        }
+    }
     @IBOutlet weak var thumbnailView: UIImageView!
 
     override func awakeFromNib() {
@@ -76,9 +86,7 @@ class LiveCell: UITableViewCell, ReusableCell {
             (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
 
         buyTicketButtonView.isHidden = true
-        buyTicketButtonView.inject(input: (text: "チケット購入", image: UIImage(named: "ticket")))
         listenButtonView.isHidden = true
-        listenButtonView.inject(input: (text: "曲を聴く", image: UIImage(named: "play")))
         dateView.inject(input: (text: date, image: UIImage(named: "calendar")))
         placeView.inject(input: (text: input.liveHouse ?? "会場未定", image: UIImage(named: "map")))
     }

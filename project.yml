@@ -11,14 +11,24 @@ targets:
     type: framework
     platform: iOS
     sources: [UIComponent]
+    settings:
+      base:
+        DEVELOPMENT_ASSET_PATHS: UIComponent/PreviewContent
+        ENABLE_PREVIEWS: YES
   Rocket-Production:
     templates: [RocketTarget]
     sources:
       - Rocket/FirebaseConfig/Production
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.Rocket
   Rocket-Development:
     templates: [RocketTarget]
     sources:
       - Rocket/FirebaseConfig/Development
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.dev.Rocket
 
 targetTemplates:
   RocketTarget:

@@ -21,7 +21,7 @@ final class EditAccountViewController: UIViewController, Instantiable {
     private var thumbnailInputView: UIView!
     private var profileImageView: UIImageView!
     private var partInputView: TextFieldView!
-    private var updateButton: Button!
+    private var updateButton: PrimaryButton!
 
     lazy var viewModel = EditAccountViewModel(
         apiClient: dependencyProvider.apiClient,
@@ -119,7 +119,7 @@ final class EditAccountViewController: UIViewController, Instantiable {
         profileImageTitle.textColor = style.color.main.get()
         thumbnailInputView.addSubview(profileImageTitle)
 
-        updateButton = Button(input: (text: "プロフィール更新", image: nil))
+        updateButton = PrimaryButton(text: "プロフィール更新")
         updateButton.translatesAutoresizingMaskIntoConstraints = false
         updateButton.layer.cornerRadius = 25
         updateButton.listen {

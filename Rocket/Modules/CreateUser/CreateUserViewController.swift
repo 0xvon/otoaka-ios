@@ -46,7 +46,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
     )
 
     @IBOutlet weak var setProfileView: UIView!
-    @IBOutlet weak var createUserButtonView: Button!
+    @IBOutlet weak var createUserButtonView: PrimaryButton!
     @IBOutlet weak var fanSection: UIView!
     @IBOutlet weak var bandSection: UIView!
     @IBOutlet weak var profileInputView: UIView!
@@ -170,7 +170,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         profileImageTitle.textColor = style.color.main.get()
         setProfileView.addSubview(profileImageTitle)
 
-        createUserButtonView.inject(input: (text: "ユーザ作成", image: nil))
+        createUserButtonView.setTitle("ユーザ作成", for: .normal)
         createUserButtonView.listen {
             self.createUser()
         }
