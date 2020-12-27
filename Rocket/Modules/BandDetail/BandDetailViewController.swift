@@ -202,7 +202,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     
     private func setupLikeView() {
         let image: UIImage = self.isFollowing ? UIImage(named: "heart_fill")! : UIImage(named: "heart")!
-        self.likeButtonView.setItem(text: "\(self.followersCount)", image: image)
+        self.likeButtonView.setTitle("\(self.followersCount)", for: .normal)
+        self.likeButtonView.setImage(image, for: .normal)
     }
 
     private func setupCreation() {

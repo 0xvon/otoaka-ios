@@ -21,7 +21,7 @@ public final class PrimaryButton: UIButton {
 
     func setup() {
         backgroundColor = Brand.color(for: .background(.button))
-        layer.cornerRadius = self.bounds.height / 2
+        layer.cornerRadius = bounds.height / 2
         clipsToBounds = true
         addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
 

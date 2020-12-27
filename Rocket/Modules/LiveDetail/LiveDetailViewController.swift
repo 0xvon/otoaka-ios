@@ -248,7 +248,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         self.setupCreation()
         liveDetailHeader.update(
             input: (dependencyProvider: self.dependencyProvider, live: self.input.live, groups: self.performers))
-        numOfParticipantView.updateText(text: "\(self.participants)人予約済み")
+        numOfParticipantView.setTitle("\(self.participants)人予約済み", for: .normal)
     }
     
     func injectPerformers() {
