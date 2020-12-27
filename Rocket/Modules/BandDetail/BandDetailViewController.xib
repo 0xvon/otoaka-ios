@@ -42,11 +42,9 @@
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L3a-GU-FLo" customClass="ReactionIndicatorButton" customModule="UIComponent">
                                             <rect key="frame" x="0.0" y="0.0" width="120" height="48"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         </view>
                                         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lqm-IJ-L64" customClass="ReactionIndicatorButton" customModule="UIComponent">
                                             <rect key="frame" x="128" y="0.0" width="120" height="48"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="48" id="C57-iC-9Hu"/>
                                                 <constraint firstAttribute="width" constant="120" id="H4e-Ky-8On"/>
