@@ -24,12 +24,17 @@ public final class ToggleButton: UIButton {
     public override var isSelected: Bool {
         didSet { update() }
     }
+    public override var isHighlighted: Bool {
+        didSet { alpha = isHighlighted ? 0.6 : 1.0 }
+    }
 
     func update() {
         backgroundColor = isSelected ?
             Brand.color(for: .background(.toggleSelected)) : .clear
-        setTitleColor(isSelected ? Brand.color(for: .text(.primary)) :
-                        Brand.color(for: .text(.toggle)), for: .normal)
+        let titleColor = isSelected ? Brand.color(for: .text(.primary)) :
+            Brand.color(for: .text(.toggle))
+        setTitleColor(titleColor, for: .normal)
+        setTitleColor(titleColor.pressed(), for: .highlighted)
         setTitle(titlesByIsSelected[isSelected], for: .normal)
     }
 
