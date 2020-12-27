@@ -1,110 +1,110 @@
 name: AWSCognitoAuth, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.19.1
+version: 2.21.1
 
 name: AWSCognitoAuth, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.19.1
+version: 2.21.1
 
 name: AWSCognitoIdentityProviderASF, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.19.1
+version: 2.21.1
 
 name: AWSCognitoIdentityProviderASF, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.19.1
+version: 2.21.1
 
 name: AWSCore, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.19.1
+version: 2.21.1
 
 name: AWSCore, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.19.1
+version: 2.21.1
 
 name: AWSS3, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.19.1
+version: 2.21.1
 
 name: AWSS3, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.19.1
+version: 2.21.1
 
 name: Firebase, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: Firebase, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseAnalytics, nameSpecified: 
 body: Copyright 2020 Googl…
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseAnalytics, nameSpecified: 
 body: Copyright 2020 Googl…
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseCore, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseCore, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseCoreDiagnostics, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseCoreDiagnostics, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseCrashlytics, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseCrashlytics, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.1.0
+version: 7.3.0
 
 name: GoogleAppMeasurement, nameSpecified: 
 body: Copyright 2020 Googl…
-version: 7.1.0
+version: 7.3.0
 
 name: GoogleAppMeasurement, nameSpecified: 
 body: Copyright 2020 Googl…
-version: 7.1.0
+version: 7.3.0
 
 name: GoogleDataTransport, nameSpecified: 
 body: 
                    …
-version: 8.0.1
+version: 8.1.0
 
 name: GoogleDataTransport, nameSpecified: 
 body: 
                    …
-version: 8.0.1
+version: 8.1.0
 
 name: GoogleUtilities, nameSpecified: 
 body: 
