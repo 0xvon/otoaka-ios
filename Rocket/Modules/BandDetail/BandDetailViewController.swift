@@ -9,29 +9,21 @@ import Endpoint
 import UIKit
 import SafariServices
 import UIComponent
+import Combine
 
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group
-    
-    enum UserType {
-        case fan
-        case group
-        case member
-    }
 
     var dependencyProvider: LoggedInDependencyProvider!
-    var input: Input!
-    var lives: [Live] = []
-    var feeds: [ArtistFeedSummary] = []
-    var groupItem: ChannelDetail.ChannelItem? = nil
-    var isFollowing: Bool = false
-    var followersCount: Int = 0
-    var userType: UserType!
 
     @IBOutlet weak var headerView: BandDetailHeaderView!
     @IBOutlet weak var liveTableView: UITableView!
     @IBOutlet weak var contentsTableView: UITableView!
-    @IBOutlet weak var verticalScrollView: UIScrollView!
+    @IBOutlet weak var verticalScrollView: UIScrollView! {
+        didSet {
+            verticalScrollView.refreshControl = refreshControl
+        }
+    }
     @IBOutlet weak var followersSummaryView: FollowersSummaryView!
     @IBOutlet weak var followButton: ToggleButton! {
         didSet {
@@ -40,80 +32,23 @@ final class BandDetailViewController: UIViewController, Instantiable {
         }
     }
 
-    lazy var viewModel = BandDetailViewModel(
-        apiClient: dependencyProvider.apiClient,
-        youTubeDataAPIClient: dependencyProvider.youTubeDataApiClient,
-        auth: dependencyProvider.auth,
-        group: self.input,
-        outputHander: { output in
-            switch output {
-            case .getGroup(let response):
-                DispatchQueue.main.async {
-                    self.input = response.group
-                    self.isFollowing = response.isFollowing
-                    self.followersCount = response.followersCount
-                    switch self.dependencyProvider.user.role {
-                    case .fan(_):
-                        self.userType = .fan
-                    default:
-                        self.userType = response.isMember ? .member : .group
-                    }
-                    self.setupLikeView()
-                    self.setupCreation()
-                    self.inject()
-                }
-            case .getChart(let items):
-                DispatchQueue.main.async {
-                    self.groupItem = items.first
-                    self.inject()
-                }
-            case .getGroupLives(let lives):
-                DispatchQueue.main.async {
-                    self.lives = lives
-                    self.liveTableView.reloadData()
-                }
-            case .getGroupFeeds(let feeds):
-                DispatchQueue.main.async {
-                    self.feeds = feeds
-                    self.contentsTableView.reloadData()
-                }
-            case .follow:
-                DispatchQueue.main.async {
-                    self.isFollowing.toggle()
-                    self.followersCount += 1
-                    self.setupLikeView()
-                    self.likeButtonColor()
-                }
-            case .unfollow:
-                DispatchQueue.main.async {
-                    self.isFollowing.toggle()
-                    self.followersCount -= 1
-                    self.setupLikeView()
-                    self.likeButtonColor()
-                }
-            case .inviteGroup(let invitation):
-                DispatchQueue.main.async {
-                    self.showInviteCode(invitationCode: invitation.id)
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
+    let refreshControl = UIRefreshControl()
+
+    let viewModel: BandDetailViewModel
+    let followingViewModel: FollowingViewModel
+    var cancellables: Set<AnyCancellable> = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.input = input
-        switch dependencyProvider.user.role {
-        case .artist(_):
-            self.userType = .member
-        case .fan(_):
-            self.userType = .fan
-        }
-
+        self.viewModel = BandDetailViewModel(
+            dependencyProvider: dependencyProvider,
+            group: input
+        )
+        self.followingViewModel = FollowingViewModel(
+            group: input.id, apiClient: dependencyProvider.apiClient
+        )
         super.init(nibName: nil, bundle: nil)
+        bind()
     }
 
     required init?(coder: NSCoder) {
@@ -132,13 +67,61 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
-        setupCreation()
-    }
+        setupViews()
 
-    func setup() {
-        view.backgroundColor = style.color.background.get()
-        headerView.inject(input: (group: input, groupItem: self.groupItem))
+        followingViewModel.viewDidLoad()
+        viewModel.viewDidLoad()
+    }
+    
+    func bind() {
+        followingViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .updateFollowing(let isFollowing):
+                self.followButton.isSelected = isFollowing
+            case .updateIsButtonEnabled(let isEnabled):
+                self.followButton.isEnabled = isEnabled
+            case .updateFollowersCount(let count):
+                self.followersSummaryView.updateNumber(count)
+            case .reportError(let error):
+                self.showAlert(title: "エラー", message: error.localizedDescription)
+            }
+        }
+        .store(in: &cancellables)
+
+        followButton.controlEventPublisher(for: .touchUpInside)
+            .sink(receiveValue: followingViewModel.didButtonTapped)
+            .store(in: &cancellables)
+
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didGetGroupDetail(let response, let displayType):
+                self.followingViewModel.didGetGroupDetail(
+                    isFollowing: response.isFollowing,
+                    followersCount: response.followersCount
+                )
+                self.setupFloatingItems(displayType: displayType)
+            case let .didGetChart(group, item):
+                headerView.update(input: (group: group, groupItem: item))
+            case .didGetGroupLives:
+                self.liveTableView.reloadData()
+            case .didGetGroupFeeds:
+                self.contentsTableView.reloadData()
+            case .didCreatedInvitation(let invitation):
+                self.showInviteCode(invitationCode: invitation.id)
+            case .reportError(let error):
+                self.showAlert(title: "エラー", message: error.localizedDescription)
+            case .pushToLiveDetail(let live):
+                let vc = LiveDetailViewController(
+                    dependencyProvider: self.dependencyProvider, input: (live: live, ticket: nil))
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .openURLInBrowser(let url):
+                let safari = SFSafariViewController(url: url)
+                safari.dismissButtonStyle = .close
+                present(safari, animated: true, completion: nil)
+            }
+        }
+        .store(in: &cancellables)
+        
         headerView.listen { listenType in
             switch listenType {
             case .play(let url):
@@ -146,7 +129,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 safari.dismissButtonStyle = .close
                 self.present(safari, animated: true, completion: nil)
             case .seeMoreCharts:
-                let vc = ChartListViewController(dependencyProvider: self.dependencyProvider, input: self.input)
+                let vc = ChartListViewController(dependencyProvider: self.dependencyProvider, input: self.viewModel.state.group)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .youtube(let url):
                 let safari = SFSafariViewController(url: url)
@@ -158,21 +141,18 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.present(safari, animated: true, completion: nil)
             }
         }
+        refreshControl.controlEventPublisher(for: .valueChanged)
+            .sink { [refreshControl, viewModel] _ in
+                viewModel.refresh()
+                refreshControl.endRefreshing()
+            }
+            .store(in: &cancellables)
+    }
 
-        verticalScrollView.refreshControl = UIRefreshControl()
-        verticalScrollView.refreshControl?.addTarget(
-            self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
-
-//        likeButtonView.inject(input: (text: "", image: UIImage(named: "heart")))
-//        likeButtonView.listen { type in
-//            switch type {
-//            case .reaction:
-//                self.likeButtonTapped()
-//            case .num:
-//                self.numOfLikeButtonTapped()
-//            }
-//
-//        }
+    func setupViews() {
+        view.backgroundColor = style.color.background.get()
+        // FIXME:
+        headerView.inject(input: (group: viewModel.state.group, groupItem: nil))
 
         liveTableView.delegate = self
         liveTableView.separatorStyle = .none
@@ -181,10 +161,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
         liveTableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
         liveTableView.tableFooterView = UIView(frame: .zero)
-        viewModel.getGroup()
-        viewModel.getGroupFeed()
-        viewModel.getGroupLive()
-        viewModel.getChart()
 
         contentsTableView.delegate = self
         contentsTableView.separatorStyle = .none
@@ -196,44 +172,29 @@ final class BandDetailViewController: UIViewController, Instantiable {
             forCellReuseIdentifier: "BandContentsCell")
     }
     
-    private func setupLikeView() {
-        let image: UIImage = self.isFollowing ? UIImage(named: "heart_fill")! : UIImage(named: "heart")!
-//        self.likeButtonView.setTitle("\(self.followersCount)", for: .normal)
-//        self.likeButtonView.setImage(image, for: .normal)
-    }
-
-
-    func inject() {
-        headerView.update(input: (group: input, groupItem: self.groupItem))
-    }
-
-    @objc private func refreshGroups(sender: UIRefreshControl) {
-        viewModel.getGroup()
-        viewModel.getGroupFeed()
-        viewModel.getGroupLive()
-        sender.endRefreshing()
-    }
-    
-    @available(*, deprecated)
-    func setupCreation() {
-        let floatingController = dependencyProvider.viewHierarchy.floatingViewController
+    private func setupFloatingItems(displayType: BandDetailViewModel.DisplayType) {
         let items: [FloatingButtonItem]
-        switch self.userType {
+        switch displayType {
         case .member:
             let createEditView = FloatingButtonItem(icon: UIImage(named: "edit")!)
+            createEditView.addTarget(self, action: #selector(editGroup), for: .touchUpInside)
             let inviteCodeView = FloatingButtonItem(icon: UIImage(named: "invitation")!)
+            inviteCodeView.addTarget(self, action: #selector(inviteGroup), for: .touchUpInside)
             let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
+            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
             items = [createEditView, inviteCodeView, createShareView]
         case .group:
             let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
+            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
             let createMessageView = FloatingButtonItem(icon: UIImage(named: "mail")!)
+            createMessageView.addTarget(self, action: #selector(createMessage), for: .touchUpInside)
             items = [createShareView, createMessageView]
         case .fan:
             let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
+            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
             items = [createShareView]
-        case .none:
-            items = []
         }
+        let floatingController = dependencyProvider.viewHierarchy.floatingViewController
         floatingController.setFloatingButtonItems(items)
     }
     
@@ -257,27 +218,27 @@ final class BandDetailViewController: UIViewController, Instantiable {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func editGroup() {
-        let vc = EditBandViewController(dependencyProvider: dependencyProvider, input: input)
+    @objc func editGroup() {
+        let vc = EditBandViewController(dependencyProvider: dependencyProvider, input: viewModel.state.group)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func inviteGroup() {
-        viewModel.inviteGroup(groupId: input.id)
+    @objc func inviteGroup() {
+        viewModel.inviteGroup(groupId: viewModel.state.group.id)
     }
 
-    func createMessage() {
-        if let twitterId = input.twitterId {
+    @objc func createMessage() {
+        if let twitterId = viewModel.state.group.twitterId {
             let safari = SFSafariViewController(url: URL(string: "https://twitter.com/\(twitterId)")!)
             safari.dismissButtonStyle = .close
             present(safari, animated: true, completion: nil)
         }
     }
 
-    func createShare() {
-        let shareLiveText: String = "\(input.name)がオススメだよ！！\n\n via @rocketforband "
+    @objc func createShare() {
+        let shareLiveText: String = "\(viewModel.state.group.name)がオススメだよ！！\n\n via @rocketforband "
         let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/id1500148347")!
-        let shareImage: UIImage = UIImage(url: input.artworkURL!.absoluteString)
+        let shareImage: UIImage = UIImage(url: viewModel.state.group.artworkURL!.absoluteString)
         
         let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
         let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
@@ -285,20 +246,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
         self.present(activityViewController, animated: true, completion: nil)
     }
 
-    func likeButtonColor() {
-
-    }
-
-    private func likeButtonTapped() {
-        if self.isFollowing {
-            viewModel.unfollowGroup()
-        } else {
-            viewModel.followGroup()
-        }
-    }
-    
     private func numOfLikeButtonTapped() {
-        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.input.id))
+        let vc = UserListViewController(
+            dependencyProvider: dependencyProvider,
+            input: .followers(viewModel.state.group.id)
+        )
         self.navigationController?.pushViewController(vc, animated: true)
     }
 
@@ -309,18 +261,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
 extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        viewModel.numberOfRows(in: section)
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        switch tableView {
-        case self.liveTableView:
-            return 1
-        case self.contentsTableView:
-            return 1
-        default:
-            return 0
-        }
+        viewModel.numberOfSections()
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -339,8 +284,9 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        switch tableView {
-        case self.liveTableView:
+        // FIXME
+        switch viewModel.state.sections[section] {
+        case .live:
             let view = UIView()
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
             let titleView = TitleLabelView(
@@ -358,7 +304,7 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             view.addSubview(seeMoreButton)
 
             return view
-        case self.contentsTableView:
+        case .feed:
             let view = UIView()
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
             let titleView = TitleLabelView(
@@ -378,76 +324,39 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             view.addSubview(seeMoreButton)
 
             return view
-        default:
-            return UIView()
         }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch tableView {
-        case self.liveTableView:
-            if self.lives.isEmpty {
-                let view = UITableViewCell()
-                view.backgroundColor = .clear
-                return view
-            }
-            let live = self.lives[indexPath.section]
+        switch viewModel.state.sections[indexPath.section] {
+        case let .live(rows):
+            let live = rows[indexPath.row]
             let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
             return cell
-        case self.contentsTableView:
-            if self.feeds.isEmpty {
-                let view = UITableViewCell()
-                view.backgroundColor = .clear
-                return view
-            }
-            let feed = self.feeds[indexPath.section]
+        case let .feed(rows):
+            let feed = rows[indexPath.row]
             let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
-            cell.comment { [weak self] _ in
-                self?.seeCommentButtonTapped()
+            cell.comment { [unowned self] _ in
+                let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
+                self.present(vc, animated: true, completion: nil)
             }
             return cell
-        default:
-            return UITableViewCell()
         }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch tableView {
-        case self.liveTableView:
-            if self.lives.isEmpty { break }
-            let live = self.lives[indexPath.section]
-            let vc = LiveDetailViewController(
-                dependencyProvider: self.dependencyProvider, input: (live: live, ticket: nil))
-            self.navigationController?.pushViewController(vc, animated: true)
-        case self.contentsTableView:
-            if self.feeds.isEmpty { break }
-            let feed = self.feeds[indexPath.section]
-            switch feed.feedType {
-            case .youtube(let url):
-                let safari = SFSafariViewController(url: url)
-                safari.dismissButtonStyle = .close
-                present(safari, animated: true, completion: nil)
-            }
-        default:
-            print("hello")
-        }
+        viewModel.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
     @objc private func seeMoreLive(_ sender: UIButton) {
-        let vc = LiveListViewController(dependencyProvider: self.dependencyProvider, input: .groupLive(self.input))
+        let vc = LiveListViewController(dependencyProvider: self.dependencyProvider, input: .groupLive(viewModel.state.group))
         self.navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func seeMoreContents(_ sender: UIButton) {
-        let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: input)
+        let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: viewModel.state.group)
         self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    private func seeCommentButtonTapped() {
-        let feed = self.feeds[0]
-        let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
-        present(vc, animated: true, completion: nil)
     }
 }
 

@@ -45,14 +45,9 @@ public final class ToggleButton: UIButton {
         layer.borderColor = Brand.color(for: .background(.toggleSelected)).cgColor
         titleLabel?.font = Brand.font(for: .mediumStrong)
         
-        addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
-        
         update()
     }
 
-    @objc private func touchUpInside() {
-        isSelected = !isSelected
-    }
     public func setTitle(_ title: String?, selected: Bool) {
         titlesByIsSelected[selected] = title
         update()

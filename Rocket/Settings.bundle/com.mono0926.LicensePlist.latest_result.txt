@@ -154,37 +154,13 @@ body:
                    …
 version: 1.2.11
 
-name: RxCocoa, nameSpecified: 
-body: **The MIT License**
-…
-version: 
-
-name: RxCocoa, nameSpecified: 
-body: **The MIT License**
-…
-version: 
-
-name: RxRelay, nameSpecified: 
-body: **The MIT License**
-…
-version: 
-
-name: RxRelay, nameSpecified: 
-body: **The MIT License**
-…
-version: 
-
-name: RxSwift, nameSpecified: 
-body: **The MIT License**
-…
-version: 
-
-name: RxSwift, nameSpecified: 
-body: **The MIT License**
-…
-version: 
-
 name: CodableURL, nameSpecified: CodableURL, owner: kateinoigakukun, version: 0.3.1
+
+name: combine-schedulers, nameSpecified: combine-schedulers, owner: pointfreeco, version: 0.1.2
+
+name: swift-case-paths, nameSpecified: swift-case-paths, owner: pointfreeco, version: 0.1.2
+
+name: swift-composable-architecture, nameSpecified: swift-composable-architecture, owner: pointfreeco, version: 0.9.0
 
 add-version-numbers: false
 
