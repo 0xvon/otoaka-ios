@@ -38,7 +38,7 @@ extension DependencyProvider {
     static func make(config: Config.Type) -> DependencyProvider {
         let credentialProvider = AWSCognitoCredentialsProvider(
             regionType: .APNortheast1,
-            identityPoolId: config.identityPoolId
+            identityPoolId: config.cognitoIdentityPoolId
         )
 
         let configuration = AWSServiceConfiguration(
@@ -49,15 +49,15 @@ extension DependencyProvider {
         AWSServiceManager.default()?.defaultServiceConfiguration = configuration
 
         let cognitoConfiguration = AWSCognitoAuthConfiguration(
-            appClientId: config.appClientId,
-            appClientSecret: config.appClientSecret,
-            scopes: config.scopes,
-            signInRedirectUri: config.signInRedirectUri,
-            signOutRedirectUri: config.signOutRedirectUri,
-            webDomain: config.webDomain,
+            appClientId: config.cognitoAppClientId,
+            appClientSecret: config.cognitoAppClientSecret,
+            scopes: config.cognitoCcopes,
+            signInRedirectUri: config.cognitoSignInRedirectUri,
+            signOutRedirectUri: config.cognitoSignOutRedirectUri,
+            webDomain: config.cognitoWebDomain,
             identityProvider: nil,
             idpIdentifier: nil,
-            userPoolIdForEnablingASF: config.userPoolIdForEnablingASF
+            userPoolIdForEnablingASF: nil
         )
 
         let cognitoAuthKey = "dev.wall-of-death.Rocket.cognito-auth"
