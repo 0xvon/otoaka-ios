@@ -7,6 +7,10 @@ packages:
   Endpoint:
     path: Libraries/rocket-api/Modules/Endpoint
 targets:
+  UIComponent:
+    type: framework
+    platform: iOS
+    sources: [UIComponent]
   Rocket:
     type: application
     platform: iOS
@@ -58,3 +62,4 @@ targets:
         implicit: true
         embed: false
       - package: Endpoint
+      - target: UIComponent

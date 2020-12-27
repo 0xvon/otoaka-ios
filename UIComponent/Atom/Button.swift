@@ -7,19 +7,19 @@
 
 import UIKit
 
-final class Button: UIView, InputAppliable {
-    typealias Input = (
+public final class Button: UIView, InputAppliable {
+    public typealias Input = (
         text: String,
         image: UIImage?
     )
 
-    var input: Input!
+    var input: Input
 
     private var buttonImageView: UIImageView!
     private var buttonTitleLabel: UILabel!
     private var button: UIButton!
 
-    init(input: Input) {
+    public init(input: Input) {
         self.input = input
         super.init(frame: .zero)
         self.inject(input: input)
@@ -27,24 +27,24 @@ final class Button: UIView, InputAppliable {
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        fatalError("unavailable")
     }
 
-    func inject(input: Input) {
+    public func inject(input: Input) {
         self.input = input
         self.setup()
     }
 
     func setup() {
+        backgroundColor = Brand.color(for: .background(.button))
+        layer.cornerCurve = .circular
         layer.cornerRadius = self.bounds.height / 2
-        layer.borderWidth = 1
-        layer.borderColor = style.color.main.get().cgColor
+        clipsToBounds = true
 
         let contentView = UIView(frame: self.frame)
         addSubview(contentView)
 
         contentView.backgroundColor = .clear
-        translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
         buttonImageView = UIImageView()
@@ -52,13 +52,13 @@ final class Button: UIView, InputAppliable {
         addSubview(buttonImageView)
         buttonImageView.image = input.image
 
-        buttonImageView.tintColor = style.color.main.get()
+        buttonImageView.tintColor = Brand.color(for: .brand(.primary))
 
         buttonTitleLabel = UILabel()
         buttonTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(buttonTitleLabel)
-        buttonTitleLabel.textColor = style.color.main.get()
-        buttonTitleLabel.font = style.font.regular.get()
+        buttonTitleLabel.textColor = Brand.color(for: .text(.button))
+        buttonTitleLabel.font = Brand.font(for: .mediumStrong)
         buttonTitleLabel.text = input.text
         buttonTitleLabel.textAlignment = .center
 
@@ -78,9 +78,7 @@ final class Button: UIView, InputAppliable {
             buttonImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             buttonImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
             buttonImageView.widthAnchor.constraint(equalToConstant: 24),
-            buttonImageView.heightAnchor.constraint(
-                equalTo: buttonImageView.widthAnchor, multiplier: 1),
-
+            buttonImageView.heightAnchor.constraint(equalTo: buttonImageView.widthAnchor),
             buttonTitleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
             buttonTitleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             buttonTitleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -12),
@@ -102,21 +100,20 @@ final class Button: UIView, InputAppliable {
     }
 
     private var listener: () -> Void = {}
-    func listen(_ listener: @escaping () -> Void) {
+    public func listen(_ listener: @escaping () -> Void) {
         self.listener = listener
     }
 }
 
-//#if DEBUG && canImport(SwiftUI)
-//import SwiftUI
-//
-//struct Button_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            ViewWrapper<Button>(input: (text: "チケット購入", image: UIImage(systemName: "ticket")))
-//        }
-//        .previewLayout(.fixed(width: 180, height: 48))
-//        .preferredColorScheme(.dark)
-//    }
-//}
-//#endif
+#if DEBUG && canImport(SwiftUI)
+import SwiftUI
+
+struct Button_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ViewWrapper(view: Button(input: (text: "Hello", image: nil)))
+        }
+        .previewLayout(.fixed(width: 180, height: 48))
+    }
+}
+#endif
