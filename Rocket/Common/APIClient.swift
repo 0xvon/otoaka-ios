@@ -97,11 +97,11 @@ class APIClient {
                         callback(.success(response))
                     } else {
                         print("error response: \(httpResponse.statusCode)")
-                        let errorMessage = try decoder.decode(String.self, from: data)
+                        let errorMessage = String(data: data, encoding: .utf8)
                         callback(
                             .failure(
                                 APIError.invalidStatus(
-                                    "status: \(httpResponse.statusCode), message: \(errorMessage)"))
+                                    "status: \(httpResponse.statusCode), message: \(String(describing: errorMessage))"))
                         )
                         print()
                     }

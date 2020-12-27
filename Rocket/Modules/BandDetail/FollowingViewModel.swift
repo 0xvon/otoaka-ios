@@ -41,6 +41,9 @@ class FollowingViewModel {
     func didGetGroupDetail(isFollowing: Bool, followersCount: Int) {
         state.isFollowing = isFollowing
         state.followersCount = followersCount
+        outputSubject.send(.updateIsButtonEnabled(true))
+        outputSubject.send(.updateFollowing(isFollowing))
+        outputSubject.send(.updateFollowersCount(followersCount))
     }
 
     func didButtonTapped() {
@@ -48,7 +51,7 @@ class FollowingViewModel {
             preconditionFailure("Button shouldn't be enabled before got isFollowing")
         }
         outputSubject.send(.updateIsButtonEnabled(false))
-        if !isFollowing {
+        if isFollowing {
             let req = UnfollowGroup.Request(groupId: state.group)
             apiClient.request(UnfollowGroup.self, request: req) { [unowned self] in
                 self.updateState(with: $0, didFollow: false)
@@ -72,6 +75,7 @@ class FollowingViewModel {
             let newCount = count + (didFollow ? 1 : -1)
             state.followersCount = newCount
             outputSubject.send(.updateFollowersCount(newCount))
+            outputSubject.send(.updateFollowing(didFollow))
         case .failure(let error):
             outputSubject.send(.reportError(error))
         }

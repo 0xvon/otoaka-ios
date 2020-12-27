@@ -83,7 +83,7 @@ class BandDetailViewModel {
 
     // MARK: - Inputs
     func viewDidLoad() {
-        getGroupDetail()
+        refresh()
     }
 
     func refresh() {

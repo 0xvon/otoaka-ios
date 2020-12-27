@@ -17,8 +17,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider!
 
     @IBOutlet weak var headerView: BandDetailHeaderView!
-    @IBOutlet weak var liveTableView: UITableView!
-    @IBOutlet weak var contentsTableView: UITableView!
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var verticalScrollView: UIScrollView! {
         didSet {
             verticalScrollView.refreshControl = refreshControl
@@ -48,7 +47,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
             group: input.id, apiClient: dependencyProvider.apiClient
         )
         super.init(nibName: nil, bundle: nil)
-        bind()
     }
 
     required init?(coder: NSCoder) {
@@ -68,6 +66,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        bind()
 
         followingViewModel.viewDidLoad()
         viewModel.viewDidLoad()
@@ -102,10 +101,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.setupFloatingItems(displayType: displayType)
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item))
-            case .didGetGroupLives:
-                self.liveTableView.reloadData()
-            case .didGetGroupFeeds:
-                self.contentsTableView.reloadData()
+            case .didGetGroupLives, .didGetGroupFeeds:
+                self.tableView.reloadData()
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
             case .reportError(let error):
@@ -154,22 +151,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
         // FIXME:
         headerView.inject(input: (group: viewModel.state.group, groupItem: nil))
 
-        liveTableView.delegate = self
-        liveTableView.separatorStyle = .none
-        liveTableView.dataSource = self
-        liveTableView.backgroundColor = style.color.background.get()
-        liveTableView.register(
+        tableView.delegate = self
+        tableView.separatorStyle = .none
+        tableView.dataSource = self
+        tableView.backgroundColor = style.color.background.get()
+        tableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
-        liveTableView.tableFooterView = UIView(frame: .zero)
-
-        contentsTableView.delegate = self
-        contentsTableView.separatorStyle = .none
-        contentsTableView.dataSource = self
-        contentsTableView.backgroundColor = style.color.background.get()
-        contentsTableView.tableFooterView = UIView(frame: .zero)
-        contentsTableView.register(
+        tableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
+        tableView.tableFooterView = UIView(frame: .zero)
     }
     
     private func setupFloatingItems(displayType: BandDetailViewModel.DisplayType) {
@@ -269,18 +260,11 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 60 : 16
+        return 60
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch tableView {
-        case self.liveTableView:
-            return 300
-        case self.contentsTableView:
-            return 300
-        default:
-            return 100
-        }
+        return 300
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
