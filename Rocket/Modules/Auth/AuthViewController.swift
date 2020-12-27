@@ -83,17 +83,3 @@ extension AuthViewController: AWSCognitoAuthDelegate {
         return self
     }
 }
-
-#if DEBUG && canImport(SwiftUI)
-    import SwiftUI
-
-    struct AuthViewController_Previews: PreviewProvider {
-        static var previews: some View {
-            ViewControllerWrapper<AuthViewController>(
-                dependencyProvider: .make(),
-                input: {}
-            )
-        }
-    }
-
-#endif

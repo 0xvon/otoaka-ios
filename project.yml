@@ -11,7 +11,17 @@ targets:
     type: framework
     platform: iOS
     sources: [UIComponent]
-  Rocket:
+  Rocket-Production:
+    templates: [RocketTarget]
+    sources:
+      - Rocket/FirebaseConfig/Production
+  Rocket-Development:
+    templates: [RocketTarget]
+    sources:
+      - Rocket/FirebaseConfig/Development
+
+targetTemplates:
+  RocketTarget:
     type: application
     platform: iOS
     scheme:
@@ -27,6 +37,7 @@ targets:
       Release: Pods/Target Support Files/Pods-Rocket/Pods-Rocket.release.xcconfig
     sources:
       - path: Rocket
+        excludes: [FirebaseConfig]
     preBuildScripts:
       - name: "[CP] Check Pods Manifest.lock"
         path: /bin/sh
@@ -58,7 +69,7 @@ targets:
         path: /bin/sh
         script: |
           if [ $CONFIGURATION = "Debug" ]; then
-            ${PODS_ROOT}/LicensePlist/license-plist --output-path $PRODUCT_NAME/Settings.bundle --github-token YOUR_GITHUB_TOKEN
+            ${PODS_ROOT}/LicensePlist/license-plist --output-path ${SRCROOT}/Rocket/Settings.bundle --github-token YOUR_GITHUB_TOKEN
           fi
     postBuildScripts:
       - name: "Crashlytics Logs"

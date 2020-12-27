@@ -91,7 +91,7 @@ public final class Button: UIView, InputAppliable {
         NSLayoutConstraint.activate(constraints)
     }
     
-    func setText(text: String) {
+    public func setText(text: String) {
         self.buttonTitleLabel.text = text
     }
 
