@@ -13,6 +13,8 @@ target 'Rocket' do
   pod 'LicensePlist'
   pod 'Firebase/Crashlytics'
   pod 'Firebase/Analytics'
+  pod 'RxSwift', '6.0.0-rc.2'
+  pod 'RxCocoa', '6.0.0-rc.2'
 
   target 'RocketTests' do
     inherit! :search_paths
