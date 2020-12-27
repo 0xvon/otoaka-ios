@@ -89,7 +89,6 @@ class FloatingViewController: UIViewController {
                 item.alpha = 0.0
                 item.isHidden = true
             }
-            self.buttonsContainer.layoutIfNeeded()
             self.openButtonItem.transform = .identity
         }
     }
