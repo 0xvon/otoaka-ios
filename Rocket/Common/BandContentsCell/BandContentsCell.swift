@@ -31,7 +31,6 @@ class BandContentsCell: UITableViewCell, ReusableCell {
                     .withTintColor(.white, renderingMode: .alwaysOriginal),
                 for: .normal
             )
-
         }
     }
 

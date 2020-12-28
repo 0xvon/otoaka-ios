@@ -57,6 +57,16 @@ struct Button_Previews: PreviewProvider {
                 return button
             }())
             .previewLayout(.fixed(width: 150, height: 48))
+            
+            ViewWrapper(view: {
+                let button = PrimaryButton(text: "再生")
+                button.setImage(
+                    UIImage(systemName: "play")!
+                        .withTintColor(.white, renderingMode: .alwaysOriginal),
+                    for: .normal)
+                return button
+            }())
+            .previewLayout(.fixed(width: 150, height: 48))
         }
     }
 }

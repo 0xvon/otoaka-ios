@@ -183,9 +183,13 @@ final class BandDetailHeaderView: UIView {
         artworkImageView.contentMode = .scaleAspectFill
         artworkImageView.clipsToBounds = true
         trackInformationView.addSubview(artworkImageView)
-
+        
         playButton = PrimaryButton(text: "再生")
-        playButton.setImage(UIImage(named: "play"), for: .normal)
+        playButton.setImage(
+            UIImage(systemName: "play")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal)
+        playButton.imageView?.contentMode = .scaleAspectFit
         playButton.isHidden = true
         playButton.layer.cornerRadius = 18
         playButton.translatesAutoresizingMaskIntoConstraints = false

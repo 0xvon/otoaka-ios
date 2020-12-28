@@ -41,7 +41,7 @@ extension DependencyProvider {
         let cognitoConfiguration = AWSCognitoAuthConfiguration(
             appClientId: config.cognitoAppClientId,
             appClientSecret: config.cognitoAppClientSecret,
-            scopes: config.cognitoCcopes,
+            scopes: config.cognitoScopes,
             signInRedirectUri: config.cognitoSignInRedirectUri,
             signOutRedirectUri: config.cognitoSignOutRedirectUri,
             webDomain: config.cognitoWebDomain,

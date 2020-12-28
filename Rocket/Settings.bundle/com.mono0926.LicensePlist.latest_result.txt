@@ -40,14 +40,6 @@ body:
                    …
 version: 7.3.0
 
-name: FirebaseAnalytics, nameSpecified: 
-body: Copyright 2020 Googl…
-version: 7.3.0
-
-name: FirebaseAnalytics, nameSpecified: 
-body: Copyright 2020 Googl…
-version: 7.3.0
-
 name: FirebaseCore, nameSpecified: 
 body: 
                    …
@@ -86,14 +78,6 @@ version: 7.3.0
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.3.0
-
-name: GoogleAppMeasurement, nameSpecified: 
-body: Copyright 2020 Googl…
-version: 7.3.0
-
-name: GoogleAppMeasurement, nameSpecified: 
-body: Copyright 2020 Googl…
 version: 7.3.0
 
 name: GoogleDataTransport, nameSpecified: 
@@ -147,12 +131,12 @@ version: 2.30906.0
 name: PromisesObjC, nameSpecified: 
 body: 
                    …
-version: 1.2.11
+version: 1.2.12
 
 name: PromisesObjC, nameSpecified: 
 body: 
                    …
-version: 1.2.11
+version: 1.2.12
 
 name: CodableURL, nameSpecified: CodableURL, owner: kateinoigakukun, version: 0.3.1
 

@@ -228,7 +228,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             buyTicketButtonView.heightAnchor.constraint(equalToConstant: 48),
             
             numOfParticipantView.topAnchor.constraint(equalTo: reactionStackView.bottomAnchor, constant: 4),
-            numOfParticipantView.widthAnchor.constraint(equalToConstant: 80),
+            numOfParticipantView.widthAnchor.constraint(equalToConstant: 130),
             numOfParticipantView.heightAnchor.constraint(equalToConstant: 24),
             numOfParticipantView.centerXAnchor.constraint(equalTo: buyTicketButtonView.centerXAnchor),
             

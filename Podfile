@@ -12,7 +12,7 @@ target 'Rocket' do
   pod 'KeychainAccess'
   pod 'LicensePlist'
   pod 'Firebase/Crashlytics'
-  pod 'Firebase/Analytics'
+  # pod 'Firebase/Analytics'
 
   target 'RocketTests' do
     inherit! :search_paths

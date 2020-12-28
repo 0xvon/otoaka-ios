@@ -201,7 +201,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
         alertController.addAction(cancelAction)
         
         alertController.addTextField(configurationHandler: {(text: UITextField!) -> Void in
-//            text.isUserInteractionEnabled = false
             text.delegate = self
             text.text = invitationCode
         })
