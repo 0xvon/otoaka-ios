@@ -47,6 +47,6 @@ class TicketViewModel {
     }
     
     func refreshMyTickets() {
-        ticketsPaginationRequest.next(isNext: false)
+        ticketsPaginationRequest.refresh()
     }
 }

@@ -53,7 +53,7 @@ class GroupFeedListViewModel {
     }
     
     func refreshGroupFeeds() {
-        groupFeedsPaginationRequest.next(isNext: false)
+        groupFeedsPaginationRequest.refresh()
     }
 }
 

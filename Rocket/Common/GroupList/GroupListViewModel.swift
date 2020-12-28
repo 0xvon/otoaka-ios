@@ -96,7 +96,7 @@ class GroupListViewModel {
     }
     
     func refreshFollowingGroups() {
-        self.followingGroupsPaginationRequest?.next(isNext: false)
+        self.followingGroupsPaginationRequest?.refresh()
     }
     
     func searchGroups() {
@@ -104,7 +104,7 @@ class GroupListViewModel {
     }
     
     func refreshSearchGroups() {
-        self.searchGroupPaginationRequest?.next(isNext: false)
+        self.searchGroupPaginationRequest?.refresh()
     }
 
 }

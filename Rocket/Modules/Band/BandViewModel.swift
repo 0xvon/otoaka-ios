@@ -79,7 +79,7 @@ class BandViewModel {
     }
     
     func refreshGroups() {
-        groupPaginationRequest.next(isNext: false)
+        groupPaginationRequest.refresh()
     }
 
     func getGroupFeeds() {
@@ -87,7 +87,7 @@ class BandViewModel {
     }
     
     func refreshGroupFeeds() {
-        groupFeedsPaginationRequest.next(isNext: false)
+        groupFeedsPaginationRequest.refresh()
     }
 
     func getLives() {
@@ -95,7 +95,7 @@ class BandViewModel {
     }
     
     func refreshLives() {
-        livePaginationRequest.next(isNext: false)
+        livePaginationRequest.refresh()
     }
 
     

@@ -46,17 +46,12 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
         self.uri.page = 1
         self.uri.per = per
     }
-    
-    @available(*, deprecated)
-    func next(isNext: Bool) {
-        execute(isNext: isNext)
-    }
 
     func refresh() {
         execute(isNext: false)
     }
     func next() {
-        execute(isNext: false)
+        execute(isNext: true)
     }
 
     private func execute(isNext: Bool) {

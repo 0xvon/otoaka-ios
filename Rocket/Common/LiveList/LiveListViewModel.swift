@@ -74,7 +74,7 @@ class LiveListViewModel {
     }
     
     func refreshGroupLives() {
-        getGroupLivesPaginationRequest?.next(isNext: false)
+        getGroupLivesPaginationRequest?.refresh()
     }
     
     func searchLive() {
@@ -82,8 +82,6 @@ class LiveListViewModel {
     }
     
     func refreshSearchLive() {
-        searchLivePaginationRequest?.next(isNext: false)
+        searchLivePaginationRequest?.refresh()
     }
 }
-
-

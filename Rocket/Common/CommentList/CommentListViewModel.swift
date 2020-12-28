@@ -57,7 +57,7 @@ class CommentListViewModel {
     }
     
     func refreshFeedComments() {
-        getFeedCommentsPaginationRequest?.next(isNext: false)
+        getFeedCommentsPaginationRequest?.refresh()
     }
     
     func postFeedComment(text: String) {

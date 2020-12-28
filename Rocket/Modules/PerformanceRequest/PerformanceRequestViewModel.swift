@@ -50,7 +50,7 @@ class PerformanceRequestViewModel {
     }
     
     func refreshRequests() {
-        getPerformanceRequestsPaginationRequest.next(isNext: false)
+        getPerformanceRequestsPaginationRequest.refresh()
     }
 
     func replyRequest(requestId: PerformanceRequest.ID, accept: Bool, cellIndex: Int) {

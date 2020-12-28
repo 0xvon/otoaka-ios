@@ -74,7 +74,7 @@ class UserListViewModel {
     }
     
     func refreshFollowers() {
-        groupFollowersPaginationRequest?.next(isNext: false)
+        groupFollowersPaginationRequest?.refresh()
     }
     
     func getParticipants() {
@@ -82,6 +82,6 @@ class UserListViewModel {
     }
     
     func refreshParticipants() {
-        liveParticipantsPaginationRequest?.next(isNext: false)
+        liveParticipantsPaginationRequest?.refresh()
     }
 }

@@ -54,7 +54,7 @@ class SelectPerformersViewModel {
     }
     
     func refreshSearchGroup() {
-        searchGroupPaginationRequest?.next(isNext: false)
+        searchGroupPaginationRequest?.refresh()
     }
 }
 
