@@ -59,7 +59,7 @@ class FollowingViewModel {
         } else {
             let req = FollowGroup.Request(groupId: state.group)
             apiClient.request(FollowGroup.self, request: req) { [unowned self] in
-                self.updateState(with: $0, didFollow: false)
+                self.updateState(with: $0, didFollow: true)
             }
         }
     }
