@@ -15,7 +15,7 @@ import UserNotifications
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    let dependencyProvider: DependencyProvider = .make(config: DevelopmentConfig.self)
+    var dependencyProvider: DependencyProvider!
 
     func application(
         _ application: UIApplication,
@@ -24,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
 
         window = UIWindow(frame: UIScreen.main.bounds)
+        dependencyProvider = .make(config: DevelopmentConfig.self, windowScene: window!.windowScene!)
         let viewController = HomeViewController(dependencyProvider: dependencyProvider, input: ())
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()

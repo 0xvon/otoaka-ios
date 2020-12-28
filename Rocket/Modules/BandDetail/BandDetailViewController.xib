@@ -1,86 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17504.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandDetailViewController" customModule="Rocket" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandDetailViewController" customModule="Rocket_Development" customModuleProvider="target">
             <connections>
-                <outlet property="commentButtonView" destination="lqm-IJ-L64" id="7kE-6M-SJ7"/>
-                <outlet property="contentsTableView" destination="HNk-Sr-seo" id="LWt-d4-69K"/>
+                <outlet property="followButton" destination="2V5-hm-XCj" id="UFG-UE-hWx"/>
+                <outlet property="followersSummaryView" destination="Flx-Oh-chm" id="6ka-bU-ocE"/>
                 <outlet property="headerView" destination="Y9D-z1-Lis" id="U9L-NT-87M"/>
-                <outlet property="likeButtonView" destination="L3a-GU-FLo" id="Qy3-LC-VTW"/>
-                <outlet property="liveTableView" destination="sQZ-gg-szN" id="58K-8R-WcF"/>
+                <outlet property="tableView" destination="sQZ-gg-szN" id="58K-8R-WcF"/>
                 <outlet property="verticalScrollView" destination="LlA-XZ-xsc" id="EEU-kM-Guc"/>
                 <outlet property="view" destination="iN0-l3-epB" id="sAZ-nS-7DA"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="1224"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="756"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LlA-XZ-xsc">
-                    <rect key="frame" x="0.0" y="44" width="414" height="1146"/>
+                    <rect key="frame" x="0.0" y="44" width="414" height="712"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kwn-rv-aqn">
-                            <rect key="frame" x="0.0" y="0.0" width="414" height="1146"/>
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="1562"/>
                             <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y9D-z1-Lis" customClass="BandDetailHeaderView" customModule="Rocket" customModuleProvider="target">
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y9D-z1-Lis" customClass="BandDetailHeaderView" customModule="Rocket_Development" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="250" id="IXH-G0-Nod"/>
                                     </constraints>
                                 </view>
                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="vjU-mj-h0h">
-                                    <rect key="frame" x="16" y="266" width="248" height="48"/>
+                                    <rect key="frame" x="16" y="266" width="208" height="44"/>
                                     <subviews>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="L3a-GU-FLo" customClass="ReactionButtonView" customModule="Rocket" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="120" height="48"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Flx-Oh-chm" customClass="FollowersSummaryView" customModule="UIComponent">
+                                            <rect key="frame" x="0.0" y="0.0" width="100" height="44"/>
                                         </view>
-                                        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lqm-IJ-L64" customClass="ReactionButtonView" customModule="Rocket" customModuleProvider="target">
-                                            <rect key="frame" x="128" y="0.0" width="120" height="48"/>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2V5-hm-XCj" customClass="ToggleButton" customModule="UIComponent">
+                                            <rect key="frame" x="108" y="0.0" width="100" height="44"/>
                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="48" id="C57-iC-9Hu"/>
-                                                <constraint firstAttribute="width" constant="120" id="H4e-Ky-8On"/>
+                                                <constraint firstAttribute="height" constant="44" id="Za8-0Q-TdZ"/>
+                                                <constraint firstAttribute="width" constant="100" id="e2o-nP-rbN"/>
                                             </constraints>
                                         </view>
                                     </subviews>
                                 </stackView>
                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="sQZ-gg-szN">
-                                    <rect key="frame" x="16" y="338" width="383" height="362"/>
+                                    <rect key="frame" x="16" y="334" width="383" height="1200"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="362" id="hyx-qA-2x0"/>
-                                    </constraints>
-                                </tableView>
-                                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="HNk-Sr-seo">
-                                    <rect key="frame" x="16" y="724" width="382" height="360"/>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="360" id="ONB-CW-LaD"/>
+                                        <constraint firstAttribute="height" constant="1200" id="wUu-7C-Abf"/>
                                     </constraints>
                                 </tableView>
                             </subviews>
                             <constraints>
-                                <constraint firstAttribute="trailing" secondItem="HNk-Sr-seo" secondAttribute="trailing" constant="16" id="6k3-cc-RYr"/>
                                 <constraint firstItem="sQZ-gg-szN" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" constant="16" id="E5i-iO-aMc"/>
-                                <constraint firstItem="HNk-Sr-seo" firstAttribute="top" secondItem="sQZ-gg-szN" secondAttribute="bottom" constant="24" id="JXD-eH-819"/>
                                 <constraint firstItem="Y9D-z1-Lis" firstAttribute="top" secondItem="Kwn-rv-aqn" secondAttribute="top" id="QWM-b3-MRB"/>
                                 <constraint firstItem="Y9D-z1-Lis" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" id="RX8-34-Z9H"/>
                                 <constraint firstItem="vjU-mj-h0h" firstAttribute="top" secondItem="Y9D-z1-Lis" secondAttribute="bottom" constant="16" id="a9r-nL-Opy"/>
                                 <constraint firstAttribute="trailing" secondItem="Y9D-z1-Lis" secondAttribute="trailing" id="dxt-oO-oKM"/>
-                                <constraint firstItem="HNk-Sr-seo" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" constant="16" id="f7s-xR-4hm"/>
                                 <constraint firstItem="sQZ-gg-szN" firstAttribute="top" secondItem="vjU-mj-h0h" secondAttribute="bottom" constant="24" id="gKM-Yt-Q2I"/>
+                                <constraint firstAttribute="bottom" secondItem="sQZ-gg-szN" secondAttribute="bottom" constant="28" id="hyL-sr-Rqc"/>
                                 <constraint firstAttribute="trailing" secondItem="sQZ-gg-szN" secondAttribute="trailing" constant="15" id="lfK-r7-Fs7"/>
-                                <constraint firstAttribute="height" constant="1146" id="nLt-QC-Nst"/>
                                 <constraint firstItem="vjU-mj-h0h" firstAttribute="leading" secondItem="Kwn-rv-aqn" secondAttribute="leading" constant="16" id="tZB-wK-HUP"/>
                             </constraints>
                         </view>
@@ -103,7 +91,7 @@
                 <constraint firstItem="LlA-XZ-xsc" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="wJC-en-sxH"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="140.57971014492756" y="156.69642857142856"/>
+            <point key="canvasLocation" x="140.57971014492756" y="0.0"/>
         </view>
     </objects>
     <resources>

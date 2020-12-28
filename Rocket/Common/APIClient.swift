@@ -7,6 +7,7 @@
 
 import Endpoint
 import Foundation
+import Combine
 
 protocol APITokenProvider {
     func provideIdToken(_: @escaping (Result<String, Error>) -> Void)
@@ -37,8 +38,8 @@ class APIClient {
         _ endpoint: E.Type,
         uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
-    ) where E.Request == Empty {
-        request(E.self, request: Empty(), uri: uri, file: file, line: line, callback: callback)
+    ) where E.Request == Endpoint.Empty {
+        request(E.self, request: Endpoint.Empty(), uri: uri, file: file, line: line, callback: callback)
     }
 
     public func request<E: EndpointProtocol>(
@@ -96,11 +97,11 @@ class APIClient {
                         callback(.success(response))
                     } else {
                         print("error response: \(httpResponse.statusCode)")
-                        let errorMessage = try decoder.decode(String.self, from: data)
+                        let errorMessage = String(data: data, encoding: .utf8)
                         callback(
                             .failure(
                                 APIError.invalidStatus(
-                                    "status: \(httpResponse.statusCode), message: \(errorMessage)"))
+                                    "status: \(httpResponse.statusCode), message: \(String(describing: errorMessage))"))
                         )
                         print()
                     }
@@ -112,5 +113,25 @@ class APIClient {
             }
         }
         task.resume()
+    }
+}
+
+
+// MARK: - Combine Extensions
+extension APIClient {
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line
+    ) -> Future<E.Response, Error>
+    where E.Request == Endpoint.Empty {
+        request(endpoint, request: Endpoint.Empty(), uri: uri, file: file, line: line)
+    }
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        request: E.Request, uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line
+    ) -> Future<E.Response, Error> {
+        return Future { promise in
+            self.request(endpoint, request: request, uri: uri, file: file, line: line, callback: promise)
+        }
     }
 }

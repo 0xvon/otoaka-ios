@@ -24,9 +24,16 @@ class BandContentsCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var artistNameLabel: UILabel!
     @IBOutlet weak var thumbnailImageView: UIImageView!
     @IBOutlet weak var playImageView: UIImageView!
-    
-    private var commentView: UIView!
-    private var commentReactionView: ReactionButtonView!
+    @IBOutlet weak var commentButton: ReactionIndicatorButton! {
+        didSet {
+            commentButton.setImage(
+                UIImage(systemName: "bubble.right")!
+                    .withTintColor(.white, renderingMode: .alwaysOriginal),
+                for: .normal
+            )
+
+        }
+    }
 
     func inject(input: Input) {
         self.input = input
@@ -62,35 +69,14 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         artistNameLabel.text = input.author.name
         artistNameLabel.font = style.font.regular.get()
         artistNameLabel.textColor = style.color.main.get()
-        
-        commentView = UIView()
-        commentView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(commentView)
-        
-        if let commentReactionView = commentReactionView { commentReactionView.removeFromSuperview() }
-        commentReactionView = ReactionButtonView(input: (text: "\(input.commentCount)", image: UIImage(named: "comment")))
-        commentReactionView.translatesAutoresizingMaskIntoConstraints = false
-        commentView.addSubview(commentReactionView)
-        
-        let constraints = [
-            commentView.leftAnchor.constraint(equalTo: artistNameLabel.leftAnchor),
-            commentView.centerYAnchor.constraint(equalTo: dateLabel.centerYAnchor),
-            commentView.rightAnchor.constraint(equalTo: dateLabel.leftAnchor, constant: 48),
-            commentView.heightAnchor.constraint(equalToConstant: 24),
-            
-            commentReactionView.topAnchor.constraint(equalTo: commentView.topAnchor),
-            commentReactionView.bottomAnchor.constraint(equalTo: commentView.bottomAnchor),
-            commentReactionView.rightAnchor.constraint(equalTo: commentView.rightAnchor),
-            commentReactionView.leftAnchor.constraint(equalTo: commentView.leftAnchor),
 
-        ]
-        NSLayoutConstraint.activate(constraints)
+        commentButton.setTitle("\(input.commentCount)", for: .normal)
 
         playImageView.image = UIImage(named: "play")
         playImageView.layer.opacity = 0.6
     }
     
-    func comment(_ listener: @escaping (ReactionButtonView.ListenerType) -> Void) {
-        commentReactionView.listen(listener)
+    func comment(_ listener: @escaping (ReactionIndicatorButton.ListenerType) -> Void) {
+        commentButton.listen(listener)
     }
 }

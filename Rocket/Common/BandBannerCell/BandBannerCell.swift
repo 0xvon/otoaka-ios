@@ -15,7 +15,7 @@ class BandBannerCell: UITableViewCell, ReusableCell {
     var input: Input!
     @IBOutlet weak var bandImageView: UIImageView!
     @IBOutlet weak var bandNameLabel: UILabel!
-    @IBOutlet weak var likeButtonView: ReactionButtonView!
+    @IBOutlet weak var likeButtonView: ReactionIndicatorButton!
     @IBOutlet weak var listenButtonView: PrimaryButton! {
         didSet {
             listenButtonView.setTitle("曲を聴く", for: .normal)
@@ -59,7 +59,7 @@ class BandBannerCell: UITableViewCell, ReusableCell {
         listenButtonView.listen(listener)
     }
 
-    func like(_ listener: @escaping (ReactionButtonView.ListenerType) -> Void) {
+    func like(_ listener: @escaping (ReactionIndicatorButton.ListenerType) -> Void) {
         likeButtonView.listen(listener)
     }
 }

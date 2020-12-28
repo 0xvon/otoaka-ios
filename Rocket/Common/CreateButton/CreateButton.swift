@@ -7,6 +7,7 @@
 
 import UIKit
 
+@available(*, deprecated)
 final class CreateButton: UIView {
     typealias Input = UIImage
 

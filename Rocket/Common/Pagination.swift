@@ -37,7 +37,7 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
         subscribers.append(subscriber)
     }
     
-    func notify(_ response: Event) {
+    private func notify(_ response: Event) {
         subscribers.forEach { $0(response) }
     }
     
@@ -47,7 +47,19 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
         self.uri.per = per
     }
     
-    func next(isNext: Bool = true) {
+    @available(*, deprecated)
+    func next(isNext: Bool) {
+        execute(isNext: isNext)
+    }
+
+    func refresh() {
+        execute(isNext: false)
+    }
+    func next() {
+        execute(isNext: false)
+    }
+
+    private func execute(isNext: Bool) {
         if !isNext && self.state != .isLoading {
             self.state = .isInitial
             initialize()

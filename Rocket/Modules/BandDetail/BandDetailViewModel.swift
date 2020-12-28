@@ -5,137 +5,179 @@
 //  Created by Masato TSUTSUMI on 2020/10/28.
 //
 
-import AWSCognitoAuth
 import Endpoint
 import Foundation
+import Combine
 
 class BandDetailViewModel {
-    enum Output {
-        case getGroup(GetGroup.Response)
-        case getGroupLives([Live])
-        case getGroupFeeds([ArtistFeedSummary])
-        case getChart([ChannelDetail.ChannelItem])
-        case follow
-        case unfollow
-        case inviteGroup(InviteGroup.Invitation)
-        case error(Error)
+    enum DisplayType {
+        case fan
+        case group
+        case member
+    }
+    enum Section {
+        case live(rows: [Live])
+        case feed(rows: [ArtistFeedSummary])
+    }
+    struct State {
+        var group: Group
+        var lives: [Live] = []
+        var feeds: [ArtistFeedSummary] = []
+        var groupItem: ChannelDetail.ChannelItem? = nil
+        var groupDetail: GetGroup.Response?
+        let role: RoleProperties
+
+        var sections: [Section] {
+            [.live(rows: lives), .feed(rows: feeds)]
+        }
     }
 
-    let auth: AWSCognitoAuth
-    let apiClient: APIClient
-    let youTubeDataAPIClient: YouTubeDataAPIClient
-    let group: Group
-    let outputHandler: (Output) -> Void
+    enum Output {
+        case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
+        case didGetGroupLives
+        case didGetGroupFeeds
+        case didGetChart(Group, ChannelDetail.ChannelItem?)
+        case didCreatedInvitation(InviteGroup.Invitation)
+
+        case pushToLiveDetail(Live)
+        case openURLInBrowser(URL)
+        case reportError(Error)
+    }
+
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    
+
+    private(set) var state: State
+
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
     init(
-        apiClient: APIClient, youTubeDataAPIClient: YouTubeDataAPIClient, auth: AWSCognitoAuth, group: Group,
-        outputHander: @escaping (Output) -> Void
+        dependencyProvider: LoggedInDependencyProvider, group: Group
     ) {
-        self.apiClient = apiClient
-        self.youTubeDataAPIClient = youTubeDataAPIClient
-        self.auth = auth
-        self.group = group
-        self.outputHandler = outputHander
+        self.dependencyProvider = dependencyProvider
+        self.state = State(group: group, role: dependencyProvider.user.role)
     }
 
-    func followGroup() {
-        let req = FollowGroup.Request(groupId: self.group.id)
-        apiClient.request(FollowGroup.self, request: req) { result in
-            switch result {
-            case .success(_):
-                self.outputHandler(.follow)
-            case .failure(let error):
-                self.outputHandler(.error(error))
+    func numberOfSections() -> Int { state.sections.count }
+    func numberOfRows(in section: Int) -> Int {
+        switch state.sections[section] {
+        case let .feed(rows): return rows.count
+        case let .live(rows): return rows.count
+        }
+    }
+    func didSelectRow(at indexPath: IndexPath) {
+        switch state.sections[indexPath.row] {
+        case let .live(rows):
+            let live = rows[indexPath.row]
+            outputSubject.send(.pushToLiveDetail(live))
+        case let .feed(rows):
+            let feed = rows[indexPath.row]
+            switch feed.feedType {
+            case .youtube(let url):
+                outputSubject.send(.openURLInBrowser(url))
             }
         }
     }
 
-    func unfollowGroup() {
-        let req = UnfollowGroup.Request(groupId: self.group.id)
-        apiClient.request(UnfollowGroup.self, request: req) { result in
-            switch result {
-            case .success(_):
-                self.outputHandler(.unfollow)
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
-        }
+    // MARK: - Inputs
+    func viewDidLoad() {
+        refresh()
     }
 
-    func getGroup() {
-        var uri = GetGroup.URI()
-        uri.groupId = self.group.id
-        apiClient.request(GetGroup.self, request: Empty(), uri: uri) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.getGroup(res))
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
-        }
+    func refresh() {
+        getGroupDetail()
+        getChartSummary()
+        getGroupLiveSummary()
+        getGroupFeedSummary()
     }
-    
+
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
-        apiClient.request(InviteGroup.self, request: request) { result in
+        apiClient.request(InviteGroup.self, request: request) { [outputSubject] result in
             switch result {
             case .success(let invitation):
-                self.outputHandler(.inviteGroup(invitation))
+                outputSubject.send(.didCreatedInvitation(invitation))
             case .failure(let error):
-                self.outputHandler(.error(error))
+                outputSubject.send(.reportError(error))
             }
         }
     }
-    
-    func getGroupLive() {
+
+    private func getGroupDetail() {
+        var uri = GetGroup.URI()
+        uri.groupId = state.group.id
+        apiClient.request(GetGroup.self, request: Empty(), uri: uri) { [unowned self] result in
+            switch result {
+            case .success(let response):
+                state.group = response.group
+                state.groupDetail = response
+                let displayType: DisplayType = {
+                    switch state.role {
+                    case .fan: return .fan
+                    case .artist:
+                        return response.isMember ? .group : .member
+                    }
+                }()
+                outputSubject.send(.didGetGroupDetail(response, displayType: displayType))
+            case .failure(let error):
+                self.outputSubject.send(.reportError(error))
+            }
+        }
+    }
+
+    private func getGroupLiveSummary() {
         let request = Empty()
         var uri = Endpoint.GetGroupLives.URI()
         uri.page = 1
         uri.per = 1
-        uri.groupId = self.group.id
-        apiClient.request(GetGroupLives.self, request: request, uri: uri) { result in
+        uri.groupId = state.group.id
+        apiClient.request(GetGroupLives.self, request: request, uri: uri) { [unowned self] result in
             switch result {
             case .success(let lives):
-                self.outputHandler(.getGroupLives(lives.items))
+                self.state.lives = lives.items
+                self.outputSubject.send(.didGetGroupLives)
             case .failure(let error):
-                self.outputHandler(.error(error))
+                self.outputSubject.send(.reportError(error))
             }
         }
     }
     
-    func getGroupFeed() {
+    private func getGroupFeedSummary() {
         var uri = GetGroupFeed.URI()
-        uri.groupId = self.group.id
+        uri.groupId = state.group.id
         uri.per = 1
         uri.page = 1
         let request = Empty()
-        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { result in
+        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { [unowned self] result in
             switch result {
             case .success(let res):
-                self.outputHandler(.getGroupFeeds(res.items))
+                self.state.feeds = res.items
+                self.outputSubject.send(.didGetGroupFeeds)
             case .failure(let error):
-                self.outputHandler(.error(error))
+                self.outputSubject.send(.reportError(error))
             }
         }
     }
     
-    func getChart() {
-        if let youtubeChannelId = self.group.youtubeChannelId {
-            let request = Empty()
-            var uri = ListChannel.URI()
-            uri.key = youTubeDataAPIClient.getApiKey()
-            uri.channelId = youtubeChannelId
-            uri.part = "snippet"
-            uri.maxResults = 1
-            uri.order = "viewCount"
-            youTubeDataAPIClient.request(ListChannel.self, request: request, uri: uri) { result in
+    private func getChartSummary() {
+        guard let youtubeChannelId = state.group.youtubeChannelId else { return }
+        let request = Empty()
+        var uri = ListChannel.URI()
+        uri.key = dependencyProvider.youTubeDataApiClient.getApiKey()
+        uri.channelId = youtubeChannelId
+        uri.part = "snippet"
+        uri.maxResults = 1
+        uri.order = "viewCount"
+        dependencyProvider.youTubeDataApiClient
+            .request(ListChannel.self, request: request, uri: uri) { [unowned self] result in
                 switch result {
                 case .success(let res):
-                    self.outputHandler(.getChart(res.items))
+                    self.outputSubject.send(.didGetChart(self.state.group, res.items.first))
                 case .failure(let error):
-                    self.outputHandler(.error(error))
+                    self.outputSubject.send(.reportError(error))
                 }
             }
-        }
     }
 }
