@@ -36,7 +36,8 @@ targetTemplates:
     platform: iOS
     scheme:
       commandLineArguments:
-        "-FIRDebugEnabled": true
+        "-FIRDebugDisabled": true
+        "-FIRAnalyticsDebugDisabled": true
     settings:
       base:
         DEVELOPMENT_TEAM: 6WL9GUCS6V
