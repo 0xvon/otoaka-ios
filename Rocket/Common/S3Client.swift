@@ -13,14 +13,17 @@ import AVKit
 
 class S3Client {
     let s3Bucket: String
+    let cognitoIdentityPoolCredentialProvider: AWSCognitoCredentialsProvider
 
-    init(s3Bucket: String) {
+    init(s3Bucket: String, cognitoIdentityPoolCredentialProvider: AWSCognitoCredentialsProvider) {
         self.s3Bucket = s3Bucket
+        self.cognitoIdentityPoolCredentialProvider = cognitoIdentityPoolCredentialProvider
     }
 
     public func uploadImage(image: UIImage?, callback: @escaping ((Result<String, Error>) -> Void)) {
         let transferUtility = AWSS3TransferUtility.default()
-        let key = "\(UUID()).jpeg"
+        let key = "\(self.cognitoIdentityPoolCredentialProvider.identityId!)/\(UUID()).jpeg"
+        print("======================\(key)=====================")
         let contentType = "application/jpeg"
         let im: UIImage = image ?? UIImage(named: "band")!
         guard let pngData = im.jpegData(compressionQuality: 0.25) else {
@@ -28,26 +31,24 @@ class S3Client {
             return
         }
 
-        let expression = AWSS3TransferUtilityUploadExpression()
-        let completionHandler: AWSS3TransferUtilityUploadCompletionHandlerBlock = {
-            (task, error) -> Void in
-            DispatchQueue.main.async {
-                if let error = error {
-                    callback(.failure(error))
-                }
-                callback(.success("https://\(self.s3Bucket).s3-ap-northeast-1.amazonaws.com/\(key)"))
-            }
-        }
-
         transferUtility.uploadData(
             pngData,
             bucket: s3Bucket,
             key: key,
             contentType: contentType,
-            expression: expression,
-            completionHandler: completionHandler
+            expression: AWSS3TransferUtilityUploadExpression(),
+            completionHandler: {(task, error) -> Void in
+                DispatchQueue.main.async {
+                    if let error = error {
+                        print(error)
+                        callback(.failure(error))
+                    }
+                    callback(.success("https://\(self.s3Bucket).s3-ap-northeast-1.amazonaws.com/\(key)"))
+                }
+            }
         ).continueWith { task in
             if let error = task.error {
+                print(error)
                 callback(.failure(error))
             }
 

@@ -48,7 +48,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
     lazy var viewModel = CreateLiveViewModel(
         apiClient: dependencyProvider.apiClient,
-        s3Bucket: dependencyProvider.s3Bucket,
+        s3Client: dependencyProvider.s3Client,
         user: dependencyProvider.user,
         outputHander: { output in
             switch output {

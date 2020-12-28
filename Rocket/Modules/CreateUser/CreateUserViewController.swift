@@ -20,7 +20,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
 
     lazy var viewModel = CreateUserViewModel(
         apiClient: dependencyProvider.apiClient,
-        s3Bucket: dependencyProvider.s3Bucket,
+        s3Client: dependencyProvider.s3Client,
         outputHander: { output in
             switch output {
             case .fan(let user):

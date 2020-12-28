@@ -41,7 +41,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
     lazy var viewModel = EditLiveViewModel(
         apiClient: dependencyProvider.apiClient,
         live: self.input,
-        s3Bucket: dependencyProvider.s3Bucket,
+        s3Client: dependencyProvider.s3Client,
         user: dependencyProvider.user,
         outputHander: { output in
             switch output {

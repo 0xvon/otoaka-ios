@@ -15,7 +15,7 @@ final class InvitationViewController: UIViewController, Instantiable {
 
     lazy var viewModel = InvitationViewModel(
         apiClient: dependencyProvider.apiClient,
-        s3Bucket: dependencyProvider.s3Bucket,
+        s3Client: dependencyProvider.s3Client,
         outputHander: { output in
             switch output {
             case .joinGroup:

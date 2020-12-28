@@ -23,12 +23,12 @@ class EditLiveViewModel {
     let outputHandler: (Output) -> Void
 
     init(
-        apiClient: APIClient, live: Live, s3Bucket: String, user: User,
+        apiClient: APIClient, live: Live, s3Client: S3Client, user: User,
         outputHander: @escaping (Output) -> Void
     ) {
         self.apiClient = apiClient
         self.live = live
-        self.s3Client = S3Client(s3Bucket: s3Bucket)
+        self.s3Client = s3Client
         self.user = user
         self.outputHandler = outputHander
     }

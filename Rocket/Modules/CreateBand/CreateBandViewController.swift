@@ -14,7 +14,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
 
     lazy var viewModel = CreateBandViewModel(
         apiClient: dependencyProvider.apiClient,
-        s3Bucket: dependencyProvider.s3Bucket,
+        s3Client: dependencyProvider.s3Client,
         outputHander: { output in
             switch output {
             case .create(let group):

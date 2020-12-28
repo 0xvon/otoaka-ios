@@ -39,7 +39,7 @@ final class EditBandViewController: UIViewController, Instantiable {
 
     lazy var viewModel = EditBandViewModel(
         apiClient: dependencyProvider.apiClient,
-        s3Bucket: dependencyProvider.s3Bucket,
+        s3Client: dependencyProvider.s3Client,
         user: dependencyProvider.user,
         outputHander: { output in
             switch output {

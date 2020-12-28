@@ -25,7 +25,7 @@ struct DependencyProvider {
     var auth: AWSCognitoAuth
     var apiClient: APIClient
     var youTubeDataApiClient: YouTubeDataAPIClient
-    var s3Bucket: String
+    var s3Client: S3Client
 }
 
 extension DependencyProvider {
@@ -36,17 +36,6 @@ extension DependencyProvider {
         }
     #endif
     static func make(config: Config.Type) -> DependencyProvider {
-        let credentialProvider = AWSCognitoCredentialsProvider(
-            regionType: .APNortheast1,
-            identityPoolId: config.cognitoIdentityPoolId
-        )
-
-        let configuration = AWSServiceConfiguration(
-            region: .APNortheast1,
-            credentialsProvider: credentialProvider
-        )
-
-        AWSServiceManager.default()?.defaultServiceConfiguration = configuration
 
         let cognitoConfiguration = AWSCognitoAuthConfiguration(
             appClientId: config.cognitoAppClientId,
@@ -65,9 +54,32 @@ extension DependencyProvider {
         FirebaseApp.configure()
         let auth = AWSCognitoAuth(forKey: cognitoAuthKey)
         let wrapper = CognitoAuthWrapper(awsCognitoAuth: auth)
+        
+        let credentialProvider = AWSCognitoCredentialsProvider(
+            regionType: .APNortheast1,
+            identityPoolId: config.cognitoIdentityPoolId
+        )
+        let configuration = AWSServiceConfiguration(
+            region: .APNortheast1,
+            credentialsProvider: credentialProvider
+        )
+
+        AWSServiceManager.default()?.defaultServiceConfiguration = configuration
         let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: wrapper)
         let youTubeDataApiClient = YouTubeDataAPIClient(baseUrl: URL(string: "https://www.googleapis.com")!, apiKey: config.youTubeApiKey)
-        return DependencyProvider(auth: auth, apiClient: apiClient, youTubeDataApiClient: youTubeDataApiClient, s3Bucket: config.s3Bucket)
+        
+        if credentialProvider.identityId == nil {
+            credentialProvider.getIdentityId().continueWith(block: {(task) -> AnyObject? in
+                if let error = task.error { fatalError(error.localizedDescription) }
+                if let identityId = task.result {
+                    print("Identity ID is: \(identityId)")
+                }
+                return task
+            })
+        }
+        
+        let s3Client = S3Client(s3Bucket: config.s3Bucket, cognitoIdentityPoolCredentialProvider: credentialProvider)
+        return DependencyProvider(auth: auth, apiClient: apiClient, youTubeDataApiClient: youTubeDataApiClient, s3Client: s3Client)
     }
 }
 

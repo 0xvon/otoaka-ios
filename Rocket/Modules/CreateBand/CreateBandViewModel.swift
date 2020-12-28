@@ -18,9 +18,9 @@ class CreateBandViewModel {
     let s3Client: S3Client
     let outputHandler: (Output) -> Void
 
-    init(apiClient: APIClient, s3Bucket: String, outputHander: @escaping (Output) -> Void) {
+    init(apiClient: APIClient, s3Client: S3Client, outputHander: @escaping (Output) -> Void) {
         self.apiClient = apiClient
-        self.s3Client = S3Client(s3Bucket: s3Bucket)
+        self.s3Client = s3Client
         self.outputHandler = outputHander
     }
 
