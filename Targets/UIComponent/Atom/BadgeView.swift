@@ -7,8 +7,8 @@
 
 import UIKit
 
-final class BadgeView: UIView {
-    typealias Input = (
+public final class BadgeView: UIView {
+    public typealias Input = (
         text: String,
         image: UIImage?
     )
@@ -18,7 +18,7 @@ final class BadgeView: UIView {
     private var badgeImageView: UIImageView!
     private var badgeTitle: UILabel!
 
-    init(input: Input) {
+    public init(input: Input) {
         self.input = input
         super.init(frame: .zero)
         self.inject(input: input)
@@ -29,12 +29,12 @@ final class BadgeView: UIView {
         super.init(coder: coder)
     }
 
-    func inject(input: Input) {
+    public func inject(input: Input) {
         self.input = input
         self.setup()
     }
 
-    func updateText(text: String) {
+    public func updateText(text: String) {
         input.text = text
         badgeTitle.text = input.text
     }

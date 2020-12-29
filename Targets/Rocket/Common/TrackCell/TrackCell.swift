@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import InternalDomain
 
 final class TrackCell: UITableViewCell, ReusableCell {
     typealias Input = ChannelDetail.ChannelItem

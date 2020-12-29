@@ -8,6 +8,7 @@
 import AWSCognitoAuth
 import Endpoint
 import UIKit
+import InternalDomain
 
 class BandViewModel {
     enum Output {

@@ -5,8 +5,9 @@
 //  Created by Masato TSUTSUMI on 2020/10/28.
 //
 
-import Endpoint
+import DomainEntity
 import UIKit
+import UIComponent
 
 final class BandCell: UITableViewCell, ReusableCell {
     typealias Input = Group

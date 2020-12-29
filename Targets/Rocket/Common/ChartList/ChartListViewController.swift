@@ -6,7 +6,8 @@
 //
 
 import UIKit
-import Endpoint
+import InternalDomain
+import DomainEntity
 
 final class ChartListViewController: UIViewController, Instantiable {
     typealias Input = Group

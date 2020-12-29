@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import UserNotifications
 import SafariServices
+import InternalDomain
 
 final class BandViewController: UIViewController, Instantiable {
 

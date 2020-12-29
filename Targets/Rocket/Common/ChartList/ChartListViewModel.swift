@@ -8,6 +8,7 @@
 import UIKit
 import AWSCognitoAuth
 import Endpoint
+import InternalDomain
 
 class ChartListViewModel {
     enum Output {

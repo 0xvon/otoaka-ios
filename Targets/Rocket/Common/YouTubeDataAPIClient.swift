@@ -7,6 +7,7 @@
 
 import Endpoint
 import Foundation
+import InternalDomain
 
 class YouTubeDataAPIClient {
     private let baseURL: URL

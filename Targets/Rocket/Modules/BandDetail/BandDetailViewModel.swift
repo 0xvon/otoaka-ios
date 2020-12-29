@@ -8,6 +8,7 @@
 import Endpoint
 import Foundation
 import Combine
+import InternalDomain
 
 class BandDetailViewModel {
     enum DisplayType {

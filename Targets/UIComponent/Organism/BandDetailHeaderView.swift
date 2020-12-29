@@ -9,8 +9,8 @@ import DomainEntity
 import InternalDomain
 import UIKit
 
-final class BandDetailHeaderView: UIView {
-    typealias Input = (
+public final class BandDetailHeaderView: UIView {
+    public typealias Input = (
         group: Group,
         groupItem: ChannelDetail.ChannelItem?
     )
@@ -23,11 +23,11 @@ final class BandDetailHeaderView: UIView {
     }()
     
     private var listener: (ListenType) -> Void = { listenType in }
-    func listen(_ listener: @escaping (ListenType) -> Void) {
+    public func listen(_ listener: @escaping (ListenType) -> Void) {
         self.listener = listener
     }
     
-    enum ListenType {
+    public enum ListenType {
         case play(URL)
         case seeMoreCharts
         case youtube(URL)
@@ -209,7 +209,7 @@ final class BandDetailHeaderView: UIView {
         return contentView
     }()
 
-    init(input: Input) {
+    public init(input: Input) {
         self.input = input
         super.init(frame: .zero)
         self.inject(input: input)
@@ -220,7 +220,7 @@ final class BandDetailHeaderView: UIView {
         super.init(coder: coder)
     }
 
-    func update(input: Input) {
+    public func update(input: Input) {
         self.input = input
 
         bandImageView.loadImageAsynchronously(url: input.group.artworkURL)
@@ -238,7 +238,7 @@ final class BandDetailHeaderView: UIView {
         }
     }
 
-    func inject(input: Input) {
+    public func inject(input: Input) {
         self.input = input
         self.setup()
     }
