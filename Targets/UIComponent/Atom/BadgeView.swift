@@ -8,64 +8,55 @@
 import UIKit
 
 public final class BadgeView: UIView {
-    public typealias Input = (
-        text: String,
-        image: UIImage?
-    )
+    private let badgeImageView: UIImageView = {
+        let badgeImageView = UIImageView()
+        badgeImageView.translatesAutoresizingMaskIntoConstraints = false
+        return badgeImageView
+    }()
+    private let badgeTitle: UILabel = {
+        let badgeTitle = UILabel()
+        badgeTitle.translatesAutoresizingMaskIntoConstraints = false
+        badgeTitle.textColor = Brand.color(for: .text(.primary))
+        badgeTitle.font = Brand.font(for: .medium)
+        return badgeTitle
+    }()
 
-    var input: Input!
+    public var image: UIImage? {
+        get { badgeImageView.image }
+        set { badgeImageView.image = newValue }
+    }
 
-    private var badgeImageView: UIImageView!
-    private var badgeTitle: UILabel!
+    public var title: String? {
+        get { badgeTitle.text }
+        set { badgeTitle.text = newValue }
+    }
 
-    public init(input: Input) {
-        self.input = input
+    public init(text: String, image: UIImage?) {
         super.init(frame: .zero)
+        self.title = text
+        self.image = image
         self.setup()
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-    }
-
-    public func inject(input: Input) {
-        self.input = input
         self.setup()
     }
 
+    @available(*, deprecated)
     public func updateText(text: String) {
-        input.text = text
-        badgeTitle.text = input.text
+        self.title = text
     }
 
     func setup() {
         backgroundColor = .clear
-        let contentView = UIView(frame: self.frame)
-        addSubview(contentView)
+        layer.opacity = 0.8
 
-        contentView.backgroundColor = .clear
-        contentView.layer.opacity = 0.8
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-
-        badgeTitle = UILabel()
-        badgeTitle.translatesAutoresizingMaskIntoConstraints = false
         addSubview(badgeTitle)
-        badgeTitle.textColor = style.color.main.get()
-        badgeTitle.font = style.font.small.get()
-        badgeTitle.text = input.text
-
-        badgeImageView = UIImageView()
-        badgeImageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(badgeImageView)
-        badgeImageView.image = input.image
 
         let constraints = [
-            topAnchor.constraint(equalTo: contentView.topAnchor),
-            bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            rightAnchor.constraint(equalTo: contentView.rightAnchor),
-
             badgeImageView.leftAnchor.constraint(equalTo: leftAnchor),
             badgeImageView.widthAnchor.constraint(equalToConstant: 24),
             badgeImageView.heightAnchor.constraint(
@@ -88,7 +79,7 @@ struct BadgeView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ViewWrapper(
-                view: BadgeView(input: (text: "Hello", image: BundleReference.image(named: "ticket")))
+                view: BadgeView(text: "Hello", image: BundleReference.image(named: "ticket"))
             )
                 .previewLayout(.fixed(width: 100, height: 60))
         }

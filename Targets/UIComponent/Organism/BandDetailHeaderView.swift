@@ -227,8 +227,8 @@ public final class BandDetailHeaderView: UIView {
         bandNameLabel.text = input.group.name
         let startYear: String =
             (input.group.since != nil) ? dateFormatter.string(from: input.group.since!) : "不明"
-        dateBadgeView.updateText(text: startYear)
-        mapBadgeView.updateText(text: input.group.hometown ?? "不明")
+        dateBadgeView.title = startYear
+        mapBadgeView.title = input.group.hometown ?? "不明"
         biographyTextView.text = input.group.biography
         if let groupItem = input.groupItem {
             artworkImageView.loadImageAsynchronously(url: URL(string: groupItem.snippet.thumbnails.high.url))
@@ -260,19 +260,17 @@ public final class BandDetailHeaderView: UIView {
 
         let startYear: String =
             (input.group.since != nil) ? dateFormatter.string(from: input.group.since!) : "不明"
-        dateBadgeView = BadgeView(input: (text: startYear, image: UIImage(named: "calendar")))
+        dateBadgeView = BadgeView(text: startYear, image: UIImage(named: "calendar"))
         bandInformationView.addSubview(dateBadgeView)
 
-        mapBadgeView = BadgeView(
-            input: (text: input.group.hometown ?? "不明", image: UIImage(named: "map")))
+        mapBadgeView = BadgeView(text: input.group.hometown ?? "不明", image: UIImage(named: "map"))
         bandInformationView.addSubview(mapBadgeView)
         
-        labelBadgeView = BadgeView(input: (text: "Intact Records", image: UIImage(named: "record")))
+        labelBadgeView = BadgeView(text: "Intact Records", image: UIImage(named: "record"))
         labelBadgeView.isHidden = true
         bandInformationView.addSubview(labelBadgeView)
 
-        productionBadgeView = BadgeView(
-            input: (text: "Japan Music Systems", image: UIImage(named: "production")))
+        productionBadgeView = BadgeView(text: "Japan Music Systems", image: UIImage(named: "production"))
         productionBadgeView.isHidden = true
         bandInformationView.addSubview(productionBadgeView)
 
