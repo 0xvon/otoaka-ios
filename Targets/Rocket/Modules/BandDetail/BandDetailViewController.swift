@@ -5,11 +5,11 @@
 //  Created by Masato TSUTSUMI on 2020/10/28.
 //
 
+import Combine
 import Endpoint
-import UIKit
 import SafariServices
 import UIComponent
-import Combine
+import UIKit
 
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group
@@ -31,7 +31,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     @IBOutlet weak var followersSummaryView: FollowersSummaryView!
     @IBOutlet weak var followersSummaryButton: UIButton! {
         didSet {
-            followersSummaryButton.addTarget(self, action: #selector(followersSummaryButtonTapped(_:)), for: .touchUpInside)
+            followersSummaryButton.addTarget(
+                self, action: #selector(followersSummaryButtonTapped(_:)), for: .touchUpInside)
             followersSummaryButton.backgroundColor = .clear
         }
     }
@@ -63,7 +64,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
@@ -82,7 +83,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         followingViewModel.viewDidLoad()
         viewModel.viewDidLoad()
     }
-    
+
     func bind() {
         followingViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
@@ -123,7 +124,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     dependencyProvider: self.dependencyProvider, input: (live: live, ticket: nil))
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToChartList(let group):
-                let vc = ChartListViewController(dependencyProvider: self.dependencyProvider, input: group)
+                let vc = ChartListViewController(
+                    dependencyProvider: self.dependencyProvider, input: group)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
@@ -132,7 +134,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             }
         }
         .store(in: &cancellables)
-        
+
         headerView.listen { [viewModel] output in
             viewModel.headerEvent(event: output)
         }
@@ -146,7 +148,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     func setupViews() {
         view.backgroundColor = Brand.color(for: .background(.primary))
-        // FIXME:
         headerView.update(input: (group: viewModel.state.group, groupItem: nil))
 
         tableView.delegate = self
@@ -158,7 +159,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             forCellReuseIdentifier: "BandContentsCell")
         tableView.tableFooterView = UIView(frame: .zero)
     }
-    
+
     private func setupFloatingItems(displayType: BandDetailViewModel.DisplayType) {
         let items: [FloatingButtonItem]
         switch displayType {
@@ -184,7 +185,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         let floatingController = dependencyProvider.viewHierarchy.floatingViewController
         floatingController.setFloatingButtonItems(items)
     }
-    
+
     private func showInviteCode(invitationCode: String) {
         let alertController = UIAlertController(
             title: "招待コード", message: nil, preferredStyle: UIAlertController.Style.alert)
@@ -195,27 +196,29 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 print("close")
             })
         alertController.addAction(cancelAction)
-        
-        alertController.addTextField(configurationHandler: {(text: UITextField!) -> Void in
+
+        alertController.addTextField(configurationHandler: { (text: UITextField!) -> Void in
             text.delegate = self
             text.text = invitationCode
         })
-        
+
         self.present(alertController, animated: true, completion: nil)
     }
-    
+
     @objc func editGroup() {
-        let vc = EditBandViewController(dependencyProvider: dependencyProvider, input: viewModel.state.group)
+        let vc = EditBandViewController(
+            dependencyProvider: dependencyProvider, input: viewModel.state.group)
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
+
     @objc func inviteGroup() {
         viewModel.inviteGroup(groupId: viewModel.state.group.id)
     }
 
     @objc func createMessage() {
         if let twitterId = viewModel.state.group.twitterId {
-            let safari = SFSafariViewController(url: URL(string: "https://twitter.com/\(twitterId)")!)
+            let safari = SFSafariViewController(
+                url: URL(string: "https://twitter.com/\(twitterId)")!)
             safari.dismissButtonStyle = .close
             present(safari, animated: true, completion: nil)
         }
@@ -225,10 +228,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
         let shareLiveText: String = "\(viewModel.state.group.name)がオススメだよ！！\n\n via @rocketforband "
         let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/id1500148347")!
         let shareImage: UIImage = UIImage(url: viewModel.state.group.artworkURL!.absoluteString)
-        
+
         let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
-        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
-        
+        let activityViewController = UIActivityViewController(
+            activityItems: activityItems, applicationActivities: [])
+
         self.present(activityViewController, animated: true, completion: nil)
     }
 
@@ -269,7 +273,10 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let view = UIView()
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
             let titleView = TitleLabelView(
-                input: (title: "LIVE", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary)))
+                input: (
+                    title: "LIVE", font: Brand.font(for: .xlargeStrong),
+                    color: Brand.color(for: .text(.primary))
+                )
             )
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)
@@ -288,7 +295,8 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
             let titleView = TitleLabelView(
                 input: (
-                    title: "CONTENTS", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary))
+                    title: "CONTENTS", font: Brand.font(for: .xlargeStrong),
+                    color: Brand.color(for: .text(.primary))
                 ))
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)
@@ -316,7 +324,8 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let feed = rows[indexPath.row]
             let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
             cell.comment { [unowned self] _ in
-                let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
+                let vc = CommentListViewController(
+                    dependencyProvider: dependencyProvider, input: .feedComment(feed))
                 self.present(vc, animated: true, completion: nil)
             }
             return cell
@@ -329,23 +338,30 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     @objc private func seeMoreLive(_ sender: UIButton) {
-        let vc = LiveListViewController(dependencyProvider: self.dependencyProvider, input: .groupLive(viewModel.state.group))
+        let vc = LiveListViewController(
+            dependencyProvider: self.dependencyProvider, input: .groupLive(viewModel.state.group))
         self.navigationController?.pushViewController(vc, animated: true)
     }
 
     @objc private func seeMoreContents(_ sender: UIButton) {
-        let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: viewModel.state.group)
+        let vc = GroupFeedListViewController(
+            dependencyProvider: dependencyProvider, input: viewModel.state.group)
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
+
     @objc private func followersSummaryButtonTapped(_ sender: UIButton) {
-        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.viewModel.state.group.id))
+        let vc = UserListViewController(
+            dependencyProvider: dependencyProvider, input: .followers(self.viewModel.state.group.id)
+        )
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 
 extension BandDetailViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField, shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         return false
     }
 }

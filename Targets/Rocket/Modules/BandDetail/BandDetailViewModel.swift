@@ -5,9 +5,9 @@
 //  Created by Masato TSUTSUMI on 2020/10/28.
 //
 
+import Combine
 import Endpoint
 import Foundation
-import Combine
 import InternalDomain
 import UIComponent
 
@@ -49,7 +49,6 @@ class BandDetailViewModel {
 
     let dependencyProvider: LoggedInDependencyProvider
     var apiClient: APIClient { dependencyProvider.apiClient }
-    
 
     private(set) var state: State
 
@@ -102,25 +101,28 @@ class BandDetailViewModel {
             outputSubject.send(.pushToChartList(state.group))
         case .track(.playButtonTapped):
             guard let item = state.channelItem,
-                  let url = URL(string: "https://youtube.com/watch?v=\(item.id.videoId)") else {
+                let url = URL(string: "https://youtube.com/watch?v=\(item.id.videoId)")
+            else {
                 return
             }
             outputSubject.send(.openURLInBrowser(url))
         case .track(.youtubeButtonTapped):
             guard let channelId = state.group.youtubeChannelId,
-                  let url = URL(string: "https://www.youtube.com/channel/\(channelId)") else {
+                let url = URL(string: "https://www.youtube.com/channel/\(channelId)")
+            else {
                 return
             }
             outputSubject.send(.openURLInBrowser(url))
         case .track(.twitterButtonTapped):
             guard let id = state.group.twitterId,
-                  let url = URL(string: "https://twitter.com/\(id)") else {
+                let url = URL(string: "https://twitter.com/\(id)")
+            else {
                 return
             }
             outputSubject.send(.openURLInBrowser(url))
         case .track(.appleMusicButtonTapped),
-             .track(.spotifyButtonTapped):
-            break // TODO
+            .track(.spotifyButtonTapped):
+            break  // TODO
         }
     }
 
@@ -174,7 +176,7 @@ class BandDetailViewModel {
             }
         }
     }
-    
+
     private func getGroupFeedSummary() {
         var uri = GetGroupFeed.URI()
         uri.groupId = state.group.id
@@ -191,7 +193,7 @@ class BandDetailViewModel {
             }
         }
     }
-    
+
     private func getChartSummary() {
         guard let youtubeChannelId = state.group.youtubeChannelId else { return }
         let request = Empty()

@@ -5,9 +5,9 @@
 //  Created by kateinoigakukun on 2020/12/28.
 //
 
+import Combine
 import Endpoint
 import Foundation
-import Combine
 
 class FollowingViewModel {
     struct State {
@@ -15,7 +15,7 @@ class FollowingViewModel {
         var isFollowing: Bool?
         var followersCount: Int?
     }
-    
+
     enum Output {
         case updateIsButtonEnabled(Bool)
         case updateFollowing(Bool)
@@ -33,7 +33,7 @@ class FollowingViewModel {
         self.apiClient = apiClient
         self.state = State(group: group, isFollowing: nil)
     }
-    
+
     func viewDidLoad() {
         outputSubject.send(.updateIsButtonEnabled(false))
     }
@@ -81,4 +81,3 @@ class FollowingViewModel {
         }
     }
 }
-
