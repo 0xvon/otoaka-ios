@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17504.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -12,6 +12,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandDetailViewController" customModule="Rocket_Development" customModuleProvider="target">
             <connections>
                 <outlet property="followButton" destination="2V5-hm-XCj" id="UFG-UE-hWx"/>
+                <outlet property="followersSummaryButton" destination="mkR-lL-fAa" id="3P9-pH-kxA"/>
                 <outlet property="followersSummaryView" destination="Flx-Oh-chm" id="6ka-bU-ocE"/>
                 <outlet property="headerView" destination="Y9D-z1-Lis" id="U9L-NT-87M"/>
                 <outlet property="tableView" destination="sQZ-gg-szN" id="58K-8R-WcF"/>
@@ -39,8 +40,24 @@
                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="vjU-mj-h0h">
                                     <rect key="frame" x="16" y="266" width="208" height="44"/>
                                     <subviews>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Flx-Oh-chm" customClass="FollowersSummaryView" customModule="UIComponent">
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tMg-3q-XLW">
                                             <rect key="frame" x="0.0" y="0.0" width="100" height="44"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Flx-Oh-chm" customClass="FollowersSummaryView" customModule="UIComponent">
+                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="44"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </view>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mkR-lL-fAa">
+                                                    <rect key="frame" x="0.0" y="0.0" width="100" height="44"/>
+                                                </button>
+                                            </subviews>
+                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                            <constraints>
+                                                <constraint firstItem="mkR-lL-fAa" firstAttribute="leading" secondItem="tMg-3q-XLW" secondAttribute="leading" id="0PF-EY-3wI"/>
+                                                <constraint firstItem="mkR-lL-fAa" firstAttribute="top" secondItem="tMg-3q-XLW" secondAttribute="top" id="49l-cr-Xzc"/>
+                                                <constraint firstAttribute="trailing" secondItem="mkR-lL-fAa" secondAttribute="trailing" id="Kl8-0Z-Ndq"/>
+                                                <constraint firstAttribute="bottom" secondItem="mkR-lL-fAa" secondAttribute="bottom" id="xbx-5h-QlO"/>
+                                            </constraints>
                                         </view>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2V5-hm-XCj" customClass="ToggleButton" customModule="UIComponent">
                                             <rect key="frame" x="108" y="0.0" width="100" height="44"/>

@@ -29,6 +29,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
         }
     }
     @IBOutlet weak var followersSummaryView: FollowersSummaryView!
+    @IBOutlet weak var followersSummaryButton: UIButton! {
+        didSet {
+            followersSummaryButton.addTarget(self, action: #selector(followersSummaryButtonTapped(_:)), for: .touchUpInside)
+            followersSummaryButton.backgroundColor = .clear
+        }
+    }
     @IBOutlet weak var followButton: ToggleButton! {
         didSet {
             followButton.setTitle("フォロー", selected: false)
@@ -342,6 +348,11 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
 
     @objc private func seeMoreContents(_ sender: UIButton) {
         let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: viewModel.state.group)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func followersSummaryButtonTapped(_ sender: UIButton) {
+        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .followers(self.viewModel.state.group.id))
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
