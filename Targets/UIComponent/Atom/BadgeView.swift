@@ -21,7 +21,7 @@ public final class BadgeView: UIView {
     public init(input: Input) {
         self.input = input
         super.init(frame: .zero)
-        self.inject(input: input)
+        self.setup()
     }
 
     @available(*, unavailable)
@@ -46,7 +46,6 @@ public final class BadgeView: UIView {
 
         contentView.backgroundColor = .clear
         contentView.layer.opacity = 0.8
-        translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
 
         badgeTitle = UILabel()
@@ -70,7 +69,7 @@ public final class BadgeView: UIView {
             badgeImageView.leftAnchor.constraint(equalTo: leftAnchor),
             badgeImageView.widthAnchor.constraint(equalToConstant: 24),
             badgeImageView.heightAnchor.constraint(
-                equalTo: badgeImageView.widthAnchor, multiplier: 1),
+                equalTo: badgeImageView.widthAnchor),
             badgeImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
 
             badgeTitle.leftAnchor.constraint(equalTo: badgeImageView.rightAnchor, constant: 8),
@@ -82,22 +81,18 @@ public final class BadgeView: UIView {
     }
 }
 
-//#if DEBUG && canImport(SwiftUI)
-//import SwiftUI
-//
-//struct BadgeView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Group {
-//            ViewWrapper<BadgeView>(
-//                input: .date("明日12時")
-//            ).previewDisplayName("date")
-//            ViewWrapper<BadgeView>(
-//                input: .place("代々木公園")
-//            ).previewDisplayName("place")
-//        }
-//        .previewLayout(.fixed(width: 150, height: 48))
-//        .preferredColorScheme(.dark)
-//
-//    }
-//}
-//#endif
+#if DEBUG && canImport(SwiftUI)
+import SwiftUI
+
+struct BadgeView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ViewWrapper(
+                view: BadgeView(input: (text: "Hello", image: BundleReference.image(named: "ticket")))
+            )
+                .previewLayout(.fixed(width: 100, height: 60))
+        }
+        .background(Color.black)
+    }
+}
+#endif
