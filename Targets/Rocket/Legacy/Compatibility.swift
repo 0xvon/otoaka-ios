@@ -2,4 +2,5 @@
 @_exported import Networking
 
 typealias Button = UIComponent.PrimaryButton
-typealias APIClient = HTTPClient
+typealias APIClient = HTTPClient<RocketAPIAdapter>
+typealias YouTubeDataAPIClient = HTTPClient<YoutubeDataAPIAdapter>

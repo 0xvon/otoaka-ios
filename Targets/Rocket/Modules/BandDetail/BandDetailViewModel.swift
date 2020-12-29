@@ -206,7 +206,6 @@ class BandDetailViewModel {
         guard let youtubeChannelId = state.group.youtubeChannelId else { return }
         let request = Empty()
         var uri = ListChannel.URI()
-        uri.key = dependencyProvider.youTubeDataApiClient.getApiKey()
         uri.channelId = youtubeChannelId
         uri.part = "snippet"
         uri.maxResults = 1

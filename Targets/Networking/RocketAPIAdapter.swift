@@ -48,8 +48,8 @@ public class RocketAPIAdapter: HTTPClientAdapter {
 
     }
     
-    public func afterRequest<Response>(urlResponse: URLResponse, data: Data) throws -> Response where Response : Decodable, Response : Encodable {
-        try webAPIAdapter.afterRequest(urlResponse: urlResponse, data: data)
+    public func afterResponse<Response>(urlResponse: URLResponse, data: Data) throws -> Response where Response : Decodable, Response : Encodable {
+        try webAPIAdapter.afterResponse(urlResponse: urlResponse, data: data)
     }
     
 }

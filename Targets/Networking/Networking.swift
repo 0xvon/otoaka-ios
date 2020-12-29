@@ -5,13 +5,25 @@ public protocol HTTPClientAdapter {
     func beforeRequest<T: Codable>(
         urlRequest: URLRequest, requestBody: T, completion: @escaping (Result<URLRequest, Error>) -> Void
     )
-    func afterRequest<Response: Codable>(urlResponse: URLResponse, data: Data) throws -> Response
+    func afterResponse<Response: Codable>(urlResponse: URLResponse, data: Data) throws -> Response
 }
 
-public class HTTPClient {
+public protocol HTTPClientInterceptor {
+    func intercept(requestError: Error, urlRequest: URLRequest, adapter: HTTPClientAdapter)
+    func intercept(responseError: Error, urlResponse: URLResponse?, adapter: HTTPClientAdapter)
+}
+
+public struct NopHTTPClientInterceptor: HTTPClientInterceptor {
+    public init() {}
+    public func intercept(requestError: Error, urlRequest: URLRequest, adapter: HTTPClientAdapter) {}
+    public func intercept(responseError: Error, urlResponse: URLResponse?, adapter: HTTPClientAdapter) {}
+}
+
+public class HTTPClient<Adapter: HTTPClientAdapter> {
     private let baseURL: URL
     private let session: URLSession
-    private let adapter: HTTPClientAdapter
+    let adapter: Adapter
+    let interceptor: HTTPClientInterceptor
 
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
@@ -24,9 +36,12 @@ public class HTTPClient {
         return decoder
     }()
 
-    public init(baseUrl: URL, adapter: HTTPClientAdapter, session: URLSession = .shared) {
+    public init(baseUrl: URL, adapter: Adapter,
+                interceptor: HTTPClientInterceptor = NopHTTPClientInterceptor(),
+                session: URLSession = .shared) {
         self.baseURL = baseUrl
         self.adapter = adapter
+        self.interceptor = interceptor
         self.session = session
     }
 
@@ -58,6 +73,9 @@ public class HTTPClient {
                 self.request(
                     endpoint, urlRequest: urlRequest, file: file, line: line, callback: callback)
             case .failure(let error):
+                interceptor.intercept(
+                    requestError: error, urlRequest: urlRequest, adapter: self.adapter
+                )
                 callback(.failure(error))
             }
         }
@@ -68,16 +86,24 @@ public class HTTPClient {
         urlRequest: URLRequest, file: StaticString, line: UInt,
         callback: @escaping ((Result<E.Response, Error>) -> Void)
     ) {
-        let task = session.dataTask(with: urlRequest) { [adapter] (data, urlResponse, error) in
+        let task = session.dataTask(with: urlRequest) { [adapter, interceptor] (data, urlResponse, error) in
+            let result: Result<E.Response, Error>
+            defer {
+                switch result {
+                case .failure(let error):
+                    interceptor.intercept(responseError: error, urlResponse: urlResponse, adapter: adapter)
+                default: break
+                }
+            }
             if let error = error {
-                callback(.failure(error))
+                result = .failure(error)
                 return
             }
             guard let data = data, let urlResponse = urlResponse else {
                 fatalError("URLSession.dataTask should provide either response or error")
             }
-            let result = Result<E.Response, Error> {
-                try adapter.afterRequest(urlResponse: urlResponse, data: data)
+            result = Result<E.Response, Error> {
+                try adapter.afterResponse(urlResponse: urlResponse, data: data)
             }
             callback(result)
         }

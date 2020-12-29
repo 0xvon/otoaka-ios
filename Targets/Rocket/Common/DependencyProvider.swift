@@ -65,20 +65,26 @@ extension DependencyProvider {
             region: .APNortheast1,
             credentialsProvider: credentialProvider
         )
+        let httpInterceptor: HTTPClientInterceptor = {
+            #if DEBUG
+            return LoggingInterceptor(logger: ConsoleLogger())
+            #else
+            return NopHTTPClientInterceptor()
+            #endif
+        }()
 
         AWSServiceManager.default()?.defaultServiceConfiguration = configuration
         let apiClient = APIClient(
             baseUrl: URL(string: config.apiEndpoint)!,
-            adapter: {
-                #if DEBUG
-                return LoggingAdapter(adapter: RocketAPIAdapter(tokenProvider: wrapper), logger: ConsoleLogger())
-                #else
-                return RocketAPIAdapter(tokenProvider: wrapper)
-                #endif
-            }()
+            adapter: RocketAPIAdapter(tokenProvider: wrapper),
+            interceptor: httpInterceptor
         )
-        let youTubeDataApiClient = YouTubeDataAPIClient(baseUrl: URL(string: "https://www.googleapis.com")!, apiKey: config.youTubeApiKey)
-        
+        let youTubeDataApiClient = YouTubeDataAPIClient(
+            baseUrl: URL(string: "https://www.googleapis.com")!,
+            adapter: YoutubeDataAPIAdapter(apiKey: config.youTubeApiKey),
+            interceptor: httpInterceptor
+        )
+
         if credentialProvider.identityId == nil {
             credentialProvider.getIdentityId().continueWith(block: {(task) -> AnyObject? in
                 if let error = task.error { fatalError(error.localizedDescription) }

@@ -7,17 +7,46 @@
 
 import Foundation
 
-public enum WebAPIError: Error {
+public enum WebAPIError: Error, CustomStringConvertible {
     case nonHTTPURLResponse(URLResponse)
     case decodingError(error: Error, body: String?, httpURLResponse: HTTPURLResponse)
     case unacceptableStatusCode(statusCode: Int, body: String?, httpURLResponse: HTTPURLResponse)
+
+    public var description: String {
+        switch self {
+        case .nonHTTPURLResponse(let urlResponse):
+            return """
+            nonHTTPURLResponse: \(urlResponse.description)
+            """
+        case let .decodingError(error, body, httpURLResponse):
+            var content = """
+            decodingError:
+              error: \(error)\n
+            """
+            if let body = body {
+                content += "  body:\n\(body)\n"
+            }
+            content += "  httpURLResponse: \(httpURLResponse)"
+            return content
+        case let .unacceptableStatusCode(statusCode, body, httpURLResponse):
+            var content = """
+            unacceptableStatusCode:
+              statusCode: \(statusCode)\n
+            """
+            if let body = body {
+                content += "  body:\n\(body)\n"
+            }
+            content += "  httpURLResponse: \(httpURLResponse)"
+            return content
+        }
+    }
 }
 
 public class WebAPIAdapter: HTTPClientAdapter {
     private let encoder: JSONEncoder
     private let decoder: JSONDecoder
 
-    init(encoder: JSONEncoder, decoder: JSONDecoder) {
+    public init(encoder: JSONEncoder = .init(), decoder: JSONDecoder = .init()) {
         self.encoder = encoder
         self.decoder = decoder
     }
@@ -26,13 +55,15 @@ public class WebAPIAdapter: HTTPClientAdapter {
         var urlRequest = urlRequest
         let result = Result<URLRequest, Error> {
             urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            urlRequest.httpBody = try encoder.encode(requestBody)
+            if urlRequest.httpMethod != "GET" {
+                urlRequest.httpBody = try encoder.encode(requestBody)
+            }
             return urlRequest
         }
         completion(result)
     }
 
-    public func afterRequest<Response: Codable>(urlResponse: URLResponse, data: Data) throws -> Response {
+    public func afterResponse<Response: Codable>(urlResponse: URLResponse, data: Data) throws -> Response {
         guard let httpResponse = urlResponse as? HTTPURLResponse else {
             throw WebAPIError.nonHTTPURLResponse(urlResponse)
         }

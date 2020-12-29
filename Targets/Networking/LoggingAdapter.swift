@@ -11,49 +11,33 @@ public protocol Logger {
     func log(_ message: String)
 }
 
-public final class LoggingAdapter: HTTPClientAdapter {
-    internal let adapter: HTTPClientAdapter
+public final class LoggingInterceptor: HTTPClientInterceptor {
     internal let logger: Logger
 
-    public init(adapter: HTTPClientAdapter, logger: Logger) {
-        self.adapter = adapter
+    public init(logger: Logger) {
         self.logger = logger
     }
 
-    var logPrefix: String {
-        "\(Date()) [\(type(of: adapter))]"
+    public func intercept(requestError: Error, urlRequest: URLRequest, adapter: HTTPClientAdapter) {
+        logger.log(
+            """
+            \(Date()) [\(type(of: adapter))] [ ERROR ]: Request Error:
+            \(urlRequest.url?.absoluteString ?? "url is not set"):
+            \(requestError)
+            """
+        )
+
     }
-    public func beforeRequest<T>(
-        urlRequest: URLRequest, requestBody: T,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
-    ) where T: Decodable, T: Encodable {
-        let prefix = logPrefix
-        adapter.beforeRequest(
-            urlRequest: urlRequest, requestBody: requestBody,
-            completion: { [logger] result in
-                guard case .failure(let error) = result else {
-                    completion(result)
-                    return
-                }
-                logger.log(
-                    "\(prefix) [ ERROR ]: Request Error: \(urlRequest.url?.absoluteString ?? "url is not set") \(error)"
-                )
-            }
+
+    public func intercept(responseError: Error, urlResponse: URLResponse?, adapter: HTTPClientAdapter) {
+        logger.log(
+            """
+            \(Date()) [\(type(of: adapter))] [ ERROR ]: Response Error:
+            \(urlResponse?.url?.absoluteString ?? "url is not set"):
+            \(responseError)
+            """
         )
     }
-
-    public func afterRequest<Response>(urlResponse: URLResponse, data: Data) throws -> Response
-    where Response: Decodable, Response: Encodable {
-        do {
-            return try adapter.afterRequest(urlResponse: urlResponse, data: data)
-        } catch {
-            logger.log(
-                "\(Date()) [\(type(of: adapter))] [ ERROR ]: Response Error: \(urlResponse.url?.absoluteString ?? "url is not set") \(error)"
-            )
-            throw error
-        }
-    }
-
 }
 
 public class ConsoleLogger: Logger {
