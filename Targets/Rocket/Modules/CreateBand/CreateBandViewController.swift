@@ -141,7 +141,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.cornerRadius = 60
         profileImageView.clipsToBounds = true
-        profileImageView.image = UIImage(named: "band")
+        profileImageView.image = UIImage(named: "human")
         profileImageView.contentMode = .scaleAspectFill
         thumbnailInputView.addSubview(profileImageView)
 

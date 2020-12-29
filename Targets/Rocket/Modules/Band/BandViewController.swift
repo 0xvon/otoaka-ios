@@ -483,20 +483,20 @@ final class BandViewController: UIViewController, Instantiable {
     }
 
     func requestNotification() {
-        UNUserNotificationCenter.current().delegate = self
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            UNUserNotificationCenter.current().requestAuthorization(options: [
-                .alert, .sound, .badge,
-            ]) {
-                granted, error in
-                if let error = error {
-                    DispatchQueue.main.async {
-                        self.showAlert(title: "エラー", message: error.localizedDescription)
-                    }
-                    return
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+        center.requestAuthorization(options: [
+            .alert, .sound, .badge,
+        ]) {
+            granted, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
                 }
-                guard granted else { return }
-
+                return
+            }
+            
+            if granted {
                 DispatchQueue.main.async {
                     UIApplication.shared.registerForRemoteNotifications()
                 }
@@ -706,5 +706,5 @@ extension BandViewController: UIScrollViewDelegate {
 }
 
 extension BandViewController: UNUserNotificationCenterDelegate {
-
+    
 }

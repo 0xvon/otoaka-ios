@@ -153,7 +153,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.cornerRadius = 60
         profileImageView.clipsToBounds = true
-        profileImageView.image = UIImage(named: "band")
+        profileImageView.image = UIImage(named: "human")
         setProfileView.addSubview(profileImageView)
 
         let changeProfileImageButton = UIButton()
@@ -232,10 +232,9 @@ final class CreateUserViewController: UIViewController, Instantiable {
             profileImageView.widthAnchor.constraint(equalToConstant: 120),
             profileImageView.heightAnchor.constraint(equalToConstant: 120),
             profileImageView.topAnchor.constraint(equalTo: setProfileView.topAnchor),
-            profileImageView.rightAnchor.constraint(equalTo: setProfileView.rightAnchor),
-            profileImageView.leftAnchor.constraint(equalTo: setProfileView.leftAnchor),
+            profileImageView.centerXAnchor.constraint(equalTo: setProfileView.centerXAnchor),
 
-            changeProfileImageButton.widthAnchor.constraint(equalToConstant: 120),
+            changeProfileImageButton.widthAnchor.constraint(equalToConstant: 200),
             changeProfileImageButton.heightAnchor.constraint(equalToConstant: 120),
             changeProfileImageButton.topAnchor.constraint(equalTo: setProfileView.topAnchor),
             changeProfileImageButton.rightAnchor.constraint(equalTo: setProfileView.rightAnchor),

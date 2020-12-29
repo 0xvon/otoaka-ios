@@ -37,6 +37,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         return dependencyProvider.auth.application(app, open: url, options: options)
     }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print(error)
+    }
 
     func application(
         _ application: UIApplication,
