@@ -76,7 +76,7 @@ final class AccountViewController: UIViewController, Instantiable {
         setAccountSetting()
         viewModel.getPerformanceRequest()
 
-        self.view.backgroundColor = Brand.color(for: .text(.button))
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
         tableView = UITableView()
         tableView.backgroundColor = .clear
         tableView.translatesAutoresizingMaskIntoConstraints = false
