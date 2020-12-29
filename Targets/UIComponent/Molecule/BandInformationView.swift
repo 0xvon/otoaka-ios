@@ -132,8 +132,8 @@ class BandInformationView: UIView {
         ])
  */
 
-        // TODO
-        //        arrowButton.addTarget(self, action: #selector(nextPage), for: .touchUpInside)
+        arrowButton.addTarget(
+            self, action: #selector(touchUpInsideArrowButton), for: .touchUpInside)
         addSubview(arrowButton)
         NSLayoutConstraint.activate([
             arrowButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
@@ -141,6 +141,19 @@ class BandInformationView: UIView {
             arrowButton.widthAnchor.constraint(equalToConstant: 54),
             arrowButton.heightAnchor.constraint(equalToConstant: 28),
         ])
+    }
+
+    // MARK: - Output
+    private var listener: (Output) -> Void = { listenType in }
+    public func listen(_ listener: @escaping (Output) -> Void) {
+        self.listener = listener
+    }
+
+    public enum Output {
+        case arrowButtonTapped
+    }
+    @objc private func touchUpInsideArrowButton() {
+        listener(.arrowButtonTapped)
     }
 }
 

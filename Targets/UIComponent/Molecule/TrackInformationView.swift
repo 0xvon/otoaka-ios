@@ -9,7 +9,7 @@ import UIKit
 import Foundation
 import InternalDomain
 
-final class TrackInformationView: UIView {
+public final class TrackInformationView: UIView {
     typealias Input = ChannelDetail.ChannelItem
     // FIXME
     private let dateFormatter: DateFormatter = {
@@ -135,10 +135,8 @@ final class TrackInformationView: UIView {
             artworkImageView.widthAnchor.constraint(equalToConstant: 120),
             artworkImageView.heightAnchor.constraint(equalToConstant: 120),
         ])
-        
-//        playButton.listen {
-//            self.play()
-//        }
+
+        playButton.addTarget(self, action: #selector(playButtonTapped), for: .touchUpInside)
         addSubview(playButton)
         NSLayoutConstraint.activate([
             playButton.leftAnchor.constraint(equalTo: artworkImageView.rightAnchor, constant: 24),
@@ -160,7 +158,7 @@ final class TrackInformationView: UIView {
             releasedDataLabel.topAnchor.constraint(equalTo: trackNameLabel.bottomAnchor, constant: 4),
         ])
         
-//        seeMoreTracksButton.addTarget(self, action: #selector(seeMoreButtonTapped(_:)), for: .touchUpInside)
+        seeMoreTracksButton.addTarget(self, action: #selector(seeMoreButtonTapped), for: .touchUpInside)
         addSubview(seeMoreTracksButton)
         NSLayoutConstraint.activate([
             seeMoreTracksButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
@@ -174,18 +172,56 @@ final class TrackInformationView: UIView {
             stackView.heightAnchor.constraint(equalToConstant: 24),
         ])
         
-//        twitterButton.addTarget(self, action: #selector(twitterButtonTapped(_:)), for: .touchUpInside)
+        twitterButton.addTarget(self, action: #selector(twitterButtonTapped), for: .touchUpInside)
         stackView.addArrangedSubview(twitterButton)
         NSLayoutConstraint.activate([twitterButton.widthAnchor.constraint(equalToConstant: 24)])
         
-//        youtubeButton.addTarget(self, action: #selector(youtubeButtonTapped(_:)), for: .touchUpInside)
+        youtubeButton.addTarget(self, action: #selector(youtubeButtonTapped), for: .touchUpInside)
         stackView.addArrangedSubview(youtubeButton)
         
-//        appleMusicButton.addTarget(self, action: #selector(appleMusicButtonTapped(_:)), for: .touchUpInside)
+        appleMusicButton.addTarget(self, action: #selector(appleMusicButtonTapped), for: .touchUpInside)
         stackView.addArrangedSubview(appleMusicButton)
         
-//        spotifyButton.addTarget(self, action: #selector(spotifyButtonTapped(_:)), for: .touchUpInside)
+        spotifyButton.addTarget(self, action: #selector(spotifyButtonTapped), for: .touchUpInside)
         stackView.addArrangedSubview(spotifyButton)
+    }
+    
+    // MARK: - Output
+    private var listener: (Output) -> Void = { listenType in }
+    public func listen(_ listener: @escaping (Output) -> Void) {
+        self.listener = listener
+    }
+    
+    public enum Output {
+        case playButtonTapped
+        case twitterButtonTapped
+        case youtubeButtonTapped
+        case appleMusicButtonTapped
+        case spotifyButtonTapped
+        case seeMoreChartsTapped
+    }
+
+    @objc private func playButtonTapped() {
+        listener(.playButtonTapped)
+    }
+    @objc private func twitterButtonTapped() {
+        listener(.twitterButtonTapped)
+    }
+    
+    @objc private func youtubeButtonTapped() {
+        listener(.youtubeButtonTapped)
+    }
+    
+    @objc private func appleMusicButtonTapped() {
+        listener(.appleMusicButtonTapped)
+    }
+
+    @objc private func spotifyButtonTapped() {
+        listener(.spotifyButtonTapped)
+    }
+
+    @objc private func seeMoreButtonTapped() {
+        self.listener(.seeMoreChartsTapped)
     }
 }
 

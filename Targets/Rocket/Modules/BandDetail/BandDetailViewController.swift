@@ -112,7 +112,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.setupFloatingItems(displayType: displayType)
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item))
-            case .didGetGroupLives, .didGetGroupFeeds:
+            case .updateTableSections:
                 self.tableView.reloadData()
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
@@ -122,6 +122,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 let vc = LiveDetailViewController(
                     dependencyProvider: self.dependencyProvider, input: (live: live, ticket: nil))
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToChartList(let group):
+                let vc = ChartListViewController(dependencyProvider: self.dependencyProvider, input: group)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
@@ -130,24 +133,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
         }
         .store(in: &cancellables)
         
-        headerView.listen { listenType in
-            switch listenType {
-            case .play(let url):
-                let safari = SFSafariViewController(url: url)
-                safari.dismissButtonStyle = .close
-                self.present(safari, animated: true, completion: nil)
-            case .seeMoreCharts:
-                let vc = ChartListViewController(dependencyProvider: self.dependencyProvider, input: self.viewModel.state.group)
-                self.navigationController?.pushViewController(vc, animated: true)
-            case .youtube(let url):
-                let safari = SFSafariViewController(url: url)
-                safari.dismissButtonStyle = .close
-                self.present(safari, animated: true, completion: nil)
-            case .twitter(let url):
-                let safari = SFSafariViewController(url: url)
-                safari.dismissButtonStyle = .close
-                self.present(safari, animated: true, completion: nil)
-            }
+        headerView.listen { [viewModel] output in
+            viewModel.headerEvent(event: output)
         }
         refreshControl.controlEventPublisher(for: .valueChanged)
             .sink { [refreshControl, viewModel] _ in
@@ -160,7 +147,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     func setupViews() {
         view.backgroundColor = Brand.color(for: .background(.primary))
         // FIXME:
-        headerView.inject(input: (group: viewModel.state.group, groupItem: nil))
+        headerView.update(input: (group: viewModel.state.group, groupItem: nil))
 
         tableView.delegate = self
         tableView.dataSource = self

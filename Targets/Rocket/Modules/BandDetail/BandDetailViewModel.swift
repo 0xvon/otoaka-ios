@@ -9,6 +9,7 @@ import Endpoint
 import Foundation
 import Combine
 import InternalDomain
+import UIComponent
 
 class BandDetailViewModel {
     enum DisplayType {
@@ -26,6 +27,7 @@ class BandDetailViewModel {
         var feeds: [ArtistFeedSummary] = []
         var groupItem: ChannelDetail.ChannelItem? = nil
         var groupDetail: GetGroup.Response?
+        var channelItem: ChannelDetail.ChannelItem?
         let role: RoleProperties
 
         var sections: [Section] {
@@ -35,12 +37,12 @@ class BandDetailViewModel {
 
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
-        case didGetGroupLives
-        case didGetGroupFeeds
+        case updateTableSections
         case didGetChart(Group, ChannelDetail.ChannelItem?)
         case didCreatedInvitation(InviteGroup.Invitation)
 
         case pushToLiveDetail(Live)
+        case pushToChartList(Group)
         case openURLInBrowser(URL)
         case reportError(Error)
     }
@@ -94,6 +96,34 @@ class BandDetailViewModel {
         getGroupFeedSummary()
     }
 
+    func headerEvent(event: BandDetailHeaderView.Output) {
+        switch event {
+        case .track(.seeMoreChartsTapped):
+            outputSubject.send(.pushToChartList(state.group))
+        case .track(.playButtonTapped):
+            guard let item = state.channelItem,
+                  let url = URL(string: "https://youtube.com/watch?v=\(item.id.videoId)") else {
+                return
+            }
+            outputSubject.send(.openURLInBrowser(url))
+        case .track(.youtubeButtonTapped):
+            guard let channelId = state.group.youtubeChannelId,
+                  let url = URL(string: "https://www.youtube.com/channel/\(channelId)") else {
+                return
+            }
+            outputSubject.send(.openURLInBrowser(url))
+        case .track(.twitterButtonTapped):
+            guard let id = state.group.twitterId,
+                  let url = URL(string: "https://twitter.com/\(id)") else {
+                return
+            }
+            outputSubject.send(.openURLInBrowser(url))
+        case .track(.appleMusicButtonTapped),
+             .track(.spotifyButtonTapped):
+            break // TODO
+        }
+    }
+
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
         apiClient.request(InviteGroup.self, request: request) { [outputSubject] result in
@@ -138,7 +168,7 @@ class BandDetailViewModel {
             switch result {
             case .success(let lives):
                 self.state.lives = lives.items
-                self.outputSubject.send(.didGetGroupLives)
+                self.outputSubject.send(.updateTableSections)
             case .failure(let error):
                 self.outputSubject.send(.reportError(error))
             }
@@ -155,7 +185,7 @@ class BandDetailViewModel {
             switch result {
             case .success(let res):
                 self.state.feeds = res.items
-                self.outputSubject.send(.didGetGroupFeeds)
+                self.outputSubject.send(.updateTableSections)
             case .failure(let error):
                 self.outputSubject.send(.reportError(error))
             }
@@ -175,6 +205,7 @@ class BandDetailViewModel {
             .request(ListChannel.self, request: request, uri: uri) { [unowned self] result in
                 switch result {
                 case .success(let res):
+                    self.state.channelItem = res.items.first
                     self.outputSubject.send(.didGetChart(self.state.group, res.items.first))
                 case .failure(let error):
                     self.outputSubject.send(.reportError(error))

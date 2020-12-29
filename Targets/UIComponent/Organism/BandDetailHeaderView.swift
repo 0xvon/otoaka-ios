@@ -15,20 +15,6 @@ public final class BandDetailHeaderView: UIView {
         groupItem: ChannelDetail.ChannelItem?
     )
 
-    var input: Input!
-
-    private var listener: (ListenType) -> Void = { listenType in }
-    public func listen(_ listener: @escaping (ListenType) -> Void) {
-        self.listener = listener
-    }
-    
-    public enum ListenType {
-        case play(URL)
-        case seeMoreCharts
-        case youtube(URL)
-        case twitter(URL)
-    }
-
     private lazy var horizontalScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +60,6 @@ public final class BandDetailHeaderView: UIView {
     }()
 
     public init(input: Input) {
-        self.input = input
         super.init(frame: .zero)
         self.setup()
         self.update(input: input)
@@ -87,8 +72,6 @@ public final class BandDetailHeaderView: UIView {
     }
 
     public func update(input: Input) {
-        self.input = input
-
         bandInformationView.update(input: input)
         if let groupItem = input.groupItem {
             trackInformationView.update(input: groupItem)
@@ -97,10 +80,16 @@ public final class BandDetailHeaderView: UIView {
         biographyTextView.text = input.group.biography
     }
 
-    @available(*, deprecated)
-    public func inject(input: Input) {
+    func bind() {
+        bandInformationView.listen { [unowned self] output in
+            switch output {
+            case .arrowButtonTapped: self.nextPage()
+            }
+        }
+        trackInformationView.listen { [unowned self] output in
+            self.listener(.track(output))
+        }
     }
-
     func setup() {
         backgroundColor = .clear
 
@@ -151,44 +140,21 @@ public final class BandDetailHeaderView: UIView {
         }
     }
 
-    private func play() {
-        if let groupItem = input.groupItem {
-            self.listener(.play(URL(string: "https://youtube.com/watch?v=\(groupItem.id.videoId)")!))
-        }
-    }
-
-    @objc private func nextPage() {
+    private func nextPage() {
         UIView.animate(withDuration: 0.3) {
+            // FIXME: Support landscape mode?
             self.horizontalScrollView.contentOffset.x += UIScreen.main.bounds.width
         }
     }
 
-    @objc private func seeMoreButtonTapped(_ sender: UIButton) {
-        self.listener(.seeMoreCharts)
-    }
-
-    @objc private func twitterButtonTapped(_ sender: UIButton) {
-        if let twitterId = input.group.twitterId {
-            if let url = URL(string: "https://twitter.com/\(twitterId)") {
-                self.listener(.twitter(url))
-            }
-        }
+    // MARK: - Output
+    private var listener: (Output) -> Void = { listenType in }
+    public func listen(_ listener: @escaping (Output) -> Void) {
+        self.listener = listener
     }
     
-    @objc private func youtubeButtonTapped(_ sender: UIButton) {
-        if let youtubeChannelId = input.group.youtubeChannelId {
-            if let url = URL(string: "https://www.youtube.com/channel/\(youtubeChannelId)") {
-                self.listener(.youtube(url))
-            }
-        }
-    }
-
-    @objc private func appleMusicButtonTapped(_ sender: UIButton) {
-        print("itunes")
-    }
-
-    @objc private func spotifyButtonTapped(_ sender: UIButton) {
-        print("spotify")
+    public enum Output {
+        case track(TrackInformationView.Output)
     }
 }
 
