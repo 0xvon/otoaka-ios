@@ -30,7 +30,7 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Kwn-rv-aqn">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="1562"/>
                             <subviews>
-                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y9D-z1-Lis" customClass="BandDetailHeaderView" customModule="Rocket_Development" customModuleProvider="target">
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Y9D-z1-Lis" customClass="BandDetailHeaderView" customModule="UIComponent">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="250" id="IXH-G0-Nod"/>

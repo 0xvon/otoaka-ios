@@ -10,19 +10,28 @@ packages:
     path: Libraries/rocket-api/Modules/DomainEntity
 targets:
   InternalDomain:
-    type: framework
+    type: library.static
     platform: iOS
     sources: [Targets/InternalDomain]
     dependencies:
       - package: DomainEntity
   UIComponent:
-    type: framework
+    type: library.static
     platform: iOS
     sources: [Targets/UIComponent]
+    dependencies:
+      - package: DomainEntity
+      - target: InternalDomain
+  UIComponentPreview:
+    type: application
+    platform: iOS
+    sources: [Targets/UIComponent, Targets/UIComponentPreview]
     settings:
       base:
-        DEVELOPMENT_ASSET_PATHS: Targets/UIComponent/PreviewContent
+        INFOPLIST_FILE: Targets/UIComponentPreview/Info.plist
+        DEVELOPMENT_ASSET_PATHS: Targets/UIComponentPreview/PreviewContent
         ENABLE_PREVIEWS: YES
+        IPHONEOS_DEPLOYMENT_TARGET: "14.0"
     dependencies:
       - package: DomainEntity
       - target: InternalDomain
@@ -120,3 +129,4 @@ targetTemplates:
         embed: false
       - package: Endpoint
       - target: UIComponent
+      - target: InternalDomain
