@@ -49,7 +49,7 @@ public final class SummarySectionHeader: UIStackView {
     }
 
     func setup() {
-        layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         isLayoutMarginsRelativeArrangement = true
         addArrangedSubview(titleLabel)
         addArrangedSubview(UIView()) // Spacer
