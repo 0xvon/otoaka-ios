@@ -317,12 +317,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 }
 
-extension BandDetailViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        viewModel.didSelectRow(at: indexPath)
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-
+extension BandDetailViewController {
     @objc private func seeMoreLive(_ sender: UIButton) {
         let vc = LiveListViewController(
             dependencyProvider: self.dependencyProvider, input: .groupLive(viewModel.state.group))
