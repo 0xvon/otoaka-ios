@@ -697,7 +697,7 @@ extension BandViewController: UIScrollViewDelegate {
                 font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary)))
             titleViews.remove(at: pageIndex)
             titleViews.forEach {
-                $0.changeStyle(font: Brand.font(for: .medium), color: Brand.color(for: .text(.primary)))
+                $0.changeStyle(font: Brand.font(for: .mediumStrong), color: Brand.color(for: .text(.primary)))
             }
             pageTitleStackViewLeadingConstraint.constant = CGFloat(
                 16 - (scrollView.contentOffset.x / UIScreen.main.bounds.width * 50))
