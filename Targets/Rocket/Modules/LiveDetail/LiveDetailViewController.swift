@@ -679,8 +679,8 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
             return view
         }
         let feed = self.feeds[indexPath.section]
-        let cell = tableView.dequeueReusableCell(BandContentsCell.self, input: feed, for: indexPath)
-        cell.comment { [weak self] _ in
+        let cell = tableView.dequeueReusableCell(ArtistFeedCell.self, input: feed, for: indexPath)
+        cell.listen { [weak self] _ in
             self?.seeCommentButtonTapped()
         }
         return cell

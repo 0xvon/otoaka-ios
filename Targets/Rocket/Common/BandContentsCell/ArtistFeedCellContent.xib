@@ -11,7 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="BandContentsCell" customModule="Rocket_Development" customModuleProvider="target">
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ArtistFeedCellContent" customModule="Rocket_Development" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
@@ -43,12 +43,6 @@
                         <constraint firstAttribute="width" constant="60" id="K4T-ZF-UBK"/>
                     </constraints>
                 </imageView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lst-D0-Awq">
-                    <rect key="frame" x="16" y="40.5" width="382" height="21"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VCF-xH-vYa" customClass="ReactionIndicatorButton" customModule="UIComponent">
                     <rect key="frame" x="16" y="240" width="100" height="44"/>
                     <constraints>
@@ -56,6 +50,12 @@
                         <constraint firstAttribute="width" constant="100" id="DXB-eO-DQ9"/>
                     </constraints>
                 </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lst-D0-Awq">
+                    <rect key="frame" x="16" y="40.5" width="382" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -83,9 +83,9 @@
                 <outlet property="artistNameLabel" destination="lst-D0-Awq" id="1z5-OI-gbG"/>
                 <outlet property="commentButton" destination="VCF-xH-vYa" id="tDW-1I-C1z"/>
                 <outlet property="dateLabel" destination="jse-Ek-ShY" id="ESb-ZR-it0"/>
+                <outlet property="feedTitleLabel" destination="bvU-Zc-Bl4" id="ZnT-kM-koO"/>
                 <outlet property="playImageView" destination="KaQ-gr-jtr" id="pIe-27-8Ph"/>
                 <outlet property="thumbnailImageView" destination="pcy-if-26W" id="pmq-zo-DnK"/>
-                <outlet property="titleLabel" destination="bvU-Zc-Bl4" id="ZnT-kM-koO"/>
             </connections>
             <point key="canvasLocation" x="189.85507246376812" y="-89.732142857142847"/>
         </view>

@@ -42,13 +42,12 @@ class LiveCell: UITableViewCell, ReusableCell {
     }
 }
 
-class LiveCellContent: UIView {
+class LiveCellContent: UIButton {
     typealias Input = Live
     enum Output {
         case listenButtonTapped
         case buyTicketButtonTapped
     }
-    var input: Input!
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM月dd日 HH:mm"
@@ -71,7 +70,13 @@ class LiveCellContent: UIView {
             buyTicketButtonView.setImage(UIImage(named: "ticket"), for: .normal)
         }
     }
-    @IBOutlet weak var thumbnailView: UIImageView!
+    @IBOutlet weak var thumbnailView: UIImageView! {
+        didSet { thumbnailView.isUserInteractionEnabled = false }
+    }
+
+    override var isHighlighted: Bool {
+        didSet { alpha = isHighlighted ? 0.6 : 1.0 }
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -82,28 +87,11 @@ class LiveCellContent: UIView {
         buyTicketButtonView.listen { [unowned self] in
             self.listener(.buyTicketButtonTapped)
         }
-    }
-
-    func inject(input: Live) {
-        self.input = input
         setup()
     }
 
-    func setup() { 
-        self.backgroundColor = .clear
-        self.layer.borderWidth = 1
-        self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-        self.layer.cornerRadius = 10
-
+    func inject(input: Live) {
         self.liveTitleLabel.text = input.title
-        self.liveTitleLabel.font = Brand.font(for: .xlargeStrong)
-        self.liveTitleLabel.textColor = Brand.color(for: .text(.primary))
-        self.liveTitleLabel.backgroundColor = .clear
-        self.liveTitleLabel.lineBreakMode = .byWordWrapping
-        self.liveTitleLabel.numberOfLines = 0
-        self.liveTitleLabel.adjustsFontSizeToFitWidth = false
-        self.liveTitleLabel.sizeToFit()
-
         switch input.style {
         case .oneman(_):
             self.bandsLabel.text = input.hostGroup.name
@@ -112,6 +100,31 @@ class LiveCellContent: UIView {
         case .festival(let groups):
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
+        
+        let date: String =
+            (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
+
+        dateView.title = date
+        placeView.title = input.liveHouse
+        self.thumbnailView.loadImageAsynchronously(url: input.artworkURL)
+    }
+
+    func setup() { 
+        self.backgroundColor = .clear
+        self.layer.borderWidth = 1
+        self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+        self.layer.cornerRadius = 10
+
+        
+        self.liveTitleLabel.font = Brand.font(for: .xlargeStrong)
+        self.liveTitleLabel.textColor = Brand.color(for: .text(.primary))
+        self.liveTitleLabel.backgroundColor = .clear
+        self.liveTitleLabel.lineBreakMode = .byWordWrapping
+        self.liveTitleLabel.numberOfLines = 0
+        self.liveTitleLabel.adjustsFontSizeToFitWidth = false
+        self.liveTitleLabel.sizeToFit()
+
+
         self.bandsLabel.font = Brand.font(for: .medium)
         self.bandsLabel.textColor = Brand.color(for: .text(.primary))
         self.bandsLabel.lineBreakMode = .byWordWrapping
@@ -119,20 +132,15 @@ class LiveCellContent: UIView {
         self.bandsLabel.adjustsFontSizeToFitWidth = false
         self.bandsLabel.sizeToFit()
 
-        self.thumbnailView.loadImageAsynchronously(url: input.artworkURL)
         self.thumbnailView.contentMode = .scaleAspectFill
         self.thumbnailView.layer.opacity = 0.6
         self.thumbnailView.layer.cornerRadius = 10
         self.thumbnailView.clipsToBounds = true
 
-        let date: String =
-            (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
-
         buyTicketButtonView.isHidden = true
         listenButtonView.isHidden = true
-        dateView.title = date
+
         dateView.image = UIImage(named: "calendar")!
-        placeView.title = input.liveHouse
         placeView.image = UIImage(named: "map")
     }
 

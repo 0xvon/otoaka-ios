@@ -21,6 +21,9 @@ class BandDetailViewModel {
         case live(rows: [Live])
         case feed(rows: [ArtistFeedSummary])
     }
+    enum SummaryRow {
+        case live, feed
+    }
     struct State {
         var group: Group
         var lives: [Live] = []
@@ -42,8 +45,9 @@ class BandDetailViewModel {
         case didGetChart(Group, ChannelDetail.ChannelItem?)
         case didCreatedInvitation(InviteGroup.Invitation)
 
-        case pushToLiveDetail(Live)
-        case pushToChartList(Group)
+        case pushToLiveDetail(LiveDetailViewController.Input)
+        case pushToChartList(ChartListViewController.Input)
+        case pushToCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
         case reportError(Error)
     }
@@ -63,20 +67,13 @@ class BandDetailViewModel {
         self.state = State(group: group, role: dependencyProvider.user.role)
     }
 
-    func numberOfSections() -> Int { state.sections.count }
-    func numberOfRows(in section: Int) -> Int {
-        switch state.sections[section] {
-        case let .feed(rows): return rows.count
-        case let .live(rows): return rows.count
-        }
-    }
-    func didSelectRow(at indexPath: IndexPath) {
-        switch state.sections[indexPath.row] {
-        case let .live(rows):
-            let live = rows[indexPath.row]
-            outputSubject.send(.pushToLiveDetail(live))
-        case let .feed(rows):
-            let feed = rows[indexPath.row]
+    func didSelectRow(at row: SummaryRow) {
+        switch row {
+        case .live:
+            guard let live = state.lives.first else { return }
+            outputSubject.send(.pushToLiveDetail((live: live, ticket: nil)))
+        case .feed:
+            guard let feed = state.feeds.first else { return }
             switch feed.feedType {
             case .youtube(let url):
                 outputSubject.send(.openURLInBrowser(url))
@@ -127,6 +124,14 @@ class BandDetailViewModel {
         }
     }
 
+    func feedCellEvent(event: ArtistFeedCellContent.Output) {
+        switch event {
+        case .commentButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.pushToCommentList(.feedComment(feed)))
+        }
+    }
+
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
         apiClient.request(InviteGroup.self, request: request) { [outputSubject] result in
@@ -170,6 +175,7 @@ class BandDetailViewModel {
         apiClient.request(GetGroupLives.self, request: request, uri: uri) { [unowned self] result in
             switch result {
             case .success(let lives):
+                self.state.lives = lives.items
                 self.outputSubject.send(.updateLiveSummary(lives.items.first))
             case .failure(let error):
                 self.outputSubject.send(.reportError(error))

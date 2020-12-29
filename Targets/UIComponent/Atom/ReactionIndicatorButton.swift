@@ -75,6 +75,7 @@ public final class ReactionIndicatorButton: UIButton {
     }
 
     private var listener: (ListenerType) -> Void = { type in }
+    @available(*, deprecated)
     public func listen(_ listener: @escaping (ListenerType) -> Void) {
         self.listener = listener
     }

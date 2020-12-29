@@ -118,8 +118,8 @@ extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSourc
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let content = self.feeds[indexPath.section]
-        let cell = tableView.dequeueReusableCell(BandContentsCell.self, input: content, for: indexPath)
-        cell.comment { [weak self] _ in
+        let cell = tableView.dequeueReusableCell(ArtistFeedCell.self, input: content, for: indexPath)
+        cell.listen { [weak self] _ in
             self?.feedCommentButtonTapped(cellIndex: indexPath.section)
         }
         return cell

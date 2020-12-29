@@ -53,16 +53,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
 
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.separatorStyle = .none
-        tableView.backgroundColor = Brand.color(for: .background(.primary))
-        return tableView
-    }()
-
+    // FIXME: Use a safe way to instantiate views from xib
     private lazy var liveCellContent: LiveCellContent = {
         UINib(nibName: "LiveCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+    }()
+    private lazy var feedCellContent: ArtistFeedCellContent = {
+        UINib(nibName: "ArtistFeedCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! ArtistFeedCellContent
     }()
 
     let refreshControl = UIRefreshControl()
@@ -125,13 +123,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
         scrollStackView.addArrangedSubview(followStackView)
 
         scrollStackView.addArrangedSubview(SummarySectionHeader(title: "LIVE"))
+        liveCellContent.isHidden = true
         scrollStackView.addArrangedSubview(liveCellContent)
-        scrollStackView.addArrangedSubview(tableView)
-        NSLayoutConstraint.activate([
-            tableView.heightAnchor.constraint(equalToConstant: 1000),
-            tableView.widthAnchor.constraint(equalTo: view.widthAnchor),
-        ])
+
+        scrollStackView.addArrangedSubview(SummarySectionHeader(title: "FEED"))
+        feedCellContent.isHidden = true
+        scrollStackView.addArrangedSubview(feedCellContent)
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -175,20 +174,27 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .updateLiveSummary(.some(let live)):
                 self.liveCellContent.isHidden = false
                 self.liveCellContent.inject(input: live)
-            case .updateFeedSummary:
-                self.tableView.reloadData()
+            case .updateFeedSummary(.none):
+                self.feedCellContent.isHidden = true
+            case .updateFeedSummary(.some(let feed)):
+                self.feedCellContent.isHidden = false
+                self.feedCellContent.inject(input: feed)
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
-            case .pushToLiveDetail(let live):
+            case .pushToLiveDetail(let input):
                 let vc = LiveDetailViewController(
-                    dependencyProvider: self.dependencyProvider, input: (live: live, ticket: nil))
+                    dependencyProvider: self.dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToChartList(let group):
+            case .pushToChartList(let input):
                 let vc = ChartListViewController(
-                    dependencyProvider: self.dependencyProvider, input: group)
+                    dependencyProvider: self.dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToCommentList(let input):
+                let vc = CommentListViewController(
+                    dependencyProvider: dependencyProvider, input: input)
+                self.present(vc, animated: true, completion: nil)
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
@@ -206,18 +212,17 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 refreshControl.endRefreshing()
             }
             .store(in: &cancellables)
+
+        feedCellContent.listen { [unowned self] output in
+            self.viewModel.feedCellEvent(event: output)
+        }
+
+        liveCellContent.addTarget(self, action: #selector(liveCellTaped), for: .touchUpInside)
+        feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
     }
 
     func setupViews() {
         headerView.update(input: (group: viewModel.state.group, groupItem: nil))
-
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.registerCellClass(LiveCell.self)
-        tableView.register(
-            UINib(nibName: "BandContentsCell", bundle: nil),
-            forCellReuseIdentifier: "BandContentsCell")
-        tableView.tableFooterView = UIView(frame: .zero)
     }
 
     private func setupFloatingItems(displayType: BandDetailViewModel.DisplayType) {
@@ -296,6 +301,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
         self.present(activityViewController, animated: true, completion: nil)
     }
 
+    @objc func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
+    @objc func liveCellTaped() { viewModel.didSelectRow(at: .live) }
+
     private func numOfLikeButtonTapped() {
         let vc = UserListViewController(
             dependencyProvider: dependencyProvider,
@@ -309,53 +317,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 }
 
-extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfRows(in: section)
-    }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        viewModel.numberOfSections()
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 60
-    }
-
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 300
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        // FIXME
-        switch viewModel.state.sections[section] {
-        case .live:
-            return SummarySectionHeader(title: "LIVE")
-        case .feed:
-            return SummarySectionHeader(title: "FEED")
-        }
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch viewModel.state.sections[indexPath.section] {
-        case let .live(rows):
-            let live = rows[indexPath.row]
-            let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
-            return cell
-        case let .feed(rows):
-            let feed = rows[indexPath.row]
-            let cell = tableView.dequeueReusableCell(BandContentsCell.self, input: feed, for: indexPath)
-            cell.comment { [unowned self] _ in
-                let vc = CommentListViewController(
-                    dependencyProvider: dependencyProvider, input: .feedComment(feed))
-                self.present(vc, animated: true, completion: nil)
-            }
-            return cell
-        }
-    }
-
+extension BandDetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.didSelectRow(at: indexPath)
+//        viewModel.didSelectRow(at: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
