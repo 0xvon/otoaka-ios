@@ -30,7 +30,7 @@ class BandInformationView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = Brand.color(for: .text(.primary))
-        label.font = Brand.font(for: .xlarge)
+        label.font = Brand.font(for: .xlargeStrong)
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = false

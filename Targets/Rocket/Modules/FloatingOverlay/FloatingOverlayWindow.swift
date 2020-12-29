@@ -50,6 +50,7 @@ class FloatingViewController: UIViewController {
             view.bottomAnchor.constraint(equalTo: buttonsContainer.bottomAnchor, constant: 100),
             buttonsContainer.widthAnchor.constraint(equalToConstant: 60),
         ])
+        openButtonItem.isHidden = true
         buttonsContainer.addArrangedSubview(openButtonItem)
     }
 
@@ -58,6 +59,7 @@ class FloatingViewController: UIViewController {
             buttonsContainer.removeArrangedSubview(oldItem)
             oldItem.removeFromSuperview()
         }
+        openButtonItem.isHidden = items.isEmpty
         for item in items {
             item.isHidden = true
             buttonsContainer.insertArrangedSubview(item, at: 0)

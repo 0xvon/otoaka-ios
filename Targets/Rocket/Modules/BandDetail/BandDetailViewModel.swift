@@ -17,10 +17,6 @@ class BandDetailViewModel {
         case group
         case member
     }
-    enum Section {
-        case live(rows: [Live])
-        case feed(rows: [ArtistFeedSummary])
-    }
     enum SummaryRow {
         case live, feed
     }
@@ -32,10 +28,6 @@ class BandDetailViewModel {
         var groupDetail: GetGroup.Response?
         var channelItem: ChannelDetail.ChannelItem?
         let role: RoleProperties
-
-        var sections: [Section] {
-            [.feed(rows: feeds)]
-        }
     }
 
     enum Output {
@@ -48,6 +40,8 @@ class BandDetailViewModel {
         case pushToLiveDetail(LiveDetailViewController.Input)
         case pushToChartList(ChartListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
+        case pushToLiveList(LiveListViewController.Input)
+        case pushToGroupFeedList(GroupFeedListViewController.Input)
         case openURLInBrowser(URL)
         case reportError(Error)
     }
@@ -65,6 +59,15 @@ class BandDetailViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(group: group, role: dependencyProvider.user.role)
+    }
+
+    func didTapSeeMore(at row: SummaryRow) {
+        switch row {
+        case .live:
+            outputSubject.send(.pushToLiveList(.groupLive(state.group)))
+        case .feed:
+            outputSubject.send(.pushToGroupFeedList(state.group))
+        }
     }
 
     func didSelectRow(at row: SummaryRow) {

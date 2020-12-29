@@ -14,8 +14,6 @@ import UIKit
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group
 
-    var dependencyProvider: LoggedInDependencyProvider!
-
     private lazy var headerView: BandDetailHeaderView = {
         let headerView = BandDetailHeaderView()
         headerView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,12 +59,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
 
+
     private let feedSectionHeader = SummarySectionHeader(title: "FEED")
     private lazy var feedCellContent: ArtistFeedCellContent = {
         UINib(nibName: "ArtistFeedCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! ArtistFeedCellContent
     }()
     private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
+
 
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
@@ -81,8 +81,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return paddingView
     }
 
-    let refreshControl = UIRefreshControl()
+    private let refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.tintColor = Brand.color(for: .background(.secondary))
+        return refreshControl
+    }()
 
+    let dependencyProvider: LoggedInDependencyProvider
     let viewModel: BandDetailViewModel
     let followingViewModel: FollowingViewModel
     var cancellables: Set<AnyCancellable> = []
@@ -153,10 +158,21 @@ final class BandDetailViewController: UIViewController, Instantiable {
         ])
         feedCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(feedCellWrapper)
+
+        let bottomSpacer = UIView()
+        scrollStackView.addArrangedSubview(bottomSpacer) // Spacer
+        NSLayoutConstraint.activate([
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 64),
+        ])
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        navigationItem.setRightBarButton(
+            UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare)),
+            animated: false
+        )
         setupViews()
         bind()
 
@@ -226,6 +242,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: input)
                 self.present(vc, animated: true, completion: nil)
+            case .pushToLiveList(let input):
+                let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToGroupFeedList(let input):
+                let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
@@ -248,6 +270,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
             self.viewModel.feedCellEvent(event: output)
         }
 
+        liveSectionHeader.listen { [unowned self] in
+            self.viewModel.didTapSeeMore(at: .live)
+        }
+        feedSectionHeader.listen { [unowned self] in
+            self.viewModel.didTapSeeMore(at: .feed)
+        }
         liveCellContent.addTarget(self, action: #selector(liveCellTaped), for: .touchUpInside)
         feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
 
@@ -268,19 +296,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
             createEditView.addTarget(self, action: #selector(editGroup), for: .touchUpInside)
             let inviteCodeView = FloatingButtonItem(icon: UIImage(named: "invitation")!)
             inviteCodeView.addTarget(self, action: #selector(inviteGroup), for: .touchUpInside)
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
-            items = [createEditView, inviteCodeView, createShareView]
+            items = [createEditView, inviteCodeView]
         case .group:
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
             let createMessageView = FloatingButtonItem(icon: UIImage(named: "mail")!)
             createMessageView.addTarget(self, action: #selector(createMessage), for: .touchUpInside)
-            items = [createShareView, createMessageView]
+            items = [createMessageView]
         case .fan:
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
-            items = [createShareView]
+            items = []
         }
         let floatingController = dependencyProvider.viewHierarchy.floatingViewController
         floatingController.setFloatingButtonItems(items)
@@ -326,13 +348,17 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     @objc func createShare() {
         let shareLiveText: String = "\(viewModel.state.group.name)がオススメだよ！！\n\n via @rocketforband "
-        let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/id1500148347")!
+        let shareUrl = URL(string: "https://apps.apple.com/jp/app/id1500148347")!
         let shareImage: UIImage = UIImage(url: viewModel.state.group.artworkURL!.absoluteString)
 
         let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
         let activityViewController = UIActivityViewController(
             activityItems: activityItems, applicationActivities: [])
 
+        activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
+            dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+        }
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         self.present(activityViewController, animated: true, completion: nil)
     }
 
@@ -343,31 +369,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
         let vc = UserListViewController(
             dependencyProvider: dependencyProvider,
             input: .followers(viewModel.state.group.id)
-        )
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-
-    private func commentButtonTapped() {
-        print("comment")
-    }
-}
-
-extension BandDetailViewController {
-    @objc private func seeMoreLive(_ sender: UIButton) {
-        let vc = LiveListViewController(
-            dependencyProvider: self.dependencyProvider, input: .groupLive(viewModel.state.group))
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-
-    @objc private func seeMoreContents(_ sender: UIButton) {
-        let vc = GroupFeedListViewController(
-            dependencyProvider: dependencyProvider, input: viewModel.state.group)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-
-    @objc private func followersSummaryButtonTapped(_ sender: UIButton) {
-        let vc = UserListViewController(
-            dependencyProvider: dependencyProvider, input: .followers(self.viewModel.state.group.id)
         )
         self.navigationController?.pushViewController(vc, animated: true)
     }
