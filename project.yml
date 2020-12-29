@@ -18,14 +18,16 @@ targets:
   Rocket-Production:
     templates: [RocketTarget]
     sources:
-      - Rocket/FirebaseConfig/Production
+      - path: Rocket/FirebaseConfig/Production
+        group: Rocket/FirebaseConfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.Rocket
   Rocket-Development:
     templates: [RocketTarget]
     sources:
-      - Rocket/FirebaseConfig/Development
+      - path: Rocket/FirebaseConfig/Development
+        group: Rocket/FirebaseConfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.dev.Rocket
@@ -49,7 +51,20 @@ targetTemplates:
     sources:
       - path: Rocket
         excludes: [FirebaseConfig]
+      - path: Rocket/Generated/Assets.swift
+        group: Rocket/Generated
+        optional: true
     preBuildScripts:
+      - name: "SwiftGen"
+        path: /bin/sh
+        script: |
+          if [[ -f "${PODS_ROOT}/SwiftGen/bin/swiftgen" ]]; then
+            "${PODS_ROOT}/SwiftGen/bin/swiftgen"
+          else
+            echo "warning: SwiftGen is not installed. Run 'pod install --repo-update' to install it."
+          fi
+        outputFiles:
+          - "$(SRCROOT)/Rocket/Generated/Assets.swift"
       - name: "[CP] Check Pods Manifest.lock"
         path: /bin/sh
         script: |
@@ -80,7 +95,7 @@ targetTemplates:
         path: /bin/sh
         script: |
           if [ $CONFIGURATION = "Debug" ]; then
-            ${PODS_ROOT}/LicensePlist/license-plist --output-path ${SRCROOT}/Rocket/Settings.bundle --github-token YOUR_GITHUB_TOKEN
+            "${PODS_ROOT}/LicensePlist/license-plist" --output-path ${SRCROOT}/Rocket/Settings.bundle
           fi
     postBuildScripts:
       - name: "Crashlytics Logs"

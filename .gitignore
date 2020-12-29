@@ -31,3 +31,6 @@ playground.xcworkspace
 
 iOSInjectionProject/
 .DS_Store
+
+Rocket/Generated/*
+!.gitkeep

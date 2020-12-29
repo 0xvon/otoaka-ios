@@ -47,6 +47,7 @@ PODS:
   - nanopb/decode (2.30906.0)
   - nanopb/encode (2.30906.0)
   - PromisesObjC (1.2.12)
+  - SwiftGen (6.4.0)
 
 DEPENDENCIES:
   - AWSCognitoAuth
@@ -54,6 +55,7 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - KeychainAccess
   - LicensePlist
+  - SwiftGen (~> 6.0)
 
 SPEC REPOS:
   trunk:
@@ -72,6 +74,7 @@ SPEC REPOS:
     - LicensePlist
     - nanopb
     - PromisesObjC
+    - SwiftGen
 
 SPEC CHECKSUMS:
   AWSCognitoAuth: 4d34e1cbb6629f5f333f341d9086cd2037416fd4
@@ -89,7 +92,8 @@ SPEC CHECKSUMS:
   LicensePlist: 11c638fa9dc22ddb5771cdf910242ae1ba2684da
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
+  SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
 
-PODFILE CHECKSUM: 1b8dbe030e7a65f3c474395b81e3cb2495a421ba
+PODFILE CHECKSUM: 0844f484cafc3761d037a0be79c2dc5e3b77bcdb
 
 COCOAPODS: 1.10.0

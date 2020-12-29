@@ -1,0 +1,5 @@
+xcassets:
+  inputs: Rocket/Assets.xcassets
+  outputs:
+    templateName: swift5
+    output: Rocket/Generated/Assets.swift
