@@ -209,9 +209,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         contentsTableView.separatorStyle = .none
         contentsTableView.isScrollEnabled = false
         contentsTableView.dataSource = self
-        contentsTableView.register(
-            UINib(nibName: "BandContentsCell", bundle: nil),
-            forCellReuseIdentifier: "BandContentsCell")
+        contentsTableView.registerCellClass(ArtistFeedCell.self)
         contentsTableView.backgroundColor = Brand.color(for: .background(.primary))
         scrollableView.addSubview(contentsTableView)
                 

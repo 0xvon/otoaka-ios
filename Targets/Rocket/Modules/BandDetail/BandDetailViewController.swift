@@ -53,15 +53,33 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
 
+    private let liveSectionHeader = SummarySectionHeader(title: "LIVE")
     // FIXME: Use a safe way to instantiate views from xib
     private lazy var liveCellContent: LiveCellContent = {
         UINib(nibName: "LiveCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
     }()
+    private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
+
+    private let feedSectionHeader = SummarySectionHeader(title: "FEED")
     private lazy var feedCellContent: ArtistFeedCellContent = {
         UINib(nibName: "ArtistFeedCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! ArtistFeedCellContent
     }()
+    private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
+
+    private static func addPadding(to view: UIView) -> UIView {
+        let paddingView = UIView()
+        paddingView.addSubview(view)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            view.leftAnchor.constraint(equalTo: paddingView.leftAnchor, constant: 16),
+            paddingView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 16),
+            view.topAnchor.constraint(equalTo: paddingView.topAnchor),
+            view.bottomAnchor.constraint(equalTo: paddingView.bottomAnchor),
+        ])
+        return paddingView
+    }
 
     let refreshControl = UIRefreshControl()
 
@@ -122,33 +140,19 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         scrollStackView.addArrangedSubview(followStackView)
 
-        func addPadding(to view: UIView) -> UIView {
-            let paddingView = UIView()
-            paddingView.addSubview(view)
-            view.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                view.leftAnchor.constraint(equalTo: paddingView.leftAnchor, constant: 16),
-                paddingView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 16),
-                view.topAnchor.constraint(equalTo: paddingView.topAnchor),
-                view.bottomAnchor.constraint(equalTo: paddingView.bottomAnchor),
-            ])
-            return paddingView
-        }
-        let liveSectionHeader = SummarySectionHeader(title: "LIVE")
         scrollStackView.addArrangedSubview(liveSectionHeader)
         NSLayoutConstraint.activate([
             liveSectionHeader.heightAnchor.constraint(equalToConstant: 64),
         ])
-        liveCellContent.isHidden = true
-        scrollStackView.addArrangedSubview(addPadding(to: liveCellContent))
+        liveCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(liveCellWrapper)
 
-        let feedSectionHeader = SummarySectionHeader(title: "FEED")
-        scrollStackView.addArrangedSubview(liveSectionHeader)
+        scrollStackView.addArrangedSubview(feedSectionHeader)
         NSLayoutConstraint.activate([
             feedSectionHeader.heightAnchor.constraint(equalToConstant: 64),
         ])
-        feedCellContent.isHidden = true
-        scrollStackView.addArrangedSubview(addPadding(to: feedCellContent))
+        feedCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(feedCellWrapper)
     }
 
     override func viewDidLoad() {
@@ -189,16 +193,23 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.setupFloatingItems(displayType: displayType)
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item))
+
             case .updateLiveSummary(.none):
-                self.liveCellContent.isHidden = true
+                self.liveSectionHeader.isHidden = true
+                self.liveCellWrapper.isHidden = true
             case .updateLiveSummary(.some(let live)):
-                self.liveCellContent.isHidden = false
+                self.liveSectionHeader.isHidden = false
+                self.liveCellWrapper.isHidden = false
                 self.liveCellContent.inject(input: live)
+
             case .updateFeedSummary(.none):
-                self.feedCellContent.isHidden = true
+                self.feedSectionHeader.isHidden = true
+                self.feedCellWrapper.isHidden = true
             case .updateFeedSummary(.some(let feed)):
-                self.feedCellContent.isHidden = false
+                self.feedSectionHeader.isHidden = false
+                self.feedCellWrapper.isHidden = false
                 self.feedCellContent.inject(input: feed)
+
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
             case .reportError(let error):
