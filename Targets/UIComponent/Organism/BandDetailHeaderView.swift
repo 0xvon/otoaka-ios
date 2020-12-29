@@ -59,6 +59,11 @@ public final class BandDetailHeaderView: UIView {
         return biographyTextView
     }()
 
+    public init() {
+        super.init(frame: .zero)
+        self.setup()
+    }
+
     public init(input: Input) {
         super.init(frame: .zero)
         self.setup()

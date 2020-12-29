@@ -16,32 +16,49 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
 
-    @IBOutlet weak var headerView: BandDetailHeaderView!
-    @IBOutlet weak var tableView: UITableView! {
-        didSet {
-            tableView.separatorStyle = .none
-            tableView.backgroundColor = Brand.color(for: .background(.primary))
-        }
-    }
-    @IBOutlet weak var verticalScrollView: UIScrollView! {
-        didSet {
-            verticalScrollView.refreshControl = refreshControl
-        }
-    }
-    @IBOutlet weak var followersSummaryView: FollowersSummaryView!
-    @IBOutlet weak var followersSummaryButton: UIButton! {
-        didSet {
-            followersSummaryButton.addTarget(
-                self, action: #selector(followersSummaryButtonTapped(_:)), for: .touchUpInside)
-            followersSummaryButton.backgroundColor = .clear
-        }
-    }
-    @IBOutlet weak var followButton: ToggleButton! {
-        didSet {
-            followButton.setTitle("フォロー", selected: false)
-            followButton.setTitle("フォロー中", selected: true)
-        }
-    }
+    private lazy var headerView: BandDetailHeaderView = {
+        let headerView = BandDetailHeaderView()
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        return headerView
+    }()
+
+    private lazy var verticalScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.isScrollEnabled = true
+        scrollView.refreshControl = self.refreshControl
+        return scrollView
+    }()
+    private lazy var scrollStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        return stackView
+    }()
+
+    private let followersSummaryView = FollowersSummaryView()
+    private let followButton: ToggleButton = {
+        let followButton = ToggleButton()
+        followButton.setTitle("フォロー", selected: false)
+        followButton.setTitle("フォロー中", selected: true)
+        return followButton
+    }()
+    private lazy var followStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing = 16.0
+        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        stackView.isLayoutMarginsRelativeArrangement = true
+        return stackView
+    }()
+
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = Brand.color(for: .background(.primary))
+        return tableView
+    }()
 
     let refreshControl = UIRefreshControl()
 
@@ -75,6 +92,38 @@ final class BandDetailViewController: UIViewController, Instantiable {
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
 
+    override func loadView() {
+        view = verticalScrollView
+        view.addSubview(scrollStackView)
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: scrollStackView.topAnchor),
+            view.bottomAnchor.constraint(equalTo: scrollStackView.bottomAnchor),
+            view.leftAnchor.constraint(equalTo: scrollStackView.leftAnchor),
+            view.rightAnchor.constraint(equalTo: scrollStackView.rightAnchor),
+        ])
+
+        scrollStackView.addArrangedSubview(headerView)
+        NSLayoutConstraint.activate([
+            headerView.heightAnchor.constraint(equalToConstant: 250),
+            headerView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+
+        followStackView.addArrangedSubview(followersSummaryView)
+        followStackView.addArrangedSubview(followButton)
+        NSLayoutConstraint.activate([
+            followButton.heightAnchor.constraint(equalToConstant: 44),
+            followButton.widthAnchor.constraint(equalToConstant: 100),
+        ])
+        followStackView.addArrangedSubview(UIView()) // Spacer
+
+        scrollStackView.addArrangedSubview(followStackView)
+
+        scrollStackView.addArrangedSubview(tableView)
+        NSLayoutConstraint.activate([
+            tableView.heightAnchor.constraint(equalToConstant: 1000),
+            tableView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
