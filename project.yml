@@ -10,23 +10,23 @@ targets:
   UIComponent:
     type: framework
     platform: iOS
-    sources: [UIComponent]
+    sources: [Targets/UIComponent]
     settings:
       base:
-        DEVELOPMENT_ASSET_PATHS: UIComponent/PreviewContent
+        DEVELOPMENT_ASSET_PATHS: Targets/UIComponent/PreviewContent
         ENABLE_PREVIEWS: YES
   Rocket-Production:
     templates: [RocketTarget]
     sources:
-      - path: Rocket/FirebaseConfig/Production
-        group: Rocket/FirebaseConfig
+      - path: Targets/Rocket/FirebaseConfig/Production
+        group: Targets/Rocket/FirebaseConfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.Rocket
   Rocket-Development:
     templates: [RocketTarget]
     sources:
-      - path: Rocket/FirebaseConfig/Development
+      - path: Targets/Rocket/FirebaseConfig/Development
         group: Rocket/FirebaseConfig
     settings:
       base:
@@ -49,10 +49,11 @@ targetTemplates:
       Debug: Pods/Target Support Files/Pods-Rocket/Pods-Rocket.debug.xcconfig
       Release: Pods/Target Support Files/Pods-Rocket/Pods-Rocket.release.xcconfig
     sources:
-      - path: Rocket
+      - path: Targets/Rocket
+        group: Rocket
         excludes: [FirebaseConfig]
-      - path: Rocket/Generated/Assets.swift
-        group: Rocket/Generated
+      - path: Targets/Rocket/Generated/Assets.swift
+        group: Targets/Rocket/Generated
         optional: true
     preBuildScripts:
       - name: "SwiftGen"
@@ -64,7 +65,7 @@ targetTemplates:
             echo "warning: SwiftGen is not installed. Run 'pod install --repo-update' to install it."
           fi
         outputFiles:
-          - "$(SRCROOT)/Rocket/Generated/Assets.swift"
+          - "$(SRCROOT)/Targets/Rocket/Generated/Assets.swift"
       - name: "[CP] Check Pods Manifest.lock"
         path: /bin/sh
         script: |
