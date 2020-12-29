@@ -3,13 +3,12 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17504.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandViewController" customModule="Rocket" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="BandViewController" customModule="Rocket_Development" customModuleProvider="target">
             <connections>
                 <outlet property="horizontalScrollView" destination="lei-An-07T" id="1b8-ws-RJR"/>
                 <outlet property="view" destination="iN0-l3-epB" id="Snd-II-OqA"/>
@@ -25,7 +24,6 @@
                 </scrollView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="lei-An-07T" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="4x3-Qo-gl2"/>
                 <constraint firstItem="lei-An-07T" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="9zv-OF-J55"/>
@@ -36,9 +34,4 @@
             <point key="canvasLocation" x="-145" y="66"/>
         </view>
     </objects>
-    <resources>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-    </resources>
 </document>

@@ -202,6 +202,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didGetGroupDetail(let response, let displayType):
+                self.title = response.group.name
                 self.followingViewModel.didGetGroupDetail(
                     isFollowing: response.isFollowing,
                     followersCount: response.followersCount
