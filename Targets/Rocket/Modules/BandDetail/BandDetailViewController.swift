@@ -122,13 +122,33 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         scrollStackView.addArrangedSubview(followStackView)
 
-        scrollStackView.addArrangedSubview(SummarySectionHeader(title: "LIVE"))
+        func addPadding(to view: UIView) -> UIView {
+            let paddingView = UIView()
+            paddingView.addSubview(view)
+            view.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                view.leftAnchor.constraint(equalTo: paddingView.leftAnchor, constant: 16),
+                paddingView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 16),
+                view.topAnchor.constraint(equalTo: paddingView.topAnchor),
+                view.bottomAnchor.constraint(equalTo: paddingView.bottomAnchor),
+            ])
+            return paddingView
+        }
+        let liveSectionHeader = SummarySectionHeader(title: "LIVE")
+        scrollStackView.addArrangedSubview(liveSectionHeader)
+        NSLayoutConstraint.activate([
+            liveSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+        ])
         liveCellContent.isHidden = true
-        scrollStackView.addArrangedSubview(liveCellContent)
+        scrollStackView.addArrangedSubview(addPadding(to: liveCellContent))
 
-        scrollStackView.addArrangedSubview(SummarySectionHeader(title: "FEED"))
+        let feedSectionHeader = SummarySectionHeader(title: "FEED")
+        scrollStackView.addArrangedSubview(liveSectionHeader)
+        NSLayoutConstraint.activate([
+            feedSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+        ])
         feedCellContent.isHidden = true
-        scrollStackView.addArrangedSubview(feedCellContent)
+        scrollStackView.addArrangedSubview(addPadding(to: feedCellContent))
     }
 
     override func viewDidLoad() {
@@ -219,6 +239,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         liveCellContent.addTarget(self, action: #selector(liveCellTaped), for: .touchUpInside)
         feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
+
+        followersSummaryView.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(followerSummaryTapped))
+        )
     }
 
     func setupViews() {
@@ -301,10 +325,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
         self.present(activityViewController, animated: true, completion: nil)
     }
 
-    @objc func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
-    @objc func liveCellTaped() { viewModel.didSelectRow(at: .live) }
+    @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
+    @objc private func liveCellTaped() { viewModel.didSelectRow(at: .live) }
 
-    private func numOfLikeButtonTapped() {
+    @objc private func followerSummaryTapped() {
         let vc = UserListViewController(
             dependencyProvider: dependencyProvider,
             input: .followers(viewModel.state.group.id)
