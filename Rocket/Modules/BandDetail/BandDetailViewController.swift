@@ -17,7 +17,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider!
 
     @IBOutlet weak var headerView: BandDetailHeaderView!
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView: UITableView! {
+        didSet {
+            tableView.separatorStyle = .none
+            tableView.backgroundColor = Brand.color(for: .background(.primary))
+        }
+    }
     @IBOutlet weak var verticalScrollView: UIScrollView! {
         didSet {
             verticalScrollView.refreshControl = refreshControl
@@ -152,9 +157,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         headerView.inject(input: (group: viewModel.state.group, groupItem: nil))
 
         tableView.delegate = self
-        tableView.separatorStyle = .none
         tableView.dataSource = self
-        tableView.backgroundColor = style.color.background.get()
         tableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
         tableView.register(
