@@ -154,7 +154,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = self.users[indexPath.section]
-        let cell = tableView.reuse(FanCell.self, input: user, for: indexPath)
+        let cell = tableView.dequeueReusableCell(FanCell.self, input: user, for: indexPath)
         return cell
     }
 

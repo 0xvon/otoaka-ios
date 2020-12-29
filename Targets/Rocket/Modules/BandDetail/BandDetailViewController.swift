@@ -16,32 +16,54 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider!
 
-    @IBOutlet weak var headerView: BandDetailHeaderView!
-    @IBOutlet weak var tableView: UITableView! {
-        didSet {
-            tableView.separatorStyle = .none
-            tableView.backgroundColor = Brand.color(for: .background(.primary))
-        }
-    }
-    @IBOutlet weak var verticalScrollView: UIScrollView! {
-        didSet {
-            verticalScrollView.refreshControl = refreshControl
-        }
-    }
-    @IBOutlet weak var followersSummaryView: FollowersSummaryView!
-    @IBOutlet weak var followersSummaryButton: UIButton! {
-        didSet {
-            followersSummaryButton.addTarget(
-                self, action: #selector(followersSummaryButtonTapped(_:)), for: .touchUpInside)
-            followersSummaryButton.backgroundColor = .clear
-        }
-    }
-    @IBOutlet weak var followButton: ToggleButton! {
-        didSet {
-            followButton.setTitle("フォロー", selected: false)
-            followButton.setTitle("フォロー中", selected: true)
-        }
-    }
+    private lazy var headerView: BandDetailHeaderView = {
+        let headerView = BandDetailHeaderView()
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        return headerView
+    }()
+
+    private lazy var verticalScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.isScrollEnabled = true
+        scrollView.refreshControl = self.refreshControl
+        return scrollView
+    }()
+    private lazy var scrollStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        return stackView
+    }()
+
+    private let followersSummaryView = FollowersSummaryView()
+    private let followButton: ToggleButton = {
+        let followButton = ToggleButton()
+        followButton.setTitle("フォロー", selected: false)
+        followButton.setTitle("フォロー中", selected: true)
+        return followButton
+    }()
+    private lazy var followStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing = 16.0
+        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        stackView.isLayoutMarginsRelativeArrangement = true
+        return stackView
+    }()
+
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = Brand.color(for: .background(.primary))
+        return tableView
+    }()
+
+    private lazy var liveCellContent: LiveCellContent = {
+        UINib(nibName: "LiveCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+    }()
 
     let refreshControl = UIRefreshControl()
 
@@ -75,6 +97,41 @@ final class BandDetailViewController: UIViewController, Instantiable {
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
 
+    override func loadView() {
+        view = verticalScrollView
+        view.backgroundColor = Brand.color(for: .background(.primary))
+        view.addSubview(scrollStackView)
+        NSLayoutConstraint.activate([
+            view.topAnchor.constraint(equalTo: scrollStackView.topAnchor),
+            view.bottomAnchor.constraint(equalTo: scrollStackView.bottomAnchor),
+            view.leftAnchor.constraint(equalTo: scrollStackView.leftAnchor),
+            view.rightAnchor.constraint(equalTo: scrollStackView.rightAnchor),
+        ])
+
+        scrollStackView.addArrangedSubview(headerView)
+        NSLayoutConstraint.activate([
+            headerView.heightAnchor.constraint(equalToConstant: 250),
+            headerView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+
+        followStackView.addArrangedSubview(followersSummaryView)
+        followStackView.addArrangedSubview(followButton)
+        NSLayoutConstraint.activate([
+            followButton.heightAnchor.constraint(equalToConstant: 44),
+            followButton.widthAnchor.constraint(equalToConstant: 100),
+        ])
+        followStackView.addArrangedSubview(UIView()) // Spacer
+
+        scrollStackView.addArrangedSubview(followStackView)
+
+        scrollStackView.addArrangedSubview(SummarySectionHeader(title: "LIVE"))
+        scrollStackView.addArrangedSubview(liveCellContent)
+        scrollStackView.addArrangedSubview(tableView)
+        NSLayoutConstraint.activate([
+            tableView.heightAnchor.constraint(equalToConstant: 1000),
+            tableView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -113,7 +170,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.setupFloatingItems(displayType: displayType)
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item))
-            case .updateTableSections:
+            case .updateLiveSummary(.none):
+                self.liveCellContent.isHidden = true
+            case .updateLiveSummary(.some(let live)):
+                self.liveCellContent.isHidden = false
+                self.liveCellContent.inject(input: live)
+            case .updateFeedSummary:
                 self.tableView.reloadData()
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
@@ -147,13 +209,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func setupViews() {
-        view.backgroundColor = Brand.color(for: .background(.primary))
         headerView.update(input: (group: viewModel.state.group, groupItem: nil))
 
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(
-            UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+        tableView.registerCellClass(LiveCell.self)
         tableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
@@ -270,47 +330,9 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         // FIXME
         switch viewModel.state.sections[section] {
         case .live:
-            let view = UIView()
-            let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
-            let titleView = TitleLabelView(
-                input: (
-                    title: "LIVE", font: Brand.font(for: .xlargeStrong),
-                    color: Brand.color(for: .text(.primary))
-                )
-            )
-            titleBaseView.addSubview(titleView)
-            view.addSubview(titleBaseView)
-
-            let seeMoreButton = UIButton(
-                frame: CGRect(x: UIScreen.main.bounds.width - 132, y: 16, width: 100, height: 40))
-            seeMoreButton.setTitle("もっと見る", for: .normal)
-            seeMoreButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-            seeMoreButton.titleLabel?.font = Brand.font(for: .small)
-            seeMoreButton.addTarget(self, action: #selector(seeMoreLive(_:)), for: .touchUpInside)
-            view.addSubview(seeMoreButton)
-
-            return view
+            return SummarySectionHeader(title: "LIVE")
         case .feed:
-            let view = UIView()
-            let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
-            let titleView = TitleLabelView(
-                input: (
-                    title: "CONTENTS", font: Brand.font(for: .xlargeStrong),
-                    color: Brand.color(for: .text(.primary))
-                ))
-            titleBaseView.addSubview(titleView)
-            view.addSubview(titleBaseView)
-
-            let seeMoreButton = UIButton(
-                frame: CGRect(x: UIScreen.main.bounds.width - 132, y: 16, width: 100, height: 40))
-            seeMoreButton.setTitle("もっと見る", for: .normal)
-            seeMoreButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-            seeMoreButton.titleLabel?.font = Brand.font(for: .small)
-            seeMoreButton.addTarget(
-                self, action: #selector(seeMoreContents(_:)), for: .touchUpInside)
-            view.addSubview(seeMoreButton)
-
-            return view
+            return SummarySectionHeader(title: "FEED")
         }
     }
 
@@ -318,11 +340,11 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         switch viewModel.state.sections[indexPath.section] {
         case let .live(rows):
             let live = rows[indexPath.row]
-            let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
+            let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
             return cell
         case let .feed(rows):
             let feed = rows[indexPath.row]
-            let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
+            let cell = tableView.dequeueReusableCell(BandContentsCell.self, input: feed, for: indexPath)
             cell.comment { [unowned self] _ in
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: .feedComment(feed))

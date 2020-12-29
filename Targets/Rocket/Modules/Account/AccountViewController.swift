@@ -166,7 +166,7 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = items[indexPath.row]
-        let cell = tableView.reuse(
+        let cell = tableView.dequeueReusableCell(
             AccountCell.self,
             input: (title: item.title, image: item.image, hasNotif: item.hasNotification),
             for: indexPath)

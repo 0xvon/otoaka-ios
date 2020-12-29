@@ -8,7 +8,7 @@
 import UIKit
 
 public final class ToggleButton: UIButton {
-    public init(text: String) {
+    public init(text: String? = nil) {
         super.init(frame: .zero)
         setTitle(text, for: .normal)
         setup()
@@ -24,8 +24,13 @@ public final class ToggleButton: UIButton {
     public override var isSelected: Bool {
         didSet { update() }
     }
+
     public override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
+    }
+
+    public override var bounds: CGRect {
+        didSet { layer.cornerRadius = frame.height/2 }
     }
 
     func update() {
@@ -40,7 +45,7 @@ public final class ToggleButton: UIButton {
 
     func setup() {
         clipsToBounds = true
-        layer.cornerRadius = frame.height/2
+        layer.masksToBounds = true
         layer.borderWidth = 1
         layer.borderColor = Brand.color(for: .background(.toggleSelected)).cgColor
         titleLabel?.font = Brand.font(for: .mediumStrong)

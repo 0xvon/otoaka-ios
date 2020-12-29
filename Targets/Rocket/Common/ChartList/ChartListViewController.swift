@@ -116,7 +116,7 @@ extension ChartListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let chart = self.charts[indexPath.section]
-        let cell = tableView.reuse(TrackCell.self, input: chart, for: indexPath)
+        let cell = tableView.dequeueReusableCell(TrackCell.self, input: chart, for: indexPath)
         return cell
     }
 

@@ -81,12 +81,12 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let live: Live = self.lives[indexPath.section]
-        let cell: LiveCell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
-        cell.listen { [weak self] in
-            self?.listenButtonTapped(cellIndex: indexPath.section)
-        }
-        cell.buyTicket { [weak self] in
-            self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+        let cell: LiveCell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
+        cell.listen { [weak self] output in
+            switch output {
+            case .listenButtonTapped: self?.listenButtonTapped(cellIndex: indexPath.section)
+            case .buyTicketButtonTapped: self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+            }
         }
         return cell
     }
