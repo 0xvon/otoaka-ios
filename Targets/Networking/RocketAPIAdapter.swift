@@ -18,7 +18,7 @@ public class RocketAPIAdapter: HTTPClientAdapter {
         decoder.dateDecodingStrategy = .iso8601
         return decoder
     }()
-    internal lazy var webAPIInterceptor = WebAPIAdapter(
+    internal lazy var webAPIAdapter = WebAPIAdapter(
         encoder: self.encoder, decoder: self.decoder
     )
 
@@ -28,7 +28,7 @@ public class RocketAPIAdapter: HTTPClientAdapter {
     }
 
     public func beforeRequest<T>(urlRequest: URLRequest, requestBody: T, completion: @escaping (Result<URLRequest, Error>) -> Void) where T : Decodable, T : Encodable {
-        tokenProvider.provideIdToken { [webAPIInterceptor] result in
+        tokenProvider.provideIdToken { [webAPIAdapter] result in
 
             let idToken: String
             switch result {
@@ -41,7 +41,7 @@ public class RocketAPIAdapter: HTTPClientAdapter {
 
             var urlRequest = urlRequest
             urlRequest.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
-            webAPIInterceptor.beforeRequest(
+            webAPIAdapter.beforeRequest(
                 urlRequest: urlRequest, requestBody: requestBody, completion: completion
             )
         }
@@ -49,7 +49,7 @@ public class RocketAPIAdapter: HTTPClientAdapter {
     }
     
     public func afterRequest<Response>(urlResponse: URLResponse, data: Data) throws -> Response where Response : Decodable, Response : Encodable {
-        try webAPIInterceptor.afterRequest(urlResponse: urlResponse, data: data)
+        try webAPIAdapter.afterRequest(urlResponse: urlResponse, data: data)
     }
     
 }
