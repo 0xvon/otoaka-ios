@@ -5,9 +5,9 @@
 //  Created by Masato TSUTSUMI on 2020/10/28.
 //
 
-import Endpoint
+import DomainEntity
+import InternalDomain
 import UIKit
-import SafariServices
 
 final class BandDetailHeaderView: UIView {
     typealias Input = (

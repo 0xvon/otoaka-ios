@@ -6,7 +6,15 @@ options:
 packages:
   Endpoint:
     path: Libraries/rocket-api/Modules/Endpoint
+  DomainEntity:
+    path: Libraries/rocket-api/Modules/DomainEntity
 targets:
+  InternalDomain:
+    type: framework
+    platform: iOS
+    sources: [Targets/InternalDomain]
+    dependencies:
+      - package: DomainEntity
   UIComponent:
     type: framework
     platform: iOS
@@ -15,6 +23,9 @@ targets:
       base:
         DEVELOPMENT_ASSET_PATHS: Targets/UIComponent/PreviewContent
         ENABLE_PREVIEWS: YES
+    dependencies:
+      - package: DomainEntity
+      - target: InternalDomain
   Rocket-Production:
     templates: [RocketTarget]
     sources:
