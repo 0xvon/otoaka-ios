@@ -180,9 +180,7 @@ final class BandViewController: UIViewController, Instantiable {
         groupFeedTableView.backgroundColor = Brand.color(for: .background(.primary))
         groupFeedTableView.delegate = self
         groupFeedTableView.dataSource = self
-        groupFeedTableView.register(
-            UINib(nibName: "BandContentsCell", bundle: nil),
-            forCellReuseIdentifier: "BandContentsCell")
+        groupFeedTableView.registerCellClass(ArtistFeedCell.self)
 
         groupFeedTableView.refreshControl = UIRefreshControl()
         groupFeedTableView.refreshControl?.addTarget(
@@ -205,8 +203,7 @@ final class BandViewController: UIViewController, Instantiable {
         liveTableView.backgroundColor = Brand.color(for: .background(.primary))
         liveTableView.delegate = self
         liveTableView.dataSource = self
-        liveTableView.register(
-            UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+        liveTableView.registerCellClass(LiveCell.self)
 
         liveTableView.refreshControl = UIRefreshControl()
         liveTableView.refreshControl?.addTarget(
@@ -229,8 +226,7 @@ final class BandViewController: UIViewController, Instantiable {
         chartsTableView.separatorStyle = .none
         chartsTableView.delegate = self
         chartsTableView.dataSource = self
-        chartsTableView.register(
-            UINib(nibName: "TrackCell", bundle: nil), forCellReuseIdentifier: "TrackCell")
+        chartsTableView.registerCellClass(TrackCell.self)
 
         chartsTableView.refreshControl = UIRefreshControl()
         chartsTableView.refreshControl?.addTarget(
@@ -253,8 +249,7 @@ final class BandViewController: UIViewController, Instantiable {
         groupTableView.backgroundColor = Brand.color(for: .background(.primary))
         groupTableView.delegate = self
         groupTableView.dataSource = self
-        groupTableView.register(
-            UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
+        groupTableView.register(UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
 
         groupTableView.refreshControl = UIRefreshControl()
         groupTableView.refreshControl?.addTarget(
@@ -705,5 +700,7 @@ extension BandViewController: UIScrollViewDelegate {
 }
 
 extension BandViewController: UNUserNotificationCenterDelegate {
-    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .sound])
+    }
 }
