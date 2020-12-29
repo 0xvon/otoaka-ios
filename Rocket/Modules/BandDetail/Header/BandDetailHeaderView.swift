@@ -34,28 +34,180 @@ final class BandDetailHeaderView: UIView {
         case twitter(URL)
     }
 
-    private var horizontalScrollView: UIScrollView!
-    private var bandInformationView: UIView!
-    private var trackInformationView: UIView!
-    private var biographyView: UIView!
-    private var bandNameLabel: UILabel!
+    private lazy var horizontalScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.isPagingEnabled = true
+        scrollView.isScrollEnabled = true
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.contentSize = CGSize(
+            width: UIScreen.main.bounds.width * 3, height: self.frame.height)
+        return scrollView
+    }()
+    private lazy var bandInformationView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: self.frame.height))
+        view.backgroundColor = .clear
+        return view
+    }()
+    private lazy var trackInformationView: UIView = {
+        let view = UIView(frame: CGRect(x: UIScreen.main.bounds.width, y: 0, width: UIScreen.main.bounds.width, height: self.bounds.height))
+        view.backgroundColor = .clear
+        return view
+    }()
+    private lazy var biographyView: UIView = {
+        let view = UIView(
+            frame: CGRect(
+                x: UIScreen.main.bounds.width * 2, y: 0, width: UIScreen.main.bounds.width,
+                height: self.bounds.height))
+        view.backgroundColor = .clear
+        return view
+    }()
+    private lazy var bandNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = style.font.xlarge.get()
+        label.textColor = style.color.main.get()
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 0
+        label.adjustsFontSizeToFitWidth = false
+        return label
+    }()
     private var mapBadgeView: BadgeView!
     private var dateBadgeView: BadgeView!
     private var productionBadgeView: BadgeView!
     private var labelBadgeView: BadgeView!
-    private var bandImageView: UIImageView!
-    private var arrowButton: UIButton!
-    private var artworkImageView: UIImageView!
-    private var playButton: PrimaryButton!
-    private var trackNameLabel: UILabel!
-    private var releasedDataLabel: UILabel!
-    private var seeMoreTracksButton: UIButton!
-    private var stackView: UIStackView!
-    private var twitterButton: UIButton!
-    private var youtubeButton: UIButton!
-    private var appleMusicButton: UIButton!
-    private var spotifyButton: UIButton!
-    private var biographyTextView: UITextView!
+    private lazy var bandImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.loadImageAsynchronously(url: input.group.artworkURL)
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.opacity = 0.6
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    private lazy var arrowButton: UIButton = {
+        let arrowButton = UIButton()
+        arrowButton.translatesAutoresizingMaskIntoConstraints = false
+        arrowButton.contentMode = .scaleAspectFit
+        arrowButton.contentHorizontalAlignment = .fill
+        arrowButton.contentVerticalAlignment = .fill
+        arrowButton.setImage(UIImage(named: "arrow"), for: .normal)
+        return arrowButton
+    }()
+    private lazy var artworkImageView: UIImageView = {
+        let artworkImageView = UIImageView()
+        artworkImageView.translatesAutoresizingMaskIntoConstraints = false
+        artworkImageView.image = nil
+        artworkImageView.layer.cornerRadius = 10
+        artworkImageView.contentMode = .scaleAspectFill
+        artworkImageView.clipsToBounds = true
+        return artworkImageView
+    }()
+    private lazy var playButton: PrimaryButton = {
+        let playButton = PrimaryButton(text: "再生")
+        playButton.setImage(
+            UIImage(systemName: "play")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal)
+        playButton.imageView?.contentMode = .scaleAspectFit
+        playButton.isHidden = true
+        playButton.layer.cornerRadius = 18
+        playButton.translatesAutoresizingMaskIntoConstraints = false
+        return playButton
+    }()
+    private lazy var trackNameLabel: UILabel = {
+        let trackNameLabel = UILabel()
+        trackNameLabel.translatesAutoresizingMaskIntoConstraints = false
+        trackNameLabel.text = ""
+        trackNameLabel.font = style.font.regular.get()
+        trackNameLabel.textColor = style.color.main.get()
+        return trackNameLabel
+    }()
+    private lazy var releasedDataLabel: UILabel = {
+        let releasedDataLabel = UILabel()
+        releasedDataLabel.translatesAutoresizingMaskIntoConstraints = false
+        releasedDataLabel.text = ""
+        releasedDataLabel.font = style.font.regular.get()
+        releasedDataLabel.textColor = style.color.main.get()
+        return releasedDataLabel
+    }()
+    private lazy var seeMoreTracksButton: UIButton = {
+        let seeMoreTracksButton = UIButton()
+        seeMoreTracksButton.isHidden = true
+        seeMoreTracksButton.translatesAutoresizingMaskIntoConstraints = false
+        seeMoreTracksButton.setTitle("もっと見る", for: .normal)
+        seeMoreTracksButton.setTitleColor(style.color.main.get(), for: .normal)
+        seeMoreTracksButton.titleLabel?.font = style.font.small.get()
+        return seeMoreTracksButton
+    }()
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.spacing = 16
+        stackView.distribution = .fillEqually
+        return stackView
+    }()
+    private lazy var twitterButton: UIButton = {
+        let twitterButton = UIButton()
+        twitterButton.translatesAutoresizingMaskIntoConstraints = false
+        twitterButton.contentHorizontalAlignment = .fill
+        twitterButton.contentVerticalAlignment = .fill
+        twitterButton.setImage(UIImage(named: "twitter"), for: .normal)
+        twitterButton.imageView?.contentMode = .scaleAspectFit
+        return twitterButton
+    }()
+    private lazy var youtubeButton: UIButton = {
+        let youtubeButton = UIButton()
+        youtubeButton.translatesAutoresizingMaskIntoConstraints = false
+        youtubeButton.contentHorizontalAlignment = .fill
+        youtubeButton.contentVerticalAlignment = .fill
+        youtubeButton.setImage(UIImage(named: "youtube"), for: .normal)
+        youtubeButton.imageView?.contentMode = .scaleAspectFit
+        return youtubeButton
+    }()
+    private lazy var appleMusicButton: UIButton = {
+        let appleMusicButton = UIButton()
+        appleMusicButton.isHidden = true
+        appleMusicButton.translatesAutoresizingMaskIntoConstraints = false
+        appleMusicButton.contentHorizontalAlignment = .fill
+        appleMusicButton.contentVerticalAlignment = .fill
+        appleMusicButton.setImage(UIImage(named: "itunes"), for: .normal)
+        appleMusicButton.imageView?.contentMode = .scaleAspectFit
+        return appleMusicButton
+    }()
+    private lazy var spotifyButton: UIButton = {
+        let spotifyButton = UIButton()
+        spotifyButton.isHidden = true
+        spotifyButton.translatesAutoresizingMaskIntoConstraints = false
+        spotifyButton.contentHorizontalAlignment = .fill
+        spotifyButton.contentVerticalAlignment = .fill
+        spotifyButton.setImage(UIImage(named: "spotify"), for: .normal)
+        spotifyButton.imageView?.contentMode = .scaleAspectFit
+        return spotifyButton
+    }()
+    private lazy var biographyTextView: UITextView = {
+        let biographyTextView = UITextView()
+        biographyTextView.translatesAutoresizingMaskIntoConstraints = false
+        biographyTextView.isScrollEnabled = true
+        biographyTextView.textColor = style.color.main.get()
+        biographyTextView.backgroundColor = .clear
+        biographyTextView.isEditable = false
+        biographyTextView.font = style.font.regular.get()
+        return biographyTextView
+    }()
+    
+    private lazy var contentView: UIView = {
+        let contentView = UIView(frame: self.frame)
+        addSubview(contentView)
+
+        contentView.backgroundColor = .clear
+        contentView.layer.opacity = 0.8
+        translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        return contentView
+    }()
 
     init(input: Input) {
         self.input = input
@@ -93,62 +245,19 @@ final class BandDetailHeaderView: UIView {
 
     func setup() {
         backgroundColor = .clear
-        let contentView = UIView(frame: self.frame)
-        addSubview(contentView)
-
-        contentView.backgroundColor = .clear
-        contentView.layer.opacity = 0.8
         translatesAutoresizingMaskIntoConstraints = false
-        contentView.translatesAutoresizingMaskIntoConstraints = false
 
-        bandImageView = UIImageView()
-        bandImageView.translatesAutoresizingMaskIntoConstraints = false
-        bandImageView.loadImageAsynchronously(url: input.group.artworkURL)
-        bandImageView.contentMode = .scaleAspectFill
-        bandImageView.layer.opacity = 0.6
-        bandImageView.clipsToBounds = true
+        addSubview(contentView)
         addSubview(bandImageView)
-
-        horizontalScrollView = UIScrollView()
-        horizontalScrollView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(horizontalScrollView)
-        horizontalScrollView.isPagingEnabled = true
-        horizontalScrollView.isScrollEnabled = true
-        horizontalScrollView.showsHorizontalScrollIndicator = false
-        horizontalScrollView.showsVerticalScrollIndicator = false
-        horizontalScrollView.contentSize = CGSize(
-            width: UIScreen.main.bounds.width * 3, height: self.frame.height)
-        horizontalScrollView.delegate = self
-
-        bandInformationView = UIView(
-            frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: self.frame.height))
-        bandInformationView.backgroundColor = .clear
         horizontalScrollView.addSubview(bandInformationView)
-
-        trackInformationView = UIView(
-            frame: CGRect(
-                x: UIScreen.main.bounds.width, y: 0, width: UIScreen.main.bounds.width,
-                height: self.bounds.height))
-        trackInformationView.backgroundColor = .clear
         horizontalScrollView.addSubview(trackInformationView)
-
-        biographyView = UIView(
-            frame: CGRect(
-                x: UIScreen.main.bounds.width * 2, y: 0, width: UIScreen.main.bounds.width,
-                height: self.bounds.height))
-        biographyView.backgroundColor = .clear
         horizontalScrollView.addSubview(biographyView)
 
-        bandNameLabel = UILabel()
-        bandNameLabel.translatesAutoresizingMaskIntoConstraints = false
         bandNameLabel.text = input.group.name
-        bandNameLabel.font = style.font.xlarge.get()
-        bandNameLabel.textColor = style.color.main.get()
-        bandNameLabel.lineBreakMode = .byWordWrapping
-        bandNameLabel.numberOfLines = 0
-        bandNameLabel.adjustsFontSizeToFitWidth = false
         bandNameLabel.sizeToFit()
         bandInformationView.addSubview(bandNameLabel)
+
         let startYear: String =
             (input.group.since != nil) ? dateFormatter.string(from: input.group.since!) : "不明"
         dateBadgeView = BadgeView(input: (text: startYear, image: UIImage(named: "calendar")))
@@ -167,117 +276,42 @@ final class BandDetailHeaderView: UIView {
         productionBadgeView.isHidden = true
         bandInformationView.addSubview(productionBadgeView)
 
-        arrowButton = UIButton()
-        arrowButton.translatesAutoresizingMaskIntoConstraints = false
-        arrowButton.contentMode = .scaleAspectFit
-        arrowButton.contentHorizontalAlignment = .fill
-        arrowButton.contentVerticalAlignment = .fill
-        arrowButton.setImage(UIImage(named: "arrow"), for: .normal)
         arrowButton.addTarget(self, action: #selector(nextPage), for: .touchUpInside)
         bandInformationView.addSubview(arrowButton)
 
-        artworkImageView = UIImageView()
-        artworkImageView.translatesAutoresizingMaskIntoConstraints = false
-        artworkImageView.image = nil
-        artworkImageView.layer.cornerRadius = 10
-        artworkImageView.contentMode = .scaleAspectFill
-        artworkImageView.clipsToBounds = true
         trackInformationView.addSubview(artworkImageView)
         
-        playButton = PrimaryButton(text: "再生")
-        playButton.setImage(
-            UIImage(systemName: "play")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
-            for: .normal)
-        playButton.imageView?.contentMode = .scaleAspectFit
-        playButton.isHidden = true
-        playButton.layer.cornerRadius = 18
-        playButton.translatesAutoresizingMaskIntoConstraints = false
         playButton.listen {
             self.play()
         }
         trackInformationView.addSubview(playButton)
 
-        trackNameLabel = UILabel()
-        trackNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        trackNameLabel.text = ""
-        trackNameLabel.font = style.font.regular.get()
-        trackNameLabel.textColor = style.color.main.get()
         trackInformationView.addSubview(trackNameLabel)
 
-        releasedDataLabel = UILabel()
-        releasedDataLabel.translatesAutoresizingMaskIntoConstraints = false
-        releasedDataLabel.text = ""
-        releasedDataLabel.font = style.font.regular.get()
-        releasedDataLabel.textColor = style.color.main.get()
         trackInformationView.addSubview(releasedDataLabel)
 
-        seeMoreTracksButton = UIButton()
-        seeMoreTracksButton.isHidden = true
-        seeMoreTracksButton.translatesAutoresizingMaskIntoConstraints = false
-        seeMoreTracksButton.setTitle("もっと見る", for: .normal)
-        seeMoreTracksButton.setTitleColor(style.color.main.get(), for: .normal)
-        seeMoreTracksButton.titleLabel?.font = style.font.small.get()
         seeMoreTracksButton.addTarget(
             self, action: #selector(seeMoreButtonTapped(_:)), for: .touchUpInside)
         trackInformationView.addSubview(seeMoreTracksButton)
 
-        stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.distribution = .fillEqually
         trackInformationView.addSubview(stackView)
 
-        twitterButton = UIButton()
-        twitterButton.translatesAutoresizingMaskIntoConstraints = false
-        twitterButton.contentHorizontalAlignment = .fill
-        twitterButton.contentVerticalAlignment = .fill
-        twitterButton.setImage(UIImage(named: "twitter"), for: .normal)
-        twitterButton.imageView?.contentMode = .scaleAspectFit
         twitterButton.addTarget(
             self, action: #selector(twitterButtonTapped(_:)), for: .touchUpInside)
         stackView.addArrangedSubview(twitterButton)
 
-        youtubeButton = UIButton()
-        youtubeButton.translatesAutoresizingMaskIntoConstraints = false
-        youtubeButton.contentHorizontalAlignment = .fill
-        youtubeButton.contentVerticalAlignment = .fill
-        youtubeButton.setImage(UIImage(named: "youtube"), for: .normal)
-        youtubeButton.imageView?.contentMode = .scaleAspectFit
         youtubeButton.addTarget(
             self, action: #selector(youtubeButtonTapped(_:)), for: .touchUpInside)
         stackView.addArrangedSubview(youtubeButton)
 
-        appleMusicButton = UIButton()
-        appleMusicButton.isHidden = true
-        appleMusicButton.translatesAutoresizingMaskIntoConstraints = false
-        appleMusicButton.contentHorizontalAlignment = .fill
-        appleMusicButton.contentVerticalAlignment = .fill
-        appleMusicButton.setImage(UIImage(named: "itunes"), for: .normal)
-        appleMusicButton.imageView?.contentMode = .scaleAspectFit
         appleMusicButton.addTarget(
             self, action: #selector(appleMusicButtonTapped(_:)), for: .touchUpInside)
         stackView.addArrangedSubview(appleMusicButton)
 
-        spotifyButton = UIButton()
-        spotifyButton.isHidden = true
-        spotifyButton.translatesAutoresizingMaskIntoConstraints = false
-        spotifyButton.contentHorizontalAlignment = .fill
-        spotifyButton.contentVerticalAlignment = .fill
-        spotifyButton.setImage(UIImage(named: "spotify"), for: .normal)
-        spotifyButton.imageView?.contentMode = .scaleAspectFit
         spotifyButton.addTarget(
             self, action: #selector(spotifyButtonTapped(_:)), for: .touchUpInside)
         stackView.addArrangedSubview(spotifyButton)
 
-        biographyTextView = UITextView()
-        biographyTextView.translatesAutoresizingMaskIntoConstraints = false
-        biographyTextView.isScrollEnabled = true
-        biographyTextView.textColor = style.color.main.get()
-        biographyTextView.backgroundColor = .clear
-        biographyTextView.isEditable = false
-        biographyTextView.font = style.font.regular.get()
         biographyView.addSubview(biographyTextView)
         biographyTextView.text = input.group.biography
 
@@ -420,7 +454,4 @@ final class BandDetailHeaderView: UIView {
     @objc private func spotifyButtonTapped(_ sender: UIButton) {
         print("spotify")
     }
-}
-
-extension BandDetailHeaderView: UIScrollViewDelegate {
 }
