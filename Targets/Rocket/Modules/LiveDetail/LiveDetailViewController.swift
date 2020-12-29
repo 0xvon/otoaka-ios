@@ -135,8 +135,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     )
 
     func setup() {
-        view.backgroundColor = style.color.background.get()
-        scrollableView.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
+        scrollableView.backgroundColor = Brand.color(for: .background(.primary))
         
         verticalScrollView.refreshControl = UIRefreshControl()
         verticalScrollView.refreshControl?.addTarget(
@@ -212,7 +212,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         contentsTableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
-        contentsTableView.backgroundColor = style.color.background.get()
+        contentsTableView.backgroundColor = Brand.color(for: .background(.primary))
         scrollableView.addSubview(contentsTableView)
                 
         let constraints = [
@@ -642,7 +642,7 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
             let titleView = TitleLabelView(
                 input: (
-                    title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get()
+                    title: "CONTENTS", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary))
                 ))
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)
@@ -650,8 +650,8 @@ extension LiveDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let seeMoreButton = UIButton(
                 frame: CGRect(x: UIScreen.main.bounds.width - 132, y: 16, width: 100, height: 40))
             seeMoreButton.setTitle("もっと見る", for: .normal)
-            seeMoreButton.setTitleColor(style.color.main.get(), for: .normal)
-            seeMoreButton.titleLabel?.font = style.font.small.get()
+            seeMoreButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+            seeMoreButton.titleLabel?.font = Brand.font(for: .small)
             seeMoreButton.addTarget(
                 self, action: #selector(seeMoreContents(_:)), for: .touchUpInside)
             view.addSubview(seeMoreButton)

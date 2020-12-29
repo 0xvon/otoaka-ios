@@ -27,14 +27,14 @@ final class TrackCell: UITableViewCell, ReusableCell {
     }
 
     func setup() {
-        backgroundColor = style.color.background.get()
+        backgroundColor = Brand.color(for: .background(.primary))
         trackTitleLabel.text = input.snippet.title
-        trackTitleLabel.font = style.font.xlarge.get()
-        trackTitleLabel.textColor = style.color.main.get()
+        trackTitleLabel.font = Brand.font(for: .xlargeStrong)
+        trackTitleLabel.textColor = Brand.color(for: .text(.primary))
 
         releasedYearLabel.text = "20xx年"
-        releasedYearLabel.font = style.font.small.get()
-        releasedYearLabel.textColor = style.color.main.get()
+        releasedYearLabel.font = Brand.font(for: .small)
+        releasedYearLabel.textColor = Brand.color(for: .text(.primary))
 
         playImageView.image = UIImage(named: "play")
 
@@ -42,15 +42,15 @@ final class TrackCell: UITableViewCell, ReusableCell {
         artWorkImageView.layer.opacity = 0.6
         artWorkImageView.layer.cornerRadius = 16
         artWorkImageView.layer.borderWidth = 1
-        artWorkImageView.layer.borderColor = style.color.main.get().cgColor
+        artWorkImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         artWorkImageView.clipsToBounds = true
 
         bandThumbnailView.image = UIImage(named: "band")
         bandThumbnailView.layer.cornerRadius = 30
 
         bandNameLabel.text = input.snippet.channelTitle
-        bandNameLabel.font = style.font.regular.get()
-        bandNameLabel.textColor = style.color.main.get()
+        bandNameLabel.font = Brand.font(for: .medium)
+        bandNameLabel.textColor = Brand.color(for: .text(.primary))
 
         likeButtonView.inject(input: (text: "1,000,000", image: UIImage(named: "heart")))
         likeButtonView.listen { type in

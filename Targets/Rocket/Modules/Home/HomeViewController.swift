@@ -31,11 +31,11 @@ final class HomeViewController: UITabBarController, Instantiable {
         super.viewDidAppear(animated)
 
         dependencyProvider.auth.delegate = self
-        self.view.backgroundColor = style.color.background.get()
-        self.tabBar.tintColor = style.color.main.get()
-        self.tabBar.barTintColor = style.color.background.get()
-        self.tabBar.backgroundColor = style.color.background.get()
-        self.navigationController?.navigationBar.tintColor = style.color.main.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
+        self.tabBar.tintColor = Brand.color(for: .text(.primary))
+        self.tabBar.barTintColor = Brand.color(for: .background(.primary))
+        self.tabBar.backgroundColor = Brand.color(for: .background(.primary))
+        self.navigationController?.navigationBar.tintColor = Brand.color(for: .text(.primary))
         self.navigationController?.navigationBar.barTintColor = .clear
         checkSignupStatus()
     }
@@ -68,7 +68,7 @@ final class HomeViewController: UITabBarController, Instantiable {
             self.makeViewFromUserInfo()
         }
         let nav = ModalNavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
         nav.navigationBar.barTintColor = .clear
         nav.subscribeDismission {
             self.checkSignupStatus()
@@ -101,7 +101,7 @@ final class HomeViewController: UITabBarController, Instantiable {
         bandVC.tabBarItem = UITabBarItem(
             title: "Home", image: UIImage(named: "musicIcon"),
             selectedImage: UIImage(named: "selectedMusicIcon"))
-        bandVC.navigationBar.tintColor = style.color.main.get()
+        bandVC.navigationBar.tintColor = Brand.color(for: .text(.primary))
         bandVC.navigationBar.barTintColor = .clear
         bandViewController.signout {
             self.checkSignupStatus()
@@ -112,7 +112,7 @@ final class HomeViewController: UITabBarController, Instantiable {
         searchVC.tabBarItem = UITabBarItem(
             title: "Search", image: UIImage(named: "searchIcon"),
             selectedImage: UIImage(named: "selectedSearchIcon"))
-        searchVC.navigationBar.tintColor = style.color.main.get()
+        searchVC.navigationBar.tintColor = Brand.color(for: .text(.primary))
         searchVC.navigationBar.barTintColor = .clear
 
         let ticketViewController = TicketViewController(
@@ -121,7 +121,7 @@ final class HomeViewController: UITabBarController, Instantiable {
         ticketVC.tabBarItem = UITabBarItem(
             title: "Ticket", image: UIImage(named: "ticketIcon"),
             selectedImage: UIImage(named: "selectedTicketIcon"))
-        ticketVC.navigationBar.tintColor = style.color.main.get()
+        ticketVC.navigationBar.tintColor = Brand.color(for: .text(.primary))
         ticketVC.navigationBar.barTintColor = .clear
         return [bandVC, ticketVC, searchVC]
     }

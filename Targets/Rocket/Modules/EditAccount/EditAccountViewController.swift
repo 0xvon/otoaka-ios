@@ -57,7 +57,7 @@ final class EditAccountViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
 
         verticalScrollView = UIScrollView()
         verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -67,7 +67,7 @@ final class EditAccountViewController: UIViewController, Instantiable {
 
         mainView = UIView()
         mainView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.backgroundColor = style.color.background.get()
+        mainView.backgroundColor = Brand.color(for: .background(.primary))
         verticalScrollView.addSubview(mainView)
 
         mainViewHeightConstraint = NSLayoutConstraint(
@@ -115,8 +115,8 @@ final class EditAccountViewController: UIViewController, Instantiable {
         profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
         profileImageTitle.text = "プロフィール画像"
         profileImageTitle.textAlignment = .center
-        profileImageTitle.font = style.font.regular.get()
-        profileImageTitle.textColor = style.color.main.get()
+        profileImageTitle.font = Brand.font(for: .medium)
+        profileImageTitle.textColor = Brand.color(for: .text(.primary))
         thumbnailInputView.addSubview(profileImageTitle)
 
         updateButton = PrimaryButton(text: "プロフィール更新")

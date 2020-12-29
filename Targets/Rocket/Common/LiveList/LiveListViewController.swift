@@ -72,14 +72,14 @@ final class LiveListViewController: UIViewController, Instantiable {
     }
         
     func setup() {
-        view.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         liveTableView = UITableView()
         liveTableView.translatesAutoresizingMaskIntoConstraints = false
         liveTableView.showsVerticalScrollIndicator = false
         liveTableView.tableFooterView = UIView(frame: .zero)
         liveTableView.separatorStyle = .none
-        liveTableView.backgroundColor = style.color.background.get()
+        liveTableView.backgroundColor = Brand.color(for: .background(.primary))
         liveTableView.delegate = self
         liveTableView.dataSource = self
         liveTableView.register(

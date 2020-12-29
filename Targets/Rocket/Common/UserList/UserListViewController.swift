@@ -72,14 +72,14 @@ final class UserListViewController: UIViewController, Instantiable {
     }
     
     func setup() {
-        view.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         fanTableView = UITableView()
         fanTableView.translatesAutoresizingMaskIntoConstraints = false
         fanTableView.showsVerticalScrollIndicator = false
         fanTableView.tableFooterView = UIView(frame: .zero)
         fanTableView.separatorStyle = .none
-        fanTableView.backgroundColor = style.color.background.get()
+        fanTableView.backgroundColor = Brand.color(for: .background(.primary))
         fanTableView.delegate = self
         fanTableView.dataSource = self
         fanTableView.register(

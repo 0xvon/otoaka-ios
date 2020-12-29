@@ -43,12 +43,12 @@ class BandBannerCell: UITableViewCell, ReusableCell {
         bandImageView.layer.cornerRadius = 30
         bandImageView.layer.borderWidth = 1
         bandImageView.contentMode = .scaleAspectFill
-        bandImageView.layer.borderColor = style.color.main.get().cgColor
+        bandImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         bandImageView.clipsToBounds = true
 
         bandNameLabel.text = input.name
-        bandNameLabel.font = style.font.large.get()
-        bandNameLabel.textColor = style.color.main.get()
+        bandNameLabel.font = Brand.font(for: .largeStrong)
+        bandNameLabel.textColor = Brand.color(for: .text(.primary))
         bandNameLabel.lineBreakMode = .byWordWrapping
         bandNameLabel.numberOfLines = 0
         bandNameLabel.adjustsFontSizeToFitWidth = false

@@ -7,58 +7,6 @@
 
 import UIKit
 
-struct style {
-    enum color {
-        case main
-        case second
-        case background
-        case subBackground
-        case sub
-
-        func get() -> UIColor {
-            switch self {
-            case .main:
-                return UIColor.white
-            case .second:
-                return UIColor.systemGreen
-            case .background:
-                return UIColor.black
-            case .subBackground:
-                return UIColor.darkGray
-            case .sub:
-                return UIColor.systemGray
-            }
-        }
-    }
-
-    //    一応書いとくけどIB内で設定するから使わない(迷ったら見てね的な)
-    enum margin: Int {
-        case box = 12
-        case area = 16
-        case letter = 8
-    }
-
-    enum font {
-        case xlarge
-        case large
-        case regular
-        case small
-
-        func get() -> UIFont {
-            switch self {
-            case .xlarge:
-                return UIFont.systemFont(ofSize: CGFloat(22), weight: UIFont.Weight(500))
-            case .large:
-                return UIFont.systemFont(ofSize: CGFloat(18), weight: UIFont.Weight(300))
-            case .regular:
-                return UIFont.systemFont(ofSize: CGFloat(14), weight: UIFont.Weight(100))
-            case .small:
-                return UIFont.systemFont(ofSize: CGFloat(10), weight: UIFont.Weight(100))
-            }
-        }
-    }
-}
-
 let per = 20
 let textFieldHeight: CGFloat = 60
 

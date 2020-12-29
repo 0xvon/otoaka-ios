@@ -53,14 +53,14 @@ final class ChartListViewController: UIViewController, Instantiable {
     }
         
     func setup() {
-        view.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         chartTableView = UITableView()
         chartTableView.translatesAutoresizingMaskIntoConstraints = false
         chartTableView.showsVerticalScrollIndicator = false
         chartTableView.tableFooterView = UIView(frame: .zero)
         chartTableView.separatorStyle = .none
-        chartTableView.backgroundColor = style.color.background.get()
+        chartTableView.backgroundColor = Brand.color(for: .background(.primary))
         chartTableView.delegate = self
         chartTableView.dataSource = self
         chartTableView.register(

@@ -52,8 +52,8 @@ public final class BadgeView: UIView {
         badgeTitle = UILabel()
         badgeTitle.translatesAutoresizingMaskIntoConstraints = false
         addSubview(badgeTitle)
-        badgeTitle.textColor = style.color.main.get()
-        badgeTitle.font = style.font.small.get()
+        badgeTitle.textColor = Brand.color(for: .text(.primary))
+        badgeTitle.font = Brand.font(for: .small)
         badgeTitle.text = input.text
 
         badgeImageView = UIImageView()

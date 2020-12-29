@@ -76,14 +76,14 @@ final class AccountViewController: UIViewController, Instantiable {
         setAccountSetting()
         viewModel.getPerformanceRequest()
 
-        self.view.backgroundColor = style.color.subBackground.get()
+        self.view.backgroundColor = Brand.color(for: .text(.button))
         tableView = UITableView()
         tableView.backgroundColor = .clear
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.separatorColor = style.color.main.get()
+        tableView.separatorColor = Brand.color(for: .background(.cellSelected))
         tableView.register(
             UINib(nibName: "AccountCell", bundle: nil), forCellReuseIdentifier: "AccountCell")
         self.view.addSubview(tableView)
@@ -123,7 +123,7 @@ final class AccountViewController: UIViewController, Instantiable {
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
         let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
         nav.navigationBar.barTintColor = .clear
         
         present(nav, animated: true, completion: nil)
@@ -137,7 +137,7 @@ final class AccountViewController: UIViewController, Instantiable {
     private func memberships() {
         let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .memberships(dependencyProvider.user.id))
         let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
         nav.navigationBar.barTintColor = .clear
         
         present(nav, animated: true, completion: nil)

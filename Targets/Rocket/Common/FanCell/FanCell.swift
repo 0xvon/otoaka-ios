@@ -23,7 +23,7 @@ final class FanCell: UITableViewCell, ReusableCell {
     }
     
     func setup() {
-        backgroundColor = style.color.background.get()
+        backgroundColor = Brand.color(for: .background(.primary))
         
         fanArtworkImageView.loadImageAsynchronously(url: URL(string: input.thumbnailURL!)!)
         fanArtworkImageView.clipsToBounds = true
@@ -31,13 +31,13 @@ final class FanCell: UITableViewCell, ReusableCell {
         fanArtworkImageView.contentMode = .scaleAspectFill
         
         fanNameLabel.text = input.name
-        fanNameLabel.font = style.font.large.get()
-        fanNameLabel.backgroundColor = style.color.background.get()
-        fanNameLabel.textColor = style.color.main.get()
+        fanNameLabel.font = Brand.font(for: .largeStrong)
+        fanNameLabel.backgroundColor = Brand.color(for: .background(.primary))
+        fanNameLabel.textColor = Brand.color(for: .text(.primary))
         
         biographyTextView.text = input.biography
-        biographyTextView.font = style.font.regular.get()
-        biographyTextView.backgroundColor = style.color.background.get()
-        biographyTextView.textColor = style.color.main.get()
+        biographyTextView.font = Brand.font(for: .medium)
+        biographyTextView.backgroundColor = Brand.color(for: .background(.primary))
+        biographyTextView.textColor = Brand.color(for: .text(.primary))
     }
 }
