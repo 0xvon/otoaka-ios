@@ -31,13 +31,14 @@ class BandDetailViewModel {
         let role: RoleProperties
 
         var sections: [Section] {
-            [.live(rows: lives), .feed(rows: feeds)]
+            [.feed(rows: feeds)]
         }
     }
 
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
-        case updateTableSections
+        case updateLiveSummary(Live?)
+        case updateFeedSummary(ArtistFeedSummary?)
         case didGetChart(Group, ChannelDetail.ChannelItem?)
         case didCreatedInvitation(InviteGroup.Invitation)
 
@@ -169,8 +170,7 @@ class BandDetailViewModel {
         apiClient.request(GetGroupLives.self, request: request, uri: uri) { [unowned self] result in
             switch result {
             case .success(let lives):
-                self.state.lives = lives.items
-                self.outputSubject.send(.updateTableSections)
+                self.outputSubject.send(.updateLiveSummary(lives.items.first))
             case .failure(let error):
                 self.outputSubject.send(.reportError(error))
             }
@@ -187,7 +187,7 @@ class BandDetailViewModel {
             switch result {
             case .success(let res):
                 self.state.feeds = res.items
-                self.outputSubject.send(.updateTableSections)
+                self.outputSubject.send(.updateFeedSummary(res.items.first))
             case .failure(let error):
                 self.outputSubject.send(.reportError(error))
             }

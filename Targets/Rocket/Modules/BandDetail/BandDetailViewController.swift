@@ -60,6 +60,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return tableView
     }()
 
+    private lazy var liveCellContent: LiveCellContent = {
+        UINib(nibName: "LiveCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+    }()
+
     let refreshControl = UIRefreshControl()
 
     let viewModel: BandDetailViewModel
@@ -94,6 +99,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     override func loadView() {
         view = verticalScrollView
+        view.backgroundColor = Brand.color(for: .background(.primary))
         view.addSubview(scrollStackView)
         NSLayoutConstraint.activate([
             view.topAnchor.constraint(equalTo: scrollStackView.topAnchor),
@@ -118,6 +124,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         scrollStackView.addArrangedSubview(followStackView)
 
+        scrollStackView.addArrangedSubview(SummarySectionHeader(title: "LIVE"))
+        scrollStackView.addArrangedSubview(liveCellContent)
         scrollStackView.addArrangedSubview(tableView)
         NSLayoutConstraint.activate([
             tableView.heightAnchor.constraint(equalToConstant: 1000),
@@ -162,7 +170,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.setupFloatingItems(displayType: displayType)
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item))
-            case .updateTableSections:
+            case .updateLiveSummary(.none):
+                self.liveCellContent.isHidden = true
+            case .updateLiveSummary(.some(let live)):
+                self.liveCellContent.isHidden = false
+                self.liveCellContent.inject(input: live)
+            case .updateFeedSummary:
                 self.tableView.reloadData()
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
@@ -196,7 +209,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func setupViews() {
-        view.backgroundColor = Brand.color(for: .background(.primary))
         headerView.update(input: (group: viewModel.state.group, groupItem: nil))
 
         tableView.delegate = self
