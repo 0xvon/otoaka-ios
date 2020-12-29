@@ -11,7 +11,7 @@ import UIKit
 
 public final class BandDetailHeaderView: UIView {
     public typealias Input = (
-        group: Group,
+        group: DomainEntity.Group,
         groupItem: ChannelDetail.ChannelItem?
     )
 
@@ -66,6 +66,7 @@ public final class BandDetailHeaderView: UIView {
     private lazy var bandNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Brand.color(for: .text(.primary))
         label.font = Brand.font(for: .xlarge)
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
@@ -199,11 +200,9 @@ public final class BandDetailHeaderView: UIView {
     
     private lazy var contentView: UIView = {
         let contentView = UIView(frame: self.frame)
-        addSubview(contentView)
 
         contentView.backgroundColor = .clear
         contentView.layer.opacity = 0.8
-        translatesAutoresizingMaskIntoConstraints = false
         contentView.translatesAutoresizingMaskIntoConstraints = false
         return contentView
     }()
@@ -244,7 +243,6 @@ public final class BandDetailHeaderView: UIView {
 
     func setup() {
         backgroundColor = .clear
-        translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(contentView)
         addSubview(bandImageView)
@@ -260,16 +258,20 @@ public final class BandDetailHeaderView: UIView {
         let startYear: String =
             (input.group.since != nil) ? dateFormatter.string(from: input.group.since!) : "不明"
         dateBadgeView = BadgeView(text: startYear, image: UIImage(named: "calendar"))
+        dateBadgeView.translatesAutoresizingMaskIntoConstraints = false
         bandInformationView.addSubview(dateBadgeView)
 
         mapBadgeView = BadgeView(text: input.group.hometown ?? "不明", image: UIImage(named: "map"))
+        mapBadgeView.translatesAutoresizingMaskIntoConstraints = false
         bandInformationView.addSubview(mapBadgeView)
         
         labelBadgeView = BadgeView(text: "Intact Records", image: UIImage(named: "record"))
+        labelBadgeView.translatesAutoresizingMaskIntoConstraints = false
         labelBadgeView.isHidden = true
         bandInformationView.addSubview(labelBadgeView)
 
         productionBadgeView = BadgeView(text: "Japan Music Systems", image: UIImage(named: "production"))
+        productionBadgeView.translatesAutoresizingMaskIntoConstraints = false
         productionBadgeView.isHidden = true
         bandInformationView.addSubview(productionBadgeView)
 
@@ -452,3 +454,26 @@ public final class BandDetailHeaderView: UIView {
         print("spotify")
     }
 }
+
+#if PREVIEW
+import SwiftUI
+import StubKit
+import Foundation
+
+struct BandDetailHeaderView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            ViewWrapper(
+                view: try! BandDetailHeaderView(input: (group: Stub.make {
+                    $0.set(\.name, value: "Band Name")
+                    $0.set(\.biography, value: "Band Biography")
+                    $0.set(\.hometown, value: "Band Hometown")
+                    $0.set(\.since, value: Date())
+                }, groupItem: nil))
+            )
+                .previewLayout(.fixed(width: 320, height: 200))
+        }
+        .background(Color.black)
+    }
+}
+#endif

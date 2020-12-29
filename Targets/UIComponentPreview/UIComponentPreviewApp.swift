@@ -6,12 +6,22 @@
 //
 
 import SwiftUI
+import StubKit
 
 @main
 struct UIComponentPreviewApp: App {
     var body: some Scene {
         WindowGroup {
-            EmptyView()
+            ViewWrapper(
+                view: try! BandDetailHeaderView(input: (group: Stub.make(), groupItem: nil))
+            )
+            .frame(height: 150)
         }
+    }
+}
+
+extension UUID: Stubbable {
+    public static func stub() -> UUID {
+        UUID()
     }
 }

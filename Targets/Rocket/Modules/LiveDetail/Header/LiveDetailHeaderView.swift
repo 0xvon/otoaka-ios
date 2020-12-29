@@ -151,10 +151,10 @@ final class LiveDetailHeaderView: UIView {
         let date: String =
             (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
 
-        dateBadgeView = BadgeView(input: (text: date, image: UIImage(named: "calendar")))
+        dateBadgeView = BadgeView(text: date, image: UIImage(named: "calendar"))
         liveInformationView.addSubview(dateBadgeView)
 
-        mapBadgeView = BadgeView(input: (text: input.live.liveHouse ?? "会場未定", image: UIImage(named: "map")))
+        mapBadgeView = BadgeView(text: input.live.liveHouse ?? "会場未定", image: UIImage(named: "map"))
         liveInformationView.addSubview(mapBadgeView)
 
         arrowButton = UIButton()

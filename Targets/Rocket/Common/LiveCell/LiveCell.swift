@@ -87,8 +87,10 @@ class LiveCell: UITableViewCell, ReusableCell {
 
         buyTicketButtonView.isHidden = true
         listenButtonView.isHidden = true
-        dateView.inject(input: (text: date, image: UIImage(named: "calendar")))
-        placeView.inject(input: (text: input.liveHouse ?? "会場未定", image: UIImage(named: "map")))
+        dateView.title = date
+        dateView.image = UIImage(named: "calendar")!
+        placeView.title = input.liveHouse
+        placeView.image = UIImage(named: "map")
     }
 
     override func prepareForReuse() {

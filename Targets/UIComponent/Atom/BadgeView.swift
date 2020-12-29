@@ -17,7 +17,7 @@ public final class BadgeView: UIView {
         let badgeTitle = UILabel()
         badgeTitle.translatesAutoresizingMaskIntoConstraints = false
         badgeTitle.textColor = Brand.color(for: .text(.primary))
-        badgeTitle.font = Brand.font(for: .medium)
+        badgeTitle.font = Brand.font(for: .mediumStrong)
         return badgeTitle
     }()
 

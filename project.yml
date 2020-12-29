@@ -8,6 +8,9 @@ packages:
     path: Libraries/rocket-api/Modules/Endpoint
   DomainEntity:
     path: Libraries/rocket-api/Modules/DomainEntity
+  StubKit:
+    url: https://github.com/kateinoigakukun/StubKit.git
+    minorVersion: 0.1.7
 targets:
   InternalDomain:
     type: library.static
@@ -31,10 +34,12 @@ targets:
         INFOPLIST_FILE: Targets/UIComponentPreview/Info.plist
         DEVELOPMENT_ASSET_PATHS: Targets/UIComponentPreview/PreviewContent
         ENABLE_PREVIEWS: YES
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: PREVIEW
         IPHONEOS_DEPLOYMENT_TARGET: "14.0"
     dependencies:
       - package: DomainEntity
       - target: InternalDomain
+      - package: StubKit
   Rocket-Production:
     templates: [RocketTarget]
     sources:

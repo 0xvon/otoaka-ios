@@ -47,15 +47,17 @@ final class BandCell: UITableViewCell, ReusableCell {
         bandName.textColor = Brand.color(for: .text(.primary))
 
         productionBadgeView.isHidden = true
-        productionBadgeView.inject(
-            input: (text: "Japan Music Systems", image: UIImage(named: "production")))
+        productionBadgeView.title = "Japan Music Systems"
+        productionBadgeView.image = UIImage(named: "production")!
         
         labelBadgeView.isHidden = true
-        labelBadgeView.inject(input: (text: "Intact Records", image: UIImage(named: "record")))
+        labelBadgeView.title = "Intact Records"
+        labelBadgeView.image = UIImage(named: "record")!
         let startYear: String =
             (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"
-        yearBadgeView.inject(input: (text: startYear, image: UIImage(named: "calendar")))
-        hometownBadgeView.inject(
-            input: (text: input.hometown ?? "不明", image: UIImage(named: "map")))
+        yearBadgeView.title = startYear
+        yearBadgeView.image = UIImage(named: "calendar")!
+        hometownBadgeView.title = input.hometown ?? "不明"
+        hometownBadgeView.image = UIImage(named: "map")!
     }
 }

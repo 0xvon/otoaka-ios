@@ -88,9 +88,12 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
 
         let date: String =
             (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
-        dateBadgeLabel.inject(input: (text: date, image: UIImage(named: "calendar")))
-        livehouseBadgeView.inject(input: (text: input.live.liveHouse ?? "会場未定", image: UIImage(named: "map")))
-        ticketBadgeView.inject(input: (text: "￥1500", image: UIImage(named: "ticket")))
+        dateBadgeLabel.title = date
+        dateBadgeLabel.image = UIImage(named: "calendar")!
+        livehouseBadgeView.title = input.live.liveHouse ?? "会場未定"
+        livehouseBadgeView.image = UIImage(named: "map")!
+        ticketBadgeView.title = "￥1500"
+        ticketBadgeView.image = UIImage(named: "ticket")
     }
 
     @IBAction func bandButtonTapped(_ sender: Any) {
