@@ -55,8 +55,7 @@ final class LiveViewController: UIViewController, Instantiable {
 
         liveTableView.delegate = self
         liveTableView.dataSource = self
-        liveTableView.register(
-            UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+        liveTableView.registerCellClass(LiveCell.self)
         liveTableView.backgroundColor = Brand.color(for: .background(.primary))
 
         liveSearchBar.barTintColor = Brand.color(for: .background(.primary))

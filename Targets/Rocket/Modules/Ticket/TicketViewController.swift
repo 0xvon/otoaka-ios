@@ -62,8 +62,7 @@ final class TicketViewController: UIViewController, Instantiable {
 
         ticketsTableView.delegate = self
         ticketsTableView.dataSource = self
-        ticketsTableView.register(
-            UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+        ticketsTableView.registerCellClass(LiveCell.self)
         ticketsTableView.backgroundColor = .clear
         
         ticketsTableView.refreshControl = UIRefreshControl()

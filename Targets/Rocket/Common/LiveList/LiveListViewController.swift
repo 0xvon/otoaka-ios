@@ -82,8 +82,7 @@ final class LiveListViewController: UIViewController, Instantiable {
         liveTableView.backgroundColor = Brand.color(for: .background(.primary))
         liveTableView.delegate = self
         liveTableView.dataSource = self
-        liveTableView.register(
-            UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+        liveTableView.registerCellClass(LiveCell.self)
         self.view.addSubview(liveTableView)
         
         liveTableView.refreshControl = UIRefreshControl()
