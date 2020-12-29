@@ -162,7 +162,7 @@ extension SelectPerformersViewController: UITableViewDelegate, UITableViewDataSo
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let band = self.searchResults[indexPath.section]
-        let cell = tableView.reuse(BandCell.self, input: band, for: indexPath)
+        let cell = tableView.dequeueReusableCell(BandCell.self, input: band, for: indexPath)
         cell.selectionStyle = .none
         if self.selectedGroups.contains(where: { $0.id == band.id }) {
             tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)

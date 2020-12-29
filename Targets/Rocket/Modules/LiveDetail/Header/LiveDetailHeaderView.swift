@@ -280,7 +280,7 @@ extension LiveDetailHeaderView: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = input.groups[indexPath.section]
-        let cell = tableView.reuse(BandBannerCell.self, input: group, for: indexPath)
+        let cell = tableView.dequeueReusableCell(BandBannerCell.self, input: group, for: indexPath)
         cell.like { [weak self] type in
             switch type {
             case .reaction:

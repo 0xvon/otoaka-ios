@@ -160,7 +160,7 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let band = self.groups[indexPath.section]
-        let cell = tableView.reuse(BandCell.self, input: band, for: indexPath)
+        let cell = tableView.dequeueReusableCell(BandCell.self, input: band, for: indexPath)
         return cell
     }
 

@@ -201,8 +201,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(
-            UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
+        tableView.registerCellClass(LiveCell.self)
         tableView.register(
             UINib(nibName: "BandContentsCell", bundle: nil),
             forCellReuseIdentifier: "BandContentsCell")
@@ -319,47 +318,9 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         // FIXME
         switch viewModel.state.sections[section] {
         case .live:
-            let view = UIView()
-            let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
-            let titleView = TitleLabelView(
-                input: (
-                    title: "LIVE", font: Brand.font(for: .xlargeStrong),
-                    color: Brand.color(for: .text(.primary))
-                )
-            )
-            titleBaseView.addSubview(titleView)
-            view.addSubview(titleBaseView)
-
-            let seeMoreButton = UIButton(
-                frame: CGRect(x: UIScreen.main.bounds.width - 132, y: 16, width: 100, height: 40))
-            seeMoreButton.setTitle("もっと見る", for: .normal)
-            seeMoreButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-            seeMoreButton.titleLabel?.font = Brand.font(for: .small)
-            seeMoreButton.addTarget(self, action: #selector(seeMoreLive(_:)), for: .touchUpInside)
-            view.addSubview(seeMoreButton)
-
-            return view
+            return SummarySectionHeader(title: "LIVE")
         case .feed:
-            let view = UIView()
-            let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
-            let titleView = TitleLabelView(
-                input: (
-                    title: "CONTENTS", font: Brand.font(for: .xlargeStrong),
-                    color: Brand.color(for: .text(.primary))
-                ))
-            titleBaseView.addSubview(titleView)
-            view.addSubview(titleBaseView)
-
-            let seeMoreButton = UIButton(
-                frame: CGRect(x: UIScreen.main.bounds.width - 132, y: 16, width: 100, height: 40))
-            seeMoreButton.setTitle("もっと見る", for: .normal)
-            seeMoreButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-            seeMoreButton.titleLabel?.font = Brand.font(for: .small)
-            seeMoreButton.addTarget(
-                self, action: #selector(seeMoreContents(_:)), for: .touchUpInside)
-            view.addSubview(seeMoreButton)
-
-            return view
+            return SummarySectionHeader(title: "FEED")
         }
     }
 
@@ -367,11 +328,11 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
         switch viewModel.state.sections[indexPath.section] {
         case let .live(rows):
             let live = rows[indexPath.row]
-            let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
+            let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
             return cell
         case let .feed(rows):
             let feed = rows[indexPath.row]
-            let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
+            let cell = tableView.dequeueReusableCell(BandContentsCell.self, input: feed, for: indexPath)
             cell.comment { [unowned self] _ in
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: .feedComment(feed))

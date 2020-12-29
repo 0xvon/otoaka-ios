@@ -94,12 +94,12 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let live = self.tickets[indexPath.section].live
-        let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
-        cell.listen { [weak self] in
-            self?.listenButtonTapped(cellIndex: indexPath.section)
-        }
-        cell.buyTicket { [weak self] in
-            self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+        let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
+        cell.listen { [weak self] output in
+            switch output {
+            case .listenButtonTapped: self?.listenButtonTapped(cellIndex: indexPath.section)
+            case .buyTicketButtonTapped: self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+            }
         }
         return cell
     }

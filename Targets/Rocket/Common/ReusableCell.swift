@@ -16,13 +16,16 @@ protocol ReusableCell {
 
 extension UITableView {
 
+    func registerCellClass<Cell: ReusableCell & AnyObject>(_ type: Cell.Type) {
+        self.register(Cell.self, forCellReuseIdentifier: Cell.reusableIdentifier)
+    }
     func dequeueReusableCell<Cell: ReusableCell>(
         _ type: Cell.Type = Cell.self, for indexPath: IndexPath
     ) -> Cell {
         self.dequeueReusableCell(withIdentifier: type.reusableIdentifier, for: indexPath) as! Cell
     }
 
-    func reuse<Cell: ReusableCell>(
+    func dequeueReusableCell<Cell: ReusableCell>(
         _ type: Cell.Type = Cell.self, input: Cell.Input, for indexPath: IndexPath
     ) -> Cell {
         let cell = dequeueReusableCell(Cell.self, for: indexPath)

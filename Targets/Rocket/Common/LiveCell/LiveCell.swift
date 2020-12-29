@@ -9,9 +9,45 @@ import Endpoint
 import UIKit
 
 class LiveCell: UITableViewCell, ReusableCell {
+    typealias Input = LiveCellContent.Input
+    typealias Output = LiveCellContent.Output
     static var reusableIdentifier: String { "LiveCell" }
 
+    private let _contentView: LiveCellContent
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        _contentView = UINib(nibName: "LiveCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        contentView.addSubview(_contentView)
+        _contentView.translatesAutoresizingMaskIntoConstraints = false
+        backgroundColor = .clear
+        NSLayoutConstraint.activate([
+            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func inject(input: LiveCellContent.Input) {
+        _contentView.inject(input: input)
+    }
+
+    func listen(_ listener: @escaping (Output) -> Void) {
+        _contentView.listen(listener)
+    }
+}
+
+class LiveCellContent: UIView {
     typealias Input = Live
+    enum Output {
+        case listenButtonTapped
+        case buyTicketButtonTapped
+    }
     var input: Input!
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -39,6 +75,13 @@ class LiveCell: UITableViewCell, ReusableCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+
+        listenButtonView.listen { [unowned self] in
+            self.listener(.listenButtonTapped)
+        }
+        buyTicketButtonView.listen { [unowned self] in
+            self.listener(.buyTicketButtonTapped)
+        }
     }
 
     func inject(input: Live) {
@@ -93,15 +136,8 @@ class LiveCell: UITableViewCell, ReusableCell {
         placeView.image = UIImage(named: "map")
     }
 
-    override func prepareForReuse() {
-        super.prepareForReuse()
-    }
-
-    func listen(_ listener: @escaping () -> Void) {
-        listenButtonView.listen(listener)
-    }
-
-    func buyTicket(_ listener: @escaping () -> Void) {
-        buyTicketButtonView.listen(listener)
+    private var listener: (Output) -> Void = { _ in }
+    func listen(_ listener: @escaping (Output) -> Void) {
+        self.listener = listener
     }
 }

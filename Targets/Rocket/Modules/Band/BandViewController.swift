@@ -588,7 +588,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         switch tableView {
         case self.groupFeedTableView:
             let feed = self.feeds[indexPath.section]
-            let cell = tableView.reuse(BandContentsCell.self, input: feed, for: indexPath)
+            let cell = tableView.dequeueReusableCell(BandContentsCell.self, input: feed, for: indexPath)
             cell.comment { [weak self] _ in
                 print("tapped")
                 self?.feedCommentButtonTapped(cellIndex: indexPath.section)
@@ -596,21 +596,21 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         case self.liveTableView:
             let live = self.lives[indexPath.section].live
-            let cell = tableView.reuse(LiveCell.self, input: live, for: indexPath)
-            cell.listen { [weak self] in
-                self?.listenButtonTapped(cellIndex: indexPath.section)
-            }
-            cell.buyTicket { [weak self] in
-                self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+            let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
+            cell.listen { [weak self] output in
+                switch output {
+                case .listenButtonTapped: self?.listenButtonTapped(cellIndex: indexPath.section)
+                case .buyTicketButtonTapped: self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+                }
             }
             return cell
         case self.chartsTableView:
             let chart = self.charts[indexPath.section]
-            let cell = tableView.reuse(TrackCell.self, input: chart, for: indexPath)
+            let cell = tableView.dequeueReusableCell(TrackCell.self, input: chart, for: indexPath)
             return cell
         case self.groupTableView:
             let band = self.groups[indexPath.section]
-            let cell = tableView.reuse(BandCell.self, input: band, for: indexPath)
+            let cell = tableView.dequeueReusableCell(BandCell.self, input: band, for: indexPath)
             return cell
         default:
             return UITableViewCell()
