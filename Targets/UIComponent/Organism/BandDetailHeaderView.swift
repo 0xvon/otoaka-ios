@@ -41,25 +41,23 @@ public final class BandDetailHeaderView: UIView {
         scrollView.isScrollEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
-        scrollView.contentSize = CGSize(
-            width: UIScreen.main.bounds.width * 3, height: self.frame.height)
         return scrollView
     }()
     private lazy var bandInformationView: UIView = {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: self.frame.height))
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         return view
     }()
     private lazy var trackInformationView: UIView = {
-        let view = UIView(frame: CGRect(x: UIScreen.main.bounds.width, y: 0, width: UIScreen.main.bounds.width, height: self.bounds.height))
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         return view
     }()
     private lazy var biographyView: UIView = {
-        let view = UIView(
-            frame: CGRect(
-                x: UIScreen.main.bounds.width * 2, y: 0, width: UIScreen.main.bounds.width,
-                height: self.bounds.height))
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .clear
         return view
     }()
@@ -197,15 +195,6 @@ public final class BandDetailHeaderView: UIView {
         biographyTextView.font = Brand.font(for: .medium)
         return biographyTextView
     }()
-    
-    private lazy var contentView: UIView = {
-        let contentView = UIView(frame: self.frame)
-
-        contentView.backgroundColor = .clear
-        contentView.layer.opacity = 0.8
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        return contentView
-    }()
 
     public init(input: Input) {
         self.input = input
@@ -244,174 +233,185 @@ public final class BandDetailHeaderView: UIView {
     func setup() {
         backgroundColor = .clear
 
-        addSubview(contentView)
         addSubview(bandImageView)
-        addSubview(horizontalScrollView)
-        horizontalScrollView.addSubview(bandInformationView)
-        horizontalScrollView.addSubview(trackInformationView)
-        horizontalScrollView.addSubview(biographyView)
-
-        bandNameLabel.text = input.group.name
-        bandNameLabel.sizeToFit()
-        bandInformationView.addSubview(bandNameLabel)
-
-        let startYear: String =
-            (input.group.since != nil) ? dateFormatter.string(from: input.group.since!) : "不明"
-        dateBadgeView = BadgeView(text: startYear, image: UIImage(named: "calendar"))
-        dateBadgeView.translatesAutoresizingMaskIntoConstraints = false
-        bandInformationView.addSubview(dateBadgeView)
-
-        mapBadgeView = BadgeView(text: input.group.hometown ?? "不明", image: UIImage(named: "map"))
-        mapBadgeView.translatesAutoresizingMaskIntoConstraints = false
-        bandInformationView.addSubview(mapBadgeView)
-        
-        labelBadgeView = BadgeView(text: "Intact Records", image: UIImage(named: "record"))
-        labelBadgeView.translatesAutoresizingMaskIntoConstraints = false
-        labelBadgeView.isHidden = true
-        bandInformationView.addSubview(labelBadgeView)
-
-        productionBadgeView = BadgeView(text: "Japan Music Systems", image: UIImage(named: "production"))
-        productionBadgeView.translatesAutoresizingMaskIntoConstraints = false
-        productionBadgeView.isHidden = true
-        bandInformationView.addSubview(productionBadgeView)
-
-        arrowButton.addTarget(self, action: #selector(nextPage), for: .touchUpInside)
-        bandInformationView.addSubview(arrowButton)
-
-        trackInformationView.addSubview(artworkImageView)
-        
-        playButton.listen {
-            self.play()
-        }
-        trackInformationView.addSubview(playButton)
-
-        trackInformationView.addSubview(trackNameLabel)
-
-        trackInformationView.addSubview(releasedDataLabel)
-
-        seeMoreTracksButton.addTarget(
-            self, action: #selector(seeMoreButtonTapped(_:)), for: .touchUpInside)
-        trackInformationView.addSubview(seeMoreTracksButton)
-
-        trackInformationView.addSubview(stackView)
-
-        twitterButton.addTarget(
-            self, action: #selector(twitterButtonTapped(_:)), for: .touchUpInside)
-        stackView.addArrangedSubview(twitterButton)
-
-        youtubeButton.addTarget(
-            self, action: #selector(youtubeButtonTapped(_:)), for: .touchUpInside)
-        stackView.addArrangedSubview(youtubeButton)
-
-        appleMusicButton.addTarget(
-            self, action: #selector(appleMusicButtonTapped(_:)), for: .touchUpInside)
-        stackView.addArrangedSubview(appleMusicButton)
-
-        spotifyButton.addTarget(
-            self, action: #selector(spotifyButtonTapped(_:)), for: .touchUpInside)
-        stackView.addArrangedSubview(spotifyButton)
-
-        biographyView.addSubview(biographyTextView)
-        biographyTextView.text = input.group.biography
-
-        let constraints = [
-            topAnchor.constraint(equalTo: contentView.topAnchor),
-            bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            rightAnchor.constraint(equalTo: contentView.rightAnchor),
-
+        NSLayoutConstraint.activate([
             bandImageView.topAnchor.constraint(equalTo: topAnchor),
             bandImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
             bandImageView.leftAnchor.constraint(equalTo: leftAnchor),
             bandImageView.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
 
+        addSubview(horizontalScrollView)
+        NSLayoutConstraint.activate([
             horizontalScrollView.topAnchor.constraint(equalTo: topAnchor),
             horizontalScrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             horizontalScrollView.leftAnchor.constraint(equalTo: leftAnchor),
             horizontalScrollView.rightAnchor.constraint(equalTo: rightAnchor),
+        ])
 
-            bandNameLabel.topAnchor.constraint(
-                equalTo: bandInformationView.topAnchor, constant: 16),
-            bandNameLabel.leftAnchor.constraint(
-                equalTo: bandInformationView.leftAnchor, constant: 16),
-            bandNameLabel.rightAnchor.constraint(
-                equalTo: bandInformationView.rightAnchor, constant: -16),
+        // Setup `bandInformationView` contents
+        do {
+            bandNameLabel.text = input.group.name
+            bandNameLabel.sizeToFit()
+            bandInformationView.addSubview(bandNameLabel)
+            NSLayoutConstraint.activate([
+                bandNameLabel.topAnchor.constraint(equalTo: bandInformationView.topAnchor, constant: 16),
+                bandNameLabel.leftAnchor.constraint(equalTo: bandInformationView.leftAnchor, constant: 16),
+                bandInformationView.rightAnchor.constraint(equalTo: bandNameLabel.rightAnchor, constant: 16),
+            ])
+            
+            let startYear: String = {
+                guard let since = input.group.since else { return "不明" }
+                return dateFormatter.string(from: since)
+            }()
+            dateBadgeView = BadgeView(text: startYear, image: UIImage(named: "calendar"))
+            dateBadgeView.translatesAutoresizingMaskIntoConstraints = false
+            bandInformationView.addSubview(dateBadgeView)
+            NSLayoutConstraint.activate([
+                dateBadgeView.bottomAnchor.constraint(equalTo: bandInformationView.bottomAnchor, constant: -16),
+                dateBadgeView.leftAnchor.constraint(equalTo: bandInformationView.leftAnchor, constant: 16),
+                dateBadgeView.widthAnchor.constraint(equalToConstant: 160),
+                dateBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            ])
+            
+            mapBadgeView = BadgeView(text: input.group.hometown ?? "不明", image: UIImage(named: "map"))
+            mapBadgeView.translatesAutoresizingMaskIntoConstraints = false
+            bandInformationView.addSubview(mapBadgeView)
+            NSLayoutConstraint.activate([
+                mapBadgeView.bottomAnchor.constraint(equalTo: dateBadgeView.topAnchor, constant: -8),
+                mapBadgeView.leftAnchor.constraint(equalTo: bandInformationView.leftAnchor, constant: 16),
+                mapBadgeView.widthAnchor.constraint(equalToConstant: 160),
+                mapBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            ])
 
-            dateBadgeView.bottomAnchor.constraint(
-                equalTo: bandInformationView.bottomAnchor, constant: -16),
-            dateBadgeView.leftAnchor.constraint(
-                equalTo: bandInformationView.leftAnchor, constant: 16),
-            dateBadgeView.widthAnchor.constraint(equalToConstant: 160),
-            dateBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            labelBadgeView = BadgeView(text: "Intact Records", image: UIImage(named: "record"))
+            labelBadgeView.translatesAutoresizingMaskIntoConstraints = false
+            labelBadgeView.isHidden = true
+            bandInformationView.addSubview(labelBadgeView)
+            NSLayoutConstraint.activate([
+                labelBadgeView.bottomAnchor.constraint(equalTo: mapBadgeView.topAnchor, constant: -8),
+                labelBadgeView.leftAnchor.constraint(equalTo: bandInformationView.leftAnchor, constant: 16),
+                labelBadgeView.widthAnchor.constraint(equalToConstant: 160),
+                labelBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            ])
+            
+            productionBadgeView = BadgeView(text: "Japan Music Systems", image: UIImage(named: "production"))
+            productionBadgeView.translatesAutoresizingMaskIntoConstraints = false
+            productionBadgeView.isHidden = true
+            bandInformationView.addSubview(productionBadgeView)
+            NSLayoutConstraint.activate([
+                productionBadgeView.bottomAnchor.constraint(equalTo: labelBadgeView.topAnchor, constant: -8),
+                productionBadgeView.leftAnchor.constraint(equalTo: bandInformationView.leftAnchor, constant: 16),
+                productionBadgeView.widthAnchor.constraint(equalToConstant: 160),
+                productionBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            ])
+            
+            arrowButton.addTarget(self, action: #selector(nextPage), for: .touchUpInside)
+            bandInformationView.addSubview(arrowButton)
+            NSLayoutConstraint.activate([
+                arrowButton.rightAnchor.constraint(equalTo: bandInformationView.rightAnchor, constant: -16),
+                arrowButton.bottomAnchor.constraint(equalTo: bandInformationView.bottomAnchor, constant: -16),
+                arrowButton.widthAnchor.constraint(equalToConstant: 54),
+                arrowButton.heightAnchor.constraint(equalToConstant: 28),
+            ])
+        }
 
-            mapBadgeView.bottomAnchor.constraint(equalTo: dateBadgeView.topAnchor, constant: -8),
-            mapBadgeView.leftAnchor.constraint(
-                equalTo: bandInformationView.leftAnchor, constant: 16),
-            mapBadgeView.widthAnchor.constraint(equalToConstant: 160),
-            mapBadgeView.heightAnchor.constraint(equalToConstant: 30),
+        // Setup `trackInformationView` contents
+        do {
+            trackInformationView.addSubview(artworkImageView)
+            NSLayoutConstraint.activate([
+                artworkImageView.leftAnchor.constraint(equalTo: trackInformationView.leftAnchor, constant: 36),
+                artworkImageView.topAnchor.constraint(equalTo: trackInformationView.topAnchor, constant: 48),
+                artworkImageView.widthAnchor.constraint(equalToConstant: 120),
+                artworkImageView.heightAnchor.constraint(equalToConstant: 120),
+            ])
+            
+            playButton.listen {
+                self.play()
+            }
+            trackInformationView.addSubview(playButton)
+            NSLayoutConstraint.activate([
+                playButton.leftAnchor.constraint(equalTo: artworkImageView.rightAnchor, constant: 24),
+                playButton.topAnchor.constraint(equalTo: artworkImageView.topAnchor, constant: 8),
+                playButton.widthAnchor.constraint(equalToConstant: 150),
+                playButton.heightAnchor.constraint(equalToConstant: 36),
+            ])
+            
+            trackInformationView.addSubview(trackNameLabel)
+            NSLayoutConstraint.activate([
+                trackNameLabel.leftAnchor.constraint(equalTo: playButton.leftAnchor),
+                trackNameLabel.topAnchor.constraint(equalTo: playButton.bottomAnchor, constant: 8),
+                trackNameLabel.rightAnchor.constraint(equalTo: trackInformationView.rightAnchor, constant: -16),
+            ])
 
-            labelBadgeView.bottomAnchor.constraint(equalTo: mapBadgeView.topAnchor, constant: -8),
-            labelBadgeView.leftAnchor.constraint(
-                equalTo: bandInformationView.leftAnchor, constant: 16),
-            labelBadgeView.widthAnchor.constraint(equalToConstant: 160),
-            labelBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            trackInformationView.addSubview(releasedDataLabel)
+            NSLayoutConstraint.activate([
+                releasedDataLabel.leftAnchor.constraint(equalTo: playButton.leftAnchor),
+                releasedDataLabel.topAnchor.constraint(equalTo: trackNameLabel.bottomAnchor, constant: 4),
+            ])
 
-            productionBadgeView.bottomAnchor.constraint(
-                equalTo: labelBadgeView.topAnchor, constant: -8),
-            productionBadgeView.leftAnchor.constraint(
-                equalTo: bandInformationView.leftAnchor, constant: 16),
-            productionBadgeView.widthAnchor.constraint(equalToConstant: 160),
-            productionBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            seeMoreTracksButton.addTarget(
+                self, action: #selector(seeMoreButtonTapped(_:)), for: .touchUpInside)
+            trackInformationView.addSubview(seeMoreTracksButton)
+            NSLayoutConstraint.activate([
+                seeMoreTracksButton.topAnchor.constraint(equalTo: trackInformationView.topAnchor, constant: 16),
+                seeMoreTracksButton.rightAnchor.constraint(equalTo: trackInformationView.rightAnchor, constant: -32),
+            ])
+            
+            trackInformationView.addSubview(stackView)
+            NSLayoutConstraint.activate([
+                stackView.rightAnchor.constraint(equalTo: trackInformationView.rightAnchor, constant: -32),
+                stackView.bottomAnchor.constraint(equalTo: trackInformationView.bottomAnchor, constant: -16),
+                stackView.heightAnchor.constraint(equalToConstant: 24),
+            ])
 
-            arrowButton.rightAnchor.constraint(
-                equalTo: bandInformationView.rightAnchor, constant: -16),
-            arrowButton.bottomAnchor.constraint(
-                equalTo: bandInformationView.bottomAnchor, constant: -16),
-            arrowButton.widthAnchor.constraint(equalToConstant: 54),
-            arrowButton.heightAnchor.constraint(equalToConstant: 28),
+            twitterButton.addTarget(
+                self, action: #selector(twitterButtonTapped(_:)), for: .touchUpInside)
+            stackView.addArrangedSubview(twitterButton)
+            NSLayoutConstraint.activate([twitterButton.widthAnchor.constraint(equalToConstant: 24)])
 
-            artworkImageView.leftAnchor.constraint(
-                equalTo: trackInformationView.leftAnchor, constant: 36),
-            artworkImageView.topAnchor.constraint(
-                equalTo: trackInformationView.topAnchor, constant: 48),
-            artworkImageView.widthAnchor.constraint(equalToConstant: 120),
-            artworkImageView.heightAnchor.constraint(equalToConstant: 120),
+            youtubeButton.addTarget(
+                self, action: #selector(youtubeButtonTapped(_:)), for: .touchUpInside)
+            stackView.addArrangedSubview(youtubeButton)
 
-            playButton.leftAnchor.constraint(equalTo: artworkImageView.rightAnchor, constant: 24),
-            playButton.topAnchor.constraint(equalTo: artworkImageView.topAnchor, constant: 8),
-            playButton.widthAnchor.constraint(equalToConstant: 150),
-            playButton.heightAnchor.constraint(equalToConstant: 36),
+            appleMusicButton.addTarget(
+                self, action: #selector(appleMusicButtonTapped(_:)), for: .touchUpInside)
+            stackView.addArrangedSubview(appleMusicButton)
 
-            trackNameLabel.leftAnchor.constraint(equalTo: playButton.leftAnchor),
-            trackNameLabel.topAnchor.constraint(equalTo: playButton.bottomAnchor, constant: 8),
-            trackNameLabel.rightAnchor.constraint(equalTo: trackInformationView.rightAnchor, constant: -16),
+            spotifyButton.addTarget(
+                self, action: #selector(spotifyButtonTapped(_:)), for: .touchUpInside)
+            stackView.addArrangedSubview(spotifyButton)
+        }
 
-            releasedDataLabel.leftAnchor.constraint(equalTo: playButton.leftAnchor),
-            releasedDataLabel.topAnchor.constraint(
-                equalTo: trackNameLabel.bottomAnchor, constant: 4),
+        do {
+            biographyView.addSubview(biographyTextView)
+            biographyTextView.text = input.group.biography
+            
+            NSLayoutConstraint.activate([
+                biographyTextView.topAnchor.constraint(equalTo: biographyView.topAnchor, constant: 16),
+                biographyTextView.bottomAnchor.constraint(equalTo: biographyView.bottomAnchor, constant: -16),
+                biographyTextView.rightAnchor.constraint(equalTo: biographyView.rightAnchor, constant: -16),
+                biographyTextView.leftAnchor.constraint(equalTo: biographyView.leftAnchor, constant: 16),
+            ])
+        }
 
-            seeMoreTracksButton.topAnchor.constraint(
-                equalTo: trackInformationView.topAnchor, constant: 16),
-            seeMoreTracksButton.rightAnchor.constraint(
-                equalTo: trackInformationView.rightAnchor, constant: -32),
-
-            stackView.rightAnchor.constraint(
-                equalTo: trackInformationView.rightAnchor, constant: -32),
-            stackView.bottomAnchor.constraint(
-                equalTo: trackInformationView.bottomAnchor, constant: -16),
-            stackView.heightAnchor.constraint(equalToConstant: 24),
-
-            twitterButton.widthAnchor.constraint(equalToConstant: 24),
-
-            biographyTextView.topAnchor.constraint(equalTo: biographyView.topAnchor, constant: 16),
-            biographyTextView.bottomAnchor.constraint(
-                equalTo: biographyView.bottomAnchor, constant: -16),
-            biographyTextView.rightAnchor.constraint(
-                equalTo: biographyView.rightAnchor, constant: -16),
-            biographyTextView.leftAnchor.constraint(
-                equalTo: biographyView.leftAnchor, constant: 16),
-        ]
-        NSLayoutConstraint.activate(constraints)
+        do {
+            let arrangedSubviews = [bandInformationView, trackInformationView, biographyView,]
+            let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
+            stackView.translatesAutoresizingMaskIntoConstraints = false
+            stackView.axis = .horizontal
+            stackView.distribution = .fillEqually
+            horizontalScrollView.addSubview(stackView)
+            NSLayoutConstraint.activate([
+                stackView.topAnchor.constraint(equalTo: topAnchor),
+                stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                stackView.leftAnchor.constraint(equalTo: horizontalScrollView.leftAnchor),
+                stackView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
+                stackView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
+                stackView.rightAnchor.constraint(equalTo: horizontalScrollView.rightAnchor),
+                stackView.widthAnchor.constraint(equalTo: horizontalScrollView.widthAnchor, multiplier: CGFloat(arrangedSubviews.count))
+            ])
+        }
     }
 
     private func play() {
@@ -464,12 +464,27 @@ struct BandDetailHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ViewWrapper(
-                view: try! BandDetailHeaderView(input: (group: Stub.make {
-                    $0.set(\.name, value: "Band Name")
-                    $0.set(\.biography, value: "Band Biography")
-                    $0.set(\.hometown, value: "Band Hometown")
-                    $0.set(\.since, value: Date())
-                }, groupItem: nil))
+                view: {
+                    let wrapper = UIView()
+                    wrapper.backgroundColor = .black
+                    let contentView = try! BandDetailHeaderView(input: (group: Stub.make {
+                        $0.set(\.name, value: "Band Name")
+                        $0.set(\.biography, value: "Band Biography")
+                        $0.set(\.hometown, value: "Band Hometown")
+                        $0.set(\.since, value: Date())
+                    }, groupItem: nil))
+                    contentView.translatesAutoresizingMaskIntoConstraints = false
+                    wrapper.addSubview(contentView)
+                    let constraints = [
+                        wrapper.topAnchor.constraint(equalTo: contentView.topAnchor),
+                        wrapper.bottomAnchor.constraint(greaterThanOrEqualTo: contentView.bottomAnchor),
+                        wrapper.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+                        wrapper.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+                        contentView.heightAnchor.constraint(equalToConstant: 250),
+                    ]
+                    NSLayoutConstraint.activate(constraints)
+                    return wrapper
+                }()
             )
                 .previewLayout(.fixed(width: 320, height: 200))
         }
