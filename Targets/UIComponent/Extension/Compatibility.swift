@@ -11,6 +11,7 @@ import UIKit
 var cache: [String: UIImage] = NSMutableDictionary() as! [String: UIImage]
 
 extension UIImageView {
+    @available(*, deprecated)
     func loadImageAsynchronously(url: URL?, defaultUIImage: UIImage? = nil) {
 
         guard let url = url else {

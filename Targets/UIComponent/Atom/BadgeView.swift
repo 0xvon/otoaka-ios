@@ -31,7 +31,7 @@ public final class BadgeView: UIView {
         set { badgeTitle.text = newValue }
     }
 
-    public init(text: String, image: UIImage?) {
+    public init(text: String? = nil, image: UIImage? = nil) {
         super.init(frame: .zero)
         self.title = text
         self.image = image
