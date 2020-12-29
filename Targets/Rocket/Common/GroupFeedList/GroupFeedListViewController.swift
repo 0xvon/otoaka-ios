@@ -68,8 +68,7 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
         contentsTableView.backgroundColor = Brand.color(for: .background(.primary))
         contentsTableView.delegate = self
         contentsTableView.dataSource = self
-        contentsTableView.register(
-            UINib(nibName: "BandContentsCell", bundle: nil), forCellReuseIdentifier: "BandContentsCell")
+        contentsTableView.registerCellClass(ArtistFeedCell.self)
         self.view.addSubview(contentsTableView)
         
         contentsTableView.refreshControl = UIRefreshControl()
