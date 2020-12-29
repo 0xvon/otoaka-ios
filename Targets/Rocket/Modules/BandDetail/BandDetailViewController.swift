@@ -230,7 +230,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                self.showAlert(title: "エラー", message: String(describing: error))
             case .pushToLiveDetail(let input):
                 let vc = LiveDetailViewController(
                     dependencyProvider: self.dependencyProvider, input: input)

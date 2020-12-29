@@ -10,6 +10,7 @@ import AWSCore
 import Firebase
 import Endpoint
 import Foundation
+import Networking
 
 @dynamicMemberLookup
 struct LoggedInDependencyProvider {
@@ -66,7 +67,10 @@ extension DependencyProvider {
         )
 
         AWSServiceManager.default()?.defaultServiceConfiguration = configuration
-        let apiClient = APIClient(baseUrl: URL(string: config.apiEndpoint)!, tokenProvider: wrapper)
+        let apiClient = APIClient(
+            baseUrl: URL(string: config.apiEndpoint)!,
+            adapter: RocketAPIAdapter(tokenProvider: wrapper)
+        )
         let youTubeDataApiClient = YouTubeDataAPIClient(baseUrl: URL(string: "https://www.googleapis.com")!, apiKey: config.youTubeApiKey)
         
         if credentialProvider.identityId == nil {

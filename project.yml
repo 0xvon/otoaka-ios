@@ -18,6 +18,14 @@ targets:
     sources: [Targets/InternalDomain]
     dependencies:
       - package: DomainEntity
+  Networking:
+    type: library.static
+    platform: iOS
+    sources: [Targets/Networking]
+    dependencies:
+      - package: DomainEntity
+      - package: Endpoint
+      - target: InternalDomain
   UIComponent:
     type: library.static
     platform: iOS
@@ -138,5 +146,6 @@ targetTemplates:
         implicit: true
         embed: false
       - package: Endpoint
+      - target: Networking
       - target: UIComponent
       - target: InternalDomain

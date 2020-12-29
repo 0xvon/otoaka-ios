@@ -1,0 +1,86 @@
+import Endpoint
+import Foundation
+
+public protocol HTTPClientAdapter {
+    func beforeRequest<T: Codable>(
+        urlRequest: URLRequest, requestBody: T, completion: @escaping (Result<URLRequest, Error>) -> Void
+    )
+    func afterRequest<Response: Codable>(urlResponse: URLResponse, data: Data) throws -> Response
+}
+
+public class HTTPClient {
+    private let baseURL: URL
+    private let session: URLSession
+    private let adapter: HTTPClientAdapter
+
+    private let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }()
+    private let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }()
+
+    public init(baseUrl: URL, adapter: HTTPClientAdapter, session: URLSession = .shared) {
+        self.baseURL = baseUrl
+        self.adapter = adapter
+        self.session = session
+    }
+
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line,
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    ) where E.Request == Endpoint.Empty {
+        request(E.self, request: Endpoint.Empty(), uri: uri, file: file, line: line, callback: callback)
+    }
+
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        request: E.Request, uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line,
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    ) {
+        let url: URL
+        do {
+            url = try uri.encode(baseURL: baseURL)
+        } catch {
+            callback(.failure(error))
+            return
+        }
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = E.method.rawValue
+        adapter.beforeRequest(urlRequest: urlRequest, requestBody: request) { [unowned self] result in
+            switch result {
+            case .success(let urlRequest):
+                self.request(
+                    endpoint, urlRequest: urlRequest, file: file, line: line, callback: callback)
+            case .failure(let error):
+                callback(.failure(error))
+            }
+        }
+    }
+
+    private func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        urlRequest: URLRequest, file: StaticString, line: UInt,
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    ) {
+        let task = session.dataTask(with: urlRequest) { [adapter] (data, urlResponse, error) in
+            if let error = error {
+                callback(.failure(error))
+                return
+            }
+            guard let data = data, let urlResponse = urlResponse else {
+                fatalError("URLSession.dataTask should provide either response or error")
+            }
+            let result = Result<E.Response, Error> {
+                try adapter.afterRequest(urlResponse: urlResponse, data: data)
+            }
+            callback(result)
+        }
+        task.resume()
+    }
+}

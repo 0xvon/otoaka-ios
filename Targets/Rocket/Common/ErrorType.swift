@@ -7,10 +7,6 @@
 
 import Foundation
 
-enum APIError: Error {
-    case invalidStatus(String)
-}
-
 enum ViewModelError: Error {
     case notFoundError(String)
 }

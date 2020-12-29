@@ -24,7 +24,6 @@ class BandDetailViewModel {
         var group: Group
         var lives: [Live] = []
         var feeds: [ArtistFeedSummary] = []
-        var groupItem: ChannelDetail.ChannelItem? = nil
         var groupDetail: GetGroup.Response?
         var channelItem: ChannelDetail.ChannelItem?
         let role: RoleProperties
