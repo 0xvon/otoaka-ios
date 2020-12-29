@@ -138,6 +138,8 @@ public final class BandDetailHeaderView: UIView {
                 stackView.widthAnchor.constraint(equalTo: horizontalScrollView.widthAnchor, multiplier: CGFloat(arrangedSubviews.count))
             ])
         }
+
+        bind()
     }
 
     private func nextPage() {
