@@ -27,7 +27,7 @@ targets:
     templates: [RocketTarget]
     sources:
       - path: Targets/Rocket/FirebaseConfig/Development
-        group: Rocket/FirebaseConfig
+        group: Targets/Rocket/FirebaseConfig
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.dev.Rocket
@@ -50,7 +50,6 @@ targetTemplates:
       Release: Pods/Target Support Files/Pods-Rocket/Pods-Rocket.release.xcconfig
     sources:
       - path: Targets/Rocket
-        group: Rocket
         excludes: [FirebaseConfig]
       - path: Targets/Rocket/Generated/Assets.swift
         group: Targets/Rocket/Generated
