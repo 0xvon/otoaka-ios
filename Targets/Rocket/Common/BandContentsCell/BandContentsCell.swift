@@ -40,7 +40,7 @@ class BandContentsCell: UITableViewCell, ReusableCell {
     }
 
     func setup() {
-        backgroundColor = style.color.background.get()
+        backgroundColor = Brand.color(for: .background(.primary))
         
         switch input.feedType {
         case .youtube(let url):
@@ -51,23 +51,23 @@ class BandContentsCell: UITableViewCell, ReusableCell {
         thumbnailImageView.layer.opacity = 0.6
         thumbnailImageView.layer.cornerRadius = 16
         thumbnailImageView.layer.borderWidth = 1
-        thumbnailImageView.layer.borderColor = style.color.main.get().cgColor
+        thumbnailImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
 
         titleLabel.text = input.text
-        titleLabel.font = style.font.large.get()
-        titleLabel.textColor = style.color.main.get()
+        titleLabel.font = Brand.font(for: .largeStrong)
+        titleLabel.textColor = Brand.color(for: .text(.primary))
         titleLabel.lineBreakMode = .byWordWrapping
         titleLabel.numberOfLines = 0
         titleLabel.adjustsFontSizeToFitWidth = false
         titleLabel.sizeToFit()
 
         dateLabel.text = dateFormatter.string(from: input.createdAt)
-        dateLabel.font = style.font.small.get()
-        dateLabel.textColor = style.color.main.get()
+        dateLabel.font = Brand.font(for: .small)
+        dateLabel.textColor = Brand.color(for: .text(.primary))
         
         artistNameLabel.text = input.author.name
-        artistNameLabel.font = style.font.regular.get()
-        artistNameLabel.textColor = style.color.main.get()
+        artistNameLabel.font = Brand.font(for: .medium)
+        artistNameLabel.textColor = Brand.color(for: .text(.primary))
 
         commentButton.setTitle("\(input.commentCount)", for: .normal)
 

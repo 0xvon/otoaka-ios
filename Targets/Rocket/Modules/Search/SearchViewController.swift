@@ -38,12 +38,12 @@ final class SearchViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
 
         searchBar.delegate = self
-        searchBar.barTintColor = style.color.background.get()
+        searchBar.barTintColor = Brand.color(for: .background(.primary))
         searchBar.searchTextField.placeholder = "バンド・ライブを探す"
-        searchBar.searchTextField.textColor = style.color.main.get()
+        searchBar.searchTextField.textColor = Brand.color(for: .text(.primary))
         searchBar.showsSearchResultsButton = false
 
         let liveImageView = UIImageView()
@@ -54,8 +54,8 @@ final class SearchViewController: UIViewController, Instantiable {
         let liveTextLabel = UILabel()
         liveTextLabel.translatesAutoresizingMaskIntoConstraints = false
         liveTextLabel.text = "ライブ"
-        liveTextLabel.font = style.font.regular.get()
-        liveTextLabel.textColor = style.color.main.get()
+        liveTextLabel.font = Brand.font(for: .medium)
+        liveTextLabel.textColor = Brand.color(for: .text(.primary))
         liveChoiceView.addSubview(liveTextLabel)
 
         let liveChoiceButton = UIButton()
@@ -73,8 +73,8 @@ final class SearchViewController: UIViewController, Instantiable {
         let bandTextLabel = UILabel()
         bandTextLabel.translatesAutoresizingMaskIntoConstraints = false
         bandTextLabel.text = "バンド"
-        bandTextLabel.font = style.font.regular.get()
-        bandTextLabel.textColor = style.color.main.get()
+        bandTextLabel.font = Brand.font(for: .medium)
+        bandTextLabel.textColor = Brand.color(for: .text(.primary))
         bandChoiceView.addSubview(bandTextLabel)
 
         let bandChoiceButton = UIButton()
@@ -123,11 +123,11 @@ final class SearchViewController: UIViewController, Instantiable {
         case .live:
             bandChoiceView.layer.borderWidth = 0
             liveChoiceView.layer.borderWidth = 1
-            liveChoiceView.layer.borderColor = style.color.main.get().cgColor
+            liveChoiceView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         case .band:
             liveChoiceView.layer.borderWidth = 0
             bandChoiceView.layer.borderWidth = 1
-            bandChoiceView.layer.borderColor = style.color.main.get().cgColor
+            bandChoiceView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         }
     }
 

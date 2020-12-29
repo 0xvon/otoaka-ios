@@ -58,7 +58,7 @@ final class TicketViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
 
         ticketsTableView.delegate = self
         ticketsTableView.dataSource = self
@@ -116,7 +116,7 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 300, height: 40))
             let titleView = TitleLabelView(
                 input: (
-                    title: "TICKETS", font: style.font.xlarge.get(), color: style.color.main.get()
+                    title: "TICKETS", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary))
                 ))
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)

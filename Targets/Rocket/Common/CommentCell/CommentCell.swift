@@ -30,7 +30,7 @@ class CommentCell: UITableViewCell, ReusableCell {
     }
     
     func setup() {
-        backgroundColor = style.color.background.get()
+        backgroundColor = Brand.color(for: .background(.primary))
         
         if let thumbnailUrl = input.author.thumbnailURL {
             thumbnailImageView.loadImageAsynchronously(url: URL(string: thumbnailUrl))
@@ -40,16 +40,16 @@ class CommentCell: UITableViewCell, ReusableCell {
         thumbnailImageView.layer.cornerRadius = 32
         
         nameLabel.text = input.author.name
-        nameLabel.font = style.font.large.get()
-        nameLabel.textColor = style.color.main.get()
+        nameLabel.font = Brand.font(for: .largeStrong)
+        nameLabel.textColor = Brand.color(for: .text(.primary))
         
         dateLabel.text = dateFormatter.string(from: input.createdAt)
-        dateLabel.font = style.font.small.get()
-        dateLabel.textColor = style.color.main.get()
+        dateLabel.font = Brand.font(for: .small)
+        dateLabel.textColor = Brand.color(for: .text(.primary))
         
         commentTextView.text = input.text
-        commentTextView.font = style.font.regular.get()
+        commentTextView.font = Brand.font(for: .medium)
         commentTextView.backgroundColor = .clear
-        commentTextView.textColor = style.color.main.get()
+        commentTextView.textColor = Brand.color(for: .text(.primary))
     }
 }

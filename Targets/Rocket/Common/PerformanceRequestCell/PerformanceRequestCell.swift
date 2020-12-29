@@ -41,7 +41,7 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
     func setup() {
         self.backgroundColor = .clear
         self.layer.borderWidth = 1
-        self.layer.borderColor = style.color.main.get().cgColor
+        self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         self.layer.cornerRadius = 10
 
         liveArtworkImageView.loadImageAsynchronously(url: input.live.artworkURL)
@@ -56,13 +56,13 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
         bandImageView.clipsToBounds = true
 
         hostGroupNameLabel.text = "\(input.live.hostGroup.name)から"
-        hostGroupNameLabel.font = style.font.regular.get()
-        hostGroupNameLabel.textColor = style.color.main.get()
+        hostGroupNameLabel.font = Brand.font(for: .medium)
+        hostGroupNameLabel.textColor = Brand.color(for: .text(.primary))
         hostGroupNameLabel.backgroundColor = .clear
 
         liveTitleLabel.text = input.live.title
-        liveTitleLabel.font = style.font.xlarge.get()
-        liveTitleLabel.textColor = style.color.main.get()
+        liveTitleLabel.font = Brand.font(for: .xlargeStrong)
+        liveTitleLabel.textColor = Brand.color(for: .text(.primary))
         liveTitleLabel.backgroundColor = .clear
         liveTitleLabel.lineBreakMode = .byWordWrapping
         liveTitleLabel.numberOfLines = 0
@@ -77,8 +77,8 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
         case .festival(let groups):
             self.performersLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
-        performersLabel.font = style.font.regular.get()
-        performersLabel.textColor = style.color.main.get()
+        performersLabel.font = Brand.font(for: .medium)
+        performersLabel.textColor = Brand.color(for: .text(.primary))
         performersLabel.lineBreakMode = .byWordWrapping
         performersLabel.numberOfLines = 0
         performersLabel.adjustsFontSizeToFitWidth = false

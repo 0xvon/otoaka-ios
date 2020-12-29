@@ -35,8 +35,8 @@ final class CreateButton: UIView {
     func setup() {
         self.layer.cornerRadius = self.bounds.width / 2
         self.layer.borderWidth = 1
-        self.layer.borderColor = style.color.main.get().cgColor
-        self.backgroundColor = style.color.background.get()
+        self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+        self.backgroundColor = Brand.color(for: .background(.primary))
 
         imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false

@@ -50,18 +50,18 @@ final class LiveViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
-        self.view.tintColor = style.color.main.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
+        self.view.tintColor = Brand.color(for: .text(.primary))
 
         liveTableView.delegate = self
         liveTableView.dataSource = self
         liveTableView.register(
             UINib(nibName: "LiveCell", bundle: nil), forCellReuseIdentifier: "LiveCell")
-        liveTableView.backgroundColor = style.color.background.get()
+        liveTableView.backgroundColor = Brand.color(for: .background(.primary))
 
-        liveSearchBar.barTintColor = style.color.background.get()
+        liveSearchBar.barTintColor = Brand.color(for: .background(.primary))
         liveSearchBar.searchTextField.placeholder = "ライブを探す"
-        liveSearchBar.searchTextField.textColor = style.color.main.get()
+        liveSearchBar.searchTextField.textColor = Brand.color(for: .text(.primary))
     }
 
     @objc func tappedButton(sender: UIButton!) {
@@ -102,7 +102,7 @@ extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
                 frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 32, height: 60))
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 300, height: 40))
             let titleView = TitleLabelView(
-                input: (title: "LIVE", font: style.font.xlarge.get(), color: style.color.main.get())
+                input: (title: "LIVE", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary)))
             )
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)

@@ -78,14 +78,14 @@ final class GroupListViewController: UIViewController, Instantiable {
     }
         
     func setup() {
-        view.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         groupTableView = UITableView()
         groupTableView.translatesAutoresizingMaskIntoConstraints = false
         groupTableView.showsVerticalScrollIndicator = false
         groupTableView.tableFooterView = UIView(frame: .zero)
         groupTableView.separatorStyle = .none
-        groupTableView.backgroundColor = style.color.background.get()
+        groupTableView.backgroundColor = Brand.color(for: .background(.primary))
         groupTableView.delegate = self
         groupTableView.dataSource = self
         groupTableView.register(

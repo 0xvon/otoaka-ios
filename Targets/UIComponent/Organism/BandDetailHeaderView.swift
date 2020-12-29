@@ -66,8 +66,7 @@ public final class BandDetailHeaderView: UIView {
     private lazy var bandNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = style.font.xlarge.get()
-        label.textColor = style.color.main.get()
+        label.font = Brand.font(for: .xlarge)
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = false
@@ -120,16 +119,16 @@ public final class BandDetailHeaderView: UIView {
         let trackNameLabel = UILabel()
         trackNameLabel.translatesAutoresizingMaskIntoConstraints = false
         trackNameLabel.text = ""
-        trackNameLabel.font = style.font.regular.get()
-        trackNameLabel.textColor = style.color.main.get()
+        trackNameLabel.font = Brand.font(for: .mediumStrong)
+        trackNameLabel.textColor = Brand.color(for: .text(.primary))
         return trackNameLabel
     }()
     private lazy var releasedDataLabel: UILabel = {
         let releasedDataLabel = UILabel()
         releasedDataLabel.translatesAutoresizingMaskIntoConstraints = false
         releasedDataLabel.text = ""
-        releasedDataLabel.font = style.font.regular.get()
-        releasedDataLabel.textColor = style.color.main.get()
+        releasedDataLabel.font = Brand.font(for: .small)
+        releasedDataLabel.textColor = Brand.color(for: .text(.primary))
         return releasedDataLabel
     }()
     private lazy var seeMoreTracksButton: UIButton = {
@@ -137,8 +136,8 @@ public final class BandDetailHeaderView: UIView {
         seeMoreTracksButton.isHidden = true
         seeMoreTracksButton.translatesAutoresizingMaskIntoConstraints = false
         seeMoreTracksButton.setTitle("もっと見る", for: .normal)
-        seeMoreTracksButton.setTitleColor(style.color.main.get(), for: .normal)
-        seeMoreTracksButton.titleLabel?.font = style.font.small.get()
+        seeMoreTracksButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        seeMoreTracksButton.titleLabel?.font = Brand.font(for: .small)
         return seeMoreTracksButton
     }()
     private lazy var stackView: UIStackView = {
@@ -191,10 +190,10 @@ public final class BandDetailHeaderView: UIView {
         let biographyTextView = UITextView()
         biographyTextView.translatesAutoresizingMaskIntoConstraints = false
         biographyTextView.isScrollEnabled = true
-        biographyTextView.textColor = style.color.main.get()
+        biographyTextView.textColor = Brand.color(for: .text(.primary))
         biographyTextView.backgroundColor = .clear
         biographyTextView.isEditable = false
-        biographyTextView.font = style.font.regular.get()
+        biographyTextView.font = Brand.font(for: .medium)
         return biographyTextView
     }()
     

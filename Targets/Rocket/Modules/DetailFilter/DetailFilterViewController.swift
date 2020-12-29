@@ -51,7 +51,7 @@ final class DetailFilterViewController: UIViewController, Instantiable {
     }
     
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
         
         verticalScrollView = UIScrollView()
         verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,7 +60,7 @@ final class DetailFilterViewController: UIViewController, Instantiable {
         
         settingView = UIView()
         settingView.translatesAutoresizingMaskIntoConstraints = false
-        settingView.backgroundColor = style.color.background.get()
+        settingView.backgroundColor = Brand.color(for: .background(.primary))
         verticalScrollView.addSubview(settingView)
 
         prefecturePicker = UIPickerView()
@@ -69,7 +69,7 @@ final class DetailFilterViewController: UIViewController, Instantiable {
         prefecturePicker.delegate = self
 
         bandSettingView = UIView()
-        bandSettingView.backgroundColor = style.color.background.get()
+        bandSettingView.backgroundColor = Brand.color(for: .background(.primary))
         bandSettingView.translatesAutoresizingMaskIntoConstraints = false
         settingView.addSubview(bandSettingView)
 
@@ -89,7 +89,7 @@ final class DetailFilterViewController: UIViewController, Instantiable {
         hometownView.addSubview(prefectureTextFieldView)
 
         liveSettingView = UIView()
-        liveSettingView.backgroundColor = style.color.background.get()
+        liveSettingView.backgroundColor = Brand.color(for: .background(.primary))
         liveSettingView.translatesAutoresizingMaskIntoConstraints = false
         settingView.addSubview(liveSettingView)
 
@@ -108,7 +108,7 @@ final class DetailFilterViewController: UIViewController, Instantiable {
         datePicker.datePickerMode = .date
         datePicker.addTarget(
             self, action: #selector(datePickerValueChanged(_:)), for: .valueChanged)
-        datePicker.tintColor = style.color.main.get()
+        datePicker.tintColor = Brand.color(for: .text(.primary))
         datePicker.backgroundColor = .clear
 
         calendarView.addSubview(datePicker)
@@ -117,10 +117,10 @@ final class DetailFilterViewController: UIViewController, Instantiable {
         
         postButton = UIButton()
         postButton.translatesAutoresizingMaskIntoConstraints = false
-        postButton.setTitleColor(style.color.main.get(), for: .normal)
+        postButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
         postButton.setTitle("OK", for: .normal)
         postButton.addTarget(self, action: #selector(post(_:)), for: .touchUpInside)
-        postButton.titleLabel?.font = style.font.large.get()
+        postButton.titleLabel?.font = Brand.font(for: .largeStrong)
 
         let constraints = [
             verticalScrollView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),

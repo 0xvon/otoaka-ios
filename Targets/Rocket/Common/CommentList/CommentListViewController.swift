@@ -66,14 +66,14 @@ final class CommentListViewController: UIViewController, Instantiable {
     }
         
     func setup() {
-        view.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         commentTableView = UITableView(frame: .zero, style: .grouped)
         commentTableView.translatesAutoresizingMaskIntoConstraints = false
         commentTableView.showsVerticalScrollIndicator = false
         commentTableView.tableFooterView = UIView(frame: .zero)
         commentTableView.separatorStyle = .none
-        commentTableView.backgroundColor = style.color.background.get()
+        commentTableView.backgroundColor = Brand.color(for: .background(.primary))
         commentTableView.delegate = self
         commentTableView.dataSource = self
         commentTableView.register(
@@ -147,11 +147,11 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
             textView.translatesAutoresizingMaskIntoConstraints = false
             textView.layer.cornerRadius = 16
             textView.layer.borderWidth = 1
-            textView.layer.borderColor = style.color.main.get().cgColor
+            textView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
             textView.backgroundColor = .clear
             textView.isEditable = true
-            textView.font = style.font.regular.get()
-            textView.textColor = style.color.main.get()
+            textView.font = Brand.font(for: .medium)
+            textView.textColor = Brand.color(for: .text(.primary))
             view.addSubview(textView)
             
             let commentView = UIView()

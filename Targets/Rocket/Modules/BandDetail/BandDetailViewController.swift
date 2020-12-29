@@ -158,7 +158,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func setupViews() {
-        view.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
         // FIXME:
         headerView.inject(input: (group: viewModel.state.group, groupItem: nil))
 
@@ -282,7 +282,7 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let view = UIView()
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
             let titleView = TitleLabelView(
-                input: (title: "LIVE", font: style.font.xlarge.get(), color: style.color.main.get())
+                input: (title: "LIVE", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary)))
             )
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)
@@ -290,8 +290,8 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let seeMoreButton = UIButton(
                 frame: CGRect(x: UIScreen.main.bounds.width - 132, y: 16, width: 100, height: 40))
             seeMoreButton.setTitle("もっと見る", for: .normal)
-            seeMoreButton.setTitleColor(style.color.main.get(), for: .normal)
-            seeMoreButton.titleLabel?.font = style.font.small.get()
+            seeMoreButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+            seeMoreButton.titleLabel?.font = Brand.font(for: .small)
             seeMoreButton.addTarget(self, action: #selector(seeMoreLive(_:)), for: .touchUpInside)
             view.addSubview(seeMoreButton)
 
@@ -301,7 +301,7 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 150, height: 40))
             let titleView = TitleLabelView(
                 input: (
-                    title: "CONTENTS", font: style.font.xlarge.get(), color: style.color.main.get()
+                    title: "CONTENTS", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary))
                 ))
             titleBaseView.addSubview(titleView)
             view.addSubview(titleBaseView)
@@ -309,8 +309,8 @@ extension BandDetailViewController: UITableViewDelegate, UITableViewDataSource {
             let seeMoreButton = UIButton(
                 frame: CGRect(x: UIScreen.main.bounds.width - 132, y: 16, width: 100, height: 40))
             seeMoreButton.setTitle("もっと見る", for: .normal)
-            seeMoreButton.setTitleColor(style.color.main.get(), for: .normal)
-            seeMoreButton.titleLabel?.font = style.font.small.get()
+            seeMoreButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+            seeMoreButton.titleLabel?.font = Brand.font(for: .small)
             seeMoreButton.addTarget(
                 self, action: #selector(seeMoreContents(_:)), for: .touchUpInside)
             view.addSubview(seeMoreButton)

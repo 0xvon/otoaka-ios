@@ -102,7 +102,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "ライブ作成"
 
         verticalScrollView = UIScrollView()
@@ -113,7 +113,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
         mainView = UIView()
         mainView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.backgroundColor = style.color.background.get()
+        mainView.backgroundColor = Brand.color(for: .background(.primary))
         verticalScrollView.addSubview(mainView)
 
         mainViewHeightConstraint = NSLayoutConstraint(
@@ -182,14 +182,14 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         openTimeInputView.datePickerMode = .dateAndTime
         openTimeInputView.addTarget(
             self, action: #selector(openTimeChanged(_:)), for: .valueChanged)
-        openTimeInputView.tintColor = style.color.main.get()
+        openTimeInputView.tintColor = Brand.color(for: .text(.primary))
         openTimeInputView.backgroundColor = .clear
         mainView.addSubview(openTimeInputView)
 
         let openTimeLabel = UILabel()
         openTimeLabel.text = "開場時間"
-        openTimeLabel.font = style.font.regular.get()
-        openTimeLabel.textColor = style.color.main.get()
+        openTimeLabel.font = Brand.font(for: .medium)
+        openTimeLabel.textColor = Brand.color(for: .text(.primary))
         openTimeLabel.textAlignment = .center
         openTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(openTimeLabel)
@@ -200,14 +200,14 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         startTimeInputView.datePickerMode = .dateAndTime
         startTimeInputView.addTarget(
             self, action: #selector(startTimeChanged(_:)), for: .valueChanged)
-        startTimeInputView.tintColor = style.color.main.get()
+        startTimeInputView.tintColor = Brand.color(for: .text(.primary))
         startTimeInputView.backgroundColor = .clear
         mainView.addSubview(startTimeInputView)
 
         let startTimeLabel = UILabel()
         startTimeLabel.text = "開演時間"
-        startTimeLabel.font = style.font.regular.get()
-        startTimeLabel.textColor = style.color.main.get()
+        startTimeLabel.font = Brand.font(for: .medium)
+        startTimeLabel.textColor = Brand.color(for: .text(.primary))
         startTimeLabel.textAlignment = .center
         startTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(startTimeLabel)
@@ -217,14 +217,14 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         endTimeInputView.date = Date()
         endTimeInputView.datePickerMode = .dateAndTime
         endTimeInputView.addTarget(self, action: #selector(endTimeChanged(_:)), for: .valueChanged)
-        endTimeInputView.tintColor = style.color.main.get()
+        endTimeInputView.tintColor = Brand.color(for: .text(.primary))
         endTimeInputView.backgroundColor = .clear
         mainView.addSubview(endTimeInputView)
 
         let endTimeLabel = UILabel()
         endTimeLabel.text = "終演時間"
-        endTimeLabel.font = style.font.regular.get()
-        endTimeLabel.textColor = style.color.main.get()
+        endTimeLabel.font = Brand.font(for: .medium)
+        endTimeLabel.textColor = Brand.color(for: .text(.primary))
         endTimeLabel.textAlignment = .center
         endTimeLabel.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(endTimeLabel)
@@ -241,7 +241,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         thumbnailImageView.clipsToBounds = true
         thumbnailImageView.layer.opacity = 0.6
         thumbnailImageView.contentMode = .scaleAspectFill
-        thumbnailImageView.backgroundColor = style.color.subBackground.get()
+        thumbnailImageView.backgroundColor = Brand.color(for: .background(.cellSelected))
         thumbnailInputView.addSubview(thumbnailImageView)
 
         let changeThumbnailButton = UIButton()
@@ -253,8 +253,8 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         thumbnailInputView.addSubview(changeThumbnailButton)
 
         let thumbnailLabel = UILabel()
-        thumbnailLabel.font = style.font.regular.get()
-        thumbnailLabel.textColor = style.color.main.get()
+        thumbnailLabel.font = Brand.font(for: .medium)
+        thumbnailLabel.textColor = Brand.color(for: .text(.primary))
         thumbnailLabel.textAlignment = .center
         thumbnailLabel.text = "サムネイル画像"
         thumbnailLabel.translatesAutoresizingMaskIntoConstraints = false

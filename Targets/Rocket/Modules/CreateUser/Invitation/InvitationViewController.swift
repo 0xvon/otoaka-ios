@@ -58,16 +58,16 @@ final class InvitationViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
 
         switch dependencyProvider.user.role {
         case .fan(_):
             orLabel.isHidden = true
             createBandButton.isHidden = true
         case .artist(_):
-            orLabel.font = style.font.small.get()
-            orLabel.textColor = style.color.main.get()
-            createBandButton.setTitleColor(style.color.sub.get(), for: .normal)
+            orLabel.font = Brand.font(for: .small)
+            orLabel.textColor = Brand.color(for: .text(.primary))
+            createBandButton.setTitleColor(Brand.color(for: .text(.toggle)), for: .normal)
             createBandButton.addTarget(self, action: #selector(createBand(_:)), for: .touchUpInside)
         }
 
@@ -80,8 +80,8 @@ final class InvitationViewController: UIViewController, Instantiable {
         let skipButton = UIButton()
         skipButton.translatesAutoresizingMaskIntoConstraints = false
         skipButton.setTitle("skip", for: .normal)
-        skipButton.titleLabel?.font = style.font.regular.get()
-        skipButton.setTitleColor(style.color.main.get(), for: .normal)
+        skipButton.titleLabel?.font = Brand.font(for: .medium)
+        skipButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
         skipButton.addTarget(self, action: #selector(skip(_:)), for: .touchUpInside)
         self.view.addSubview(skipButton)
 

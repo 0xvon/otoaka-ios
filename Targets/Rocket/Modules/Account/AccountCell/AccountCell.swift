@@ -34,15 +34,15 @@ class AccountCell: UITableViewCell, ReusableCell {
         itemImageView.image = input.image
 
         itemTitleLabel.text = input.title
-        itemTitleLabel.textColor = style.color.main.get()
-        itemTitleLabel.font = style.font.regular.get()
+        itemTitleLabel.textColor = Brand.color(for: .text(.primary))
+        itemTitleLabel.font = Brand.font(for: .mediumStrong)
 
         notification()
     }
 
     func notification() {
         if input.hasNotif {
-            notifView.backgroundColor = style.color.second.get()
+            notifView.backgroundColor = Brand.color(for: .brand(.primary))
             notifView.layer.cornerRadius = 5
         } else {
             notifView.backgroundColor = .clear

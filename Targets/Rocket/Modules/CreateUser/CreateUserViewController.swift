@@ -78,7 +78,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
 
         let fanImageView = UIImageView()
         fanImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -88,8 +88,8 @@ final class CreateUserViewController: UIViewController, Instantiable {
         let fanTitleLabel = UILabel()
         fanTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         fanTitleLabel.text = "ファン"
-        fanTitleLabel.font = style.font.regular.get()
-        fanTitleLabel.textColor = style.color.main.get()
+        fanTitleLabel.font = Brand.font(for: .medium)
+        fanTitleLabel.textColor = Brand.color(for: .text(.primary))
         fanSection.addSubview(fanTitleLabel)
 
         let fanSectionButton = UIButton()
@@ -107,8 +107,8 @@ final class CreateUserViewController: UIViewController, Instantiable {
         let bandTitleLabel = UILabel()
         bandTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         bandTitleLabel.text = "メンバー"
-        bandTitleLabel.font = style.font.regular.get()
-        bandTitleLabel.textColor = style.color.main.get()
+        bandTitleLabel.font = Brand.font(for: .medium)
+        bandTitleLabel.textColor = Brand.color(for: .text(.primary))
         bandSection.addSubview(bandTitleLabel)
 
         let bandSectionButton = UIButton()
@@ -118,7 +118,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         bandSection.addSubview(bandSectionButton)
 
         fanInputs = UIView()
-        fanInputs.backgroundColor = style.color.background.get()
+        fanInputs.backgroundColor = Brand.color(for: .background(.primary))
         fanInputs.translatesAutoresizingMaskIntoConstraints = false
         profileInputView.addSubview(fanInputs)
 
@@ -127,7 +127,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         fanInputs.addSubview(nameInputView)
 
         bandInputs = UIView()
-        bandInputs.backgroundColor = style.color.background.get()
+        bandInputs.backgroundColor = Brand.color(for: .background(.primary))
         bandInputs.translatesAutoresizingMaskIntoConstraints = false
         profileInputView.addSubview(bandInputs)
 
@@ -166,8 +166,8 @@ final class CreateUserViewController: UIViewController, Instantiable {
         profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
         profileImageTitle.text = "プロフィール画像"
         profileImageTitle.textAlignment = .center
-        profileImageTitle.font = style.font.regular.get()
-        profileImageTitle.textColor = style.color.main.get()
+        profileImageTitle.font = Brand.font(for: .medium)
+        profileImageTitle.textColor = Brand.color(for: .text(.primary))
         setProfileView.addSubview(profileImageTitle)
 
         createUserButtonView.setTitle("ユーザ作成", for: .normal)
@@ -254,12 +254,12 @@ final class CreateUserViewController: UIViewController, Instantiable {
         switch self.sectionType {
         case .fan:
             fanSection.layer.borderWidth = 1
-            fanSection.layer.borderColor = style.color.main.get().cgColor
+            fanSection.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
             bandSection.layer.borderWidth = 0
             profileInputView.bringSubviewToFront(fanInputs)
         case .artist:
             bandSection.layer.borderWidth = 1
-            bandSection.layer.borderColor = style.color.main.get().cgColor
+            bandSection.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
             fanSection.layer.borderWidth = 0
             profileInputView.bringSubviewToFront(bandInputs)
         }

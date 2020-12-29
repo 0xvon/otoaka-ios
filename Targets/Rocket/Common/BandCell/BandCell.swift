@@ -33,18 +33,18 @@ final class BandCell: UITableViewCell, ReusableCell {
     }
 
     func setup() {
-        backgroundColor = style.color.background.get()
+        backgroundColor = Brand.color(for: .background(.primary))
 
         jacketImageView.loadImageAsynchronously(url: input.artworkURL)
         jacketImageView.layer.opacity = 0.6
         jacketImageView.layer.cornerRadius = 16
         jacketImageView.layer.borderWidth = 1
-        jacketImageView.layer.borderColor = style.color.main.get().cgColor
+        jacketImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         jacketImageView.clipsToBounds = true
 
         bandName.text = input.name
-        bandName.font = style.font.xlarge.get()
-        bandName.textColor = style.color.main.get()
+        bandName.font = Brand.font(for: .xlargeStrong)
+        bandName.textColor = Brand.color(for: .text(.primary))
 
         productionBadgeView.isHidden = true
         productionBadgeView.inject(

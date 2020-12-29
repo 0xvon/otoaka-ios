@@ -49,16 +49,16 @@ final class InputTextView: UIView {
         section = UILabel()
         section.translatesAutoresizingMaskIntoConstraints = false
         section.text = input.section
-        section.textColor = style.color.sub.get()
-        section.font = style.font.regular.get()
+        section.textColor = Brand.color(for: .text(.toggle))
+        section.font = Brand.font(for: .medium)
         contentView.addSubview(section)
 
         textView = UITextView()
         textView.returnKeyType = .done
         textView.backgroundColor = .clear
         textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.textColor = style.color.main.get()
-        textView.font = style.font.regular.get()
+        textView.textColor = Brand.color(for: .text(.primary))
+        textView.font = Brand.font(for: .medium)
         textView.text = input.text
         contentView.addSubview(textView)
 
@@ -93,9 +93,9 @@ final class InputTextView: UIView {
     func underLineColor() {
         guard let text = textView.text else { return }
         if text.isEmpty {
-            underLine.backgroundColor = style.color.subBackground.get()
+            underLine.backgroundColor = Brand.color(for: .text(.primary))
         } else {
-            underLine.backgroundColor = style.color.second.get()
+            underLine.backgroundColor = Brand.color(for: .text(.toggle))
         }
     }
 
@@ -111,7 +111,7 @@ final class InputTextView: UIView {
 
 extension InputTextView: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
-        underLine.backgroundColor = style.color.main.get()
+        underLine.backgroundColor = Brand.color(for: .text(.primary))
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {

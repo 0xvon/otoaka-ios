@@ -131,8 +131,8 @@ final class LiveDetailHeaderView: UIView {
 
         liveTitleLabel = UILabel()
         liveTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        liveTitleLabel.font = style.font.xlarge.get()
-        liveTitleLabel.textColor = style.color.main.get()
+        liveTitleLabel.font = Brand.font(for: .xlargeStrong)
+        liveTitleLabel.textColor = Brand.color(for: .text(.primary))
         liveTitleLabel.lineBreakMode = .byWordWrapping
         liveTitleLabel.numberOfLines = 0
         liveTitleLabel.adjustsFontSizeToFitWidth = false
@@ -141,8 +141,8 @@ final class LiveDetailHeaderView: UIView {
 
         bandNameLabel = UILabel()
         bandNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        bandNameLabel.font = style.font.regular.get()
-        bandNameLabel.textColor = style.color.main.get()
+        bandNameLabel.font = Brand.font(for: .medium)
+        bandNameLabel.textColor = Brand.color(for: .text(.primary))
         bandNameLabel.lineBreakMode = .byWordWrapping
         bandNameLabel.numberOfLines = 0
         bandNameLabel.adjustsFontSizeToFitWidth = false

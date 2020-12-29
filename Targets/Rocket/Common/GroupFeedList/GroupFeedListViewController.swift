@@ -58,14 +58,14 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
     }
         
     func setup() {
-        view.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         contentsTableView = UITableView()
         contentsTableView.translatesAutoresizingMaskIntoConstraints = false
         contentsTableView.showsVerticalScrollIndicator = false
         contentsTableView.tableFooterView = UIView(frame: .zero)
         contentsTableView.separatorStyle = .none
-        contentsTableView.backgroundColor = style.color.background.get()
+        contentsTableView.backgroundColor = Brand.color(for: .background(.primary))
         contentsTableView.delegate = self
         contentsTableView.dataSource = self
         contentsTableView.register(

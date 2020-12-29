@@ -46,15 +46,15 @@ class LiveCell: UITableViewCell, ReusableCell {
         setup()
     }
 
-    func setup() {
+    func setup() { 
         self.backgroundColor = .clear
         self.layer.borderWidth = 1
-        self.layer.borderColor = style.color.main.get().cgColor
+        self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         self.layer.cornerRadius = 10
 
         self.liveTitleLabel.text = input.title
-        self.liveTitleLabel.font = style.font.xlarge.get()
-        self.liveTitleLabel.textColor = style.color.main.get()
+        self.liveTitleLabel.font = Brand.font(for: .xlargeStrong)
+        self.liveTitleLabel.textColor = Brand.color(for: .text(.primary))
         self.liveTitleLabel.backgroundColor = .clear
         self.liveTitleLabel.lineBreakMode = .byWordWrapping
         self.liveTitleLabel.numberOfLines = 0
@@ -69,8 +69,8 @@ class LiveCell: UITableViewCell, ReusableCell {
         case .festival(let groups):
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
-        self.bandsLabel.font = style.font.regular.get()
-        self.bandsLabel.textColor = style.color.main.get()
+        self.bandsLabel.font = Brand.font(for: .medium)
+        self.bandsLabel.textColor = Brand.color(for: .text(.primary))
         self.bandsLabel.lineBreakMode = .byWordWrapping
         self.bandsLabel.numberOfLines = 0
         self.bandsLabel.adjustsFontSizeToFitWidth = false

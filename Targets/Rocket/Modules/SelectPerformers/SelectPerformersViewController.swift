@@ -59,13 +59,13 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
     }
     
     func setup() {
-        view.backgroundColor = style.color.background.get()
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         searchBar = UISearchBar()
         searchBar.translatesAutoresizingMaskIntoConstraints = false
-        searchBar.barTintColor = style.color.background.get()
+        searchBar.barTintColor = Brand.color(for: .background(.primary))
         searchBar.searchTextField.placeholder = "バンド名から探す"
-        searchBar.searchTextField.textColor = style.color.main.get()
+        searchBar.searchTextField.textColor = Brand.color(for: .text(.primary))
         searchBar.returnKeyType = .go
         searchBar.delegate = self
         self.view.addSubview(searchBar)
@@ -76,7 +76,7 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
         groupTableView.dataSource = self
         groupTableView.tableFooterView = UIView(frame: .zero)
         groupTableView.separatorStyle = .none
-        groupTableView.backgroundColor = style.color.background.get()
+        groupTableView.backgroundColor = Brand.color(for: .background(.primary))
         groupTableView.allowsMultipleSelection = true
         groupTableView.refreshControl = UIRefreshControl()
         groupTableView.refreshControl?.addTarget(
@@ -87,7 +87,7 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
         
         let okButtonView = UIView()
         okButtonView.translatesAutoresizingMaskIntoConstraints = false
-        okButtonView.backgroundColor = style.color.background.get()
+        okButtonView.backgroundColor = Brand.color(for: .background(.primary))
         self.view.addSubview(okButtonView)
         
         okButton = PrimaryButton(text: "ok")

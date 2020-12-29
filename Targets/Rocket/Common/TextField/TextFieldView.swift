@@ -49,20 +49,20 @@ final class TextFieldView: UIView {
         section = UILabel()
         section.translatesAutoresizingMaskIntoConstraints = false
         section.text = input.section
-        section.font = style.font.regular.get()
-        section.textColor = style.color.sub.get()
+        section.font = Brand.font(for: .medium)
+        section.textColor = Brand.color(for: .text(.toggle))
         contentView.addSubview(section)
 
         textField = UITextField()
         textField.returnKeyType = .done
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.delegate = self
-        textField.textColor = style.color.main.get()
-        textField.font = style.font.regular.get()
+        textField.textColor = Brand.color(for: .text(.primary))
+        textField.font = Brand.font(for: .medium)
 //        textField.placeholder = self.input.placeholder
 //        textField.attributedPlaceholder = NSAttributedString(
 //            string: self.input.placeholder,
-//            attributes: [NSAttributedString.Key.foregroundColor: style.color.main.get()])
+//            attributes: [NSAttributedString.Key.foregroundColor: Brand.color(for: .text(.primary))])
         textField.text = input.text
         textField.borderStyle = .none
         contentView.addSubview(textField)
@@ -102,9 +102,9 @@ final class TextFieldView: UIView {
     func underLineColor() {
         guard let text = textField.text else { return }
         if text.isEmpty {
-            underLine.backgroundColor = style.color.subBackground.get()
+            underLine.backgroundColor = Brand.color(for: .text(.primary))
         } else {
-            underLine.backgroundColor = style.color.second.get()
+            underLine.backgroundColor = Brand.color(for: .text(.toggle))
         }
     }
 
@@ -134,7 +134,7 @@ final class TextFieldView: UIView {
 
 extension TextFieldView: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        underLine.backgroundColor = style.color.main.get()
+        underLine.backgroundColor = Brand.color(for: .text(.primary))
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

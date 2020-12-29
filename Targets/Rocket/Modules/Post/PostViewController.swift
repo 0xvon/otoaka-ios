@@ -69,11 +69,11 @@ final class PostViewController: UIViewController, Instantiable {
     )
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
         
         postView = UIView()
         postView.translatesAutoresizingMaskIntoConstraints = false
-        postView.backgroundColor = style.color.background.get()
+        postView.backgroundColor = Brand.color(for: .background(.primary))
         self.view.addSubview(postView)
         
         postViewHeightConstraint = NSLayoutConstraint(
@@ -101,8 +101,8 @@ final class PostViewController: UIViewController, Instantiable {
         textView.isScrollEnabled = true
         textView.backgroundColor = .clear
         textView.delegate = self
-        textView.font = style.font.large.get()
-        textView.textColor = style.color.main.get()
+        textView.font = Brand.font(for: .largeStrong)
+        textView.textColor = Brand.color(for: .text(.primary))
         postView.addSubview(textView)
         
         movieThumbnailImageView = UIImageView()
@@ -114,21 +114,21 @@ final class PostViewController: UIViewController, Instantiable {
         
         cancelMovieButton = UIButton()
         cancelMovieButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelMovieButton.setTitleColor(style.color.main.get(), for: .normal)
-        cancelMovieButton.setTitleColor(style.color.subBackground.get(), for: .highlighted)
+        cancelMovieButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        cancelMovieButton.setTitleColor(Brand.color(for: .background(.cellSelected)), for: .highlighted)
         cancelMovieButton.setTitle("✗", for: .normal)
         cancelMovieButton.addTarget(self, action: #selector(cancelMovie(_:)), for: .touchUpInside)
         cancelMovieButton.isHidden = true
-        cancelMovieButton.titleLabel?.font = style.font.large.get()
+        cancelMovieButton.titleLabel?.font = Brand.font(for: .largeStrong)
         cancelMovieButton.layer.cornerRadius = 12
         cancelMovieButton.layer.borderWidth = 1
-        cancelMovieButton.layer.borderColor = style.color.main.get().cgColor
+        cancelMovieButton.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         postView.addSubview(cancelMovieButton)
         
         numOfTextLable = UILabel()
         numOfTextLable.translatesAutoresizingMaskIntoConstraints = false
         numOfTextLable.text = "140"
-        numOfTextLable.font = style.font.regular.get()
+        numOfTextLable.font = Brand.font(for: .medium)
         postView.addSubview(numOfTextLable)
         
         sectionView = UIView()
@@ -138,7 +138,7 @@ final class PostViewController: UIViewController, Instantiable {
         
         let sectionBorderView = UIView()
         sectionBorderView.translatesAutoresizingMaskIntoConstraints = false
-        sectionBorderView.backgroundColor = style.color.main.get()
+        sectionBorderView.backgroundColor = Brand.color(for: .text(.primary))
         sectionView.addSubview(sectionBorderView)
         
         setupSectionView()
@@ -149,11 +149,11 @@ final class PostViewController: UIViewController, Instantiable {
 
         postButton = UIButton()
         postButton.translatesAutoresizingMaskIntoConstraints = false
-        postButton.setTitleColor(style.color.main.get(), for: .normal)
-        postButton.setTitleColor(style.color.subBackground.get(), for: .highlighted)
+        postButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        postButton.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
         postButton.setTitle("post", for: .normal)
         postButton.addTarget(self, action: #selector(post(_:)), for: .touchUpInside)
-        postButton.titleLabel?.font = style.font.large.get()
+        postButton.titleLabel?.font = Brand.font(for: .largeStrong)
 
         let barButtonItem = UIBarButtonItem(customView: postButton)
         self.navigationItem.rightBarButtonItem = barButtonItem

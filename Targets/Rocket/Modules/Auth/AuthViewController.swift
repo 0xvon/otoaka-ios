@@ -62,7 +62,7 @@ final class AuthViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        self.view.backgroundColor = style.color.background.get()
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
         backgroundImageView.layer.opacity = 0.6
         backgroundImageView.image = UIImage(named: "live")
         backgroundImageView.contentMode = .scaleAspectFill

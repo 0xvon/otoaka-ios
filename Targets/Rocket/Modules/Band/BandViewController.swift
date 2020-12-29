@@ -148,7 +148,7 @@ final class BandViewController: UIViewController, Instantiable {
 
     func setup() {
         horizontalScrollView.delegate = self
-        horizontalScrollView.backgroundColor = style.color.background.get()
+        horizontalScrollView.backgroundColor = Brand.color(for: .background(.primary))
         
         pageStackView = UIStackView()
         pageStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -170,14 +170,14 @@ final class BandViewController: UIViewController, Instantiable {
 
         groupFeedsView = UIView()
         groupFeedsView.translatesAutoresizingMaskIntoConstraints = false
-        groupFeedsView.backgroundColor = style.color.background.get()
+        groupFeedsView.backgroundColor = Brand.color(for: .background(.primary))
 
         groupFeedTableView = UITableView()
         groupFeedTableView.translatesAutoresizingMaskIntoConstraints = false
         groupFeedTableView.showsVerticalScrollIndicator = false
         groupFeedTableView.tableFooterView = UIView(frame: .zero)
         groupFeedTableView.separatorStyle = .none
-        groupFeedTableView.backgroundColor = style.color.background.get()
+        groupFeedTableView.backgroundColor = Brand.color(for: .background(.primary))
         groupFeedTableView.delegate = self
         groupFeedTableView.dataSource = self
         groupFeedTableView.register(
@@ -188,21 +188,21 @@ final class BandViewController: UIViewController, Instantiable {
         groupFeedTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroupFeeds(sender:)), for: .valueChanged)
         
-        groupFeedPageTitleView = TitleLabelView(input: (title: "FEEDS", font: style.font.xlarge.get(), color: style.color.main.get()))
+        groupFeedPageTitleView = TitleLabelView(input: (title: "FEEDS", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary))))
         groupFeedPageTitleView.translatesAutoresizingMaskIntoConstraints = false
         groupFeedPageButton = UIButton()
         groupFeedPageButton.translatesAutoresizingMaskIntoConstraints = false
 
         liveView = UIView()
         liveView.translatesAutoresizingMaskIntoConstraints = false
-        liveView.backgroundColor = style.color.background.get()
+        liveView.backgroundColor = Brand.color(for: .background(.primary))
 
         liveTableView = UITableView()
         liveTableView.translatesAutoresizingMaskIntoConstraints = false
         liveTableView.showsVerticalScrollIndicator = false
         liveTableView.tableFooterView = UIView(frame: .zero)
         liveTableView.separatorStyle = .none
-        liveTableView.backgroundColor = style.color.background.get()
+        liveTableView.backgroundColor = Brand.color(for: .background(.primary))
         liveTableView.delegate = self
         liveTableView.dataSource = self
         liveTableView.register(
@@ -212,19 +212,19 @@ final class BandViewController: UIViewController, Instantiable {
         liveTableView.refreshControl?.addTarget(
             self, action: #selector(refreshLive(sender:)), for: .valueChanged)
         
-        livePageTitleView = TitleLabelView(input: (title: "LIVE", font: style.font.regular.get(), color: style.color.main.get()))
+        livePageTitleView = TitleLabelView(input: (title: "LIVE", font: Brand.font(for: .medium), color: Brand.color(for: .text(.primary))))
         livePageTitleView.translatesAutoresizingMaskIntoConstraints = false
         livePageButton = UIButton()
         livePageButton.translatesAutoresizingMaskIntoConstraints = false
 
         chartsView = UIView()
         chartsView.translatesAutoresizingMaskIntoConstraints = false
-        chartsView.backgroundColor = style.color.background.get()
+        chartsView.backgroundColor = Brand.color(for: .background(.primary))
 
         chartsTableView = UITableView()
         chartsTableView.translatesAutoresizingMaskIntoConstraints = false
         chartsTableView.showsVerticalScrollIndicator = false
-        chartsTableView.backgroundColor = style.color.background.get()
+        chartsTableView.backgroundColor = Brand.color(for: .background(.primary))
         chartsTableView.tableFooterView = UIView(frame: .zero)
         chartsTableView.separatorStyle = .none
         chartsTableView.delegate = self
@@ -238,9 +238,9 @@ final class BandViewController: UIViewController, Instantiable {
 
         groupsView = UIView()
         groupsView.translatesAutoresizingMaskIntoConstraints = false
-        groupsView.backgroundColor = style.color.background.get()
+        groupsView.backgroundColor = Brand.color(for: .background(.primary))
         
-        chartsPageTitleView = TitleLabelView(input: (title: "CHARTS", font: style.font.regular.get(), color: style.color.main.get()))
+        chartsPageTitleView = TitleLabelView(input: (title: "CHARTS", font: Brand.font(for: .medium), color: Brand.color(for: .text(.primary))))
         chartsPageTitleView.translatesAutoresizingMaskIntoConstraints = false
         chartsPageButton = UIButton()
         chartsPageButton.translatesAutoresizingMaskIntoConstraints = false
@@ -250,7 +250,7 @@ final class BandViewController: UIViewController, Instantiable {
         groupTableView.showsVerticalScrollIndicator = false
         groupTableView.tableFooterView = UIView(frame: .zero)
         groupTableView.separatorStyle = .none
-        groupTableView.backgroundColor = style.color.background.get()
+        groupTableView.backgroundColor = Brand.color(for: .background(.primary))
         groupTableView.delegate = self
         groupTableView.dataSource = self
         groupTableView.register(
@@ -260,7 +260,7 @@ final class BandViewController: UIViewController, Instantiable {
         groupTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroup(sender:)), for: .valueChanged)
         
-        groupPageTitleView = TitleLabelView(input: (title: "BANDS", font: style.font.regular.get(), color: style.color.main.get()))
+        groupPageTitleView = TitleLabelView(input: (title: "BANDS", font: Brand.font(for: .medium), color: Brand.color(for: .text(.primary))))
         groupPageTitleView.translatesAutoresizingMaskIntoConstraints = false
         groupPageButton = UIButton()
         groupPageButton.translatesAutoresizingMaskIntoConstraints = false
@@ -507,7 +507,7 @@ final class BandViewController: UIViewController, Instantiable {
     func createContents() {
         let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
         let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = style.color.main.get()
+        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
         nav.navigationBar.barTintColor = .clear
         present(nav, animated: true, completion: nil)
     }
@@ -694,10 +694,10 @@ extension BandViewController: UIScrollViewDelegate {
                 ), self.pageItems.count - 1)
             var titleViews: [TitleLabelView] = pageItems.map { $0.pageTitle }
             titleViews[pageIndex].changeStyle(
-                font: style.font.xlarge.get(), color: style.color.main.get())
+                font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary)))
             titleViews.remove(at: pageIndex)
             titleViews.forEach {
-                $0.changeStyle(font: style.font.regular.get(), color: style.color.main.get())
+                $0.changeStyle(font: Brand.font(for: .mediumStrong), color: Brand.color(for: .text(.primary)))
             }
             pageTitleStackViewLeadingConstraint.constant = CGFloat(
                 16 - (scrollView.contentOffset.x / UIScreen.main.bounds.width * 50))
