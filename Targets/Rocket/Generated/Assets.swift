@@ -30,6 +30,7 @@ internal enum Asset {
   internal static let guitarIcon = ImageAsset(name: "guitarIcon")
   internal static let heart = ImageAsset(name: "heart")
   internal static let heartFill = ImageAsset(name: "heart_fill")
+  internal static let human = ImageAsset(name: "human")
   internal static let image = ImageAsset(name: "image")
   internal static let invitation = ImageAsset(name: "invitation")
   internal static let itunes = ImageAsset(name: "itunes")

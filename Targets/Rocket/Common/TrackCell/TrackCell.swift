@@ -45,7 +45,7 @@ final class TrackCell: UITableViewCell, ReusableCell {
         artWorkImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         artWorkImageView.clipsToBounds = true
 
-        bandThumbnailView.image = UIImage(named: "band")
+        bandThumbnailView.image = UIImage(named: "human")
         bandThumbnailView.layer.cornerRadius = 30
 
         bandNameLabel.text = input.snippet.channelTitle

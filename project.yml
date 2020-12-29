@@ -73,6 +73,11 @@ targetTemplates:
     configFiles:
       Debug: Pods/Target Support Files/Pods-Rocket/Pods-Rocket.debug.xcconfig
       Release: Pods/Target Support Files/Pods-Rocket/Pods-Rocket.release.xcconfig
+    entitlements:
+      path: Targets/Rocket/Rocket.entitlements
+      properties:
+        aps-environment: production
+        keychain-access-groups: []
     sources:
       - path: Targets/Rocket
         excludes: [FirebaseConfig]
