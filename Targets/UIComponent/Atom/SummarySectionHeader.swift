@@ -56,6 +56,10 @@ public final class SummarySectionHeader: UIStackView {
         addArrangedSubview(seeMoreButton)
         seeMoreButton.addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
     }
+    
+    public func hideSeeMoreButton(_ isHidden: Bool) {
+        self.seeMoreButton.isHidden = isHidden
+    }
 }
 
 #if PREVIEW

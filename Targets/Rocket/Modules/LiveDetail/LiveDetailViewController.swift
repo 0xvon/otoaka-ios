@@ -63,6 +63,23 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
     
+    private let performersSectionHeader: SummarySectionHeader = {
+        let view = SummarySectionHeader(title: "PERFORMERS")
+        view.hideSeeMoreButton(true)
+        return view
+    }()
+    // FIXME: Use a safe way to instantiate views from xib
+    private lazy var performersCellWrapper: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.spacing = 16.0
+        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        stackView.isLayoutMarginsRelativeArrangement = true
+        return stackView
+    }()
+    
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
         paddingView.addSubview(view)
@@ -149,6 +166,13 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         feedCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(feedCellWrapper)
         
+        scrollStackView.addArrangedSubview(performersSectionHeader)
+        NSLayoutConstraint.activate([
+            performersSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+        ])
+        performersCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(performersCellWrapper)
+        
         let bottomSpacer = UIView()
         scrollStackView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
@@ -194,8 +218,12 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .didGetLiveDetail(let liveDetail, let performers):
                 self.title = liveDetail.live.title
                 self.reserveTicketViewModel.didGetLiveDetail(ticket: liveDetail.ticket, participantsCount: liveDetail.participants)
-                print(performers)
-                
+                let performersContents: [UIView] = performers.map { performer in
+                    let cellContent = GroupBannerCell()
+                    cellContent.update(input: performer)
+                    return cellContent
+                }
+                self.setupPerformersContents(arrangedSubviews: performersContents)
             case .didGetDisplayType(let displayType):
                 self.setupFloatingItems(displayType: displayType)
             case .updateFeedSummary(.none):
@@ -235,7 +263,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             .store(in: &cancellables)
         
         feedCellContent.listen { [unowned self] output in
-            print("hello")
             self.viewModel.feedCellEvent(event: output)
         }
         
@@ -252,6 +279,13 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     func setupViews() {
         headerView.update(input: (live: viewModel.state.live, performers: viewModel.state.performers))
+    }
+    
+    func setupPerformersContents(arrangedSubviews: [UIView]) {
+        performersCellWrapper.arrangedSubviews.forEach { performersCellWrapper.removeArrangedSubview($0) }
+        arrangedSubviews.forEach { performersCellWrapper.addArrangedSubview($0) }
+        performersCellWrapper.isHidden = arrangedSubviews.isEmpty
+        performersSectionHeader.isHidden = arrangedSubviews.isEmpty
     }
     
     private func setupFloatingItems(displayType: LiveDetailViewModel.DisplayType) {

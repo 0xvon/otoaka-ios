@@ -8,8 +8,7 @@
 import DomainEntity
 import UIKit
 
-class GroupBannerCell: UITableViewCell, ReusableCell {
-    static var reusableIdentifier: String { "GroupBannerCell" }
+class GroupBannerCell: UIView {
 
     typealias Input = Group
     private lazy var groupArtworkView: UIImageView = {
@@ -32,18 +31,13 @@ class GroupBannerCell: UITableViewCell, ReusableCell {
         return label
     }()
     
-//    init() {
-//        super.init(style: .default, reuseIdentifier: "GroupBannerCell")
-//        setup()
-//    }
-//
-//    required init?(coder: NSCoder) {
-//        super.init(coder: coder)
-//        setup()
-//    }
-    
-    func inject(input: Group) {
-        update(input: input)
+    init() {
+        super.init(frame: .zero)
+        setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
         setup()
     }
     
@@ -61,6 +55,7 @@ class GroupBannerCell: UITableViewCell, ReusableCell {
             groupArtworkView.heightAnchor.constraint(equalToConstant: 60),
             groupArtworkView.leftAnchor.constraint(equalTo: leftAnchor, constant: 8),
             groupArtworkView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            groupArtworkView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
         ])
         
         addSubview(groupNameLabel)
