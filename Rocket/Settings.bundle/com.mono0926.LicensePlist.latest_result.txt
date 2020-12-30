@@ -40,6 +40,14 @@ body:
                    …
 version: 7.3.0
 
+name: FirebaseAnalytics, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 7.3.0
+
+name: FirebaseAnalytics, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 7.3.0
+
 name: FirebaseCore, nameSpecified: 
 body: 
                    …
@@ -78,6 +86,14 @@ version: 7.3.0
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
+version: 7.3.0
+
+name: GoogleAppMeasurement, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 7.3.0
+
+name: GoogleAppMeasurement, nameSpecified: 
+body: Copyright 2020 Googl…
 version: 7.3.0
 
 name: GoogleDataTransport, nameSpecified: 
