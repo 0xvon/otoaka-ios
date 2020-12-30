@@ -64,12 +64,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
-        do {
-            self.socialInputs = try JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: URL(string: "https://\(dependencyProvider.s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!))
-        } catch let err {
-            print(err)
-            self.socialInputs = dummySocialInputs
-        }
+        self.socialInputs = try! dependencyProvider.masterService.blockingMasterData()
 
         super.init(nibName: nil, bundle: nil)
 

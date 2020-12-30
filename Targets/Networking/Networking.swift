@@ -1,5 +1,6 @@
 import Endpoint
 import Foundation
+import Combine
 
 public protocol HTTPClientAdapter {
     func beforeRequest<T: Codable>(
@@ -108,5 +109,25 @@ public class HTTPClient<Adapter: HTTPClientAdapter> {
             callback(result)
         }
         task.resume()
+    }
+}
+
+// MARK: - Combine Extensions
+extension HTTPClient {
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line
+    ) -> Future<E.Response, Error>
+    where E.Request == Endpoint.Empty {
+        request(endpoint, request: Endpoint.Empty(), uri: uri, file: file, line: line)
+    }
+
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        request: E.Request, uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line
+    ) -> Future<E.Response, Error> {
+        return Future { promise in
+            self.request(endpoint, request: request, uri: uri, file: file, line: line, callback: promise)
+        }
     }
 }

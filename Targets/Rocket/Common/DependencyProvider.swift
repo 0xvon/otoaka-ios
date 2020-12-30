@@ -28,6 +28,7 @@ struct DependencyProvider {
     var youTubeDataApiClient: YouTubeDataAPIClient
     var s3Client: S3Client
     var viewHierarchy: ViewHierarchy
+    var masterService: MasterSerivice
 }
 
 extension DependencyProvider {
@@ -96,12 +97,17 @@ extension DependencyProvider {
         }
         
         let s3Client = S3Client(s3Bucket: config.s3Bucket, cognitoIdentityPoolCredentialProvider: credentialProvider)
+        let masterServiceClient = HTTPClient<WebAPIAdapter>(
+            baseUrl: URL(string: "https://\(s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!,
+            adapter: WebAPIAdapter()
+        )
         
         return DependencyProvider(
             auth: auth, apiClient: apiClient,
             youTubeDataApiClient: youTubeDataApiClient,
             s3Client: s3Client,
-            viewHierarchy: ViewHierarchy(windowScene: windowScene)
+            viewHierarchy: ViewHierarchy(windowScene: windowScene),
+            masterService: MasterSerivice(httpClient: masterServiceClient)
         )
     }
 }
