@@ -15,7 +15,7 @@ public final class SummarySectionHeader: UIStackView {
         return label
     }()
 
-    private let seeMoreButton: UIButton = {
+    public let seeMoreButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("もっと見る", for: .normal)
         button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
@@ -55,10 +55,6 @@ public final class SummarySectionHeader: UIStackView {
         addArrangedSubview(UIView()) // Spacer
         addArrangedSubview(seeMoreButton)
         seeMoreButton.addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
-    }
-    
-    public func hideSeeMoreButton(_ isHidden: Bool) {
-        self.seeMoreButton.isHidden = isHidden
     }
 }
 

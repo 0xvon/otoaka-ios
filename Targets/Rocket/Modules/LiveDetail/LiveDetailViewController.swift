@@ -62,7 +62,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     private let performersSectionHeader: SummarySectionHeader = {
         let view = SummarySectionHeader(title: "PERFORMERS")
-        view.hideSeeMoreButton(true)
+        view.seeMoreButton.isHidden = true
         return view
     }()
     // FIXME: Use a safe way to instantiate views from xib
