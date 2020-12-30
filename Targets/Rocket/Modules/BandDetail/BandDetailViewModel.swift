@@ -158,7 +158,7 @@ class BandDetailViewModel {
                     switch state.role {
                     case .fan: return .fan
                     case .artist:
-                        return response.isMember ? .group : .member
+                        return response.isMember ? .member : .group
                     }
                 }()
                 outputSubject.send(.didGetGroupDetail(response, displayType: displayType))
