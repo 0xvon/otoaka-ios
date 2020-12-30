@@ -52,10 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         let token = deviceToken.map { (byte: UInt8) in String(format: "%02.2hhx", byte) }.joined()
         let req = RegisterDeviceToken.Request(deviceToken: token)
-        dependencyProvider.apiClient.request(RegisterDeviceToken.self, request: req) {
-            result in
-            print(result)
-        }
+        dependencyProvider.apiClient.request(RegisterDeviceToken.self, request: req) { _ in }
     }
 
     //    // MARK: UISceneSession Lifecycle

@@ -12,8 +12,7 @@ final class EditBandViewController: UIViewController, Instantiable {
     typealias Input = Group
     var input: Input
     var dependencyProvider: LoggedInDependencyProvider!
-    var years = Components().years
-    var hometowns = Components().prefectures
+    let socialInputs: SocialInputs
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
@@ -58,6 +57,12 @@ final class EditBandViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
+        do {
+            self.socialInputs = try JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: URL(string: "https://\(dependencyProvider.s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!))
+        } catch let err {
+            print(err)
+            self.socialInputs = dummySocialInputs
+        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -309,9 +314,9 @@ extension EditBandViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch pickerView {
         case self.sincePickerView:
-            return self.years.count
+            return socialInputs.years.count
         case self.hometownPickerView:
-            return self.hometowns.count
+            return socialInputs.prefectures.count
         default:
             return 1
         }
@@ -322,9 +327,9 @@ extension EditBandViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     {
         switch pickerView {
         case self.sincePickerView:
-            return self.years[row]
+            return socialInputs.years[row]
         case self.hometownPickerView:
-            return self.hometowns[row]
+            return socialInputs.prefectures[row]
         default:
             return "aaa"
         }
@@ -333,9 +338,9 @@ extension EditBandViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView {
         case self.sincePickerView:
-            sinceInputView.setText(text: self.years[row])
+            sinceInputView.setText(text: socialInputs.years[row])
         case self.hometownPickerView:
-            hometownInputView.setText(text: self.hometowns[row])
+            hometownInputView.setText(text: socialInputs.prefectures[row])
         default:
             print("yo")
         }

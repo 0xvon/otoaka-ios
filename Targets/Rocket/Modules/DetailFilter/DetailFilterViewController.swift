@@ -24,7 +24,7 @@ final class DetailFilterViewController: UIViewController, Instantiable {
     }()
 
     var choice: Choice
-    private var prefectures = Components().prefectures
+    let socialInputs: SocialInputs
     private var prefecturePicker: UIPickerView!
     private var prefectureTextFieldView: TextFieldView!
     private var dateTextFieldView: TextFieldView!
@@ -37,6 +37,12 @@ final class DetailFilterViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.choice = input
+        do {
+            self.socialInputs = try JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: URL(string: "https://\(dependencyProvider.s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!))
+        } catch let err {
+            print(err)
+            self.socialInputs = dummySocialInputs
+        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -206,16 +212,16 @@ extension DetailFilterViewController: UIPickerViewDataSource, UIPickerViewDelega
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return prefectures.count
+        return socialInputs.prefectures.count
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
         -> String?
     {
-        return prefectures[row]
+        return socialInputs.prefectures[row]
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        prefectureTextFieldView.setText(text: prefectures[row])
+        prefectureTextFieldView.setText(text: socialInputs.prefectures[row])
     }
 }

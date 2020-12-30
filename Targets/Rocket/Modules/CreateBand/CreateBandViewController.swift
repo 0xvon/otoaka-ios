@@ -31,8 +31,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
 
     var dependencyProvider: LoggedInDependencyProvider
     var input: Input!
-    let hometowns = Components().prefectures
-    let years = Components().years
+    let socialInputs: SocialInputs
 
     private var verticalScrollView: UIScrollView!
     private var mainView: UIView!
@@ -53,6 +52,12 @@ final class CreateBandViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
+        do {
+            self.socialInputs = try JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: URL(string: "https://\(dependencyProvider.s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!))
+        } catch let err {
+            print(err)
+            self.socialInputs = dummySocialInputs
+        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -315,9 +320,9 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
     {
         switch pickerView {
         case self.hometownPickerView:
-            return hometowns[row]
+            return socialInputs.prefectures[row]
         case self.sincePickerView:
-            return years[row]
+            return socialInputs.years[row]
         default:
             return "yo"
         }
@@ -326,9 +331,9 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch pickerView {
         case self.hometownPickerView:
-            return hometowns.count
+            return socialInputs.prefectures.count
         case self.sincePickerView:
-            return years.count
+            return socialInputs.years.count
         default:
             return 1
         }
@@ -337,10 +342,10 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView {
         case self.hometownPickerView:
-            let text = hometowns[row]
+            let text = socialInputs.prefectures[row]
             hometownInputView.setText(text: text)
         case self.sincePickerView:
-            let text = years[row]
+            let text = socialInputs.years[row]
             sinceInputView.setText(text: text)
         default:
             print("hello")

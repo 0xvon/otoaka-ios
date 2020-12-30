@@ -27,8 +27,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
     private var thumbnailImageView: UIImageView!
     private var createButton: PrimaryButton!
 
-    var livehouses: [String] = Components().livehouses
-
+    let socialInputs: SocialInputs
     var partnerGroups: [Endpoint.Group] = []
     var livehouse: String!
     var thumbnail: UIImage!
@@ -64,6 +63,12 @@ final class EditLiveViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
+        do {
+            self.socialInputs = try JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: URL(string: "https://\(dependencyProvider.s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!))
+        } catch let err {
+            print(err)
+            self.socialInputs = dummySocialInputs
+        }
 
         super.init(nibName: nil, bundle: nil)
 
@@ -405,7 +410,7 @@ extension EditLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     {
         switch pickerView {
         case self.livehousePickerView:
-            return livehouses[row]
+            return socialInputs.livehouses[row]
         default:
             return "yo"
         }
@@ -414,7 +419,7 @@ extension EditLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch pickerView {
         case self.livehousePickerView:
-            return livehouses.count
+            return socialInputs.livehouses.count
         default:
             return 1
         }
@@ -423,8 +428,8 @@ extension EditLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         switch pickerView {
         case self.livehousePickerView:
-            self.livehouseInputView.setText(text: self.livehouses[row])
-            self.livehouse = self.livehouses[row]
+            self.livehouseInputView.setText(text: socialInputs.livehouses[row])
+            self.livehouse = socialInputs.livehouses[row]
         default:
             print("hello")
         }

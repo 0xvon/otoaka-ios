@@ -32,8 +32,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     private var createButton: PrimaryButton!
 
     var hostGroups: [Endpoint.Group] = []
-    var liveStyles: [String] = Components().liveStyles
-    var livehouses: [String] = Components().livehouses
+    let socialInputs: SocialInputs
 
     var hostGroup: Endpoint.Group!
     var partnerGroups: [Endpoint.Group] = []
@@ -88,6 +87,12 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
+        do {
+            self.socialInputs = try JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: URL(string: "https://\(dependencyProvider.s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!))
+        } catch let err {
+            print(err)
+            self.socialInputs = dummySocialInputs
+        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -480,9 +485,9 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
         case self.hostGroupPickerView:
             return hostGroups[row].name
         case self.liveStylePickerView:
-            return liveStyles[row]
+            return socialInputs.liveStyles[row]
         case self.livehousePickerView:
-            return livehouses[row]
+            return socialInputs.livehouses[row]
         default:
             return "yo"
         }
@@ -493,9 +498,9 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
         case self.hostGroupPickerView:
             return hostGroups.count
         case self.liveStylePickerView:
-            return self.liveStyles.count
+            return socialInputs.liveStyles.count
         case self.livehousePickerView:
-            return livehouses.count
+            return socialInputs.livehouses.count
         default:
             return 1
         }
@@ -508,11 +513,11 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
             self.hostGroupInputView.setText(text: text.name)
             self.hostGroup = text
         case self.liveStylePickerView:
-            self.liveStyleInputView.setText(text: self.liveStyles[row])
+            self.liveStyleInputView.setText(text: socialInputs.liveStyles[row])
             self.liveStyle = getLiveStyle()
         case self.livehousePickerView:
-            self.livehouseInputView.setText(text: self.livehouses[row])
-            self.livehouse = self.livehouses[row]
+            self.livehouseInputView.setText(text: socialInputs.livehouses[row])
+            self.livehouse = socialInputs.livehouses[row]
         default:
             print("hello")
         }

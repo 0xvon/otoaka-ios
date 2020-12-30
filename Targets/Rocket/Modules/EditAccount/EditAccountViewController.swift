@@ -11,7 +11,7 @@ import UIKit
 final class EditAccountViewController: UIViewController, Instantiable {
     typealias Input = Void
     var dependencyProvider: LoggedInDependencyProvider!
-    var parts = Components().parts
+    let socialInputs: SocialInputs
 
     private var verticalScrollView: UIScrollView!
     private var mainView: UIView!
@@ -43,6 +43,12 @@ final class EditAccountViewController: UIViewController, Instantiable {
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
+        do {
+            self.socialInputs = try JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: URL(string: "https://\(dependencyProvider.s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!))
+        } catch let err {
+            print(err)
+            self.socialInputs = dummySocialInputs
+        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -260,17 +266,17 @@ extension EditAccountViewController: UIPickerViewDelegate, UIPickerViewDataSourc
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return self.parts.count
+        return socialInputs.parts.count
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
         -> String?
     {
-        return self.parts[row]
+        return socialInputs.parts[row]
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let text = self.parts[row]
+        let text = socialInputs.parts[row]
         partInputView.setText(text: text)
     }
 }

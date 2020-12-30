@@ -59,11 +59,17 @@ final class CreateUserViewController: UIViewController, Instantiable {
     private var bandInputs: UIView!
     private var profileImageView: UIImageView!
     private var sectionType: SectionType = .fan
-    private let parts = Components().parts
+    let socialInputs: SocialInputs
 
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
+        do {
+            self.socialInputs = try JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: URL(string: "https://\(dependencyProvider.s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!))
+        } catch let err {
+            print(err)
+            self.socialInputs = dummySocialInputs
+        }
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -136,7 +142,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         bandInputs.addSubview(artistNameInputView)
 
         partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
-        partInputView.setText(text: parts[0])
+        partInputView.setText(text: socialInputs.parts[0])
         partInputView.translatesAutoresizingMaskIntoConstraints = false
         bandInputs.addSubview(partInputView)
 
@@ -316,17 +322,17 @@ extension CreateUserViewController: UIPickerViewDelegate, UIPickerViewDataSource
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return self.parts.count
+        return socialInputs.parts.count
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
         -> String?
     {
-        return self.parts[row]
+        return socialInputs.parts[row]
     }
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let text = self.parts[row]
+        let text = socialInputs.parts[row]
         partInputView.setText(text: text)
     }
 }
