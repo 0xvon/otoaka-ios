@@ -7,6 +7,7 @@
 
 import UIKit
 import Endpoint
+import InternalDomain
 
 final class DetailFilterViewController: UIViewController, Instantiable {
     typealias Input = Choice

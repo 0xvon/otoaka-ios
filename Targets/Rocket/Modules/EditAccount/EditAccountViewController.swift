@@ -7,6 +7,7 @@
 
 import Endpoint
 import UIKit
+import InternalDomain
 
 final class EditAccountViewController: UIViewController, Instantiable {
     typealias Input = Void

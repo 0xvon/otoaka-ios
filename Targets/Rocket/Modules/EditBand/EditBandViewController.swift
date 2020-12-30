@@ -7,6 +7,7 @@
 
 import Endpoint
 import UIKit
+import InternalDomain
 
 final class EditBandViewController: UIViewController, Instantiable {
     typealias Input = Group

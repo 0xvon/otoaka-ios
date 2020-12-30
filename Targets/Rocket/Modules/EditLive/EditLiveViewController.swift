@@ -7,6 +7,7 @@
 
 import Endpoint
 import UIKit
+import InternalDomain
 
 final class EditLiveViewController: UIViewController, Instantiable {
     typealias Input = Live
