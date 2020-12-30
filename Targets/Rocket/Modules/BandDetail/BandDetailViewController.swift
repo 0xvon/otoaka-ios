@@ -33,7 +33,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
 
-    private let followersSummaryView = FollowersSummaryView()
+    private let followersSummaryView = CountSummaryView()
     private let followButton: ToggleButton = {
         let followButton = ToggleButton()
         followButton.setTitle("フォロー", selected: false)
@@ -46,7 +46,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.spacing = 16.0
-        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         stackView.isLayoutMarginsRelativeArrangement = true
         return stackView
     }()
@@ -188,7 +188,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .updateIsButtonEnabled(let isEnabled):
                 self.followButton.isEnabled = isEnabled
             case .updateFollowersCount(let count):
-                self.followersSummaryView.updateNumber(count)
+                self.followersSummaryView.update(input: (title: "フォロワー", count: count))
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
             }

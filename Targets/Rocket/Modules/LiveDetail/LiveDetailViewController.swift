@@ -36,12 +36,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
     
-    private let participantsCountButton: ReactionIndicatorButton = {
-        let participantsCountButton = ReactionIndicatorButton(text: "0人参戦予定", icon: nil)
-        participantsCountButton.translatesAutoresizingMaskIntoConstraints = false
-        return participantsCountButton
-        
-    }()
+    private let participantsSummaryView = CountSummaryView()
     private let buyTicketButton: PrimaryButton = {
         let buyTicketButton = PrimaryButton(text: "￥----")
         buyTicketButton.setImage(UIImage(named: "ticket"), for: .normal)
@@ -55,7 +50,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.spacing = 16.0
-        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        stackView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         stackView.isLayoutMarginsRelativeArrangement = true
         return stackView
     }()
@@ -137,7 +132,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             headerView.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
         
-        ticketStackView.addArrangedSubview(participantsCountButton)
+        ticketStackView.addArrangedSubview(participantsSummaryView)
         ticketStackView.addArrangedSubview(buyTicketButton)
         NSLayoutConstraint.activate([
             buyTicketButton.heightAnchor.constraint(equalToConstant: 48),
@@ -183,7 +178,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .updateIsButtonEnabled(let isEnabled):
                 self.buyTicketButton.isEnabled = isEnabled
             case .updateParticipantsCount(let count):
-                participantsCountButton.setTitle("\(count)人参戦予定", for: .normal)
+                participantsSummaryView.update(input: (title: "予約者", count: count))
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
             }
@@ -250,7 +245,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
         
-        participantsCountButton.addTarget(self, action: #selector(numOfParticipantsButtonTapped), for: .touchUpInside)
+        participantsSummaryView.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(numOfParticipantsButtonTapped))
+        )
     }
     
     func setupViews() {

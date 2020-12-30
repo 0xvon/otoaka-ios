@@ -1,9 +1,13 @@
 import UIKit
 
-public final class FollowersSummaryView: UIStackView {
+public final class CountSummaryView: UIStackView {
+    public typealias Input = (
+        title: String,
+        count: Int
+    )
     let followersLabel: UILabel = {
         let label = UILabel()
-        label.text = "フォロワー"
+        label.text = ""
         label.font = Brand.font(for: .medium)
         label.textColor = Brand.color(for: .text(.primary))
         return label
@@ -33,12 +37,13 @@ public final class FollowersSummaryView: UIStackView {
         followersLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
 
-    public func updateNumber(_ number: Int) {
+    public func update(input: Input) {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.groupingSeparator = ","
         formatter.groupingSize = 3
-        followersNumberLabel.text = formatter.string(from: NSNumber(value: number))
+        followersLabel.text = input.title
+        followersNumberLabel.text = formatter.string(from: NSNumber(value: input.count))
     }
 }
 
@@ -49,11 +54,11 @@ import SwiftUI
 struct FollowersSummaryView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(view: FollowersSummaryView())
+            ViewWrapper(view: CountSummaryView())
                 .previewLayout(.fixed(width: 100, height: 48))
             ViewWrapper(view: {
-                let label = FollowersSummaryView()
-                label.updateNumber(10000)
+                let label = CountSummaryView()
+                label.update(input: (title: "フォロワー", count: 100))
                 return label
             }())
                 .previewLayout(.fixed(width: 100, height: 48))
