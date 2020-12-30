@@ -1,5 +1,5 @@
 //
-//  BandViewModel.swift
+//  HomeViewModel.swift
 //  Rocket
 //
 //  Created by Masato TSUTSUMI on 2020/10/20.
@@ -10,7 +10,7 @@ import Endpoint
 import UIKit
 import InternalDomain
 
-class BandViewModel {
+class HomeViewModel {
     enum Output {
         case getGroupFeeds([ArtistFeedSummary])
         case refreshGroupFeeds([ArtistFeedSummary])

@@ -64,7 +64,7 @@ final class LiveViewController: UIViewController, Instantiable {
     }
 
     @objc func tappedButton(sender: UIButton!) {
-        let vc = BandViewController(dependencyProvider: dependencyProvider, input: ())
+        let vc = HomeViewController(dependencyProvider: dependencyProvider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }
