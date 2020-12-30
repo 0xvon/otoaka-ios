@@ -73,7 +73,7 @@ class BandDetailViewModel {
         switch row {
         case .live:
             guard let live = state.lives.first else { return }
-            outputSubject.send(.pushToLiveDetail((live: live, ticket: nil)))
+            outputSubject.send(.pushToLiveDetail(live))
         case .feed:
             guard let feed = state.feeds.first else { return }
             switch feed.feedType {

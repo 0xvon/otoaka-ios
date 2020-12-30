@@ -621,7 +621,7 @@ extension BandViewController: UITableViewDelegate, UITableViewDataSource {
         case self.liveTableView:
             let live = self.lives[indexPath.section].live
             let vc = LiveDetailViewController(
-                dependencyProvider: self.dependencyProvider, input: (live: live, ticket: nil))
+                dependencyProvider: self.dependencyProvider, input: live)
             self.navigationController?.pushViewController(vc, animated: true)
         case self.groupFeedTableView:
             let feed = self.feeds[indexPath.section]

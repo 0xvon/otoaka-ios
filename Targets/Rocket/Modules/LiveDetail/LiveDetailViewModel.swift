@@ -23,8 +23,6 @@ class LiveDetailViewModel {
     struct State {
         var live: Live
         var feeds: [ArtistFeedSummary] = []
-        var performers: [Group] = []
-        var ticket: Ticket?
         let role: RoleProperties
     }
     
@@ -48,10 +46,10 @@ class LiveDetailViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
     init(
-        dependencyProvider: LoggedInDependencyProvider, live: Live, ticket: Ticket?
+        dependencyProvider: LoggedInDependencyProvider, live: Live
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(live: live, ticket: ticket, role: dependencyProvider.user.role)
+        self.state = State(live: live, role: dependencyProvider.user.role)
     }
     
     func didTapSeeMore(at row: SummaryRow) {
@@ -101,19 +99,8 @@ class LiveDetailViewModel {
         apiClient.request(GetLive.self, request: req, uri: uri) { [outputSubject] result in
             switch result {
             case .success(let res):
-                let performers: [Group] = {
-                    switch res.live.style {
-                    case .oneman(let performer):
-                        return [performer]
-                    case .battle(let performers):
-                        return performers
-                    case .festival(let performers):
-                        return performers
-                    }
-                }()
-                self.state.performers = performers
-                
-                outputSubject.send(.didGetLiveDetail(res, performers))
+                self.state.live = res.live
+                outputSubject.send(.didGetLiveDetail(res, res.live.performers))
             case .failure(let error):
                 outputSubject.send(.reportError(error))
             }
@@ -181,4 +168,17 @@ class LiveDetailViewModel {
     //            }
     //        }
     //    }
+}
+
+extension Live {
+    var performers: [Group] {
+        switch style {
+        case .oneman(let performer):
+            return [performer]
+        case .battle(let performers):
+            return performers
+        case .festival(let performers):
+            return performers
+        }
+    }
 }

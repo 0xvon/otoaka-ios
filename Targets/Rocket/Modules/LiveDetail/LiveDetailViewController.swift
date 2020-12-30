@@ -12,10 +12,7 @@ import UIComponent
 import UIKit
 
 final class LiveDetailViewController: UIViewController, Instantiable {
-    typealias Input = (
-        live: Live,
-        ticket: Ticket?
-    )
+    typealias Input = Live
     
     private lazy var headerView: LiveDetailHeaderView = {
         let headerView = LiveDetailHeaderView()
@@ -108,11 +105,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         self.dependencyProvider = dependencyProvider
         self.viewModel = LiveDetailViewModel(
             dependencyProvider: dependencyProvider,
-            live: input.live,
-            ticket: input.ticket
+            live: input
         )
         self.reserveTicketViewModel = ReserveTicketViewModel(
-            live: input.live,
+            live: input,
             apiClient: dependencyProvider.apiClient
         )
         super.init(nibName: nil, bundle: nil)
@@ -278,7 +274,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     func setupViews() {
-        headerView.update(input: (live: viewModel.state.live, performers: viewModel.state.performers))
+        headerView.update(input: (live: viewModel.state.live, performers: viewModel.state.live.performers))
     }
     
     func setupPerformersContents(arrangedSubviews: [UIView]) {
