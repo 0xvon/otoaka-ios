@@ -8,6 +8,7 @@
 import Endpoint
 import Foundation
 import UIKit
+import InternalDomain
 
 final class CreateBandViewController: UIViewController, Instantiable {
     typealias Input = Void

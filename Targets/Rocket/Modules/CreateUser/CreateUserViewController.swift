@@ -7,6 +7,7 @@
 
 import AWSCognitoAuth
 import UIKit
+import InternalDomain
 
 final class CreateUserViewController: UIViewController, Instantiable {
     typealias Input = Void

@@ -9,9 +9,9 @@ import DomainEntity
 import Foundation
 
 public struct SocialInputs: Codable {
-    let prefectures: [String]
-    let parts: [String]
-    let years: [String]
-    let liveStyles: [String]
-    let livehouses: [String]
+    public let prefectures: [String]
+    public let parts: [String]
+    public let years: [String]
+    public let liveStyles: [String]
+    public let livehouses: [String]
 }
