@@ -11,6 +11,9 @@ packages:
   StubKit:
     url: https://github.com/kateinoigakukun/StubKit.git
     minorVersion: 0.1.7
+settings:
+  base:
+    DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
 targets:
   InternalDomain:
     type: library.static
