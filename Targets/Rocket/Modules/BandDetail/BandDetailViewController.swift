@@ -296,19 +296,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
             createEditView.addTarget(self, action: #selector(editGroup), for: .touchUpInside)
             let inviteCodeView = FloatingButtonItem(icon: UIImage(named: "invitation")!)
             inviteCodeView.addTarget(self, action: #selector(inviteGroup), for: .touchUpInside)
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
-            items = [createEditView, inviteCodeView, createShareView]
+            items = [createEditView, inviteCodeView]
         case .group:
             let createMessageView = FloatingButtonItem(icon: UIImage(named: "mail")!)
             createMessageView.addTarget(self, action: #selector(createMessage), for: .touchUpInside)
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
-            items = [createMessageView, createShareView]
+            items = [createMessageView]
         case .fan:
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
-            items = [createShareView]
+            items = []
         }
         let floatingController = dependencyProvider.viewHierarchy.floatingViewController
         floatingController.setFloatingButtonItems(items)

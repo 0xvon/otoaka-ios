@@ -290,17 +290,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         case .host:
             let createEditView = FloatingButtonItem(icon: UIImage(named: "edit")!)
             createEditView.addTarget(self, action: #selector(editLive), for: .touchUpInside)
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
-            items = [createEditView, createShareView]
+            items = [createEditView]
         case .group:
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
-            items = [createShareView]
+            items = []
         case .fan:
-            let createShareView = FloatingButtonItem(icon: UIImage(named: "share")!)
-            createShareView.addTarget(self, action: #selector(createShare), for: .touchUpInside)
-            items = [createShareView]
+            items = []
         }
         let floatingController = dependencyProvider.viewHierarchy.floatingViewController
         floatingController.setFloatingButtonItems(items)
