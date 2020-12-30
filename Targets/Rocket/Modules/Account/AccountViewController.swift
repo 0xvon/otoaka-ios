@@ -18,12 +18,12 @@ final class AccountViewController: UIViewController, Instantiable {
     private var profileSettingItem: AccountSettingItem!
     private var seeRequestsItem: AccountSettingItem!
     private var createBandItem: AccountSettingItem!
+    private var inputInvitationItem: AccountSettingItem!
     private var membershipItem: AccountSettingItem!
     private var logoutItem: AccountSettingItem!
-
+    
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -58,17 +58,21 @@ final class AccountViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.translatesAutoresizingMaskIntoConstraints = false
-
-        profileSettingItem = AccountSettingItem(
-            title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile,
-            hasNotification: false)
+        
+        profileSettingItem = {
+            return AccountSettingItem(
+                title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile,
+                hasNotification: false)
+        }()
         seeRequestsItem = AccountSettingItem(
             title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
             hasNotification: self.pendingRequestCount > 0)
-        membershipItem = AccountSettingItem(
-            title: "所属バンド一覧", image: UIImage(named: "people"), action: self.memberships, hasNotification: false)
         createBandItem = AccountSettingItem(
             title: "新規バンド作成", image: UIImage(named: "selectedGuitarIcon"), action: self.createBand, hasNotification: false)
+        inputInvitationItem = AccountSettingItem(
+            title: "招待コードを入力してバンドに参加", image: UIImage(named: "selectedGuitarIcon"), action: self.joinBand, hasNotification: false)
+        membershipItem = AccountSettingItem(
+            title: "所属バンド一覧", image: UIImage(named: "people"), action: self.memberships, hasNotification: false)
         logoutItem = AccountSettingItem(
             title: "ログアウト", image: UIImage(named: "logout"), action: self.logout,
             hasNotification: false)
@@ -105,6 +109,7 @@ final class AccountViewController: UIViewController, Instantiable {
                 membershipItem,
                 seeRequestsItem,
                 createBandItem,
+                inputInvitationItem,
                 logoutItem,
             ]
         case .fan(_):
@@ -136,6 +141,15 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func memberships() {
         let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .memberships(dependencyProvider.user.id))
+        let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
+        nav.navigationBar.barTintColor = .clear
+        
+        present(nav, animated: true, completion: nil)
+    }
+    
+    private func joinBand() {
+        let vc = InvitationViewController(dependencyProvider: dependencyProvider, input: ())
         let nav = UINavigationController(rootViewController: vc)
         nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
         nav.navigationBar.barTintColor = .clear
