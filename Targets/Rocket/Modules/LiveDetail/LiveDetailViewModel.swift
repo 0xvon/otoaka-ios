@@ -27,9 +27,10 @@ class LiveDetailViewModel {
     }
     
     enum Output {
-        case didGetLiveDetail(LiveDetail, [Group])
+        case didGetLiveDetail(LiveDetail)
         case didGetDisplayType(DisplayType)
         case updateFeedSummary(ArtistFeedSummary?)
+        case updatePerformers([Group])
         
         case pushToGroupFeedList(GroupFeedListViewController.Input)
         case pushToPerformerDetail(BandDetailViewController.Input)
@@ -100,7 +101,8 @@ class LiveDetailViewModel {
             switch result {
             case .success(let res):
                 self.state.live = res.live
-                outputSubject.send(.didGetLiveDetail(res, res.live.performers))
+                outputSubject.send(.didGetLiveDetail(res))
+                outputSubject.send(.updatePerformers(res.live.performers))
             case .failure(let error):
                 outputSubject.send(.reportError(error))
             }

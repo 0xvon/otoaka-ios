@@ -211,9 +211,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didGetLiveDetail(let liveDetail, let performers):
+            case .didGetLiveDetail(let liveDetail):
                 self.title = liveDetail.live.title
                 self.reserveTicketViewModel.didGetLiveDetail(ticket: liveDetail.ticket, participantsCount: liveDetail.participants)
+            case .updatePerformers(let performers):
                 let performersContents: [UIView] = performers.map { performer in
                     let cellContent = GroupBannerCell()
                     cellContent.update(input: performer)
