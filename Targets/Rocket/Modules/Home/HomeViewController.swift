@@ -133,13 +133,18 @@ final class HomeViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        switch dependencyProvider.user.role {
-        case .artist(_):
-            setupCreation()
-        case .fan(_):
-            print()
-        }
         requestNotification()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+        setupFloatingItems(role: dependencyProvider.user.role)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
 
     override func viewDidLayoutSubviews() {
@@ -324,95 +329,20 @@ final class HomeViewController: UIViewController, Instantiable {
         }
     }
 
-    private func setupCreation() {
-        creationView = UIView()
-        creationView.backgroundColor = .clear
-        creationView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(creationView)
-
-        creationViewHeightConstraint = NSLayoutConstraint(
-            item: creationView!,
-            attribute: .height,
-            relatedBy: .equal,
-            toItem: nil,
-            attribute: .height,
-            multiplier: 1,
-            constant: 60
-        )
-        creationView.addConstraint(creationViewHeightConstraint)
-
-        createLiveView = CreateButton(input: UIImage(named: "ticket")!)
-        createLiveView.layer.cornerRadius = 30
-        createLiveView.translatesAutoresizingMaskIntoConstraints = false
-        createLiveView.listen {
-            self.createLive()
+    private func setupFloatingItems(role: RoleProperties) {
+        let items: [FloatingButtonItem]
+        switch role {
+        case .artist:
+            let createLiveView = FloatingButtonItem(icon: UIImage(named: "ticket")!)
+            createLiveView.addTarget(self, action: #selector(createLive), for: .touchUpInside)
+            let createFeedView = FloatingButtonItem(icon: UIImage(named: "music")!)
+            createFeedView.addTarget(self, action: #selector(createFeed), for: .touchUpInside)
+            items = [createLiveView, createFeedView]
+        case .fan:
+            items = []
         }
-        creationView.addSubview(createLiveView)
-
-        createLiveViewBottomConstraint = NSLayoutConstraint(
-            item: createLiveView!,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: creationView,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 0
-        )
-
-        createGroupFeedView = CreateButton(input: UIImage(named: "music")!)
-        createGroupFeedView.layer.cornerRadius = 30
-        createGroupFeedView.translatesAutoresizingMaskIntoConstraints = false
-        createGroupFeedView.listen {
-            self.createContents()
-        }
-        creationView.addSubview(createGroupFeedView)
-
-        createGroupFeedViewBottomConstraint = NSLayoutConstraint(
-            item: createGroupFeedView!,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: creationView,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 0
-        )
-
-        openButtonView = CreateButton(input: UIImage(named: "plus")!)
-        openButtonView.layer.cornerRadius = 30
-        openButtonView.translatesAutoresizingMaskIntoConstraints = false
-        openButtonView.listen {
-            self.isOpened.toggle()
-            self.open(isOpened: self.isOpened)
-        }
-        creationView.addSubview(openButtonView)
-
-        creationButtonConstraintItems = [
-            createGroupFeedViewBottomConstraint,
-            createLiveViewBottomConstraint,
-        ]
-
-        creationView.addConstraints(creationButtonConstraintItems)
-
-        let constraints = [
-            creationView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            creationView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -100),
-            creationView.widthAnchor.constraint(equalToConstant: 60),
-
-            openButtonView.bottomAnchor.constraint(equalTo: creationView.bottomAnchor),
-            openButtonView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-            openButtonView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-            openButtonView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
-
-            createGroupFeedView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-            createGroupFeedView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-            createGroupFeedView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
-
-            createLiveView.rightAnchor.constraint(equalTo: creationView.rightAnchor),
-            createLiveView.widthAnchor.constraint(equalTo: creationView.widthAnchor),
-            createLiveView.heightAnchor.constraint(equalTo: creationView.widthAnchor),
-        ]
-
-        NSLayoutConstraint.activate(constraints)
+        let floatingController = dependencyProvider.viewHierarchy.floatingViewController
+        floatingController.setFloatingButtonItems(items)
     }
 
     func open(isOpened: Bool) {
@@ -499,7 +429,7 @@ final class HomeViewController: UIViewController, Instantiable {
         }
     }
 
-    func createContents() {
+    @objc func createFeed() {
         let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
         let nav = UINavigationController(rootViewController: vc)
         nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
@@ -507,7 +437,7 @@ final class HomeViewController: UIViewController, Instantiable {
         present(nav, animated: true, completion: nil)
     }
 
-    func createLive() {
+    @objc func createLive() {
         let vc = CreateLiveViewController(dependencyProvider: self.dependencyProvider, input: ())
         present(vc, animated: true, completion: nil)
     }

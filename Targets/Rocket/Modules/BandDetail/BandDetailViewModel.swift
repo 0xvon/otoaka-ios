@@ -27,6 +27,19 @@ class BandDetailViewModel {
         var groupDetail: GetGroup.Response?
         var channelItem: ChannelDetail.ChannelItem?
         let role: RoleProperties
+
+        var displayType: DisplayType? {
+            guard let detail = groupDetail else { return nil }
+            return _displayType(isMember: detail.isMember)
+        }
+
+        fileprivate func _displayType(isMember: Bool) -> DisplayType {
+            switch role {
+            case .fan: return .fan
+            case .artist:
+                return isMember ? .member : .group
+            }
+        }
     }
 
     enum Output {
@@ -154,13 +167,7 @@ class BandDetailViewModel {
             case .success(let response):
                 state.group = response.group
                 state.groupDetail = response
-                let displayType: DisplayType = {
-                    switch state.role {
-                    case .fan: return .fan
-                    case .artist:
-                        return response.isMember ? .member : .group
-                    }
-                }()
+                let displayType = state._displayType(isMember: response.isMember)
                 outputSubject.send(.didGetGroupDetail(response, displayType: displayType))
             case .failure(let error):
                 self.outputSubject.send(.reportError(error))

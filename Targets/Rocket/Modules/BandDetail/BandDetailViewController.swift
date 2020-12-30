@@ -107,6 +107,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+        if let displayType = viewModel.state.displayType {
+            setupFloatingItems(displayType: displayType)
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {

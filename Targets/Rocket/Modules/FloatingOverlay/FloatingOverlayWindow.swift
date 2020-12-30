@@ -3,6 +3,13 @@ import UIComponent
 
 class FloatingOverlayWindow: UIWindow {
     let floatingViewController: FloatingViewController
+    override var isHidden: Bool {
+        didSet {
+            if isHidden {
+                floatingViewController.isOpening = false
+            }
+        }
+    }
     override init(windowScene: UIWindowScene) {
         floatingViewController = FloatingViewController()
         super.init(windowScene: windowScene)
@@ -22,7 +29,15 @@ class FloatingOverlayWindow: UIWindow {
 
 class FloatingViewController: UIViewController {
     
-    private var isOpened: Bool = false
+    var isOpening: Bool = false {
+        didSet {
+            if isOpening {
+                openItems()
+            } else {
+                closeItems()
+            }
+        }
+    }
     private var buttonItems: [FloatingButtonItem] = []
     private let buttonsContainer: UIStackView = {
         let container = UIStackView()
@@ -68,12 +83,7 @@ class FloatingViewController: UIViewController {
     }
 
     @objc private func toggleOpenClose() {
-        if isOpened {
-            closeItems()
-        } else {
-            openItems()
-        }
-        self.isOpened.toggle()
+        self.isOpening.toggle()
     }
 
     private func openItems() {
