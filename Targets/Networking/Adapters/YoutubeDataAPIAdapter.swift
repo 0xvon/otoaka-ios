@@ -11,7 +11,19 @@ public class YoutubeDataAPIAdapter: HTTPClientAdapter {
     enum Error: Swift.Error {
         case missingURL
     }
-    internal let webAPIAdapter = WebAPIAdapter()
+    private let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        return encoder
+    }()
+    private let decoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }()
+    internal lazy var webAPIAdapter = WebAPIAdapter(
+        encoder: self.encoder, decoder: self.decoder
+    )
 
     private let apiKey: String
     public init(apiKey: String) {
