@@ -7,6 +7,10 @@
 
 import Foundation
 
+public protocol APITokenProvider {
+    func provideIdToken(_: @escaping (Result<String, Error>) -> Void)
+}
+
 public class RocketAPIAdapter: HTTPClientAdapter {
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()
