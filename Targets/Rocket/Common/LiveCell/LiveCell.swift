@@ -20,6 +20,8 @@ class LiveCell: UITableViewCell, ReusableCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
+        // Proxy tap event to tableView(_:didSelectRowAt:)
+        _contentView.isUserInteractionEnabled = false
         backgroundColor = .clear
         NSLayoutConstraint.activate([
             _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
