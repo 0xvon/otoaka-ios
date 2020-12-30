@@ -279,7 +279,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     func setupPerformersContents(arrangedSubviews: [UIView]) {
-        performersCellWrapper.arrangedSubviews.forEach { performersCellWrapper.removeArrangedSubview($0) }
+        performersCellWrapper.arrangedSubviews.forEach {
+            performersCellWrapper.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
         arrangedSubviews.forEach { performersCellWrapper.addArrangedSubview($0) }
         performersCellWrapper.isHidden = arrangedSubviews.isEmpty
         performersSectionHeader.isHidden = arrangedSubviews.isEmpty
