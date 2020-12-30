@@ -90,7 +90,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         return paddingView
     }
     
-    private let refreshControl = RefreshControl()
+    private let refreshControl = BrandRefreshControl()
     
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: LiveDetailViewModel

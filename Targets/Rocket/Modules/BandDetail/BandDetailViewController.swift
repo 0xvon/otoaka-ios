@@ -81,7 +81,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return paddingView
     }
 
-    private let refreshControl = RefreshControl()
+    private let refreshControl = BrandRefreshControl()
 
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: BandDetailViewModel

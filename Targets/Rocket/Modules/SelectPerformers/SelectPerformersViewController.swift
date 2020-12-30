@@ -78,7 +78,7 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
         groupTableView.separatorStyle = .none
         groupTableView.backgroundColor = Brand.color(for: .background(.primary))
         groupTableView.allowsMultipleSelection = true
-        groupTableView.refreshControl = RefreshControl()
+        groupTableView.refreshControl = BrandRefreshControl()
         groupTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroup(_:)), for: .valueChanged)
         groupTableView.register(

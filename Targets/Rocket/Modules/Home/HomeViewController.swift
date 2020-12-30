@@ -182,7 +182,7 @@ final class HomeViewController: UIViewController, Instantiable {
         groupFeedTableView.dataSource = self
         groupFeedTableView.registerCellClass(ArtistFeedCell.self)
 
-        groupFeedTableView.refreshControl = RefreshControl()
+        groupFeedTableView.refreshControl = BrandRefreshControl()
         groupFeedTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroupFeeds(sender:)), for: .valueChanged)
         
@@ -205,7 +205,7 @@ final class HomeViewController: UIViewController, Instantiable {
         liveTableView.dataSource = self
         liveTableView.registerCellClass(LiveCell.self)
 
-        liveTableView.refreshControl = RefreshControl()
+        liveTableView.refreshControl = BrandRefreshControl()
         liveTableView.refreshControl?.addTarget(
             self, action: #selector(refreshLive(sender:)), for: .valueChanged)
         
@@ -228,7 +228,7 @@ final class HomeViewController: UIViewController, Instantiable {
         chartsTableView.dataSource = self
         chartsTableView.registerCellClass(TrackCell.self)
 
-        chartsTableView.refreshControl = RefreshControl()
+        chartsTableView.refreshControl = BrandRefreshControl()
         chartsTableView.refreshControl?.addTarget(
             self, action: #selector(refreshChart(sender:)), for: .valueChanged)
 
@@ -251,7 +251,7 @@ final class HomeViewController: UIViewController, Instantiable {
         groupTableView.dataSource = self
         groupTableView.register(UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
 
-        groupTableView.refreshControl = RefreshControl()
+        groupTableView.refreshControl = BrandRefreshControl()
         groupTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroup(sender:)), for: .valueChanged)
         

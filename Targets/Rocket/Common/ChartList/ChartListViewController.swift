@@ -67,7 +67,7 @@ final class ChartListViewController: UIViewController, Instantiable {
             UINib(nibName: "TrackCell", bundle: nil), forCellReuseIdentifier: "TrackCell")
         self.view.addSubview(chartTableView)
         
-        chartTableView.refreshControl = RefreshControl()
+        chartTableView.refreshControl = BrandRefreshControl()
         chartTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         self.getCharts()

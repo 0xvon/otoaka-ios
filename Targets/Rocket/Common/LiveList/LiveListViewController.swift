@@ -85,7 +85,7 @@ final class LiveListViewController: UIViewController, Instantiable {
         liveTableView.registerCellClass(LiveCell.self)
         self.view.addSubview(liveTableView)
         
-        liveTableView.refreshControl = RefreshControl()
+        liveTableView.refreshControl = BrandRefreshControl()
         liveTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         self.getLives()

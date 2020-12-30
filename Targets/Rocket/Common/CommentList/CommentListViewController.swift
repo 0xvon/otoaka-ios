@@ -80,7 +80,7 @@ final class CommentListViewController: UIViewController, Instantiable {
             UINib(nibName: "CommentCell", bundle: nil), forCellReuseIdentifier: "CommentCell")
         self.view.addSubview(commentTableView)
         
-        commentTableView.refreshControl = RefreshControl()
+        commentTableView.refreshControl = BrandRefreshControl()
         commentTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         self.getComments()
