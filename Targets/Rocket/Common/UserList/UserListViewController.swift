@@ -148,10 +148,6 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
         return view
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 300
-    }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = self.users[indexPath.section]
         let cell = tableView.dequeueReusableCell(FanCell.self, input: user, for: indexPath)

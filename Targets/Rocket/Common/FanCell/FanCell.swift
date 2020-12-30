@@ -36,6 +36,7 @@ final class FanCell: UITableViewCell, ReusableCell {
         fanNameLabel.textColor = Brand.color(for: .text(.primary))
         
         biographyTextView.text = input.biography
+        biographyTextView.isUserInteractionEnabled = false
         biographyTextView.font = Brand.font(for: .medium)
         biographyTextView.backgroundColor = Brand.color(for: .background(.primary))
         biographyTextView.textColor = Brand.color(for: .text(.primary))

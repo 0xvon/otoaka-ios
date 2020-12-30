@@ -159,19 +159,19 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         scrollStackView.addArrangedSubview(ticketStackView)
         
-        scrollStackView.addArrangedSubview(feedSectionHeader)
-        NSLayoutConstraint.activate([
-            feedSectionHeader.heightAnchor.constraint(equalToConstant: 64),
-        ])
-        feedCellWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(feedCellWrapper)
-        
         scrollStackView.addArrangedSubview(performersSectionHeader)
         NSLayoutConstraint.activate([
             performersSectionHeader.heightAnchor.constraint(equalToConstant: 64),
         ])
         performersCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(performersCellWrapper)
+        
+        scrollStackView.addArrangedSubview(feedSectionHeader)
+        NSLayoutConstraint.activate([
+            feedSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+        ])
+        feedCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(feedCellWrapper)
         
         let bottomSpacer = UIView()
         scrollStackView.addArrangedSubview(bottomSpacer) // Spacer
