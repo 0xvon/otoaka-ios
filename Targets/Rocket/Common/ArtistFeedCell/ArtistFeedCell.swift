@@ -21,7 +21,7 @@ class ArtistFeedCell: UITableViewCell, ReusableCell {
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
         // Proxy tap event to tableView(_:didSelectRowAt:)
-        _contentView.isUserInteractionEnabled = false
+        _contentView.cellButton.isUserInteractionEnabled = false
         backgroundColor = .clear
         NSLayoutConstraint.activate([
             _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -45,7 +45,7 @@ class ArtistFeedCell: UITableViewCell, ReusableCell {
 }
 
 
-class ArtistFeedCellContent: UIButton {
+class ArtistFeedCellContent: UIView {
     typealias Input = ArtistFeedSummary
     enum Output {
         case commentButtonTapped
@@ -71,9 +71,11 @@ class ArtistFeedCellContent: UIButton {
             )
         }
     }
+    private var highlightObservation: NSKeyValueObservation!
+    @IBOutlet weak var cellButton: UIButton!
 
-    override var isHighlighted: Bool {
-        didSet { alpha = isHighlighted ? 0.6 : 1.0 }
+    func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
+        cellButton.addTarget(target, action: action, for: controlEvents)
     }
 
     func inject(input: Input) {
@@ -116,6 +118,9 @@ class ArtistFeedCellContent: UIButton {
 
         playImageView.image = UIImage(named: "play")
         playImageView.layer.opacity = 0.6
+        highlightObservation = cellButton.observe(\.isHighlighted) { [unowned self] (button, change) in
+            alpha = button.isHighlighted ? 0.6 : 1.0
+        }
     }
 
     @objc private func commentButtonTapped() {

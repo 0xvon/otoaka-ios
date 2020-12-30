@@ -15,6 +15,9 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uXk-VN-0Vv">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
+                </button>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="pcy-if-26W">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
                     <constraints>
@@ -66,6 +69,7 @@
                 <constraint firstItem="lst-D0-Awq" firstAttribute="top" secondItem="bvU-Zc-Bl4" secondAttribute="bottom" constant="4" id="GBR-Jt-HnM"/>
                 <constraint firstItem="pcy-if-26W" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="IQW-Bz-CK6"/>
                 <constraint firstItem="pcy-if-26W" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Ifa-lo-inD"/>
+                <constraint firstItem="uXk-VN-0Vv" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="K85-lx-qgU"/>
                 <constraint firstItem="bvU-Zc-Bl4" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="M3l-hI-Rtu"/>
                 <constraint firstAttribute="trailing" secondItem="bvU-Zc-Bl4" secondAttribute="trailing" constant="16" id="R3f-Mb-d9C"/>
                 <constraint firstItem="KaQ-gr-jtr" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="UTh-6h-y9I"/>
@@ -73,14 +77,18 @@
                 <constraint firstItem="bvU-Zc-Bl4" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="VQn-zM-Gh8"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="VCF-xH-vYa" secondAttribute="bottom" constant="16" id="Wbo-sV-9hB"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="jse-Ek-ShY" secondAttribute="trailing" constant="16" id="mW9-g5-Qub"/>
+                <constraint firstItem="uXk-VN-0Vv" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="oDe-S2-Ofb"/>
                 <constraint firstItem="KaQ-gr-jtr" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="oJg-kZ-OlE"/>
                 <constraint firstItem="lst-D0-Awq" firstAttribute="leading" secondItem="bvU-Zc-Bl4" secondAttribute="leading" id="os3-bQ-ZGD"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="lst-D0-Awq" secondAttribute="trailing" constant="16" id="pDQ-uM-OSM"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="jse-Ek-ShY" secondAttribute="bottom" constant="16" id="wWW-UT-Xtz"/>
+                <constraint firstItem="uXk-VN-0Vv" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="xFO-aP-zlR"/>
+                <constraint firstItem="uXk-VN-0Vv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="xi8-pR-Mwn"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="artistNameLabel" destination="lst-D0-Awq" id="1z5-OI-gbG"/>
+                <outlet property="cellButton" destination="uXk-VN-0Vv" id="CWL-bh-Geh"/>
                 <outlet property="commentButton" destination="VCF-xH-vYa" id="tDW-1I-C1z"/>
                 <outlet property="dateLabel" destination="jse-Ek-ShY" id="ESb-ZR-it0"/>
                 <outlet property="feedTitleLabel" destination="bvU-Zc-Bl4" id="ZnT-kM-koO"/>
