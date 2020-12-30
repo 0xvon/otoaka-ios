@@ -53,16 +53,6 @@ final class HomeViewController: UIViewController, Instantiable {
         let pageTitle: TitleLabelView
     }
 
-    private var isOpened: Bool = false
-    private var creationView: UIView!
-    private var creationViewHeightConstraint: NSLayoutConstraint!
-    private var openButtonView: CreateButton!
-    private var createGroupFeedView: CreateButton!
-    private var createGroupFeedViewBottomConstraint: NSLayoutConstraint!
-    private var createLiveView: CreateButton!
-    private var createLiveViewBottomConstraint: NSLayoutConstraint!
-    private var creationButtonConstraintItems: [NSLayoutConstraint] = []
-
     lazy var viewModel = HomeViewModel(
         apiClient: dependencyProvider.apiClient,
         youTubeDataApiClient: dependencyProvider.youTubeDataApiClient,
@@ -343,41 +333,6 @@ final class HomeViewController: UIViewController, Instantiable {
         }
         let floatingController = dependencyProvider.viewHierarchy.floatingViewController
         floatingController.setFloatingButtonItems(items)
-    }
-
-    func open(isOpened: Bool) {
-        if isOpened {
-            UIView.animate(withDuration: 0.2) {
-                self.openButtonView.transform = CGAffineTransform(rotationAngle: .pi * 3 / 4)
-            }
-
-            self.creationButtonConstraintItems.enumerated().forEach { (index, item) in
-                creationView.removeConstraint(item)
-                item.constant = CGFloat((index + 1) * -76)
-                creationView.addConstraint(item)
-                UIView.animate(withDuration: 0.2) {
-                    self.creationView.layoutIfNeeded()
-                }
-            }
-
-            creationViewHeightConstraint.constant = CGFloat(
-                60 + 76 * creationButtonConstraintItems.count)
-        } else {
-            UIView.animate(withDuration: 0.2) {
-                self.openButtonView.transform = .identity
-            }
-
-            self.creationButtonConstraintItems.enumerated().forEach { (index, item) in
-                creationView.removeConstraint(item)
-                item.constant = 0
-                creationView.addConstraint(item)
-                UIView.animate(withDuration: 0.2) {
-                    self.creationView.layoutIfNeeded()
-                }
-            }
-
-            creationViewHeightConstraint.constant = 60
-        }
     }
 
     func initializeItems() {
