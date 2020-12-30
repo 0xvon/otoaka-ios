@@ -56,8 +56,12 @@ class LiveCellContent: UIButton {
 
     @IBOutlet weak var liveTitleLabel: UILabel!
     @IBOutlet weak var bandsLabel: UILabel!
-    @IBOutlet weak var placeView: BadgeView!
-    @IBOutlet weak var dateView: BadgeView!
+    @IBOutlet weak var placeView: BadgeView! {
+        didSet { placeView.isUserInteractionEnabled = false }
+    }
+    @IBOutlet weak var dateView: BadgeView! {
+        didSet { dateView.isUserInteractionEnabled = false }
+    }
     @IBOutlet weak var listenButtonView: PrimaryButton! {
         didSet {
             listenButtonView.setTitle("曲を聴く", for: .normal)

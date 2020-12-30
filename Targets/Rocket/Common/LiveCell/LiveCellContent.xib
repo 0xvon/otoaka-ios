@@ -33,16 +33,16 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Rh7-uL-vJd">
+                <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Rh7-uL-vJd">
                     <rect key="frame" x="16" y="180" width="194" height="104"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XvW-Dn-gmU" customClass="BadgeView" customModule="UIComponent">
+                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XvW-Dn-gmU" customClass="BadgeView" customModule="UIComponent">
                             <rect key="frame" x="0.0" y="0.0" width="194" height="48"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="48" id="XZx-Wg-vHS"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0jw-X9-Gfb" customClass="BadgeView" customModule="UIComponent">
+                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0jw-X9-Gfb" customClass="BadgeView" customModule="UIComponent">
                             <rect key="frame" x="0.0" y="56" width="194" height="48"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="48" id="gMY-rc-pqz"/>
@@ -50,7 +50,7 @@
                         </view>
                     </subviews>
                 </stackView>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="40x-Eh-8KY">
+                <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="40x-Eh-8KY">
                     <rect key="frame" x="218" y="180" width="180" height="104"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bCB-XB-RMr" customClass="PrimaryButton" customModule="UIComponent">
