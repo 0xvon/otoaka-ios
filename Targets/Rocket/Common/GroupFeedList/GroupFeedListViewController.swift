@@ -71,7 +71,7 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
         contentsTableView.registerCellClass(ArtistFeedCell.self)
         self.view.addSubview(contentsTableView)
         
-        contentsTableView.refreshControl = UIRefreshControl()
+        contentsTableView.refreshControl = RefreshControl()
         contentsTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         viewModel.getGroupFeeds()

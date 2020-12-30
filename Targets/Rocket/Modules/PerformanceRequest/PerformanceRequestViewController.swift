@@ -69,7 +69,7 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
         requestTableView.delegate = self
         requestTableView.dataSource = self
         requestTableView.backgroundColor = .clear
-        requestTableView.refreshControl = UIRefreshControl()
+        requestTableView.refreshControl = RefreshControl()
         requestTableView.refreshControl?.addTarget(
             self, action: #selector(refreshPerformanceRequests(_:)), for: .valueChanged)
         requestTableView.register(

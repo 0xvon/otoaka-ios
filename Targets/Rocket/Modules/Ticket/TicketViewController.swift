@@ -65,7 +65,7 @@ final class TicketViewController: UIViewController, Instantiable {
         ticketsTableView.registerCellClass(LiveCell.self)
         ticketsTableView.backgroundColor = .clear
         
-        ticketsTableView.refreshControl = UIRefreshControl()
+        ticketsTableView.refreshControl = RefreshControl()
         ticketsTableView.refreshControl?.addTarget(
             self, action: #selector(refreshMyTickets(sender:)), for: .valueChanged)
         

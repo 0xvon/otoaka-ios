@@ -86,7 +86,7 @@ final class UserListViewController: UIViewController, Instantiable {
             UINib(nibName: "FanCell", bundle: nil), forCellReuseIdentifier: "FanCell")
         self.view.addSubview(fanTableView)
         
-        fanTableView.refreshControl = UIRefreshControl()
+        fanTableView.refreshControl = RefreshControl()
         fanTableView.refreshControl?.addTarget(
             self, action: #selector(refreshFan(sender:)), for: .valueChanged)
         self.getUsers()

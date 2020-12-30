@@ -92,7 +92,7 @@ final class GroupListViewController: UIViewController, Instantiable {
             UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
         self.view.addSubview(groupTableView)
         
-        groupTableView.refreshControl = UIRefreshControl()
+        groupTableView.refreshControl = RefreshControl()
         groupTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         self.getGroups()

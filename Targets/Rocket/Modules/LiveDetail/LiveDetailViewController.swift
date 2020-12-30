@@ -90,11 +90,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         return paddingView
     }
     
-    private let refreshControl: UIRefreshControl = {
-        let refreshControl = UIRefreshControl()
-        refreshControl.tintColor = Brand.color(for: .background(.secondary))
-        return refreshControl
-    }()
+    private let refreshControl = RefreshControl()
     
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: LiveDetailViewModel
