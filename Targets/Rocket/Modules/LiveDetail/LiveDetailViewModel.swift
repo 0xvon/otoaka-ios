@@ -34,7 +34,7 @@ class LiveDetailViewModel {
         
         case pushToGroupFeedList(GroupFeedListViewController.Input)
         case pushToPerformerDetail(BandDetailViewController.Input)
-        case pushToCommentList(CommentListViewController.Input)
+        case presentCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
         case reportError(Error)
     }
@@ -89,7 +89,7 @@ class LiveDetailViewModel {
         switch event {
         case .commentButtonTapped:
             guard let feed = state.feeds.first else { return }
-            outputSubject.send(.pushToCommentList(.feedComment(feed)))
+            outputSubject.send(.presentCommentList(.feedComment(feed)))
         }
     }
     
