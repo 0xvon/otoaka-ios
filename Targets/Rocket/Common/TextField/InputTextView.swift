@@ -99,9 +99,9 @@ final class InputTextView: UIView {
             underLine.backgroundColor = Brand.color(for: .text(.toggle))
         }
     }
-
+    
     func getText() -> String? {
-        return textView.text
+        return ((textView.text != nil) && !textView.text!.isEmpty) ? textView.text : nil
     }
 
     func setText(text: String) {
