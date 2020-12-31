@@ -12,7 +12,10 @@ import Foundation
 class ReserveTicketViewModel {
     struct State {
         let live: Live
-        var hasTicket: Bool?
+        var hasTicket: Bool {
+            guard let ticket = ticket else { return false }
+            return ticket.status == .reserved
+        }
         var ticket: Ticket?
         var participantsCount: Int?
     }
@@ -32,7 +35,7 @@ class ReserveTicketViewModel {
 
     init(live: Live, apiClient: APIClient) {
         self.apiClient = apiClient
-        self.state = State(live: live, hasTicket: nil)
+        self.state = State(live: live)
     }
 
     func viewDidLoad() {
@@ -41,18 +44,14 @@ class ReserveTicketViewModel {
 
     func didGetLiveDetail(ticket: Ticket?, participantsCount: Int) {
         state.ticket = ticket
-        let hasTicket: Bool = (ticket != nil && ticket?.status == .reserved)
-        state.hasTicket = hasTicket
         state.participantsCount = participantsCount
         outputSubject.send(.updateIsButtonEnabled(true))
-        outputSubject.send(.updateHasTicket(hasTicket ? "予約済" : "￥\(state.live.price)"))
+        outputSubject.send(.updateHasTicket(state.hasTicket ? "予約済" : "￥\(state.live.price)"))
         outputSubject.send(.updateParticipantsCount(participantsCount))
     }
 
     func didButtonTapped() {
-        guard let hasTicket = state.hasTicket else {
-            preconditionFailure("Button shouldn't be enabled before got hasTicket")
-        }
+        let hasTicket = state.hasTicket
         outputSubject.send(.updateIsButtonEnabled(false))
         if hasTicket {
             guard let ticket = state.ticket else {
@@ -60,24 +59,25 @@ class ReserveTicketViewModel {
             }
             let req = RefundTicket.Request(ticketId: ticket.id)
             apiClient.request(RefundTicket.self, request: req) { [unowned self] in
-                self.updateState(with: $0, didReserve: false)
+                self.updateState(with: $0.map { _ in nil })
             }
         } else {
             let req = ReserveTicket.Request(liveId: state.live.id)
             apiClient.request(ReserveTicket.self, request: req) { [unowned self] in
-                self.updateState(with: $0, didReserve: true)
+                self.updateState(with: $0.map { $0 })
             }
         }
     }
 
-    private func updateState<T>(with result: Result<T, Error>, didReserve: Bool) {
+    private func updateState(with result: Result<Ticket?, Error>) {
         guard let count = state.participantsCount else {
             preconditionFailure("Button shouldn't be enabled before got followersCount")
         }
         outputSubject.send(.updateIsButtonEnabled(true))
         switch result {
-        case .success(_):
-            state.hasTicket = didReserve
+        case .success(let ticket):
+            let didReserve = ticket != nil
+            state.ticket = ticket
             let newCount = count + (didReserve ? 1 : -1)
             state.participantsCount = newCount
             outputSubject.send(.updateParticipantsCount(newCount))

@@ -10,13 +10,6 @@ import StubKit
 import Endpoint
 @testable import Rocket
 
-class MockHTTPClient: HTTPClientProtocol {
-    func request<E>(_ endpoint: E.Type, request: E.Request, uri: E.URI, file: StaticString, line: UInt,
-                    callback: @escaping ((Result<E.Response, Error>) -> Void)) where E : EndpointProtocol {
-        callback(.success(try! Stub.make()))
-    }
-}
-
 final class LiveDetailViewModelTests: XCTestCase {
     func testReserveAndRefundTicket() {
         let viewModel = try! ReserveTicketViewModel(live: Stub.make(), apiClient: MockHTTPClient())
