@@ -110,7 +110,7 @@ final class TextFieldView: UIView {
     }
 
     func getText() -> String? {
-        return textField.text
+        return ((textField.text != nil) && !textField.text!.isEmpty) ? textField.text : nil
     }
 
     func setText(text: String) {

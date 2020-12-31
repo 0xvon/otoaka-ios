@@ -54,7 +54,6 @@ final class CreateBandViewController: UIViewController, Instantiable {
         sincePickerView.translatesAutoresizingMaskIntoConstraints = false
         sincePickerView.dataSource = self
         sincePickerView.delegate = self
-        sinceInputView.selectInputView(inputView: sincePickerView)
         return sincePickerView
     }()
     private lazy var hometownInputView: TextFieldView = {
@@ -67,7 +66,6 @@ final class CreateBandViewController: UIViewController, Instantiable {
         hometownPickerView.translatesAutoresizingMaskIntoConstraints = false
         hometownPickerView.dataSource = self
         hometownPickerView.delegate = self
-        hometownInputView.selectInputView(inputView: hometownPickerView)
         return hometownPickerView
     }()
     private lazy var youTubeIdInputView: TextFieldView = {
@@ -241,11 +239,13 @@ final class CreateBandViewController: UIViewController, Instantiable {
         ])
         
         mainView.addArrangedSubview(sinceInputView)
+        sinceInputView.selectInputView(inputView: sincePickerView)
         NSLayoutConstraint.activate([
             sinceInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
         mainView.addArrangedSubview(hometownInputView)
+        hometownInputView.selectInputView(inputView: hometownPickerView)
         NSLayoutConstraint.activate([
             hometownInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
@@ -293,20 +293,23 @@ final class CreateBandViewController: UIViewController, Instantiable {
     }
     
     private func didInputValue() {
-        let groupName = displayNameInputView.getText()
-        let groupEnglishName = englishNameInputView.getText()
-        let biography = biographyInputView.getText()
-        let artworkImage = profileImageView.image
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
-        dateFormatter.locale = Locale(identifier: "ja_JP")
-        guard let sinceInput = sinceInputView.getText() else { return }
-        let since: Date? = dateFormatter.date(from: sinceInput)
+        let groupName: String? = displayNameInputView.getText()
+        let groupEnglishName: String? = englishNameInputView.getText()
+        let biography: String? = biographyInputView.getText()
+        let artworkImage: UIImage? = profileImageView.image
+        let sinceInput = sinceInputView.getText()
+        let since: Date? = {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy"
+            dateFormatter.locale = Locale(identifier: "ja_JP")
+            guard let sinceInput = sinceInput else { return nil }
+            return dateFormatter.date(from: sinceInput)
+        }()
         let hometown = hometownInputView.getText()
         let youtubeChannelId = youTubeIdInputView.getText()
         let twitterId = twitterIdInputView.getText()
         
-        viewModel.updateInput(name: groupName, englishName: groupEnglishName, biography: biography, since: since, artwork: artworkImage, youtubeChannelId: youtubeChannelId, twitterId: twitterId, hometown: hometown)
+        viewModel.didUpdateInputItems(name: groupName, englishName: groupEnglishName, biography: biography, since: since, artwork: artworkImage, youtubeChannelId: youtubeChannelId, twitterId: twitterId, hometown: hometown)
     }
 
     @objc private func selectProfileImage(_ sender: Any) {

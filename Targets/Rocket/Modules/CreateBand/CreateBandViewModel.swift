@@ -54,7 +54,7 @@ class CreateBandViewModel {
         callback(url != nil)
     }
     
-    func updateInput(
+    func didUpdateInputItems(
         name: String?, englishName: String?, biography: String?,
         since: Date?, artwork: UIImage?, youtubeChannelId: String?, twitterId: String?, hometown: String?
     ) {
