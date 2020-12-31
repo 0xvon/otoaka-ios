@@ -12,7 +12,7 @@ target 'Rocket' do
   pod 'KeychainAccess'
   pod 'LicensePlist'
   pod 'Firebase/Crashlytics'
-  pod 'Firebase/Analytics'
+  pod 'Firebase/Analytics', '7.3-M1'
   pod 'SwiftGen', '~> 6.0'
 
   target 'RocketTests' do

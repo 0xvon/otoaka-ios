@@ -6,20 +6,20 @@ PODS:
   - AWSCore (2.21.1)
   - AWSS3 (2.21.1):
     - AWSCore (= 2.21.1)
-  - Firebase/Analytics (7.3.0):
+  - Firebase/Analytics (7.3.0-M1):
     - Firebase/Core
-  - Firebase/Core (7.3.0):
+  - Firebase/Core (7.3.0-M1):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 7.3.0)
-  - Firebase/CoreOnly (7.3.0):
+    - FirebaseAnalytics (= 7.3.0-M1)
+  - Firebase/CoreOnly (7.3.0-M1):
     - FirebaseCore (= 7.3.0)
-  - Firebase/Crashlytics (7.3.0):
+  - Firebase/Crashlytics (7.3.0-M1):
     - Firebase/CoreOnly
     - FirebaseCrashlytics (~> 7.3.0)
-  - FirebaseAnalytics (7.3.0):
+  - FirebaseAnalytics (7.3.0-M1):
     - FirebaseCore (~> 7.0)
     - FirebaseInstallations (~> 7.0)
-    - GoogleAppMeasurement (= 7.3.0)
+    - GoogleAppMeasurement (= 7.3.0-M1)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
     - GoogleUtilities/MethodSwizzler (~> 7.0)
     - GoogleUtilities/Network (~> 7.0)
@@ -45,7 +45,7 @@ PODS:
     - GoogleUtilities/Environment (~> 7.0)
     - GoogleUtilities/UserDefaults (~> 7.0)
     - PromisesObjC (~> 1.2)
-  - GoogleAppMeasurement (7.3.0):
+  - GoogleAppMeasurement (7.3.0-M1):
     - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
     - GoogleUtilities/MethodSwizzler (~> 7.0)
     - GoogleUtilities/Network (~> 7.0)
@@ -85,7 +85,7 @@ PODS:
 DEPENDENCIES:
   - AWSCognitoAuth
   - AWSS3
-  - Firebase/Analytics
+  - Firebase/Analytics (= 7.3-M1)
   - Firebase/Crashlytics
   - KeychainAccess
   - LicensePlist
@@ -117,13 +117,13 @@ SPEC CHECKSUMS:
   AWSCognitoIdentityProviderASF: 318df44cc620dc401a04a94e57107b2af316c50e
   AWSCore: a855a41cb2d43c8b538d3a80f8e855ed947f3d3c
   AWSS3: b0e108589398295e84648f3403001a409d6b9761
-  Firebase: 26223c695fe322633274198cb19dca8cb7e54416
-  FirebaseAnalytics: 2580c2d62535ae7b644143d48941fcc239ea897a
+  Firebase: 3e5e5e556a5ba2c2282e89905e33a300122f4caf
+  FirebaseAnalytics: e21b1cc325468620a2dfa1e1653f86472b313ac9
   FirebaseCore: 4d3c72622ce0e2106aaa07bb4b2935ba2c370972
   FirebaseCoreDiagnostics: d50e11039e5984d92c8a512be2395f13df747350
   FirebaseCrashlytics: d31325312c92e2cb2f0386d589b9aa44e303d99b
   FirebaseInstallations: 971df89b48ae5ee4cc2bf6935f3857a525d28550
-  GoogleAppMeasurement: 8d3c0aeede16ab7764144b5a4ca8e1d4323841b7
+  GoogleAppMeasurement: ad1f97cb2ba78bb0d7ba878e826d302f1c9e5dd4
   GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
   GoogleUtilities: 3dc4ff0d5e4840e2fa8eef0889620e8c33d4218c
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
@@ -132,6 +132,6 @@ SPEC CHECKSUMS:
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
 
-PODFILE CHECKSUM: 059191bcf11578b94df31600f3ee5af18a203af9
+PODFILE CHECKSUM: 10b71280b7f15ddc4b9597ca93d694e7996a1af7
 
 COCOAPODS: 1.10.0
