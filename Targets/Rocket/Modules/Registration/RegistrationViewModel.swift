@@ -1,5 +1,5 @@
 //
-//  AuthViewModel.swift
+//  RegistrationViewModel.swift
 //  Rocket
 //
 //  Created by Masato TSUTSUMI on 2020/10/17.
@@ -9,7 +9,7 @@ import AWSCognitoAuth
 import Endpoint
 import Foundation
 
-class AuthViewModel {
+class RegistrationViewModel {
     enum Output {
         case signupStatus(Bool)
         case error(Error)
@@ -29,6 +29,10 @@ class AuthViewModel {
             switch result {
             case .success(let res):
                 self.outputHandler(.signupStatus(res.isSignedup))
+            case .failure(let error as NSError) where
+                    error.domain == AWSCognitoAuthErrorDomain &&
+                    error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue:
+                break
             case .failure(let error):
                 self.outputHandler(.error(error))
             }

@@ -41,7 +41,7 @@ public final class PrimaryButton: UIButton {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
+#if PREVIEW
 import SwiftUI
 
 struct Button_Previews: PreviewProvider {

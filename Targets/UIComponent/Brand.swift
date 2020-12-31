@@ -121,10 +121,6 @@ public enum Brand {
 extension UIColor {
     // MARK: Color variations
 
-    /// Pressed version of any color using Design System formula.
-    ///
-    /// The color returned is the same as overlaying a 20% alpha black onto the base color.
-    /// - note: If a pressed version of a color is explicitly defined as a constant, use that instead.
     public func pressed() -> UIColor {
         var r: CGFloat = 0.0
         var g: CGFloat  = 0.0
@@ -133,7 +129,7 @@ extension UIColor {
         getRed(&r, green: &g, blue: &b, alpha: &a)
 
         // blend #000000 alpha 0.1
-        return UIColor(red: r*0.9, green: g*0.9, blue: b*0.9, alpha: a * 0.9 + 0.1)
+        return UIColor(red: r*0.8, green: g*0.8, blue: b*0.8, alpha: a * 0.8 + 0.1)
     }
 }
 

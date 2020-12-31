@@ -64,7 +64,7 @@ final class RootViewController: UITabBarController, Instantiable {
     }
     
     func makeAuth() {
-        let vc = AuthViewController(dependencyProvider: dependencyProvider) { [unowned self] in
+        let vc = RegistrationViewController(dependencyProvider: dependencyProvider) { [unowned self] in
             self.makeViewFromUserInfo()
         }
         let nav = ModalNavigationController(rootViewController: vc)

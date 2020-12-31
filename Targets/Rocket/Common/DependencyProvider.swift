@@ -126,7 +126,6 @@ class CognitoAuthWrapper: APITokenProvider {
         queue.async { [auth] in
             let semaphore = DispatchSemaphore(value: 0)
             auth.getSession { (session, error) in
-                semaphore.signal()
                 if let session = session, let idToken = session.idToken {
                     callback(.success(idToken.tokenString))
                 } else if let error = error {
@@ -134,6 +133,7 @@ class CognitoAuthWrapper: APITokenProvider {
                 } else {
                     callback(.failure(Error.unexpectedGetSessionResult))
                 }
+                semaphore.signal()
             }
             semaphore.wait()
         }
