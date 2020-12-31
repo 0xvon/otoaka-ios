@@ -105,7 +105,7 @@ final class RootViewController: UITabBarController, Instantiable {
             self.checkSignupStatus()
         }
         
-        let searchViewCotnroller = SearchViewController_V1(dependencyProvider: loggedInProvider, input: ())
+        let searchViewCotnroller = SearchViewController(dependencyProvider: loggedInProvider)
         let searchVC = BrandNavigationController(rootViewController: searchViewCotnroller)
         searchVC.tabBarItem = UITabBarItem(
             title: "Search", image: UIImage(named: "searchIcon"),
