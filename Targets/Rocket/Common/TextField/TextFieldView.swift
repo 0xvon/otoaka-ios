@@ -81,6 +81,7 @@ final class TextFieldView: UIView {
             section.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             section.topAnchor.constraint(equalTo: contentView.topAnchor),
             section.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            section.heightAnchor.constraint(equalToConstant: 24),
 
             textField.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             textField.rightAnchor.constraint(equalTo: contentView.rightAnchor),
@@ -130,6 +131,11 @@ final class TextFieldView: UIView {
     @objc private func donePicker() {
         self.textField.endEditing(true)
     }
+    
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
+        self.listener = listener
+    }
 }
 
 extension TextFieldView: UITextFieldDelegate {
@@ -145,6 +151,7 @@ extension TextFieldView: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         textField.text = textField.text?.prefix(input.maxLength).description
+        self.listener()
         underLineColor()
     }
 }

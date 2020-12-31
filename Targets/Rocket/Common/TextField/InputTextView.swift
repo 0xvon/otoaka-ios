@@ -54,6 +54,7 @@ final class InputTextView: UIView {
         contentView.addSubview(section)
 
         textView = UITextView()
+        textView.delegate = self
         textView.returnKeyType = .done
         textView.backgroundColor = .clear
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -107,6 +108,11 @@ final class InputTextView: UIView {
         self.textView.text = text
         underLineColor()
     }
+    
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
+        self.listener = listener
+    }
 }
 
 extension InputTextView: UITextViewDelegate {
@@ -115,10 +121,12 @@ extension InputTextView: UITextViewDelegate {
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
+        self.listener()
         underLineColor()
     }
     
     func textViewDidChange(_ textView: UITextView) {
         textView.text = textView.text.prefix(input.maxLength).description
+        underLineColor()
     }
 }
