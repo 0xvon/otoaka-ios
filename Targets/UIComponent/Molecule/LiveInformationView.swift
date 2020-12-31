@@ -153,12 +153,7 @@ class LiveInformationView: UIView {
             Group {
                 ViewWrapper(
                     view: {
-                        let input: BandInformationView.Input = try! Stub.make {
-                            $0.set(\.name, value: "Band Name")
-                            $0.set(\.biography, value: "Band Biography")
-                            $0.set(\.hometown, value: "Band Hometown")
-                            $0.set(\.since, value: Date())
-                        }
+                        let input: LiveInformationView.Input = try! Stub.make()
                         let contentView = LiveInformationView()
                         contentView.update(input: input)
                         return contentView
