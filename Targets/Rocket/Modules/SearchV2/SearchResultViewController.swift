@@ -22,7 +22,7 @@ final class SearchResultViewController: UIViewController {
         return controller
     }()
     private lazy var groupListViewController: GroupListViewController = {
-        let controller = GroupListViewController(dependencyProvider: dependencyProvider, input: .searchResults(""))
+        let controller = GroupListViewController(dependencyProvider: dependencyProvider, input: .none)
         controller.view.isHidden = true
         return controller
     }()

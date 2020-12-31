@@ -21,12 +21,14 @@ class GroupListViewModel {
         case memberships(User.ID)
         case followingGroups(User.ID)
         case searchResults(String)
+        case none
     }
 
     enum DataSourceStorage {
         case followingGroups(User.ID, PaginationRequest<FollowingGroups>)
         case searchResults(String, PaginationRequest<SearchGroup>)
         case memberships(User.ID)
+        case none
 
         init(dataSource: DataSource, apiClient: APIClient) {
             switch dataSource {
@@ -42,7 +44,8 @@ class GroupListViewModel {
                 self = .searchResults(query, request)
             case .memberships(let userId):
                 self = .memberships(userId)
-                
+            case .none:
+                self = .none
             }
         }
     }
@@ -79,7 +82,7 @@ class GroupListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
-        case .memberships: break
+        case .memberships, .none: break
         }
     }
 
@@ -121,6 +124,7 @@ class GroupListViewModel {
                     self?.outputSubject.send(.error(error))
                 }
             }
+        case .none: break
         }
     }
     func willDisplay(rowAt indexPath: IndexPath) {
@@ -131,6 +135,7 @@ class GroupListViewModel {
         case let .searchResults(_, pagination):
             pagination.next()
         case .memberships: break
+        case .none: break
         }
     }
 }
