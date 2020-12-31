@@ -126,7 +126,8 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
         let band = self.viewModel.state.groups[indexPath.section]
         let vc = BandDetailViewController(
             dependencyProvider: self.dependencyProvider, input: band)
-        self.navigationController?.pushViewController(vc, animated: true)
+        let nav = self.navigationController ?? presentingViewController?.navigationController
+        nav?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
