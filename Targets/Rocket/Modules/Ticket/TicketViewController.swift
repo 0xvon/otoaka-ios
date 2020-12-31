@@ -58,6 +58,7 @@ final class TicketViewController: UIViewController, Instantiable {
     }
 
     func setup() {
+        title = "Ticket"
         self.view.backgroundColor = Brand.color(for: .background(.primary))
 
         ticketsTableView.delegate = self

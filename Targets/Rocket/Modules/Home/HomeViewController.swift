@@ -142,6 +142,7 @@ final class HomeViewController: UIViewController, Instantiable {
     }
 
     func setup() {
+        title = "Home"
         horizontalScrollView.delegate = self
         horizontalScrollView.backgroundColor = Brand.color(for: .background(.primary))
         

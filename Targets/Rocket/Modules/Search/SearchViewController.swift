@@ -38,6 +38,7 @@ final class SearchViewController: UIViewController, Instantiable {
     }
 
     func setup() {
+        title = "Search"
         self.view.backgroundColor = Brand.color(for: .background(.primary))
 
         searchBar.delegate = self
