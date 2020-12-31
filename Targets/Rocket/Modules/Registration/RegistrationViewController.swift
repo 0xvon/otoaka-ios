@@ -6,6 +6,7 @@
 //
 
 import AWSCognitoAuth
+import SafariServices
 import UIKit
 
 final class RegistrationViewController: UIViewController, Instantiable {
@@ -84,6 +85,37 @@ final class RegistrationViewController: UIViewController, Instantiable {
 
     func signInButtonTapped() {
         viewModel.getSignupStatus()
+    }
+
+    private var awsCognitoAuthSaferiViewControllerWorkaround: AWSCognitoAuthSaferiViewControllerWorkaround?
+    class AWSCognitoAuthSaferiViewControllerWorkaround: NSObject, UIAdaptivePresentationControllerDelegate {
+        weak var controller: SFSafariViewController?
+        weak var originalDelegate: SFSafariViewControllerDelegate?
+        init(controller: SFSafariViewController, originalDelegate: SFSafariViewControllerDelegate?) {
+            self.controller = controller
+            self.originalDelegate = originalDelegate
+        }
+        func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+            originalDelegate?.safariViewControllerDidFinish?(controller!)
+        }
+        func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+            return .formSheet
+        }
+    }
+
+    // Workaround: AWSCognitoAuth doesn't handle presentationControllerShouldDismiss for SFSafariViewController,
+    // so callback function passed to getSession will not be called when a user dismissed SFSafariVC with drag gesture.
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        var flag = flag
+        if let safariVC = viewControllerToPresent as? SFSafariViewController {
+            awsCognitoAuthSaferiViewControllerWorkaround = AWSCognitoAuthSaferiViewControllerWorkaround(
+                controller: safariVC, originalDelegate: safariVC.delegate
+            )
+            safariVC.presentationController?.delegate = awsCognitoAuthSaferiViewControllerWorkaround
+            // AWSCognitoAuth passes `animated` option as always false 😡
+            flag = true
+        }
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
     }
 }
 
