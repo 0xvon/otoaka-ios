@@ -20,7 +20,33 @@ public struct NopHTTPClientInterceptor: HTTPClientInterceptor {
     public func intercept(responseError: Error, urlResponse: URLResponse?, adapter: HTTPClientAdapter) {}
 }
 
-public class HTTPClient<Adapter: HTTPClientAdapter> {
+public protocol HTTPClientProtocol {
+    func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        request: E.Request, uri: E.URI, file: StaticString, line: UInt,
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    )
+}
+
+extension HTTPClientProtocol {
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        request: E.Request, uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line,
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    ) {
+        self.request(endpoint, request: request, uri: uri, file: file, line: line, callback: callback)
+    }
+
+    public func request<E: EndpointProtocol>(
+        _ endpoint: E.Type,
+        uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line,
+        callback: @escaping ((Result<E.Response, Error>) -> Void)
+    ) where E.Request == Endpoint.Empty {
+        request(E.self, request: Endpoint.Empty(), uri: uri, file: file, line: line, callback: callback)
+    }
+}
+
+public class HTTPClient<Adapter: HTTPClientAdapter>: HTTPClientProtocol {
     private let baseURL: URL
     private let session: URLSession
     let adapter: Adapter
@@ -44,14 +70,6 @@ public class HTTPClient<Adapter: HTTPClientAdapter> {
         self.adapter = adapter
         self.interceptor = interceptor
         self.session = session
-    }
-
-    public func request<E: EndpointProtocol>(
-        _ endpoint: E.Type,
-        uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line,
-        callback: @escaping ((Result<E.Response, Error>) -> Void)
-    ) where E.Request == Endpoint.Empty {
-        request(E.self, request: Endpoint.Empty(), uri: uri, file: file, line: line, callback: callback)
     }
 
     public func request<E: EndpointProtocol>(
@@ -113,7 +131,7 @@ public class HTTPClient<Adapter: HTTPClientAdapter> {
 }
 
 // MARK: - Combine Extensions
-extension HTTPClient {
+extension HTTPClientProtocol {
     public func request<E: EndpointProtocol>(
         _ endpoint: E.Type,
         uri: E.URI = E.URI(), file: StaticString = #file, line: UInt = #line

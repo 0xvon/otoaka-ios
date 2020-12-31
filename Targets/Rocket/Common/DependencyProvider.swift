@@ -75,12 +75,12 @@ extension DependencyProvider {
         }()
 
         AWSServiceManager.default()?.defaultServiceConfiguration = configuration
-        let apiClient = APIClient(
+        let apiClient = HTTPClient<RocketAPIAdapter>(
             baseUrl: URL(string: config.apiEndpoint)!,
             adapter: RocketAPIAdapter(tokenProvider: wrapper),
             interceptor: httpInterceptor
         )
-        let youTubeDataApiClient = YouTubeDataAPIClient(
+        let youTubeDataApiClient = HTTPClient<YoutubeDataAPIAdapter>(
             baseUrl: URL(string: "https://www.googleapis.com")!,
             adapter: YoutubeDataAPIAdapter(apiKey: config.youTubeApiKey),
             interceptor: httpInterceptor

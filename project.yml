@@ -67,12 +67,31 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.dev.Rocket
+  RocketTests:
+    type: bundle.unit-test
+    platform: iOS
+    settings:
+      base:
+        WRAPPER_EXTENSION: xctest
+    configFiles:
+      Debug: Pods/Target Support Files/Pods-RocketTests/Pods-RocketTests.debug.xcconfig
+      Release: Pods/Target Support Files/Pods-RocketTests/Pods-RocketTests.release.xcconfig
+    sources: [Targets/RocketTests]
+    dependencies:
+      - target: Rocket-Development
+      - package: StubKit
+      - framework: Pods_RocketTests.framework
+        implicit: true
+        embed: false
+
 
 targetTemplates:
   RocketTarget:
     type: application
     platform: iOS
     scheme:
+      testTargets:
+        - RocketTests
       commandLineArguments:
         "-FIRDebugDisabled": true
         "-FIRAnalyticsDebugDisabled": true
@@ -81,6 +100,9 @@ targetTemplates:
         DEVELOPMENT_TEAM: 6WL9GUCS6V
         VERSIONING_SYSTEM: apple-generic
         CURRENT_PROJECT_VERSION: 1
+        PRODUCT_MODULE_NAME: Rocket
+      Debug:
+        ENABLE_TESTABILITY: YES
     configFiles:
       Debug: Pods/Target Support Files/Pods-Rocket/Pods-Rocket.debug.xcconfig
       Release: Pods/Target Support Files/Pods-Rocket/Pods-Rocket.release.xcconfig
