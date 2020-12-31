@@ -116,7 +116,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         let registerButton = PrimaryButton(text: "バンド作成")
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         registerButton.layer.cornerRadius = 25
-        registerButton.isHidden = true
+        registerButton.isEnabled = false
         return registerButton
     }()
     
@@ -156,16 +156,12 @@ final class CreateBandViewController: UIViewController, Instantiable {
                     self.showAlert(title: "YouTube Channel IDエラー", message: "入力された値が正しくありません")
                 }
             case .updateSubmittableState(let isSubmittable):
-                self.registerButton.isHidden = !isSubmittable
+                self.registerButton.isEnabled = isSubmittable
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
             }
         }
         .store(in: &cancellables)
-        
-        registerButton.listen {
-            self.viewModel.didRegisterButtonTapped()
-        }
         
         displayNameInputView.listen {
             self.didInputValue()
