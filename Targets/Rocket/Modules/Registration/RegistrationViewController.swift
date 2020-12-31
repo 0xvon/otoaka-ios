@@ -32,7 +32,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
                 }
             case .error(let error):
                 DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                    self.showAlert(title: "エラー", message: String(describing: error))
                 }
             }
         }
@@ -48,8 +48,6 @@ final class RegistrationViewController: UIViewController, Instantiable {
         self.dependencyProvider = dependencyProvider
         self.signedUpHandler = input
         super.init(nibName: nil, bundle: nil)
-
-        self.dependencyProvider.auth.delegate = self
     }
 
     required init?(coder: NSCoder) {
@@ -59,6 +57,17 @@ final class RegistrationViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.dependencyProvider.auth.delegate = self
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        navigationController?.presentationController?.delegate = self
     }
 
     func setup() {
@@ -81,5 +90,11 @@ final class RegistrationViewController: UIViewController, Instantiable {
 extension RegistrationViewController: AWSCognitoAuthDelegate {
     func getViewController() -> UIViewController {
         return self
+    }
+}
+
+extension RegistrationViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
+        return false
     }
 }
