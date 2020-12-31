@@ -78,6 +78,44 @@ public enum Brand {
              mediumStrong,
              smallStrong, xsmallStrong, xxsmallStrong
     }
+
+    public enum Spacing: String, CaseIterable {
+        case xxsmall,
+        xsmall,
+        small,
+        medium,
+        large,
+        xlarge,
+        xxlarge,
+        xxxlarge,
+        keyline,
+        divider
+    }
+
+    public static func space(for spacing: Spacing) -> CGFloat {
+        switch spacing {
+        case .xxsmall:
+            return 4.0
+        case .xsmall:
+            return 8.0
+        case .small:
+            return 12.0
+        case .keyline:
+            return 16.0
+        case .medium:
+            return 24.0
+        case .large:
+            return 32.0
+        case .xlarge:
+            return 40.0
+        case .xxlarge:
+            return 48.0
+        case .xxxlarge:
+            return 56.0
+        case .divider:
+            return 1.0
+        }
+    }
 }
 
 extension UIColor {

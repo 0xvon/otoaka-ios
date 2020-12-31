@@ -26,6 +26,32 @@ public final class FloatingButtonItem: UIButton {
         }
     }
 
+    public var isRotating: Bool = false {
+        didSet {
+            UIView.animate(withDuration: 0.2) {
+                self.transform = self.transformation()
+            }
+        }
+    }
+    public override var isHighlighted: Bool {
+        didSet {
+            UIView.animate(withDuration: 0.2) {
+                self.transform = self.transformation()
+            }
+        }
+    }
+
+    private func transformation() -> CGAffineTransform {
+        var transform = CGAffineTransform.identity
+        if isRotating {
+            transform = transform.rotated(by: .pi * 3 / 4)
+        }
+        if isHighlighted {
+            transform = transform.scaledBy(x: 0.8, y: 0.8)
+        }
+        return transform
+    }
+
     func setup() {
         layer.cornerRadius = bounds.width / 2
         backgroundColor = Brand.color(for: .background(.button))
@@ -41,7 +67,7 @@ public final class FloatingButtonItem: UIButton {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
+#if PREVIEW
 import SwiftUI
 
 struct FloatingButtonItem_Previews: PreviewProvider {

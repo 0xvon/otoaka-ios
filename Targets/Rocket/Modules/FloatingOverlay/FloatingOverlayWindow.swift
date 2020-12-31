@@ -45,6 +45,7 @@ class FloatingViewController: UIViewController {
         container.translatesAutoresizingMaskIntoConstraints = false
         container.axis = .vertical
         container.distribution = .fillEqually
+        container.spacing = 8
         return container
     }()
     private lazy var openButtonItem: FloatingButtonItem = {
@@ -87,8 +88,8 @@ class FloatingViewController: UIViewController {
     }
 
     private func openItems() {
-        UIView.animate(withDuration: 0.2) {
-            self.openButtonItem.transform = CGAffineTransform(rotationAngle: .pi * 3 / 4)
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseOut]) {
+            self.openButtonItem.isRotating = true
             for item in self.buttonItems {
                 item.alpha = 1.0
                 item.isHidden = false
@@ -96,12 +97,12 @@ class FloatingViewController: UIViewController {
         }
     }
     private func closeItems() {
-        UIView.animate(withDuration: 0.2) {
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseIn]) {
             for item in self.buttonItems {
                 item.alpha = 0.0
                 item.isHidden = true
             }
-            self.openButtonItem.transform = .identity
+            self.openButtonItem.isRotating = false
         }
     }
 }
