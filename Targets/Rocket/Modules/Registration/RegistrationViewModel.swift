@@ -29,6 +29,10 @@ class RegistrationViewModel {
             switch result {
             case .success(let res):
                 self.outputHandler(.signupStatus(res.isSignedup))
+            case .failure(let error as NSError) where
+                    error.domain == AWSCognitoAuthErrorDomain &&
+                    error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue:
+                break
             case .failure(let error):
                 self.outputHandler(.error(error))
             }
