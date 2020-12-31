@@ -16,7 +16,7 @@ final class HomeViewController: UIViewController, Instantiable {
 
     typealias Input = Void
     var input: Input!
-    var dependencyProvider: LoggedInDependencyProvider!
+    let dependencyProvider: LoggedInDependencyProvider
 
     @IBOutlet weak var horizontalScrollView: UIScrollView!
     
@@ -560,6 +560,19 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         default:
             break
         }
+    }
+
+    // fIXME: Don't override
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+        viewControllerToPresent.presentationController?.delegate = self
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
+    }
+}
+
+extension HomeViewController: UIAdaptivePresentationControllerDelegate {
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
     }
 }
 
