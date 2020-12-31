@@ -46,7 +46,7 @@ class EditBandViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         
-        self.state = State(group: group, name: group.name, englishName: group.englishName, biography: group.biography, since: group.since, artwork: UIImage(url: group.artworkURL?.absoluteString ?? ""), youtubeChannelId: group.youtubeChannelId, twitterId: group.twitterId, hometown: group.hometown, submittable: true, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        self.state = State(group: group, name: group.name, englishName: group.englishName, biography: group.biography, since: group.since, artwork: nil, youtubeChannelId: group.youtubeChannelId, twitterId: group.twitterId, hometown: group.hometown, submittable: true, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
     }
     
     func validateYoutubeChannelId(youtubeChannelId: String?, callback: @escaping ((Bool) -> Void)) {
@@ -77,29 +77,36 @@ class EditBandViewModel {
     
     func didEditButtonTapped() {
         outputSubject.send(.updateSubmittableState(false))
-        guard let name = state.name else { return }
-        self.dependencyProvider.s3Client.uploadImage(image: state.artwork) { [unowned self] result in
-            switch result {
-            case .success(let imageUrl):
-                var uri = EditGroup.URI()
-                uri.id = self.state.group.id
-                print(state)
-                let req = EditGroup.Request(
-                    name: name,
-                    englishName: self.state.englishName,
-                    biography: self.state.biography,
-                    since: self.state.since,
-                    artworkURL: URL(string: imageUrl),
-                    twitterId: self.state.twitterId,
-                    youtubeChannelId: self.state.youtubeChannelId,
-                    hometown: self.state.hometown)
-                apiClient.request(EditGroup.self, request: req, uri: uri) { [unowned self] result in
-                    updateState(with: result)
+        if let artwork = self.state.artwork {
+            self.dependencyProvider.s3Client.uploadImage(image: state.artwork) { [unowned self] result in
+                switch result {
+                case .success(let imageUrl):
+                    editBand(imageUrl: URL(string: imageUrl))
+                case .failure(let error):
+                    outputSubject.send(.updateSubmittableState(true))
+                    outputSubject.send(.reportError(error))
                 }
-            case .failure(let error):
-                outputSubject.send(.updateSubmittableState(true))
-                outputSubject.send(.reportError(error))
             }
+        } else {
+            editBand(imageUrl: state.group.artworkURL)
+        }
+    }
+    
+    private func editBand(imageUrl: URL?) {
+        guard let name = state.name else { return }
+        var uri = EditGroup.URI()
+        uri.id = self.state.group.id
+        let req = EditGroup.Request(
+            name: name,
+            englishName: self.state.englishName,
+            biography: self.state.biography,
+            since: self.state.since,
+            artworkURL: imageUrl,
+            twitterId: self.state.twitterId,
+            youtubeChannelId: self.state.youtubeChannelId,
+            hometown: self.state.hometown)
+        apiClient.request(EditGroup.self, request: req, uri: uri) { [unowned self] result in
+            updateState(with: result)
         }
     }
     

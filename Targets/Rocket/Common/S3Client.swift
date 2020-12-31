@@ -23,7 +23,6 @@ class S3Client {
     public func uploadImage(image: UIImage?, callback: @escaping ((Result<String, Error>) -> Void)) {
         let transferUtility = AWSS3TransferUtility.default()
         let key = "assets/\(self.cognitoIdentityPoolCredentialProvider.identityId!)/\(UUID()).jpeg"
-        print("======================\(key)=====================")
         let contentType = "application/jpeg"
         let im: UIImage = image ?? UIImage(named: "human")!
         guard let pngData = im.jpegData(compressionQuality: 0.25) else {

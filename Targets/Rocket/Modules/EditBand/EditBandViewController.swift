@@ -88,9 +88,7 @@ final class EditBandViewController: UIViewController, Instantiable {
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.cornerRadius = 60
         profileImageView.clipsToBounds = true
-        profileImageView.image = UIImage(named: "human")
         profileImageView.contentMode = .scaleAspectFill
-        thumbnailInputView.addSubview(profileImageView)
         return profileImageView
     }()
     private lazy var changeProfileImageButton: UIButton = {
@@ -98,7 +96,6 @@ final class EditBandViewController: UIViewController, Instantiable {
         changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
         changeProfileImageButton.addTarget(
             self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
-        thumbnailInputView.addSubview(changeProfileImageButton)
         return changeProfileImageButton
     }()
     private lazy var profileImageTitle: UILabel = {
@@ -108,7 +105,6 @@ final class EditBandViewController: UIViewController, Instantiable {
         profileImageTitle.textAlignment = .center
         profileImageTitle.font = Brand.font(for: .medium)
         profileImageTitle.textColor = Brand.color(for: .text(.primary))
-        thumbnailInputView.addSubview(profileImageTitle)
         return profileImageTitle
     }()
     private lazy var editButton: PrimaryButton = {
@@ -286,21 +282,30 @@ final class EditBandViewController: UIViewController, Instantiable {
         mainView.addArrangedSubview(thumbnailInputView)
         NSLayoutConstraint.activate([
             thumbnailInputView.heightAnchor.constraint(equalToConstant: 150),
-
+        ])
+        
+        thumbnailInputView.addSubview(profileImageView)
+        NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: 120),
             profileImageView.heightAnchor.constraint(equalToConstant: 120),
             profileImageView.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
             profileImageView.centerXAnchor.constraint(equalTo: thumbnailInputView.centerXAnchor),
-            
+        ])
+        
+        thumbnailInputView.addSubview(profileImageTitle)
+        NSLayoutConstraint.activate([
+            profileImageTitle.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
+            profileImageTitle.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
+            profileImageTitle.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
+        ])
+        
+        thumbnailInputView.addSubview(changeProfileImageButton)
+        NSLayoutConstraint.activate([
             changeProfileImageButton.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
             changeProfileImageButton.rightAnchor.constraint(
                 equalTo: thumbnailInputView.rightAnchor),
             changeProfileImageButton.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
             changeProfileImageButton.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
-
-            profileImageTitle.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
-            profileImageTitle.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
-            profileImageTitle.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
         ])
         
         mainView.addArrangedSubview(editButton)
@@ -351,6 +356,7 @@ extension EditBandViewController: UIImagePickerControllerDelegate, UINavigationC
             return
         }
         profileImageView.image = image
+        didInputValue()
         self.dismiss(animated: true, completion: nil)
     }
 }
