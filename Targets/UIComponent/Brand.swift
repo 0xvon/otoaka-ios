@@ -11,6 +11,7 @@ public enum Brand {
         case .background(.cell):           return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
         case .background(.cellSelected):   return #colorLiteral(red: 0.2549019608, green: 0.2509803922, blue: 0.2705882353, alpha: 1) // #414045
         case .background(.navigationBar):  return #colorLiteral(red: 0.1568627451, green: 0.1568627451, blue: 0.1607843137, alpha: 1) // #282829
+        case .background(.searchBar):      return #colorLiteral(red: 0.07058823529, green: 0.07058823529, blue: 0.07058823529, alpha: 1) // #121212
         case .background(.toggleSelected): return #colorLiteral(red: 0.2862745098, green: 0.631372549, blue: 0.9725490196, alpha: 1) // #49A1F8
         case .text(.primary):              return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
         case .text(.button):               return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
@@ -30,8 +31,8 @@ public enum Brand {
         }
 
         public enum BackgroundColor: CaseIterable {
-            case primary, secondary, button, cell, cellSelected, navigationBar,
-                 toggleSelected
+            case primary, secondary, button, cell, cellSelected,
+                 navigationBar, searchBar, toggleSelected
         }
         public enum TextColor: CaseIterable {
             case primary, link, button, toggle

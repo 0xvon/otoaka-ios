@@ -7,28 +7,33 @@
 
 import Endpoint
 
-class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Request == Empty {
+enum PaginationEvent<Response> {
+    case initial(Response)
+    case next(Response)
+    case error(Error)
+}
+
+protocol PageResponse {
+    var metadata: PageMetadata { get }
+}
+
+extension Page: PageResponse {}
+
+class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Request == Empty,
+                                                   E.Response: PageResponse {
     private var uri: E.URI
-    private var state: State
     private var apiClient: APIClient
     private var subscribers: [(Event) -> Void] = []
     
-    enum State {
-        case isInitial
-        case isLoading
-        case isFinished
-    }
+    private(set) var isInitial = true
+    private(set) var isLoading = false
+    private(set) var isFinished = false
     
-    enum Event {
-        case initial(E.Response)
-        case next(E.Response)
-        case error(Error)
-    }
+    typealias Event = PaginationEvent<E.Response>
     
     init(apiClient: APIClient, uri: E.URI = E.URI()) {
         self.apiClient = apiClient
         self.uri = uri
-        self.state = .isInitial
         
         self.initialize()
     }
@@ -48,45 +53,37 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
     }
 
     func refresh() {
-        execute(isNext: false)
-    }
-    func next() {
-        execute(isNext: true)
+        self.initialize()
+        isInitial = true
+        isFinished = false
+        next()
     }
 
-    private func execute(isNext: Bool) {
-        if !isNext && self.state != .isLoading {
-            self.state = .isInitial
-            initialize()
+    func next() {
+        guard !isLoading && !isFinished else {
+            return
         }
-        
-        switch self.state {
-        case .isInitial:
-            self.state = .isLoading
-            apiClient.request(E.self, request: Empty(), uri: self.uri) { result in
-                self.state = .isFinished
-                switch result {
-                case .success(let res):
-                    self.notify(.initial(res))
-                case .failure(let err):
-                    self.notify(.error(err))
+        isLoading = true
+        apiClient.request(E.self, uri: uri) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                if self.isInitial {
+                    self.isInitial = false
+                    self.notify(.initial(response))
+                } else {
+                    self.notify(.next(response))
                 }
-                
-            }
-        case .isFinished:
-            self.uri.page += 1
-            self.state = .isLoading
-            apiClient.request(E.self, request: Empty(), uri: self.uri) { result in
-                self.state = .isFinished
-                switch result {
-                case .success(let res):
-                    self.notify(.next(res))
-                case .failure(let err):
-                    self.notify(.error(err))
+                self.isLoading = false
+                let metadata = response.metadata
+                guard (metadata.page + 1) * metadata.per < metadata.total else {
+                    self.isFinished = true
+                    return
                 }
+                self.uri.page = metadata.page + 1
+            case .failure(let error):
+                self.notify(.error(error))
             }
-        default:
-            break
         }
     }
 }

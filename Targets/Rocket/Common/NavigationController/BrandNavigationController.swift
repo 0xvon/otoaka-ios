@@ -20,6 +20,10 @@ class BrandNavigationController: UINavigationController {
     }
 
     private func setupStyle() {
+        navigationBar.prefersLargeTitles = true
+        navigationBar.largeTitleTextAttributes = [
+            .foregroundColor: Brand.color(for: .text(.primary))
+        ]
         navigationBar.barTintColor = Brand.color(for: .background(.navigationBar))
         navigationBar.tintColor = Brand.color(for: .text(.primary))
         navigationBar.titleTextAttributes = [

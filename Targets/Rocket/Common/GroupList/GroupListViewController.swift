@@ -7,63 +7,25 @@
 
 import UIKit
 import Endpoint
+import Combine
 
 final class GroupListViewController: UIViewController, Instantiable {
-    typealias Input = BandListType
-    
-    enum BandListType {
-        case memberships(User.ID)
-        case followingGroups(User.ID)
-        case searchResults(String)
-    }
+    typealias Input = GroupListViewModel.Input
 
-    var dependencyProvider: LoggedInDependencyProvider!
-    var input: Input!
-    var groups: [Group] = []
+
+    let dependencyProvider: LoggedInDependencyProvider
     private var groupTableView: UITableView!
 
-    lazy var viewModel = GroupListViewModel(
-        apiClient: dependencyProvider.apiClient,
-        type: input,
-        auth: dependencyProvider.auth,
-        outputHander: { output in
-            switch output {
-            case .memberships(let groups):
-                DispatchQueue.main.async {
-                    self.groups = groups
-                    self.groupTableView.reloadData()
-                }
-            case .followingGroups(let groups):
-                DispatchQueue.main.async {
-                    self.groups += groups
-                    self.groupTableView.reloadData()
-                }
-            case .refreshFollowingGroups(let groups):
-                DispatchQueue.main.async {
-                    self.groups = groups
-                    self.groupTableView.reloadData()
-                }
-            case .searchGroups(let groups):
-                DispatchQueue.main.async {
-                    self.groups += groups
-                    self.groupTableView.reloadData()
-                }
-            case .refreshSearchGroups(let groups):
-                DispatchQueue.main.async {
-                    self.groups = groups
-                    self.groupTableView.reloadData()
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
+    let viewModel: GroupListViewModel
+    private var cancellables: [AnyCancellable] = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.input = input
+        self.viewModel = GroupListViewModel(
+            apiClient: dependencyProvider.apiClient,
+            input: input,
+            auth: dependencyProvider.auth
+        )
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -75,9 +37,24 @@ final class GroupListViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        bind()
+        viewModel.refresh()
     }
-        
-    func setup() {
+    private func bind() {
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .reloadTableView:
+                print(output)
+                self.groupTableView.reloadData()
+            case .error(let error):
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
+            }
+        }
+        .store(in: &cancellables)
+    }
+    private func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
         
         groupTableView = UITableView()
@@ -95,8 +72,7 @@ final class GroupListViewController: UIViewController, Instantiable {
         groupTableView.refreshControl = BrandRefreshControl()
         groupTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
-        self.getGroups()
-        
+
         let constraints: [NSLayoutConstraint] = [
             groupTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
             groupTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
@@ -105,31 +81,13 @@ final class GroupListViewController: UIViewController, Instantiable {
         ]
         NSLayoutConstraint.activate(constraints)
     }
-    
-    func getGroups() {
-        switch self.input {
-        case .memberships:
-            viewModel.getMemberships()
-        case .followingGroups:
-            viewModel.getFollowingGroups()
-        case .searchResults(_):
-            viewModel.searchGroups()
-        case .none:
-            break
-        }
+
+    func inject(_ input: Input) {
+        print(input)
+        viewModel.inject(input)
     }
-    
     @objc private func refreshGroups(sender: UIRefreshControl) {
-        switch self.input {
-        case .memberships:
-            viewModel.getMemberships()
-        case .followingGroups:
-            viewModel.refreshFollowingGroups()
-        case .searchResults(_):
-            viewModel.refreshSearchGroups()
-        case .none:
-            break
-        }
+        viewModel.refresh()
         sender.endRefreshing()
     }
 }
@@ -140,7 +98,7 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.groups.count
+        return self.viewModel.state.groups.count
         
     }
 
@@ -159,13 +117,13 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let band = self.groups[indexPath.section]
+        let band = self.viewModel.state.groups[indexPath.section]
         let cell = tableView.dequeueReusableCell(BandCell.self, input: band, for: indexPath)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let band = self.groups[indexPath.section]
+        let band = self.viewModel.state.groups[indexPath.section]
         let vc = BandDetailViewController(
             dependencyProvider: self.dependencyProvider, input: band)
         self.navigationController?.pushViewController(vc, animated: true)
@@ -173,8 +131,6 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if (self.groups.count - indexPath.section) == 2 && self.groups.count % per == 0 {
-            self.getGroups()
-        }
+        self.viewModel.willDisplay(rowAt: indexPath)
     }
 }
