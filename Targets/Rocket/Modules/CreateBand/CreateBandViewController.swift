@@ -34,18 +34,18 @@ final class CreateBandViewController: UIViewController, Instantiable {
         return displayNameInputView
     }()
     private lazy var englishNameInputView: TextFieldView = {
-        let englishNameInputView = TextFieldView(input: (section: "English Name", text: nil, maxLength: 40))
+        let englishNameInputView = TextFieldView(input: (section: "English Name(optional)", text: nil, maxLength: 40))
         englishNameInputView.keyboardType(.alphabet)
         englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
         return englishNameInputView
     }()
     private lazy var biographyInputView: InputTextView = {
-        let biographyInputView = InputTextView(input: (section: "bio", text: nil, maxLength: 200))
+        let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)", text: nil, maxLength: 200))
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         return biographyInputView
     }()
     private lazy var sinceInputView: TextFieldView = {
-        let sinceInputView = TextFieldView(input: (section: "結成年", text: nil, maxLength: 20))
+        let sinceInputView = TextFieldView(input: (section: "結成年(任意)", text: nil, maxLength: 20))
         sinceInputView.translatesAutoresizingMaskIntoConstraints = false
         return sinceInputView
     }()
@@ -57,7 +57,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         return sincePickerView
     }()
     private lazy var hometownInputView: TextFieldView = {
-        let hometownInputView = TextFieldView(input: (section: "出身地", text: nil,  maxLength: 20))
+        let hometownInputView = TextFieldView(input: (section: "出身地(任意)", text: nil,  maxLength: 20))
         hometownInputView.translatesAutoresizingMaskIntoConstraints = false
         return hometownInputView
     }()
@@ -69,12 +69,12 @@ final class CreateBandViewController: UIViewController, Instantiable {
         return hometownPickerView
     }()
     private lazy var youTubeIdInputView: TextFieldView = {
-        let youTubeIdInputView = TextFieldView(input: (section: "YouTube Channel ID(スキップ可)",text: nil,  maxLength: 40))
+        let youTubeIdInputView = TextFieldView(input: (section: "YouTube Channel ID(任意)",text: nil,  maxLength: 40))
         youTubeIdInputView.translatesAutoresizingMaskIntoConstraints = false
         return youTubeIdInputView
     }()
     private lazy var twitterIdInputView: TextFieldView = {
-        let twitterIdInputView = TextFieldView(input: (section: "Twitter ID(@を省略して入力してください)", text: nil, maxLength: 20))
+        let twitterIdInputView = TextFieldView(input: (section: "Twitter ID(@を省略)(任意)", text: nil, maxLength: 20))
         twitterIdInputView.translatesAutoresizingMaskIntoConstraints = false
         return twitterIdInputView
     }()
@@ -180,10 +180,12 @@ final class CreateBandViewController: UIViewController, Instantiable {
         }
         
         sinceInputView.listen {
+            self.sinceInputView.setText(text: self.viewModel.state.socialInputs.years[self.sincePickerView.selectedRow(inComponent: 0)])
             self.didInputValue()
         }
         
         hometownInputView.listen {
+            self.hometownInputView.setText(text: self.viewModel.state.socialInputs.prefectures[self.hometownPickerView.selectedRow(inComponent: 0)])
             self.didInputValue()
         }
         
@@ -362,19 +364,6 @@ extension CreateBandViewController: UIPickerViewDelegate, UIPickerViewDataSource
             return viewModel.state.socialInputs.years.count
         default:
             return 1
-        }
-    }
-
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        switch pickerView {
-        case self.hometownPickerView:
-            let text = viewModel.state.socialInputs.prefectures[row]
-            hometownInputView.setText(text: text)
-        case self.sincePickerView:
-            let text = viewModel.state.socialInputs.years[row]
-            sinceInputView.setText(text: text)
-        default:
-            print("hello")
         }
     }
 }

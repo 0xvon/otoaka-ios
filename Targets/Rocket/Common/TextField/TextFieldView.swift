@@ -59,10 +59,9 @@ final class TextFieldView: UIView {
         textField.delegate = self
         textField.textColor = Brand.color(for: .text(.primary))
         textField.font = Brand.font(for: .medium)
-//        textField.placeholder = self.input.placeholder
-//        textField.attributedPlaceholder = NSAttributedString(
-//            string: self.input.placeholder,
-//            attributes: [NSAttributedString.Key.foregroundColor: Brand.color(for: .text(.primary))])
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "未入力",
+            attributes: [NSAttributedString.Key.foregroundColor: Brand.color(for: .background(.secondary))])
         textField.text = input.text
         textField.borderStyle = .none
         contentView.addSubview(textField)
