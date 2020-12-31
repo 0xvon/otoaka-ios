@@ -387,15 +387,14 @@ final class HomeViewController: UIViewController, Instantiable {
 
     @objc func createFeed() {
         let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        nav.navigationBar.barTintColor = .clear
+        let nav = BrandNavigationController(rootViewController: vc)
         present(nav, animated: true, completion: nil)
     }
 
     @objc func createLive() {
         let vc = CreateLiveViewController(dependencyProvider: self.dependencyProvider, input: ())
-        present(vc, animated: true, completion: nil)
+        let nav = BrandNavigationController(rootViewController: vc)
+        present(nav, animated: true, completion: nil)
     }
     
     @objc func pageButtonTapped(_ sender: UIButton) {

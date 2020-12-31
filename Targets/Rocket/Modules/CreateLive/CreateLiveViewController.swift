@@ -105,6 +105,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "ライブ作成"
+        self.navigationItem.largeTitleDisplayMode = .never
 
         verticalScrollView = UIScrollView()
         verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
