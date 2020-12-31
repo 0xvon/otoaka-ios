@@ -8,6 +8,7 @@
 import AWSCognitoAuth
 import SafariServices
 import UIKit
+import Combine
 
 final class RegistrationViewController: UIViewController, Instantiable {
     typealias SignedUpHandler = () -> Void
@@ -15,35 +16,25 @@ final class RegistrationViewController: UIViewController, Instantiable {
 
     lazy var viewModel = RegistrationViewModel(
         auth: dependencyProvider.auth,
-        apiClient: dependencyProvider.apiClient,
-        outputHander: { [dependencyProvider] output in
-            switch output {
-            case .signupStatus(let isSignedup):
-                if isSignedup {
-                    DispatchQueue.main.async {
-                        self.signedUpHandler()
-                        self.dismiss(animated: true)
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        let vc = CreateUserViewController(
-                            dependencyProvider: self.dependencyProvider, input: ())
-                        self.navigationController?.pushViewController(vc, animated: true)
-                    }
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: String(describing: error))
-                }
-            }
-        }
+        apiClient: dependencyProvider.apiClient
     )
 
-    @IBOutlet weak var backgroundImageView: UIImageView!
-    @IBOutlet weak var signInButtonView: Button!
+    @IBOutlet weak var backgroundImageView: UIImageView! {
+        didSet {
+            backgroundImageView.layer.opacity = 0.6
+            backgroundImageView.image = UIImage(named: "live")
+            backgroundImageView.contentMode = .scaleAspectFill
+        }
+    }
+    @IBOutlet weak var signInButtonView: Button! {
+        didSet {
+            signInButtonView.setTitle("ユーザー登録", for: .normal)
+        }
+    }
 
     var dependencyProvider: DependencyProvider
     var signedUpHandler: SignedUpHandler
+    private var cancellables: [AnyCancellable] = []
 
     init(dependencyProvider: DependencyProvider, input: @escaping Input) {
         self.dependencyProvider = dependencyProvider
@@ -72,19 +63,27 @@ final class RegistrationViewController: UIViewController, Instantiable {
     }
 
     func setup() {
+        title = "ユーザー登録"
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        backgroundImageView.layer.opacity = 0.6
-        backgroundImageView.image = UIImage(named: "live")
-        backgroundImageView.contentMode = .scaleAspectFill
-
-        signInButtonView.setTitle("サインイン", for: .normal)
-        signInButtonView.listen { [weak self] in
-            self?.signInButtonTapped()
+        signInButtonView.listen { [viewModel] in
+            viewModel.getSignupStatus()
         }
-    }
 
-    func signInButtonTapped() {
-        viewModel.getSignupStatus()
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .signupStatus(let isSignedup):
+                if isSignedup {
+                    self.signedUpHandler()
+                    self.dismiss(animated: true)
+                } else {
+                    let vc = CreateUserViewController(
+                        dependencyProvider: self.dependencyProvider, input: ())
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            case .error(let error):
+                self.showAlert(title: "エラー", message: String(describing: error))
+            }
+        }.store(in: &cancellables)
     }
 
     private var awsCognitoAuthSaferiViewControllerWorkaround: AWSCognitoAuthSaferiViewControllerWorkaround?

@@ -311,13 +311,15 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    @objc func createShare() {
+    @objc func createShare(_ sender: UIBarButtonItem) {
         let shareLiveText: String = "\(viewModel.state.live.hostGroup.name)主催の\(viewModel.state.live.title)に集まれ！！\n\n via @rocketforband "
         let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/id1500148347")!
         let shareImage: UIImage = UIImage(url: viewModel.state.live.artworkURL!.absoluteString)
         
         let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
         let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
+        activityViewController.popoverPresentationController?.barButtonItem = sender
+        activityViewController.popoverPresentationController?.permittedArrowDirections = .up
         
         self.present(activityViewController, animated: true, completion: nil)
     }

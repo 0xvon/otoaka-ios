@@ -8,6 +8,7 @@
 import AWSCognitoAuth
 import Endpoint
 import Foundation
+import Combine
 
 class RegistrationViewModel {
     enum Output {
@@ -17,24 +18,24 @@ class RegistrationViewModel {
 
     let auth: AWSCognitoAuth
     let apiClient: APIClient
-    let outputHandler: (Output) -> Void
-    init(auth: AWSCognitoAuth, apiClient: APIClient, outputHander: @escaping (Output) -> Void) {
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    init(auth: AWSCognitoAuth, apiClient: APIClient) {
         self.auth = auth
         self.apiClient = apiClient
-        self.outputHandler = outputHander
     }
 
     func getSignupStatus() {
-        apiClient.request(SignupStatus.self) { result in
+        apiClient.request(SignupStatus.self) { [unowned self] result in
             switch result {
             case .success(let res):
-                self.outputHandler(.signupStatus(res.isSignedup))
+                self.outputSubject.send(.signupStatus(res.isSignedup))
             case .failure(let error as NSError) where
                     error.domain == AWSCognitoAuthErrorDomain &&
                     error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue:
                 break
             case .failure(let error):
-                self.outputHandler(.error(error))
+                self.outputSubject.send(.error(error))
             }
         }
     }
