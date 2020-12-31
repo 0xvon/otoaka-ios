@@ -1,5 +1,5 @@
 //
-//  AuthViewController.swift
+//  RegistrationViewController.swift
 //  Rocket
 //
 //  Created by Masato TSUTSUMI on 2020/10/17.
@@ -8,11 +8,11 @@
 import AWSCognitoAuth
 import UIKit
 
-final class AuthViewController: UIViewController, Instantiable {
+final class RegistrationViewController: UIViewController, Instantiable {
     typealias SignedUpHandler = () -> Void
     typealias Input = SignedUpHandler
 
-    lazy var viewModel = AuthViewModel(
+    lazy var viewModel = RegistrationViewModel(
         auth: dependencyProvider.auth,
         apiClient: dependencyProvider.apiClient,
         outputHander: { [dependencyProvider] output in
@@ -78,7 +78,7 @@ final class AuthViewController: UIViewController, Instantiable {
     }
 }
 
-extension AuthViewController: AWSCognitoAuthDelegate {
+extension RegistrationViewController: AWSCognitoAuthDelegate {
     func getViewController() -> UIViewController {
         return self
     }

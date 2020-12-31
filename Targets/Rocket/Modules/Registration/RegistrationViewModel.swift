@@ -1,5 +1,5 @@
 //
-//  AuthViewModel.swift
+//  RegistrationViewModel.swift
 //  Rocket
 //
 //  Created by Masato TSUTSUMI on 2020/10/17.
@@ -9,7 +9,7 @@ import AWSCognitoAuth
 import Endpoint
 import Foundation
 
-class AuthViewModel {
+class RegistrationViewModel {
     enum Output {
         case signupStatus(Bool)
         case error(Error)
