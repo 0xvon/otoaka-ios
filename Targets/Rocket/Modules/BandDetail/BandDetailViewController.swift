@@ -346,7 +346,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         }
     }
 
-    @objc func createShare() {
+    @objc func createShare(_ sender: UIBarButtonItem) {
         let shareLiveText: String = "\(viewModel.state.group.name)がオススメだよ！！\n\n via @rocketforband "
         let shareUrl = URL(string: "https://apps.apple.com/jp/app/id1500148347")!
         let shareImage: UIImage = UIImage(url: viewModel.state.group.artworkURL!.absoluteString)
@@ -358,6 +358,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
         activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
             dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
         }
+        activityViewController.popoverPresentationController?.barButtonItem = sender
+        activityViewController.popoverPresentationController?.permittedArrowDirections = .up
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         self.present(activityViewController, animated: true, completion: nil)
     }
