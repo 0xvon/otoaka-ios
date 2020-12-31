@@ -7,23 +7,24 @@
 
 import UIKit
 import Endpoint
+import Combine
 
 final class LiveListViewController: UIViewController, Instantiable {
-    typealias Input = ListType
-    
-    enum ListType {
-        case groupLive(Group)
-        case searchResult(String)
-    }
+    typealias Input = LiveListViewModel.Input
 
-    var dependencyProvider: LoggedInDependencyProvider!
-    var input: Input!
-    var lives: [Live] = []
+    let dependencyProvider: LoggedInDependencyProvider
     private var liveTableView: UITableView!
+
+    let viewModel: LiveListViewModel
+    private var cancellables: [AnyCancellable] = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.input = input
+        self.viewModel = LiveListViewModel(
+            apiClient: dependencyProvider.apiClient,
+            input: input,
+            auth: dependencyProvider.auth
+        )
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -31,46 +32,28 @@ final class LiveListViewController: UIViewController, Instantiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    lazy var viewModel = LiveListViewModel(
-        apiClient: dependencyProvider.apiClient,
-        type: input,
-        auth: dependencyProvider.auth,
-        outputHander: { output in
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+        bind()
+        viewModel.refresh()
+    }
+
+    private func bind() {
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .getGroupLives(let lives):
-                DispatchQueue.main.async {
-                    self.lives += lives
-                    self.liveTableView.reloadData()
-                }
-            case .refreshGroupLives(let lives):
-                DispatchQueue.main.async {
-                    self.lives = lives
-                    self.liveTableView.reloadData()
-                }
-            case .searchLive(let lives):
-                DispatchQueue.main.async {
-                    self.lives += lives
-                    self.liveTableView.reloadData()
-                }
-            case .refreshSearchLive(let lives):
-                DispatchQueue.main.async {
-                    self.lives = lives
-                    self.liveTableView.reloadData()
-                }
+            case .reloadTableView:
+                self.liveTableView.reloadData()
             case .error(let error):
                 DispatchQueue.main.async {
                     self.showAlert(title: "エラー", message: error.localizedDescription)
                 }
             }
         }
-    )
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setup()
+        .store(in: &cancellables)
     }
-        
+
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
         
@@ -88,7 +71,6 @@ final class LiveListViewController: UIViewController, Instantiable {
         liveTableView.refreshControl = BrandRefreshControl()
         liveTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
-        self.getLives()
         
         let constraints: [NSLayoutConstraint] = [
             liveTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
@@ -98,31 +80,12 @@ final class LiveListViewController: UIViewController, Instantiable {
         ]
         NSLayoutConstraint.activate(constraints)
     }
-    
-    func getLives() {
-        switch input {
-        case .groupLive(_):
-            self.viewModel.getGroupLives()
-        case .searchResult(_):
-            self.viewModel.searchLive()
-        case .none:
-            break
-        }
-    }
-    
-    func refreshLives() {
-        switch input {
-        case .groupLive(_):
-            self.viewModel.refreshGroupLives()
-        case .searchResult(_):
-            self.viewModel.refreshSearchLive()
-        case .none:
-            break
-        }
+    func inject(_ input: Input) {
+        viewModel.inject(input)
     }
     
     @objc private func refreshGroups(sender: UIRefreshControl) {
-        self.refreshLives()
+        self.viewModel.refresh()
         sender.endRefreshing()
     }
 }
@@ -133,7 +96,7 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.lives.count
+        return self.viewModel.state.lives.count
         
     }
 
@@ -152,22 +115,20 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = self.lives[indexPath.section]
+        let live = self.viewModel.state.lives[indexPath.section]
         let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = self.lives[indexPath.section]
+        let live = self.viewModel.state.lives[indexPath.section]
         let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if (self.lives.count - indexPath.section) == 2 && self.lives.count % per == 0 {
-            self.getLives()
-        }
+        self.viewModel.willDisplay(rowAt: indexPath)
     }
 }
 

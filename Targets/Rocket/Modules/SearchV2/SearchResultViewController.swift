@@ -17,7 +17,7 @@ final class SearchResultViewController: UIViewController {
     typealias State = Input
 
     private lazy var liveListViewController: LiveListViewController = {
-        let controller = LiveListViewController(dependencyProvider: dependencyProvider, input: .searchResult(""))
+        let controller = LiveListViewController(dependencyProvider: dependencyProvider, input: .none)
         controller.view.isHidden = true
         return controller
     }()
@@ -37,6 +37,7 @@ final class SearchResultViewController: UIViewController {
             case .live(let query):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = false
+                liveListViewController.inject(.searchResult(query))
             case .none:
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = true

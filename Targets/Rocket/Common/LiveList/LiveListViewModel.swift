@@ -8,80 +8,117 @@
 import UIKit
 import AWSCognitoAuth
 import Endpoint
+import Combine
 
 class LiveListViewModel {
+    typealias Input = DataSource
     enum Output {
-        case getGroupLives([Live])
-        case refreshGroupLives([Live])
-        case searchLive([Live])
-        case refreshSearchLive([Live])
+        case reloadTableView
         case error(Error)
     }
 
+    enum DataSource {
+        case groupLive(Group)
+        case searchResult(String)
+        case none
+    }
+
+    enum DataSourceStorage {
+        case groupLive(PaginationRequest<GetGroupLives>)
+        case searchResult(PaginationRequest<SearchLive>)
+        case none
+
+        init(dataSource: DataSource, apiClient: APIClient) {
+            switch dataSource {
+            case .groupLive(let group):
+                var uri = GetGroupLives.URI()
+                uri.groupId = group.id
+                let request = PaginationRequest<GetGroupLives>(apiClient: apiClient, uri: uri)
+                self = .groupLive(request)
+            case .searchResult(let query):
+                var uri = SearchLive.URI()
+                uri.term = query
+                let request = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
+                self = .searchResult(request)
+            case .none:
+                self = .none
+            }
+        }
+    }
+
+    struct State {
+        var lives: [Live] = []
+    }
+
+    private var storage: DataSourceStorage
+    private(set) var state: State
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+
     let auth: AWSCognitoAuth
-    let type: LiveListViewController.ListType
     let apiClient: APIClient
-    let outputHandler: (Output) -> Void
-    
-    var getGroupLivesPaginationRequest: PaginationRequest<GetGroupLives>? = nil
-    var searchLivePaginationRequest: PaginationRequest<SearchLive>? = nil
 
     init(
-        apiClient: APIClient, type: LiveListViewController.ListType, auth: AWSCognitoAuth,
-        outputHander: @escaping (Output) -> Void
+        apiClient: APIClient, input: DataSource, auth: AWSCognitoAuth
     ) {
         self.apiClient = apiClient
-        self.type = type
         self.auth = auth
-        self.outputHandler = outputHander
-        
-        switch type {
-        case .groupLive(let group):
-            var uri = GetGroupLives.URI()
-            uri.groupId = group.id
-            getGroupLivesPaginationRequest = PaginationRequest<GetGroupLives>(apiClient: apiClient, uri: uri)
-        case .searchResult(let query):
-            var uri = SearchLive.URI()
-            uri.term = query
-            searchLivePaginationRequest = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
-        }
-        
-        getGroupLivesPaginationRequest?.subscribe { result in
-            switch result {
-            case .initial(let res):
-                self.outputHandler(.refreshGroupLives(res.items))
-            case .next(let res):
-                self.outputHandler(.getGroupLives(res.items))
-            case .error(let err):
-                self.outputHandler(.error(err))
+        self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        self.state = State()
+
+        subscribe(storage: storage)
+    }
+
+    private func subscribe(storage: DataSourceStorage) {
+        switch storage {
+        case let .groupLive(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
             }
-        }
-        
-        searchLivePaginationRequest?.subscribe { result in
-            switch result {
-            case .initial(let res):
-                self.outputHandler(.refreshSearchLive(res.items))
-            case .next(let res):
-                self.outputHandler(.searchLive(res.items))
-            case .error(let err):
-                self.outputHandler(.error(err))
+        case let .searchResult(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
             }
+        case .none: break
+        }
+    }
+
+    private func updateState(with result: PaginationEvent<Page<Live>>) {
+        switch result {
+        case .initial(let res):
+            state.lives = res.items
+            self.outputSubject.send(.reloadTableView)
+        case .next(let res):
+            state.lives += res.items
+            self.outputSubject.send(.reloadTableView)
+        case .error(let err):
+            self.outputSubject.send(.error(err))
         }
     }
     
-    func getGroupLives() {
-        getGroupLivesPaginationRequest?.next()
+    func inject(_ input: Input) {
+        self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        subscribe(storage: storage)
+        refresh()
     }
-    
-    func refreshGroupLives() {
-        getGroupLivesPaginationRequest?.refresh()
+
+    func refresh() {
+        switch storage {
+        case let .groupLive(pagination):
+            pagination.refresh()
+        case let .searchResult(pagination):
+            pagination.refresh()
+        case .none: break
+        }
     }
-    
-    func searchLive() {
-        searchLivePaginationRequest?.next()
-    }
-    
-    func refreshSearchLive() {
-        searchLivePaginationRequest?.refresh()
+    func willDisplay(rowAt indexPath: IndexPath) {
+        guard indexPath.section + 25 > state.lives.count else { return }
+        switch storage {
+        case let .groupLive(pagination):
+            pagination.next()
+        case let .searchResult(pagination):
+            pagination.next()
+        case .none: break
+        }
     }
 }
