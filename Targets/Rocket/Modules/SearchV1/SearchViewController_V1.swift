@@ -1,5 +1,5 @@
 //
-//  SearchViewController.swift
+//  SearchViewController_V1.swift
 //  Rocket
 //
 //  Created by Masato TSUTSUMI on 2020/10/29.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SearchViewController: UIViewController, Instantiable {
+final class SearchViewController_V1: UIViewController, Instantiable {
     typealias Input = Void
     var dependencyProvider: LoggedInDependencyProvider!
 
@@ -146,7 +146,7 @@ final class SearchViewController: UIViewController, Instantiable {
 
 }
 
-extension SearchViewController: UISearchBarDelegate {
+extension SearchViewController_V1: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         switch self.choice {
         case .band:
