@@ -24,17 +24,18 @@ class S3Client {
         let transferUtility = AWSS3TransferUtility.default()
         let key = "assets/\(self.cognitoIdentityPoolCredentialProvider.identityId!)/\(UUID()).jpeg"
         let contentType = "application/jpeg"
-        guard let im = image else {
+        guard let im = image, let colordImg = im.fill(color: Brand.color(for: .background(.primary))) else {
             callback(.success("https://\(self.s3Bucket).s3-ap-northeast-1.amazonaws.com/assets/public/default.jpeg"))
             return
         }
-        guard let pngData = im.jpegData(compressionQuality: 0.25) else {
+        
+        guard let jpegData = colordImg.jpegData(compressionQuality: 0.25) else {
             callback(.failure(S3Error.invalidUrl("failed to convert image to data")))
             return
         }
 
         transferUtility.uploadData(
-            pngData,
+            jpegData,
             bucket: s3Bucket,
             key: key,
             contentType: contentType,

@@ -24,6 +24,21 @@ extension UIImage {
     }
 }
 
+extension UIImage {
+    func fill(color: UIColor) -> UIImage? {
+        let rect = CGRect(origin: .zero, size: self.size)
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, UIScreen.main.scale)
+        let context = UIGraphicsGetCurrentContext()
+        context?.setFillColor(color.cgColor)
+        context?.fill(rect)
+        self.draw(in: rect)
+        
+        let coloredImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return coloredImage
+    }
+}
+
 var cache: [String: UIImage] = NSMutableDictionary() as! [String: UIImage]
 
 extension UIImageView {

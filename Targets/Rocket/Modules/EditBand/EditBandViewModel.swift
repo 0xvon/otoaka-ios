@@ -81,7 +81,7 @@ class EditBandViewModel {
     func didEditButtonTapped() {
         outputSubject.send(.updateSubmittableState(false))
         if let artwork = self.state.artwork {
-            self.dependencyProvider.s3Client.uploadImage(image: state.artwork) { [unowned self] result in
+            self.dependencyProvider.s3Client.uploadImage(image: artwork) { [unowned self] result in
                 switch result {
                 case .success(let imageUrl):
                     editBand(imageUrl: URL(string: imageUrl))
