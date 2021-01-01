@@ -116,6 +116,10 @@ final class TextFieldView: UIView {
         self.textField.text = text
         underLineColor()
     }
+    
+    func focus() {
+        self.textField.becomeFirstResponder()
+    }
 
     func selectInputView(inputView: UIView) {
         self.textField.inputView = inputView

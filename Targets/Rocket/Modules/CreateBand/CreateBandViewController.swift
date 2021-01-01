@@ -294,6 +294,8 @@ final class CreateBandViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             bottomSpacer.heightAnchor.constraint(equalToConstant: 64),
         ])
+        
+        displayNameInputView.focus()
     }
     
     private func didInputValue() {
