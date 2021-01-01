@@ -1,8 +1,8 @@
 //
-//  CreateUserViewController.swift
+//  EditUserViewController.swift
 //  Rocket
 //
-//  Created by Masato TSUTSUMI on 2020/10/31.
+//  Created by Masato TSUTSUMI on 2020/11/25.
 //
 
 import Combine
@@ -11,9 +11,9 @@ import SafariServices
 import UIComponent
 import UIKit
 
-final class CreateUserViewController: UIViewController, Instantiable {
+final class EditUserViewController: UIViewController, Instantiable {
     typealias Input = Void
-
+    
     private lazy var verticalScrollView: UIScrollView = {
         let verticalScrollView = UIScrollView()
         verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -28,112 +28,15 @@ final class CreateUserViewController: UIViewController, Instantiable {
         stackView.spacing = 48
         return stackView
     }()
-    private lazy var userRoleContentView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
-        return view
-    }()
-    private lazy var userRoleSummaryView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.spacing = 48
-        return stackView
-    }()
-    private lazy var fanRoleSummaryView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        let fanImageView = UIImageView()
-        fanImageView.translatesAutoresizingMaskIntoConstraints = false
-        fanImageView.image = UIImage(named: "selectedGuitarIcon")
-        view.addSubview(fanImageView)
-        NSLayoutConstraint.activate([
-            fanImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-            fanImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            fanImageView.widthAnchor.constraint(equalToConstant: 60),
-            fanImageView.heightAnchor.constraint(equalTo: fanImageView.widthAnchor),
-        ])
-
-        let fanTitleLabel = UILabel()
-        fanTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        fanTitleLabel.text = "ファン"
-        fanTitleLabel.textAlignment = .center
-        fanTitleLabel.font = Brand.font(for: .mediumStrong)
-        fanTitleLabel.textColor = Brand.color(for: .text(.primary))
-        view.addSubview(fanTitleLabel)
-        NSLayoutConstraint.activate([
-            fanTitleLabel.topAnchor.constraint(equalTo: fanImageView.bottomAnchor),
-            fanTitleLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
-            fanTitleLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8),
-            fanTitleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8),
-        ])
-
-        let fanSectionButton = UIButton()
-        fanSectionButton.translatesAutoresizingMaskIntoConstraints = false
-        fanSectionButton.translatesAutoresizingMaskIntoConstraints = false
-        fanSectionButton.addTarget(
-            self, action: #selector(fanSectionButtonTapped(_:)), for: .touchUpInside)
-        view.addSubview(fanSectionButton)
-        NSLayoutConstraint.activate([
-            fanSectionButton.topAnchor.constraint(equalTo: view.topAnchor),
-            fanSectionButton.rightAnchor.constraint(equalTo: view.rightAnchor),
-            fanSectionButton.leftAnchor.constraint(equalTo: view.leftAnchor),
-            fanSectionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-        
-        return view
-    }()
-    private lazy var artistRoleSummaryView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        let bandImageView = UIImageView()
-        bandImageView.translatesAutoresizingMaskIntoConstraints = false
-        bandImageView.image = UIImage(named: "selectedMusicIcon")
-        view.addSubview(bandImageView)
-        NSLayoutConstraint.activate([
-            bandImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-            bandImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            bandImageView.widthAnchor.constraint(equalToConstant: 60),
-            bandImageView.heightAnchor.constraint(equalTo: bandImageView.widthAnchor),
-        ])
-
-        let bandTitleLabel = UILabel()
-        bandTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        bandTitleLabel.text = "メンバー"
-        bandTitleLabel.textAlignment = .center
-        bandTitleLabel.font = Brand.font(for: .mediumStrong)
-        bandTitleLabel.textColor = Brand.color(for: .text(.primary))
-        view.addSubview(bandTitleLabel)
-        NSLayoutConstraint.activate([
-            bandTitleLabel.topAnchor.constraint(equalTo: bandImageView.bottomAnchor),
-            bandTitleLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
-            bandTitleLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8),
-            bandTitleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8),
-        ])
-
-        let bandSectionButton = UIButton()
-        bandSectionButton.translatesAutoresizingMaskIntoConstraints = false
-        bandSectionButton.addTarget(
-            self, action: #selector(bandSectionButtonTapped(_:)), for: .touchUpInside)
-        
-        view.addSubview(bandSectionButton)
-        NSLayoutConstraint.activate([
-            bandSectionButton.topAnchor.constraint(equalTo: view.topAnchor),
-            bandSectionButton.rightAnchor.constraint(equalTo: view.rightAnchor),
-            bandSectionButton.leftAnchor.constraint(equalTo: view.leftAnchor),
-            bandSectionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-        
-        return view
-    }()
     private lazy var displayNameInputView: TextFieldView = {
         let displayNameInputView = TextFieldView(input: (section: "表示名", text: nil, maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         return displayNameInputView
+    }()
+    private lazy var biographyInputView: InputTextView = {
+        let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)", text: nil, maxLength: 200))
+        biographyInputView.translatesAutoresizingMaskIntoConstraints = false
+        return biographyInputView
     }()
     private lazy var partInputView: TextFieldView = {
         let partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
@@ -186,13 +89,13 @@ final class CreateUserViewController: UIViewController, Instantiable {
         return registerButton
     }()
     
-    let dependencyProvider: DependencyProvider
-    let viewModel: CreateUserViewModel
+    let dependencyProvider: LoggedInDependencyProvider
+    let viewModel: EditUserViewModel
     var cancellables: Set<AnyCancellable> = []
 
-    init(dependencyProvider: DependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.viewModel = CreateUserViewModel(dependencyProvider: dependencyProvider)
+        self.viewModel = EditUserViewModel(dependencyProvider: dependencyProvider)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -205,38 +108,54 @@ final class CreateUserViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         setup()
         bind()
+        udpate()
         
         viewModel.viewDidLoad()
     }
     
+    func udpate() {
+        let user = viewModel.dependencyProvider.user
+        displayNameInputView.setText(text: user.name)
+        biographyInputView.setText(text: user.biography ?? "")
+        switch user.role {
+        case .fan(_):
+            break
+        case .artist(let artist):
+            partInputView.setText(text: artist.part)
+        }
+        profileImageView.loadImageAsynchronously(url: URL(string: user.thumbnailURL!))
+    }
+    
     func bind() {
         registerButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: viewModel.didSignupButtonTapped)
+            .sink(receiveValue: viewModel.didEditButtonTapped)
             .store(in: &cancellables)
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didCreateUser(let user):
-                switch user.role {
-                case .artist(_):
-                    let loggedInDependencyProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
-                    let vc = InvitationViewController(dependencyProvider: loggedInDependencyProvider, input: ())
-                    self.navigationController?.pushViewController(vc, animated: true)
+            case .didEditUser(_):
+                self.dismiss(animated: true, completion: nil)
+            case .didInjectRole(let role):
+                switch role {
                 case .fan(_):
-                    self.dismiss(animated: true, completion: nil)
+                    partInputView.isHidden = true
+                case .artist(let artist):
+                    partInputView.isHidden = false
+                    partInputView.setText(text: artist.part)
                 }
-                
-            case .switchUserRole(let role):
-                didSwitchedRole(role: role)
             case .updateSubmittableState(let submittable):
                 self.registerButton.isEnabled = submittable
             case .reportError(let error):
-                showAlert(title: "エラー", message: error.localizedDescription)
+                self.showAlert(title: "エラー", message: error.localizedDescription)
             }
         }
         .store(in: &cancellables)
         
         displayNameInputView.listen {
+            self.didInputValue()
+        }
+        
+        biographyInputView.listen {
             self.didInputValue()
         }
         
@@ -272,29 +191,14 @@ final class CreateUserViewController: UIViewController, Instantiable {
             topSpacer.heightAnchor.constraint(equalToConstant: 32),
         ])
         
-        mainView.addArrangedSubview(userRoleContentView)
-        NSLayoutConstraint.activate([
-            userRoleContentView.rightAnchor.constraint(equalTo: mainView.rightAnchor),
-            userRoleContentView.leftAnchor.constraint(equalTo: mainView.leftAnchor),
-            userRoleContentView.heightAnchor.constraint(equalToConstant: 100),
-        ])
-        
-        userRoleContentView.addSubview(userRoleSummaryView)
-        userRoleSummaryView.addArrangedSubview(fanRoleSummaryView)
-        NSLayoutConstraint.activate([
-            fanRoleSummaryView.widthAnchor.constraint(equalToConstant: 100),
-            fanRoleSummaryView.heightAnchor.constraint(equalToConstant: 100),
-        ])
-        
-        userRoleSummaryView.addArrangedSubview(artistRoleSummaryView)
-        NSLayoutConstraint.activate([
-            userRoleSummaryView.centerXAnchor.constraint(equalTo: userRoleContentView.centerXAnchor),
-            userRoleSummaryView.centerYAnchor.constraint(equalTo: userRoleContentView.centerYAnchor),
-        ])
-        
         mainView.addArrangedSubview(displayNameInputView)
         NSLayoutConstraint.activate([
             displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
+        mainView.addArrangedSubview(biographyInputView)
+        NSLayoutConstraint.activate([
+            biographyInputView.heightAnchor.constraint(equalToConstant: 200),
         ])
         
         mainView.addArrangedSubview(partInputView)
@@ -345,36 +249,12 @@ final class CreateUserViewController: UIViewController, Instantiable {
         
         displayNameInputView.focus()
     }
-    
+
     private func didInputValue() {
         let displayName: String? = displayNameInputView.getText()
-        let part: String? = partInputView.getText()
+        let biography = biographyInputView.getText()
         
-        viewModel.didUpdateInputItems(displayName: displayName, role: part)
-    }
-
-    func didSwitchedRole(role: RoleProperties) {
-        switch role {
-        case .fan(_):
-            fanRoleSummaryView.layer.borderWidth = 1
-            fanRoleSummaryView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-            artistRoleSummaryView.layer.borderWidth = 0
-            partInputView.isHidden = true
-        case .artist(_):
-            artistRoleSummaryView.layer.borderWidth = 1
-            artistRoleSummaryView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-            fanRoleSummaryView.layer.borderWidth = 0
-            partInputView.isHidden = false
-        }
-    }
-
-    @objc private func fanSectionButtonTapped(_ sender: Any) {
-        viewModel.switchRole(role: .fan(Fan()))
-    }
-
-    @objc private func bandSectionButtonTapped(_ sender: Any) {
-        let part = partInputView.getText() ?? viewModel.state.socialInputs.parts[0]
-        viewModel.switchRole(role: .artist(Artist(part: part)))
+        viewModel.didUpdateInputItems(displayName: displayName, biography: biography)
     }
 
     @objc private func selectProfileImage(_ sender: Any) {
@@ -387,7 +267,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
     }
 }
 
-extension CreateUserViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate
+extension EditUserViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate
 {
     func imagePickerController(
         _ picker: UIImagePickerController,
@@ -402,7 +282,7 @@ extension CreateUserViewController: UIImagePickerControllerDelegate, UINavigatio
     }
 }
 
-extension CreateUserViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+extension EditUserViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }

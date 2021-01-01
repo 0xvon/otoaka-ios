@@ -121,7 +121,7 @@ final class AccountViewController: UIViewController, Instantiable {
     }
 
     private func setProfile() {
-        let vc = EditAccountViewController(dependencyProvider: dependencyProvider, input: ())
+        let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
         present(vc, animated: true, completion: nil)
     }
 
