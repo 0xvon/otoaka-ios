@@ -216,10 +216,16 @@ final class CreateUserViewController: UIViewController, Instantiable {
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didCreateUser(let  user):
-                let loggedInDependencyProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
-                let vc = InvitationViewController(dependencyProvider: loggedInDependencyProvider, input: ())
-                self.navigationController?.pushViewController(vc, animated: true)
+            case .didCreateUser(let user):
+                switch user.role {
+                case .artist(_):
+                    let loggedInDependencyProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
+                    let vc = InvitationViewController(dependencyProvider: loggedInDependencyProvider, input: ())
+                    self.navigationController?.pushViewController(vc, animated: true)
+                case .fan(_):
+                    self.dismiss(animated: true, completion: nil)
+                }
+                
             case .switchUserRole(let role):
                 didSwitchedRole(role: role)
             case .updateSubmittableState(let submittable):
