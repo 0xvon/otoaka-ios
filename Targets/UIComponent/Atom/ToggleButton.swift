@@ -59,7 +59,7 @@ public final class ToggleButton: UIButton {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
+#if PREVIEW
 import SwiftUI
 
 struct ToggleButton_Previews: PreviewProvider {

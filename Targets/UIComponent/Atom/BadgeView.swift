@@ -72,7 +72,7 @@ public final class BadgeView: UIView {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
+#if PREVIEW
 import SwiftUI
 
 struct BadgeView_Previews: PreviewProvider {

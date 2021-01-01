@@ -81,7 +81,7 @@ public final class ReactionIndicatorButton: UIButton {
     }
 }
 
-#if DEBUG && canImport(SwiftUI)
+#if PREVIEW
 import SwiftUI
 
 struct ReactionButton_Previews: PreviewProvider {
