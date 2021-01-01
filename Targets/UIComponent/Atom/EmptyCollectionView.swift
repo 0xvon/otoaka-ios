@@ -18,7 +18,7 @@ public final class EmptyCollectionView: UIStackView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "ぴえん。。。"
+        label.text = "（’・_・｀）"
         label.textAlignment = .center
         label.font = Brand.font(for: .largeStrong)
         label.backgroundColor = .clear
@@ -39,21 +39,26 @@ public final class EmptyCollectionView: UIStackView {
         return label
     }()
     private let button: PrimaryButton = {
-        let button = PrimaryButton(text: "ユーザー作成")
+        let button = PrimaryButton(text: "")
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 25
         return button
     }()
     
-    public init(emptyType: EmptyType, isActionButtonEnabled: Bool) {
+    public init(emptyType: EmptyType, actionButtonTitle: String?) {
         super.init(frame: .zero)
         setup()
-        update(emptyType: emptyType, isActionButtonEnabled: isActionButtonEnabled)
+        update(emptyType: emptyType, actionButtonTitle: actionButtonTitle)
     }
     
-    func update(emptyType: EmptyType, isActionButtonEnabled: Bool) {
+    func update(emptyType: EmptyType, actionButtonTitle: String?) {
         messageLabel.text = emptyType.rawValue
-        button.isHidden = !isActionButtonEnabled
+        if let title = actionButtonTitle {
+            button.isHidden = false
+            button.setTitle(title, for: .normal)
+        } else {
+            button.isHidden = true
+        }
     }
     
     @available(*, unavailable)
@@ -65,13 +70,7 @@ public final class EmptyCollectionView: UIStackView {
         backgroundColor = Brand.color(for: .background(.primary))
         axis = .vertical
         distribution = .fill
-        spacing = 24
-        
-        let topSpacer = UIView()
-        addArrangedSubview(topSpacer)
-        NSLayoutConstraint.activate([
-            topSpacer.heightAnchor.constraint(equalToConstant: 40),
-        ])
+        spacing = 16
         
         addArrangedSubview(titleLabel)
         NSLayoutConstraint.activate([
@@ -88,17 +87,9 @@ public final class EmptyCollectionView: UIStackView {
             button.heightAnchor.constraint(equalToConstant: 50)
         ])
         
-        let bottomSpacer = UIView()
-        addArrangedSubview(topSpacer)
-        NSLayoutConstraint.activate([
-            bottomSpacer.heightAnchor.constraint(equalToConstant: 40),
-        ])
-        
         button.listen {
             self.listener()
         }
-        
-        
     }
     
     private var listener: () -> Void = {}
@@ -113,8 +104,14 @@ import SwiftUI
 struct EmptyCollectionView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(view: EmptyCollectionView(emptyType: .feed, isActionButtonEnabled: true))
-                .previewLayout(.fixed(width: 320, height: 320))
+            ViewWrapper(view: EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す"))
+                .previewLayout(.fixed(width: 320, height: 200))
+        }
+        .background(Color.black)
+        
+        Group {
+            ViewWrapper(view: EmptyCollectionView(emptyType: .band, actionButtonTitle: nil))
+                .previewLayout(.fixed(width: 320, height: 120))
         }
         .background(Color.black)
     }
