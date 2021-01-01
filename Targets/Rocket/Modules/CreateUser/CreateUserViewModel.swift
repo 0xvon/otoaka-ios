@@ -5,66 +5,92 @@
 //  Created by Masato TSUTSUMI on 2020/10/31.
 //
 
+import Combine
 import Endpoint
 import Foundation
+import InternalDomain
+import UIComponent
 import UIKit
 
 class CreateUserViewModel {
+    struct State {
+        var submittable: Bool
+        var displayName: String?
+        var role: RoleProperties
+        var profileImage: UIImage?
+        let socialInputs: SocialInputs
+    }
+    
     enum Output {
-        case artist(User)
-        case fan(User)
-        case error(Error)
+        case didCreateUser(User)
+        case switchUserRole(RoleProperties)
+        case updateSubmittableState(Bool)
+        case reportError(Error)
     }
 
-    let apiClient: APIClient
-    let s3Client: S3Client
-    let outputHandler: (Output) -> Void
+    let dependencyProvider: DependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    private(set) var state: State
+    
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
-    init(apiClient: APIClient, s3Client: S3Client, outputHander: @escaping (Output) -> Void) {
-        self.apiClient = apiClient
-        self.s3Client = s3Client
-        self.outputHandler = outputHander
+    init(
+        dependencyProvider: DependencyProvider
+    ) {
+        self.dependencyProvider = dependencyProvider
+        self.state = State(submittable: false, role: .fan(Fan()), socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+    }
+    
+    func viewDidLoad() {
+        outputSubject.send(.switchUserRole(state.role))
+    }
+    
+    func switchRole(role: RoleProperties) {
+        self.state.role = role
+        outputSubject.send(.switchUserRole(role))
+    }
+    
+    func didUpdateInputItems(displayName: String?, role: String?, profileImage: UIImage?) {
+        state.displayName = displayName
+        state.profileImage = profileImage
+        switch state.role {
+        case .fan(_):
+            state.role = .fan(Fan())
+        case .artist(_):
+            guard let role = role else { return }
+            state.role = .artist(Artist(part: role))
+        }
+        
+        let isSubmittable = (displayName != nil)
+        outputSubject.send(.updateSubmittableState(isSubmittable))
     }
 
-    func signupAsFan(name: String, thumbnail: UIImage?) {
-        self.s3Client.uploadImage(image: thumbnail) { [apiClient] result in
+    func didSignupButtonTapped() {
+        outputSubject.send(.updateSubmittableState(false))
+        guard let displayName = state.displayName else { return }
+        self.dependencyProvider.s3Client.uploadImage(image: state.profileImage) { [unowned self] result in
             switch result {
             case .success(let imageUrl):
                 let req = Signup.Request(
-                    name: name, biography: nil, thumbnailURL: imageUrl, role: .fan(Fan()))
-                apiClient.request(Signup.self, request: req) { result in
-                    switch result {
-                    case .success(let res):
-                        self.outputHandler(.fan(res))
-                    case .failure(let error):
-                        self.outputHandler(.error(error))
-                    }
+                    name: displayName, biography: nil, thumbnailURL: imageUrl, role: state.role)
+                apiClient.request(Signup.self, request: req) { [unowned self] result in
+                    updateState(with: result)
                 }
             case .failure(let error):
-                self.outputHandler(.error(error))
+                outputSubject.send(.updateSubmittableState(true))
+                outputSubject.send(.reportError(error))
             }
-            
         }
     }
-
-    func signupAsArtist(name: String, thumbnail: UIImage?, part: String) {
-        self.s3Client.uploadImage(image: thumbnail) { [apiClient] result in
-            switch result {
-            case .success(let imageUrl):
-                let req = Signup.Request(
-                    name: name, biography: nil, thumbnailURL: imageUrl,
-                    role: .artist(Artist(part: part)))
-                apiClient.request(Signup.self, request: req) { result in
-                    switch result {
-                    case .success(let res):
-                        self.outputHandler(.artist(res))
-                    case .failure(let error):
-                        self.outputHandler(.error(error))
-                    }
-                }
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
+    
+    private func updateState(with result: Result<User, Error>) {
+        outputSubject.send(.updateSubmittableState(true))
+        switch result {
+        case .success(let user):
+            outputSubject.send(.didCreateUser(user))
+        case .failure(let error):
+            outputSubject.send(.reportError(error))
         }
     }
 }

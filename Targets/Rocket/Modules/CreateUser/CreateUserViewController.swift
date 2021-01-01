@@ -5,67 +5,196 @@
 //  Created by Masato TSUTSUMI on 2020/10/31.
 //
 
-import AWSCognitoAuth
+import Combine
+import Endpoint
+import SafariServices
+import UIComponent
 import UIKit
-import InternalDomain
 
 final class CreateUserViewController: UIViewController, Instantiable {
     typealias Input = Void
-    var dependencyProvider: DependencyProvider
-    var input: Input!
 
-    enum SectionType {
-        case fan
-        case artist
-    }
+    private lazy var verticalScrollView: UIScrollView = {
+        let verticalScrollView = UIScrollView()
+        verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
+        verticalScrollView.backgroundColor = .clear
+        verticalScrollView.showsVerticalScrollIndicator = false
+        return verticalScrollView
+    }()
+    private lazy var mainView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 48
+        return stackView
+    }()
+    private lazy var userRoleContentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        return view
+    }()
+    private lazy var userRoleSummaryView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.spacing = 48
+        return stackView
+    }()
+    private lazy var fanRoleSummaryView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        let fanImageView = UIImageView()
+        fanImageView.translatesAutoresizingMaskIntoConstraints = false
+        fanImageView.image = UIImage(named: "selectedGuitarIcon")
+        view.addSubview(fanImageView)
+        NSLayoutConstraint.activate([
+            fanImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            fanImageView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            fanImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            fanImageView.widthAnchor.constraint(equalToConstant: 60),
+            fanImageView.heightAnchor.constraint(equalTo: fanImageView.widthAnchor),
+        ])
 
-    lazy var viewModel = CreateUserViewModel(
-        apiClient: dependencyProvider.apiClient,
-        s3Client: dependencyProvider.s3Client,
-        outputHander: { output in
-            switch output {
-            case .fan(let user):
-                DispatchQueue.main.async {
-                    let provider = LoggedInDependencyProvider(
-                        provider: self.dependencyProvider, user: user)
-                    let vc = InvitationViewController(dependencyProvider: provider, input: ())
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-            case .artist(let user):
-                DispatchQueue.main.async {
-                    let provider = LoggedInDependencyProvider(
-                        provider: self.dependencyProvider, user: user)
-                    let vc = InvitationViewController(dependencyProvider: provider, input: ())
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
+        let fanTitleLabel = UILabel()
+        fanTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        fanTitleLabel.text = "ファン"
+        fanTitleLabel.textAlignment = .center
+        fanTitleLabel.font = Brand.font(for: .mediumStrong)
+        fanTitleLabel.textColor = Brand.color(for: .text(.primary))
+        view.addSubview(fanTitleLabel)
+        NSLayoutConstraint.activate([
+            fanTitleLabel.topAnchor.constraint(equalTo: fanImageView.bottomAnchor),
+            fanTitleLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
+            fanTitleLabel.leftAnchor.constraint(equalTo: view.leftAnchor),
+            fanTitleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
 
-    @IBOutlet weak var setProfileView: UIView!
-    @IBOutlet weak var createUserButtonView: PrimaryButton!
-    @IBOutlet weak var fanSection: UIView!
-    @IBOutlet weak var bandSection: UIView!
-    @IBOutlet weak var profileInputView: UIView!
+        let fanSectionButton = UIButton()
+        fanSectionButton.translatesAutoresizingMaskIntoConstraints = false
+        fanSectionButton.translatesAutoresizingMaskIntoConstraints = false
+        fanSectionButton.addTarget(
+            self, action: #selector(fanSectionButtonTapped(_:)), for: .touchUpInside)
+        view.addSubview(fanSectionButton)
+        NSLayoutConstraint.activate([
+            fanSectionButton.topAnchor.constraint(equalTo: view.topAnchor),
+            fanSectionButton.rightAnchor.constraint(equalTo: view.rightAnchor),
+            fanSectionButton.leftAnchor.constraint(equalTo: view.leftAnchor),
+            fanSectionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+        
+        return view
+    }()
+    private lazy var artistRoleSummaryView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        let bandImageView = UIImageView()
+        bandImageView.translatesAutoresizingMaskIntoConstraints = false
+        bandImageView.image = UIImage(named: "selectedMusicIcon")
+        view.addSubview(bandImageView)
+        NSLayoutConstraint.activate([
+            bandImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            bandImageView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            bandImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            bandImageView.widthAnchor.constraint(equalToConstant: 60),
+            bandImageView.heightAnchor.constraint(equalTo: bandImageView.widthAnchor),
+        ])
 
-    private var nameInputView: TextFieldView!
-    private var artistNameInputView: TextFieldView!
-    private var partInputView: TextFieldView!
-    private var fanInputs: UIView!
-    private var partPicker: UIPickerView!
-    private var bandInputs: UIView!
-    private var profileImageView: UIImageView!
-    private var sectionType: SectionType = .fan
-    let socialInputs: SocialInputs
+        let bandTitleLabel = UILabel()
+        bandTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        bandTitleLabel.text = "メンバー"
+        bandTitleLabel.textAlignment = .center
+        bandTitleLabel.font = Brand.font(for: .mediumStrong)
+        bandTitleLabel.textColor = Brand.color(for: .text(.primary))
+        view.addSubview(bandTitleLabel)
+        NSLayoutConstraint.activate([
+            bandTitleLabel.topAnchor.constraint(equalTo: bandImageView.bottomAnchor),
+            bandTitleLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
+            bandTitleLabel.leftAnchor.constraint(equalTo: view.leftAnchor),
+            bandTitleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+
+        let bandSectionButton = UIButton()
+        bandSectionButton.translatesAutoresizingMaskIntoConstraints = false
+        bandSectionButton.addTarget(
+            self, action: #selector(bandSectionButtonTapped(_:)), for: .touchUpInside)
+        
+        view.addSubview(bandSectionButton)
+        NSLayoutConstraint.activate([
+            bandSectionButton.topAnchor.constraint(equalTo: view.topAnchor),
+            bandSectionButton.rightAnchor.constraint(equalTo: view.rightAnchor),
+            bandSectionButton.leftAnchor.constraint(equalTo: view.leftAnchor),
+            bandSectionButton.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+        
+        return view
+    }()
+    private lazy var displayNameInputView: TextFieldView = {
+        let displayNameInputView = TextFieldView(input: (section: "表示名", text: nil, maxLength: 20))
+        displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
+        return displayNameInputView
+    }()
+    private lazy var partInputView: TextFieldView = {
+        let partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
+        partInputView.translatesAutoresizingMaskIntoConstraints = false
+        return partInputView
+    }()
+    private lazy var partPickerView: UIPickerView = {
+        let partPickerView = UIPickerView()
+        partPickerView.translatesAutoresizingMaskIntoConstraints = false
+        partPickerView.dataSource = self
+        partPickerView.delegate = self
+        return partPickerView
+    }()
+    private var thumbnailInputView: UIView = {
+        let thumbnailInputView = UIView()
+        thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return thumbnailInputView
+    }()
+    private lazy var profileImageView: UIImageView = {
+        let profileImageView = UIImageView()
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.layer.cornerRadius = 60
+        profileImageView.clipsToBounds = true
+        profileImageView.image = UIImage(named: "human")
+        profileImageView.contentMode = .scaleAspectFill
+        return profileImageView
+    }()
+    private lazy var changeProfileImageButton: UIButton = {
+        let changeProfileImageButton = UIButton()
+        changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
+        changeProfileImageButton.addTarget(
+            self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
+        return changeProfileImageButton
+    }()
+    private lazy var profileImageTitle: UILabel = {
+        let profileImageTitle = UILabel()
+        profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
+        profileImageTitle.text = "プロフィール画像"
+        profileImageTitle.textAlignment = .center
+        profileImageTitle.font = Brand.font(for: .medium)
+        profileImageTitle.textColor = Brand.color(for: .text(.primary))
+        return profileImageTitle
+    }()
+    private lazy var registerButton: PrimaryButton = {
+        let registerButton = PrimaryButton(text: "ユーザー作成")
+        registerButton.translatesAutoresizingMaskIntoConstraints = false
+        registerButton.layer.cornerRadius = 25
+        registerButton.isEnabled = false
+        return registerButton
+    }()
+    
+    let dependencyProvider: DependencyProvider
+    let viewModel: CreateUserViewModel
+    var cancellables: Set<AnyCancellable> = []
 
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.input = input
-        self.socialInputs = try! dependencyProvider.masterService.blockingMasterData()
+        self.viewModel = CreateUserViewModel(dependencyProvider: dependencyProvider)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -77,201 +206,170 @@ final class CreateUserViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        bind()
+        
+        viewModel.viewDidLoad()
+    }
+    
+    func bind() {
+        registerButton.controlEventPublisher(for: .touchUpInside)
+            .sink(receiveValue: viewModel.didSignupButtonTapped)
+            .store(in: &cancellables)
+        
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didCreateUser(let  user):
+                let loggedInDependencyProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
+                let vc = InvitationViewController(dependencyProvider: loggedInDependencyProvider, input: ())
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .switchUserRole(let role):
+                didSwitchedRole(role: role)
+            case .updateSubmittableState(let submittable):
+                self.registerButton.isEnabled = submittable
+            case .reportError(let error):
+                showAlert(title: "エラー", message: error.localizedDescription)
+            }
+        }
+        .store(in: &cancellables)
+        
+        displayNameInputView.listen {
+            self.didInputValue()
+        }
+        
+        partInputView.listen {
+            self.partInputView.setText(text: self.viewModel.state.socialInputs.parts[self.partPickerView.selectedRow(inComponent: 0)])
+            self.didInputValue()
+        }
     }
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-
-        let fanImageView = UIImageView()
-        fanImageView.translatesAutoresizingMaskIntoConstraints = false
-        fanImageView.image = UIImage(named: "selectedGuitarIcon")
-        fanSection.addSubview(fanImageView)
-
-        let fanTitleLabel = UILabel()
-        fanTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        fanTitleLabel.text = "ファン"
-        fanTitleLabel.font = Brand.font(for: .medium)
-        fanTitleLabel.textColor = Brand.color(for: .text(.primary))
-        fanSection.addSubview(fanTitleLabel)
-
-        let fanSectionButton = UIButton()
-        fanSectionButton.translatesAutoresizingMaskIntoConstraints = false
-        fanSectionButton.translatesAutoresizingMaskIntoConstraints = false
-        fanSectionButton.addTarget(
-            self, action: #selector(fanSectionButtonTapped(_:)), for: .touchUpInside)
-        fanSection.addSubview(fanSectionButton)
-
-        let bandImageView = UIImageView()
-        bandImageView.translatesAutoresizingMaskIntoConstraints = false
-        bandImageView.image = UIImage(named: "selectedMusicIcon")
-        bandSection.addSubview(bandImageView)
-
-        let bandTitleLabel = UILabel()
-        bandTitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        bandTitleLabel.text = "メンバー"
-        bandTitleLabel.font = Brand.font(for: .medium)
-        bandTitleLabel.textColor = Brand.color(for: .text(.primary))
-        bandSection.addSubview(bandTitleLabel)
-
-        let bandSectionButton = UIButton()
-        bandSectionButton.translatesAutoresizingMaskIntoConstraints = false
-        bandSectionButton.addTarget(
-            self, action: #selector(bandSectionButtonTapped(_:)), for: .touchUpInside)
-        bandSection.addSubview(bandSectionButton)
-
-        fanInputs = UIView()
-        fanInputs.backgroundColor = Brand.color(for: .background(.primary))
-        fanInputs.translatesAutoresizingMaskIntoConstraints = false
-        profileInputView.addSubview(fanInputs)
-
-        nameInputView = TextFieldView(input: (section: "表示名", text: nil, maxLength: 20))
-        nameInputView.translatesAutoresizingMaskIntoConstraints = false
-        fanInputs.addSubview(nameInputView)
-
-        bandInputs = UIView()
-        bandInputs.backgroundColor = Brand.color(for: .background(.primary))
-        bandInputs.translatesAutoresizingMaskIntoConstraints = false
-        profileInputView.addSubview(bandInputs)
-
-        artistNameInputView = TextFieldView(input: (section: "表示名", text: nil, maxLength: 20))
-        artistNameInputView.translatesAutoresizingMaskIntoConstraints = false
-        bandInputs.addSubview(artistNameInputView)
-
-        partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
-        partInputView.setText(text: socialInputs.parts[0])
-        partInputView.translatesAutoresizingMaskIntoConstraints = false
-        bandInputs.addSubview(partInputView)
-
-        partPicker = UIPickerView()
-        partPicker.translatesAutoresizingMaskIntoConstraints = false
-        partPicker.dataSource = self
-        partPicker.delegate = self
-
-        partInputView.selectInputView(inputView: partPicker)
-
-        sectionChanged(section: sectionType)
-
-        profileImageView = UIImageView()
-        profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        profileImageView.layer.cornerRadius = 60
-        profileImageView.clipsToBounds = true
-        profileImageView.image = UIImage(named: "human")
-        setProfileView.addSubview(profileImageView)
-
-        let changeProfileImageButton = UIButton()
-        changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
-        changeProfileImageButton.addTarget(
-            self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
-        setProfileView.addSubview(changeProfileImageButton)
-
-        let profileImageTitle = UILabel()
-        profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
-        profileImageTitle.text = "プロフィール画像"
-        profileImageTitle.textAlignment = .center
-        profileImageTitle.font = Brand.font(for: .medium)
-        profileImageTitle.textColor = Brand.color(for: .text(.primary))
-        setProfileView.addSubview(profileImageTitle)
-
-        createUserButtonView.setTitle("ユーザ作成", for: .normal)
-        createUserButtonView.listen {
-            self.createUser()
-        }
-
-        let constraints = [
-            fanImageView.widthAnchor.constraint(equalToConstant: 40),
-            fanImageView.heightAnchor.constraint(equalToConstant: 40),
-            fanImageView.centerXAnchor.constraint(equalTo: fanSection.centerXAnchor),
-            fanImageView.topAnchor.constraint(equalTo: fanSection.topAnchor, constant: 32),
-
-            fanTitleLabel.topAnchor.constraint(equalTo: fanImageView.bottomAnchor, constant: 4),
-            fanTitleLabel.centerXAnchor.constraint(equalTo: fanImageView.centerXAnchor),
-
-            fanSectionButton.topAnchor.constraint(equalTo: fanSection.topAnchor),
-            fanSectionButton.bottomAnchor.constraint(equalTo: fanSection.bottomAnchor),
-            fanSectionButton.rightAnchor.constraint(equalTo: fanSection.rightAnchor),
-            fanSectionButton.leftAnchor.constraint(equalTo: fanSection.leftAnchor),
-
-            bandImageView.widthAnchor.constraint(equalToConstant: 40),
-            bandImageView.heightAnchor.constraint(equalToConstant: 40),
-            bandImageView.centerXAnchor.constraint(equalTo: bandSection.centerXAnchor),
-            bandImageView.topAnchor.constraint(equalTo: bandSection.topAnchor, constant: 32),
-
-            bandTitleLabel.topAnchor.constraint(equalTo: bandImageView.bottomAnchor, constant: 4),
-            bandTitleLabel.centerXAnchor.constraint(equalTo: bandImageView.centerXAnchor),
-
-            bandSectionButton.topAnchor.constraint(equalTo: bandSection.topAnchor),
-            bandSectionButton.bottomAnchor.constraint(equalTo: bandSection.bottomAnchor),
-            bandSectionButton.rightAnchor.constraint(equalTo: bandSection.rightAnchor),
-            bandSectionButton.leftAnchor.constraint(equalTo: bandSection.leftAnchor),
-
-            fanInputs.topAnchor.constraint(equalTo: profileInputView.topAnchor),
-            fanInputs.bottomAnchor.constraint(equalTo: profileInputView.bottomAnchor),
-            fanInputs.rightAnchor.constraint(equalTo: profileInputView.rightAnchor),
-            fanInputs.leftAnchor.constraint(equalTo: profileInputView.leftAnchor),
-
-            nameInputView.topAnchor.constraint(equalTo: fanInputs.topAnchor, constant: 16),
-            nameInputView.rightAnchor.constraint(equalTo: fanInputs.rightAnchor, constant: -16),
-            nameInputView.leftAnchor.constraint(equalTo: fanInputs.leftAnchor, constant: 16),
-            nameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-
-            bandInputs.topAnchor.constraint(equalTo: profileInputView.topAnchor),
-            bandInputs.bottomAnchor.constraint(equalTo: profileInputView.bottomAnchor),
-            bandInputs.rightAnchor.constraint(equalTo: profileInputView.rightAnchor),
-            bandInputs.leftAnchor.constraint(equalTo: profileInputView.leftAnchor),
-
-            artistNameInputView.topAnchor.constraint(equalTo: bandInputs.topAnchor, constant: 16),
-            artistNameInputView.rightAnchor.constraint(
-                equalTo: bandInputs.rightAnchor, constant: -16),
-            artistNameInputView.leftAnchor.constraint(equalTo: bandInputs.leftAnchor, constant: 16),
-            artistNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-
-            partInputView.topAnchor.constraint(
-                equalTo: artistNameInputView.bottomAnchor, constant: 32),
-            partInputView.rightAnchor.constraint(equalTo: bandInputs.rightAnchor, constant: -16),
-            partInputView.leftAnchor.constraint(equalTo: bandInputs.leftAnchor, constant: 16),
+        
+        self.view.addSubview(verticalScrollView)
+        NSLayoutConstraint.activate([
+            verticalScrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            verticalScrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            verticalScrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+            verticalScrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
+        ])
+        
+        verticalScrollView.addSubview(mainView)
+        NSLayoutConstraint.activate([
+            mainView.topAnchor.constraint(equalTo: verticalScrollView.topAnchor),
+            mainView.bottomAnchor.constraint(equalTo: verticalScrollView.bottomAnchor),
+            mainView.rightAnchor.constraint(equalTo: verticalScrollView.rightAnchor),
+            mainView.leftAnchor.constraint(equalTo: verticalScrollView.leftAnchor),
+            mainView.centerXAnchor.constraint(equalTo: verticalScrollView.centerXAnchor),
+        ])
+        
+        let topSpacer = UIView()
+        mainView.addArrangedSubview(topSpacer) // Spacer
+        NSLayoutConstraint.activate([
+            topSpacer.heightAnchor.constraint(equalToConstant: 32),
+        ])
+        
+        mainView.addArrangedSubview(userRoleContentView)
+        NSLayoutConstraint.activate([
+            userRoleContentView.rightAnchor.constraint(equalTo: mainView.rightAnchor),
+            userRoleContentView.leftAnchor.constraint(equalTo: mainView.leftAnchor),
+            userRoleContentView.heightAnchor.constraint(equalToConstant: 100),
+        ])
+        
+        userRoleContentView.addSubview(userRoleSummaryView)
+        userRoleSummaryView.addArrangedSubview(fanRoleSummaryView)
+        NSLayoutConstraint.activate([
+            fanRoleSummaryView.widthAnchor.constraint(equalToConstant: 60),
+            fanRoleSummaryView.heightAnchor.constraint(equalToConstant: 100),
+        ])
+        
+        userRoleSummaryView.addArrangedSubview(artistRoleSummaryView)
+        NSLayoutConstraint.activate([
+            userRoleSummaryView.centerXAnchor.constraint(equalTo: userRoleContentView.centerXAnchor),
+            userRoleSummaryView.centerYAnchor.constraint(equalTo: userRoleContentView.centerYAnchor),
+        ])
+        
+        mainView.addArrangedSubview(displayNameInputView)
+        NSLayoutConstraint.activate([
+            displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
+        mainView.addArrangedSubview(partInputView)
+        partInputView.selectInputView(inputView: partPickerView)
+        NSLayoutConstraint.activate([
             partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-
+        ])
+        
+        mainView.addArrangedSubview(thumbnailInputView)
+        NSLayoutConstraint.activate([
+            thumbnailInputView.heightAnchor.constraint(equalToConstant: 150),
+        ])
+        
+        thumbnailInputView.addSubview(profileImageView)
+        NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: 120),
             profileImageView.heightAnchor.constraint(equalToConstant: 120),
-            profileImageView.topAnchor.constraint(equalTo: setProfileView.topAnchor),
-            profileImageView.centerXAnchor.constraint(equalTo: setProfileView.centerXAnchor),
-
-            changeProfileImageButton.widthAnchor.constraint(equalToConstant: 200),
-            changeProfileImageButton.heightAnchor.constraint(equalToConstant: 120),
-            changeProfileImageButton.topAnchor.constraint(equalTo: setProfileView.topAnchor),
-            changeProfileImageButton.rightAnchor.constraint(equalTo: setProfileView.rightAnchor),
-            changeProfileImageButton.leftAnchor.constraint(equalTo: setProfileView.leftAnchor),
-
-            profileImageTitle.leftAnchor.constraint(equalTo: setProfileView.leftAnchor),
-            profileImageTitle.rightAnchor.constraint(equalTo: setProfileView.rightAnchor),
-            profileImageTitle.bottomAnchor.constraint(equalTo: setProfileView.bottomAnchor),
-        ]
-        NSLayoutConstraint.activate(constraints)
-
+            profileImageView.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
+            profileImageView.centerXAnchor.constraint(equalTo: thumbnailInputView.centerXAnchor),
+        ])
+        
+        thumbnailInputView.addSubview(profileImageTitle)
+        NSLayoutConstraint.activate([
+            profileImageTitle.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
+            profileImageTitle.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
+            profileImageTitle.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
+        ])
+        
+        thumbnailInputView.addSubview(changeProfileImageButton)
+        NSLayoutConstraint.activate([
+            changeProfileImageButton.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
+            changeProfileImageButton.rightAnchor.constraint(
+                equalTo: thumbnailInputView.rightAnchor),
+            changeProfileImageButton.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
+            changeProfileImageButton.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
+        ])
+        
+        mainView.addArrangedSubview(registerButton)
+        NSLayoutConstraint.activate([
+            registerButton.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
+        let bottomSpacer = UIView()
+        mainView.addArrangedSubview(bottomSpacer) // Spacer
+        NSLayoutConstraint.activate([
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 64),
+        ])
+    }
+    
+    private func didInputValue() {
+        let displayName: String? = displayNameInputView.getText()
+        let part: String? = partInputView.getText()
+        let artworkImage: UIImage? = profileImageView.image
+        
+        viewModel.didUpdateInputItems(displayName: displayName, role: part, profileImage: artworkImage)
     }
 
-    func sectionChanged(section: SectionType) {
-        self.sectionType = section
-        switch self.sectionType {
-        case .fan:
-            fanSection.layer.borderWidth = 1
-            fanSection.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-            bandSection.layer.borderWidth = 0
-            profileInputView.bringSubviewToFront(fanInputs)
-        case .artist:
-            bandSection.layer.borderWidth = 1
-            bandSection.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-            fanSection.layer.borderWidth = 0
-            profileInputView.bringSubviewToFront(bandInputs)
+    func didSwitchedRole(role: RoleProperties) {
+        switch role {
+        case .fan(_):
+            fanRoleSummaryView.layer.borderWidth = 1
+            fanRoleSummaryView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+            fanRoleSummaryView.layer.borderWidth = 0
+            partInputView.isHidden = true
+        case .artist(_):
+            artistRoleSummaryView.layer.borderWidth = 1
+            artistRoleSummaryView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+            artistRoleSummaryView.layer.borderWidth = 0
+            partInputView.isHidden = false
         }
     }
 
     @objc private func fanSectionButtonTapped(_ sender: Any) {
-        sectionChanged(section: .fan)
+        viewModel.switchRole(role: .fan(Fan()))
     }
 
     @objc private func bandSectionButtonTapped(_ sender: Any) {
-        sectionChanged(section: .artist)
+        let part = partInputView.getText() ?? viewModel.state.socialInputs.parts[0]
+        viewModel.switchRole(role: .artist(Artist(part: part)))
     }
 
     @objc private func selectProfileImage(_ sender: Any) {
@@ -280,20 +378,6 @@ final class CreateUserViewController: UIViewController, Instantiable {
             picker.sourceType = .photoLibrary
             picker.delegate = self
             self.present(picker, animated: true, completion: nil)
-        }
-    }
-
-    private func createUser() {
-        switch self.sectionType {
-        case .fan:
-            let name = nameInputView.getText() ?? ""
-            let thumbnail = profileImageView.image
-            viewModel.signupAsFan(name: name, thumbnail: thumbnail)
-        case .artist:
-            let name = artistNameInputView.getText() ?? ""
-            let thumbnail = profileImageView.image
-            let part = partInputView.getText() ?? ""
-            viewModel.signupAsArtist(name: name, thumbnail: thumbnail, part: part)
         }
     }
 }
@@ -308,6 +392,7 @@ extension CreateUserViewController: UIImagePickerControllerDelegate, UINavigatio
             return
         }
         profileImageView.image = image
+        didInputValue()
         self.dismiss(animated: true, completion: nil)
     }
 }
@@ -318,17 +403,12 @@ extension CreateUserViewController: UIPickerViewDelegate, UIPickerViewDataSource
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return socialInputs.parts.count
+        return viewModel.state.socialInputs.parts.count
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
         -> String?
     {
-        return socialInputs.parts[row]
-    }
-
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let text = socialInputs.parts[row]
-        partInputView.setText(text: text)
+        return viewModel.state.socialInputs.parts[row]
     }
 }

@@ -255,6 +255,11 @@ final class CreateBandViewController: UIViewController, Instantiable {
             twitterIdInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
+        mainView.addArrangedSubview(thumbnailInputView)
+        NSLayoutConstraint.activate([
+            thumbnailInputView.heightAnchor.constraint(equalToConstant: 150),
+        ])
+        
         thumbnailInputView.addSubview(profileImageView)
         NSLayoutConstraint.activate([
             profileImageView.widthAnchor.constraint(equalToConstant: 120),
