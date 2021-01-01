@@ -326,7 +326,6 @@ final class EditBandViewController: UIViewController, Instantiable {
         let groupName: String? = displayNameInputView.getText()
         let groupEnglishName: String? = englishNameInputView.getText()
         let biography: String? = biographyInputView.getText()
-        let artworkImage: UIImage? = profileImageView.image
         let sinceInput = sinceInputView.getText()
         let since: Date? = {
             guard let sinceInput = sinceInput else { return nil }
