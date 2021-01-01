@@ -56,13 +56,12 @@ class CreateBandViewModel {
     
     func didUpdateInputItems(
         name: String?, englishName: String?, biography: String?,
-        since: Date?, artwork: UIImage?, youtubeChannelId: String?, twitterId: String?, hometown: String?
+        since: Date?, youtubeChannelId: String?, twitterId: String?, hometown: String?
     ) {
         state.name = name
         state.englishName = englishName
         state.biography = biography
         state.since = since
-        state.artwork = artwork
         state.youtubeChannelId = youtubeChannelId
         state.twitterId = twitterId
         state.hometown = hometown
@@ -72,6 +71,10 @@ class CreateBandViewModel {
             state.submittable = isSubmittable
             outputSubject.send(.updateSubmittableState(isSubmittable))
         }
+    }
+    
+    func didUpdateArtwork(artwork: UIImage?) {
+        self.state.artwork = artwork
     }
 
     func didRegisterButtonTapped() {

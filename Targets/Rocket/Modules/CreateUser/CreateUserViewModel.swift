@@ -51,9 +51,8 @@ class CreateUserViewModel {
         outputSubject.send(.switchUserRole(role))
     }
     
-    func didUpdateInputItems(displayName: String?, role: String?, profileImage: UIImage?) {
+    func didUpdateInputItems(displayName: String?, role: String?) {
         state.displayName = displayName
-        state.profileImage = profileImage
         switch state.role {
         case .fan(_):
             state.role = .fan(Fan())
@@ -65,6 +64,10 @@ class CreateUserViewModel {
         let isSubmittable = (displayName != nil)
         state.submittable = isSubmittable
         outputSubject.send(.updateSubmittableState(isSubmittable))
+    }
+    
+    func didUpdateArtwork(artwork: UIImage?) {
+        self.state.profileImage = artwork
     }
 
     func didSignupButtonTapped() {

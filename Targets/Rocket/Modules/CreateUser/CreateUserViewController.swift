@@ -351,7 +351,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         let part: String? = partInputView.getText()
         let artworkImage: UIImage? = profileImageView.image
         
-        viewModel.didUpdateInputItems(displayName: displayName, role: part, profileImage: artworkImage)
+        viewModel.didUpdateInputItems(displayName: displayName, role: part)
     }
 
     func didSwitchedRole(role: RoleProperties) {
@@ -398,7 +398,7 @@ extension CreateUserViewController: UIImagePickerControllerDelegate, UINavigatio
             return
         }
         profileImageView.image = image
-        didInputValue()
+        viewModel.didUpdateArtwork(artwork: image)
         self.dismiss(animated: true, completion: nil)
     }
 }

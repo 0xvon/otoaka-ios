@@ -336,7 +336,7 @@ final class EditBandViewController: UIViewController, Instantiable {
         let youtubeChannelId = youTubeIdInputView.getText()
         let twitterId = twitterIdInputView.getText()
         
-        viewModel.didUpdateInputItems(name: groupName, englishName: groupEnglishName, biography: biography, since: since, artwork: artworkImage, youtubeChannelId: youtubeChannelId, twitterId: twitterId, hometown: hometown)
+        viewModel.didUpdateInputItems(name: groupName, englishName: groupEnglishName, biography: biography, since: since, youtubeChannelId: youtubeChannelId, twitterId: twitterId, hometown: hometown)
     }
 
     @objc private func selectProfileImage(_ sender: Any) {
@@ -358,7 +358,7 @@ extension EditBandViewController: UIImagePickerControllerDelegate, UINavigationC
             return
         }
         profileImageView.image = image
-        didInputValue()
+        viewModel.didUpdateArtwork(artwork: image)
         self.dismiss(animated: true, completion: nil)
     }
 }
