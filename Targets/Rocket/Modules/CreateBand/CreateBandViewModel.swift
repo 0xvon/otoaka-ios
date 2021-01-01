@@ -69,6 +69,7 @@ class CreateBandViewModel {
         
         validateYoutubeChannelId(youtubeChannelId: youtubeChannelId) { [unowned self] isValid in
             let isSubmittable: Bool = (name != nil && englishName != nil && isValid)
+            state.submittable = isSubmittable
             outputSubject.send(.updateSubmittableState(isSubmittable))
         }
     }

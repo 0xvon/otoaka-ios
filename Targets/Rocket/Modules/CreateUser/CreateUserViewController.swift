@@ -51,9 +51,8 @@ final class CreateUserViewController: UIViewController, Instantiable {
         fanImageView.image = UIImage(named: "selectedGuitarIcon")
         view.addSubview(fanImageView)
         NSLayoutConstraint.activate([
-            fanImageView.topAnchor.constraint(equalTo: view.topAnchor),
-            fanImageView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            fanImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            fanImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            fanImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             fanImageView.widthAnchor.constraint(equalToConstant: 60),
             fanImageView.heightAnchor.constraint(equalTo: fanImageView.widthAnchor),
         ])
@@ -67,9 +66,9 @@ final class CreateUserViewController: UIViewController, Instantiable {
         view.addSubview(fanTitleLabel)
         NSLayoutConstraint.activate([
             fanTitleLabel.topAnchor.constraint(equalTo: fanImageView.bottomAnchor),
-            fanTitleLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
-            fanTitleLabel.leftAnchor.constraint(equalTo: view.leftAnchor),
-            fanTitleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            fanTitleLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
+            fanTitleLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8),
+            fanTitleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8),
         ])
 
         let fanSectionButton = UIButton()
@@ -96,9 +95,8 @@ final class CreateUserViewController: UIViewController, Instantiable {
         bandImageView.image = UIImage(named: "selectedMusicIcon")
         view.addSubview(bandImageView)
         NSLayoutConstraint.activate([
-            bandImageView.topAnchor.constraint(equalTo: view.topAnchor),
-            bandImageView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            bandImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            bandImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+            bandImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             bandImageView.widthAnchor.constraint(equalToConstant: 60),
             bandImageView.heightAnchor.constraint(equalTo: bandImageView.widthAnchor),
         ])
@@ -112,9 +110,9 @@ final class CreateUserViewController: UIViewController, Instantiable {
         view.addSubview(bandTitleLabel)
         NSLayoutConstraint.activate([
             bandTitleLabel.topAnchor.constraint(equalTo: bandImageView.bottomAnchor),
-            bandTitleLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
-            bandTitleLabel.leftAnchor.constraint(equalTo: view.leftAnchor),
-            bandTitleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            bandTitleLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
+            bandTitleLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8),
+            bandTitleLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8),
         ])
 
         let bandSectionButton = UIButton()
@@ -278,7 +276,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         userRoleContentView.addSubview(userRoleSummaryView)
         userRoleSummaryView.addArrangedSubview(fanRoleSummaryView)
         NSLayoutConstraint.activate([
-            fanRoleSummaryView.widthAnchor.constraint(equalToConstant: 60),
+            fanRoleSummaryView.widthAnchor.constraint(equalToConstant: 100),
             fanRoleSummaryView.heightAnchor.constraint(equalToConstant: 100),
         ])
         
@@ -353,12 +351,12 @@ final class CreateUserViewController: UIViewController, Instantiable {
         case .fan(_):
             fanRoleSummaryView.layer.borderWidth = 1
             fanRoleSummaryView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-            fanRoleSummaryView.layer.borderWidth = 0
+            artistRoleSummaryView.layer.borderWidth = 0
             partInputView.isHidden = true
         case .artist(_):
             artistRoleSummaryView.layer.borderWidth = 1
             artistRoleSummaryView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-            artistRoleSummaryView.layer.borderWidth = 0
+            fanRoleSummaryView.layer.borderWidth = 0
             partInputView.isHidden = false
         }
     }

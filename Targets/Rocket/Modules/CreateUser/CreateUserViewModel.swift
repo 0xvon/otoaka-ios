@@ -63,6 +63,7 @@ class CreateUserViewModel {
         }
         
         let isSubmittable = (displayName != nil)
+        state.submittable = isSubmittable
         outputSubject.send(.updateSubmittableState(isSubmittable))
     }
 
