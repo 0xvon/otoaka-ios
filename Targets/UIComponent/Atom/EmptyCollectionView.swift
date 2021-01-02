@@ -10,8 +10,9 @@ import UIKit
 public final class EmptyCollectionView: UIStackView {
     public enum EmptyType: String {
         case feed = "Feedがまだありません。試しにバンドをフォローしてみましょう。"
-        case live = "Liveがまだありません。"
+        case live = "Liveがまだありません。試しにバンドをフォローしてみましょう。"
         case band = "Bandがまだありません。"
+        case chart = "Chartがまだありません。"
         case ticket = "Ticketがまだありません。いきたいライブを探して予約しましょう。"
     }
     
@@ -25,18 +26,16 @@ public final class EmptyCollectionView: UIStackView {
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
-    private let messageLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .center
-        label.font = Brand.font(for: .medium)
-        label.textColor = Brand.color(for: .text(.primary))
-        label.backgroundColor = .clear
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
-        label.adjustsFontSizeToFitWidth = false
-        label.sizeToFit()
-        return label
+    private let messageTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.textAlignment = .center
+        textView.font = Brand.font(for: .medium)
+        textView.textColor = Brand.color(for: .text(.primary))
+        textView.backgroundColor = .clear
+        textView.isUserInteractionEnabled = false
+        textView.isScrollEnabled = false
+        return textView
     }()
     private let button: PrimaryButton = {
         let button = PrimaryButton(text: "")
@@ -52,7 +51,7 @@ public final class EmptyCollectionView: UIStackView {
     }
     
     func update(emptyType: EmptyType, actionButtonTitle: String?) {
-        messageLabel.text = emptyType.rawValue
+        messageTextView.text = emptyType.rawValue
         if let title = actionButtonTitle {
             button.isHidden = false
             button.setTitle(title, for: .normal)
@@ -72,14 +71,20 @@ public final class EmptyCollectionView: UIStackView {
         distribution = .fill
         spacing = 16
         
+        let topSpacer = UIView()
+        addArrangedSubview(topSpacer)
+        NSLayoutConstraint.activate([
+            topSpacer.heightAnchor.constraint(equalToConstant: 24)
+        ])
+        
         addArrangedSubview(titleLabel)
         NSLayoutConstraint.activate([
             titleLabel.heightAnchor.constraint(equalToConstant: 40)
         ])
         
-        addArrangedSubview(messageLabel)
+        addArrangedSubview(messageTextView)
         NSLayoutConstraint.activate([
-            messageLabel.heightAnchor.constraint(equalToConstant: 120)
+            messageTextView.heightAnchor.constraint(equalToConstant: 120),
         ])
         
         addArrangedSubview(button)
@@ -87,13 +92,16 @@ public final class EmptyCollectionView: UIStackView {
             button.heightAnchor.constraint(equalToConstant: 50)
         ])
         
+        let bottomSpacer = UIView()
+        addArrangedSubview(bottomSpacer)
+        
         button.listen {
             self.listener()
         }
     }
     
     private var listener: () -> Void = {}
-    func listen(_ listener: @escaping () -> Void) {
+    public func listen(_ listener: @escaping () -> Void) {
         self.listener = listener
     }
 }
@@ -105,13 +113,19 @@ struct EmptyCollectionView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ViewWrapper(view: EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す"))
-                .previewLayout(.fixed(width: 320, height: 200))
+                .previewLayout(.fixed(width: 320, height: 500))
         }
         .background(Color.black)
         
         Group {
             ViewWrapper(view: EmptyCollectionView(emptyType: .band, actionButtonTitle: nil))
-                .previewLayout(.fixed(width: 320, height: 120))
+                .previewLayout(.fixed(width: 320, height: 220))
+        }
+        .background(Color.black)
+        
+        Group {
+            ViewWrapper(view: EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す"))
+                .previewLayout(.fixed(width: 320, height: 500))
         }
         .background(Color.black)
     }

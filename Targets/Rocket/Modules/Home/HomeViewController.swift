@@ -209,7 +209,7 @@ final class HomeViewController: UIViewController, Instantiable {
         livePageTitleView.translatesAutoresizingMaskIntoConstraints = false
         livePageButton = UIButton()
         livePageButton.translatesAutoresizingMaskIntoConstraints = false
-
+        
         chartsView = UIView()
         chartsView.translatesAutoresizingMaskIntoConstraints = false
         chartsView.backgroundColor = Brand.color(for: .background(.primary))
@@ -427,12 +427,64 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         switch tableView {
         case self.groupFeedTableView:
+            if self.feeds.isEmpty {
+                let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                tableView.backgroundView = emptyCollectionView
+                NSLayoutConstraint.activate([
+                    emptyCollectionView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+                ])
+                emptyCollectionView.listen {
+                    print("hello")
+                }
+            } else {
+                tableView.backgroundView = nil
+            }
             return self.feeds.count
         case self.liveTableView:
+            if self.lives.isEmpty {
+                let emptyCollectionView = EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                tableView.backgroundView = emptyCollectionView
+                NSLayoutConstraint.activate([
+                    emptyCollectionView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+                ])
+                emptyCollectionView.listen {
+                    print("hello")
+                }
+            } else {
+                tableView.backgroundView = nil
+            }
             return self.lives.count
         case self.chartsTableView:
+            if self.charts.isEmpty {
+                let emptyCollectionView = EmptyCollectionView(emptyType: .chart, actionButtonTitle: "バンドを探す")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                tableView.backgroundView = emptyCollectionView
+                NSLayoutConstraint.activate([
+                    emptyCollectionView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+                ])
+                emptyCollectionView.listen {
+                    print("hello")
+                }
+            } else {
+                tableView.backgroundView = nil
+            }
             return self.charts.count
         case self.groupTableView:
+            if self.groups.isEmpty {
+                let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                tableView.backgroundView = emptyCollectionView
+                NSLayoutConstraint.activate([
+                    emptyCollectionView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+                ])
+                emptyCollectionView.listen {
+                    print("hello")
+                }
+            } else {
+                tableView.backgroundView = nil
+            }
             return self.groups.count
         default:
             return 10
