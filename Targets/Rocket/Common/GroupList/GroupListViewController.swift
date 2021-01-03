@@ -44,7 +44,7 @@ final class GroupListViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .reloadTableView:
-                print(output)
+                self.setTableViewBackgroundView(tableView: self.groupTableView)
                 self.groupTableView.reloadData()
             case .error(let error):
                 DispatchQueue.main.async {
@@ -98,7 +98,6 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        setTableViewBackgroundView(tableView: tableView)
         return self.viewModel.state.groups.count
         
     }

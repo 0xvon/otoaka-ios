@@ -40,16 +40,19 @@ final class CommentListViewController: UIViewController, Instantiable {
             case .getFeedComments(let comments):
                 DispatchQueue.main.async {
                     self.comments += comments
+                    self.setTableViewBackgroundView(tableView: self.commentTableView)
                     self.commentTableView.reloadData()
                 }
             case .refreshFeedComments(let comments):
                 DispatchQueue.main.async {
                     self.comments = comments
+                    self.setTableViewBackgroundView(tableView: self.commentTableView)
                     self.commentTableView.reloadData()
                 }
             case .postComment(let comment):
                 DispatchQueue.main.async {
                     self.comments = [comment] + self.comments
+                    self.setTableViewBackgroundView(tableView: self.commentTableView)
                     self.commentTableView.reloadData()
                 }
             case .error(let error):
@@ -124,7 +127,6 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        setTableViewBackgroundView(tableView: tableView)
         return max(1, self.comments.count)
     }
 

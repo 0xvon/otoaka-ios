@@ -37,11 +37,13 @@ final class TicketViewController: UIViewController, Instantiable {
             case .refreshMyTickets(let tickets):
                 DispatchQueue.main.async {
                     self.tickets = tickets
+                    self.setTableViewBackgroundView(tableView: self.ticketsTableView)
                     self.ticketsTableView.reloadData()
                 }
             case .getMyTickets(let tickets):
                 DispatchQueue.main.async {
                     self.tickets += tickets
+                    self.setTableViewBackgroundView(tableView: self.ticketsTableView)
                     self.ticketsTableView.reloadData()
                 }
             case .error(let error):
@@ -85,7 +87,6 @@ final class TicketViewController: UIViewController, Instantiable {
 
 extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        setTableViewBackgroundView(tableView: tableView)
         return self.tickets.count
     }
 
@@ -165,12 +166,7 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func didSearchButtonTapped() {
-        let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
-        vc.inject(.group(""))
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        nav.navigationBar.barTintColor = .clear
-        self.present(nav, animated: true)
+        self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
     }
 
     private func listenButtonTapped(cellIndex: Int) {

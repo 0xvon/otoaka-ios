@@ -122,15 +122,20 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func setProfile() {
         let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
+        vc.listen {
+            self.listener(.editUser)
+        }
         present(vc, animated: true, completion: nil)
     }
 
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
+        vc.listen {
+            self.listener(.searchGroup)
+        }
         let nav = UINavigationController(rootViewController: vc)
         nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
         nav.navigationBar.barTintColor = .clear
-        
         present(nav, animated: true, completion: nil)
     }
     
@@ -159,12 +164,17 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func logout() {
         dependencyProvider.auth.signOutLocally()
-        self.dismiss(animated: true, completion: nil)
-        self.listener()
+        self.listener(.signout)
     }
     
-    private var listener: () -> Void = {}
-    func signout(_ listener: @escaping () -> Void) {
+    enum ListenerOutput {
+        case editUser
+        case signout
+        case searchGroup
+    }
+    
+    private var listener: (ListenerOutput) -> Void = { _ in }
+    func listen(_ listener: @escaping (ListenerOutput) -> Void) {
         self.listener = listener
     }
 }

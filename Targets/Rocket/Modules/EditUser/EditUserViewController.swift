@@ -92,6 +92,11 @@ final class EditUserViewController: UIViewController, Instantiable {
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: EditUserViewModel
     var cancellables: Set<AnyCancellable> = []
+    
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
+        self.listener = listener
+    }
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -134,6 +139,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didEditUser(_):
+                self.listener()
                 self.dismiss(animated: true, completion: nil)
             case .didInjectRole(let role):
                 switch role {

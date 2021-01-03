@@ -41,21 +41,25 @@ final class UserListViewController: UIViewController, Instantiable {
             case .getFollowers(let users):
                 DispatchQueue.main.async {
                     self.users += users
+                    self.setTableViewBackgroundView(tableView: self.fanTableView)
                     self.fanTableView.reloadData()
                 }
             case .refreshFollowers(let users):
                 DispatchQueue.main.async {
                     self.users = users
+                    self.setTableViewBackgroundView(tableView: self.fanTableView)
                     self.fanTableView.reloadData()
                 }
             case .getParticipants(let users):
                 DispatchQueue.main.async {
                     self.users += users
+                    self.setTableViewBackgroundView(tableView: self.fanTableView)
                     self.fanTableView.reloadData()
                 }
             case .refreshParticipants(let users):
                 DispatchQueue.main.async {
                     self.users = users
+                    self.setTableViewBackgroundView(tableView: self.fanTableView)
                     self.fanTableView.reloadData()
                 }
             case .error(let error):
@@ -134,7 +138,6 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        setTableViewBackgroundView(tableView: tableView)
         return self.users.count
         
     }

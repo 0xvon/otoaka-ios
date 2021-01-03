@@ -23,6 +23,11 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
 
     private var requestTableView: UITableView!
     private var requests: [PerformanceRequest] = []
+    
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
+        self.listener = listener
+    }
 
     lazy var viewModel = PerformanceRequestViewModel(
         apiClient: dependencyProvider.apiClient,
@@ -33,16 +38,19 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
             case .getRequests(let requests):
                 DispatchQueue.main.async {
                     self.requests += requests
+                    self.setTableViewBackgroundView(tableView: self.requestTableView)
                     self.requestTableView.reloadData()
                 }
             case .refreshRequests(let requests):
                 DispatchQueue.main.async {
                     self.requests = requests
+                    self.setTableViewBackgroundView(tableView: self.requestTableView)
                     self.requestTableView.reloadData()
                 }
             case .replyRequest(let index):
                 DispatchQueue.main.async {
                     self.requests.remove(at: index)
+                    self.setTableViewBackgroundView(tableView: self.requestTableView)
                     self.requestTableView.reloadData()
                 }
             case .error(let error):
@@ -103,7 +111,6 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        setTableViewBackgroundView(tableView: tableView)
         return self.requests.count
     }
     
@@ -126,12 +133,8 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     }
     
     func didSearchButtonTapped() {
-        let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
-        vc.inject(.group(""))
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        nav.navigationBar.barTintColor = .clear
-        self.present(nav, animated: true)
+        self.listener()
+        self.dismiss(animated: true, completion: nil)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

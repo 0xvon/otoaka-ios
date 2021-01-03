@@ -62,36 +62,43 @@ final class HomeViewController: UIViewController, Instantiable {
             case .getGroupFeeds(let feeds):
                 DispatchQueue.main.async {
                     self.feeds += feeds
+                    self.setTableViewBackgroundView(tableView: self.groupFeedTableView)
                     self.groupFeedTableView.reloadData()
                 }
             case .refreshGroupFeeds(let feeds):
                 DispatchQueue.main.async {
                     self.feeds = feeds
+                    self.setTableViewBackgroundView(tableView: self.groupFeedTableView)
                     self.groupFeedTableView.reloadData()
                 }
             case .getLives(let lives):
                 DispatchQueue.main.async {
                     self.lives += lives
+                    self.setTableViewBackgroundView(tableView: self.liveTableView)
                     self.liveTableView.reloadData()
                 }
             case .refreshLives(let lives):
                 DispatchQueue.main.async {
                     self.lives = lives
+                    self.setTableViewBackgroundView(tableView: self.liveTableView)
                     self.liveTableView.reloadData()
                 }
             case .getGroups(let groups):
                 DispatchQueue.main.async {
                     self.groups += groups
+                    self.setTableViewBackgroundView(tableView: self.groupTableView)
                     self.groupTableView.reloadData()
                 }
             case .refreshGroups(let groups):
                 DispatchQueue.main.async {
                     self.groups = groups
+                    self.setTableViewBackgroundView(tableView: self.groupTableView)
                     self.groupTableView.reloadData()
                 }
             case .getCharts(let charts):
                 DispatchQueue.main.async {
                     self.charts = charts
+                    self.setTableViewBackgroundView(tableView: self.chartsTableView)
                     self.chartsTableView.reloadData()
                 }
             case .reserveTicket(let ticket):
@@ -405,9 +412,18 @@ final class HomeViewController: UIViewController, Instantiable {
 
     @objc private func iconTapped(_ sender: Any) {
         let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
-        vc.signout {
-            print("signout")
-            self.listener()
+        vc.listen { output in
+            switch output {
+            case .signout:
+                self.dismiss(animated: true, completion: nil)
+                self.listener()
+            case .editUser:
+                self.dismiss(animated: true, completion: nil)
+                self.listener()
+            case .searchGroup:
+                self.dismiss(animated: true, completion: nil)
+                self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
+            }
         }
         present(vc, animated: true, completion: nil)
     }
@@ -425,7 +441,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        setTableViewBackgroundView(tableView: tableView)
         switch tableView {
         case self.groupFeedTableView:
             return self.feeds.count
@@ -583,12 +598,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func didSearchButtonTapped() {
-        let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
-        vc.inject(.group(""))
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        nav.navigationBar.barTintColor = .clear
-        self.present(nav, animated: true)
+        self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
     }
 
     private func listenButtonTapped(cellIndex: Int) {
