@@ -20,11 +20,11 @@ class EditUserViewModel {
         var role: RoleProperties
         var profileImage: UIImage?
         let socialInputs: SocialInputs
-        let user: User
     }
     
     enum Output {
         case didEditUser(User)
+        case didGetUserInfo(User)
         case updateSubmittableState(Bool)
         case didInjectRole(RoleProperties)
         case reportError(Error)
@@ -38,19 +38,30 @@ class EditUserViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
     init(
-        dependencyProvider: LoggedInDependencyProvider,
-        user: User
+        dependencyProvider: LoggedInDependencyProvider
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(submittable: true, displayName: user.name, role: user.role, socialInputs: try! dependencyProvider.masterService.blockingMasterData(), user: user)
+        self.state = State(submittable: true, role: dependencyProvider.user.role, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
     }
     
     func viewDidLoad() {
         injectRole()
+        getUserInfo()
     }
     
     func injectRole() {
         outputSubject.send(.didInjectRole(state.role))
+    }
+    
+    func getUserInfo() {
+        apiClient.request(GetUserInfo.self) { [unowned self] result in
+            switch result {
+            case .success(let user):
+                outputSubject.send(.didGetUserInfo(user))
+            case .failure(let error):
+                outputSubject.send(.reportError(error))
+            }
+        }
     }
     
     func didUpdateInputItems(displayName: String?, biography: String?) {
@@ -69,7 +80,7 @@ class EditUserViewModel {
     func didEditButtonTapped() {
         outputSubject.send(.updateSubmittableState(false))
         if let prifileImage = state.profileImage {
-            self.dependencyProvider.s3Client.uploadImage(image: state.profileImage) { [unowned self] result in
+            self.dependencyProvider.s3Client.uploadImage(image: prifileImage) { [unowned self] result in
                 switch result {
                 case .success(let imageUrl):
                     editUser(imageUrl: imageUrl)

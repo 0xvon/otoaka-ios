@@ -20,6 +20,7 @@ class HomeViewModel {
         case getGroups([Group])
         case refreshGroups([Group])
         case reserveTicket(Ticket)
+        case getUserInfo(User)
         case error(Error)
     }
 
@@ -99,7 +100,16 @@ class HomeViewModel {
         livePaginationRequest.refresh()
     }
 
-    
+    func getUserInfo() {
+        apiClient.request(GetUserInfo.self) { [unowned self] result in
+            switch result {
+            case .success(let user):
+                outputHandler(.getUserInfo(user))
+            case .failure(let error):
+                outputHandler(.error(error))
+            }
+        }
+    }
 
     func getCharts() {
 //        let request = Empty()

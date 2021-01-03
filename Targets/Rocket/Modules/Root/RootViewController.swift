@@ -96,7 +96,7 @@ final class RootViewController: UITabBarController, Instantiable {
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let homeViewController = HomeViewController(
-            dependencyProvider: loggedInProvider, input: user)
+            dependencyProvider: loggedInProvider, input: ())
         let bandVC = BrandNavigationController(rootViewController: homeViewController)
         bandVC.tabBarItem = UITabBarItem(
             title: "Home", image: UIImage(named: "musicIcon"),

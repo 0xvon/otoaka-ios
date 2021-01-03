@@ -9,7 +9,7 @@ import UIKit
 import DomainEntity
 
 final class AccountViewController: UIViewController, Instantiable {
-    typealias Input = User
+    typealias Input = Void
     var input: Input
 
     var dependencyProvider: LoggedInDependencyProvider!
@@ -125,9 +125,9 @@ final class AccountViewController: UIViewController, Instantiable {
     }
 
     private func setProfile() {
-        let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: input)
-        vc.listen { user in
-            self.listener(.editUser(user))
+        let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
+        vc.listen {
+            self.listener(.editUser)
         }
         present(vc, animated: true, completion: nil)
     }
@@ -172,7 +172,7 @@ final class AccountViewController: UIViewController, Instantiable {
     }
     
     enum ListenerOutput {
-        case editUser(User)
+        case editUser
         case signout
         case searchGroup
     }

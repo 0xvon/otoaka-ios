@@ -12,7 +12,7 @@ import UIComponent
 import UIKit
 
 final class EditUserViewController: UIViewController, Instantiable {
-    typealias Input = User
+    typealias Input = Void
     
     private lazy var verticalScrollView: UIScrollView = {
         let verticalScrollView = UIScrollView()
@@ -81,7 +81,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         return profileImageTitle
     }()
     private lazy var registerButton: PrimaryButton = {
-        let registerButton = PrimaryButton(text: "ユーザー作成")
+        let registerButton = PrimaryButton(text: "ユーザー編集")
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         registerButton.layer.cornerRadius = 25
         registerButton.isEnabled = false
@@ -92,14 +92,14 @@ final class EditUserViewController: UIViewController, Instantiable {
     let viewModel: EditUserViewModel
     var cancellables: Set<AnyCancellable> = []
     
-    private var listener: (User) -> Void = { _ in }
-    func listen(_ listener: @escaping (User) -> Void) {
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
         self.listener = listener
     }
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.viewModel = EditUserViewModel(dependencyProvider: dependencyProvider, user: input)
+        self.viewModel = EditUserViewModel(dependencyProvider: dependencyProvider)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -112,13 +112,11 @@ final class EditUserViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         setup()
         bind()
-        udpate()
         
         viewModel.viewDidLoad()
     }
     
-    func udpate() {
-        let user = viewModel.state.user
+    func update(user: User) {
         displayNameInputView.setText(text: user.name)
         biographyInputView.setText(text: user.biography ?? "")
         switch user.role {
@@ -137,9 +135,11 @@ final class EditUserViewController: UIViewController, Instantiable {
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didEditUser(let user):
-                self.listener(user)
+            case .didEditUser(_):
+                self.listener()
                 self.dismiss(animated: true, completion: nil)
+            case .didGetUserInfo(let user):
+                self.update(user: user)
             case .didInjectRole(let role):
                 switch role {
                 case .fan(_):

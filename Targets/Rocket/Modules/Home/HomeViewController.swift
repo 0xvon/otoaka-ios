@@ -14,7 +14,7 @@ import InternalDomain
 
 final class HomeViewController: UIViewController, Instantiable {
 
-    typealias Input = User
+    typealias Input = Void
     var input: Input!
     let dependencyProvider: LoggedInDependencyProvider
 
@@ -73,6 +73,11 @@ final class HomeViewController: UIViewController, Instantiable {
                     self.feeds += feeds
                     self.setTableViewBackgroundView(tableView: self.groupFeedTableView)
                     self.groupFeedTableView.reloadData()
+                }
+            case .getUserInfo(let user):
+                DispatchQueue.main.async {
+                    let image = UIImage(url: user.thumbnailURL!)
+                    self.icon.setImage(image, for: .normal)
                 }
             case .refreshGroupFeeds(let feeds):
                 DispatchQueue.main.async {
@@ -273,7 +278,12 @@ final class HomeViewController: UIViewController, Instantiable {
         groupPageButton.translatesAutoresizingMaskIntoConstraints = false
         
         setupPages()
-        setupIcon(user: self.dependencyProvider.user)
+        iconMenu = UIBarButtonItem(customView: icon)
+        self.navigationItem.leftBarButtonItem = iconMenu
+        NSLayoutConstraint.activate([
+            iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
+            iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
+        ])
 
         let constraints = [
             pageStackView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 16),
@@ -281,19 +291,6 @@ final class HomeViewController: UIViewController, Instantiable {
         ]
         NSLayoutConstraint.activate(constraints)
         initializeItems()
-    }
-    
-    private func setupIcon(user: User) {
-        DispatchQueue.main.async { [self] in
-            let image = UIImage(url: user.thumbnailURL!)
-            icon.setImage(image, for: .normal)
-            iconMenu = UIBarButtonItem(customView: icon)
-            self.navigationItem.leftBarButtonItem = iconMenu
-            NSLayoutConstraint.activate([
-                iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
-                iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
-            ])
-        }
     }
     
     private func setupPages() {
@@ -353,6 +350,7 @@ final class HomeViewController: UIViewController, Instantiable {
     }
 
     func initializeItems() {
+        viewModel.getUserInfo()
         viewModel.getGroupFeeds()
         viewModel.getLives()
         viewModel.getGroups()
@@ -360,21 +358,25 @@ final class HomeViewController: UIViewController, Instantiable {
     }
 
     @objc private func refreshGroupFeeds(sender: UIRefreshControl) {
+        viewModel.getUserInfo()
         viewModel.refreshGroupFeeds()
         sender.endRefreshing()
     }
 
     @objc private func refreshLive(sender: UIRefreshControl) {
+        viewModel.getUserInfo()
         viewModel.refreshLives()
         sender.endRefreshing()
     }
 
     @objc private func refreshChart(sender: UIRefreshControl) {
+        viewModel.getUserInfo()
         viewModel.getCharts()
         sender.endRefreshing()
     }
 
     @objc private func refreshGroup(sender: UIRefreshControl) {
+        viewModel.getUserInfo()
         viewModel.refreshGroups()
         sender.endRefreshing()
     }
@@ -420,23 +422,21 @@ final class HomeViewController: UIViewController, Instantiable {
     }
 
     @objc private func iconTapped(_ sender: Any) {
-        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: self.input)
+        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
+        present(vc, animated: true, completion: nil)
         vc.listen { output in
             switch output {
             case .signout:
                 self.dismiss(animated: true, completion: nil)
                 self.listener()
-            case .editUser(let user):
-                self.input = user
-                self.setupIcon(user: user)
+            case .editUser:
                 self.dismiss(animated: true, completion: nil)
-                self.listener()
+                self.viewModel.getUserInfo()
             case .searchGroup:
                 self.dismiss(animated: true, completion: nil)
                 self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
             }
         }
-        present(vc, animated: true, completion: nil)
     }
     
     private var listener: () -> Void = {}
