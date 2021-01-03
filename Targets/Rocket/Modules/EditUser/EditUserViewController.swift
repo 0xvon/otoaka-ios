@@ -12,7 +12,7 @@ import UIComponent
 import UIKit
 
 final class EditUserViewController: UIViewController, Instantiable {
-    typealias Input = Void
+    typealias Input = User
     
     private lazy var verticalScrollView: UIScrollView = {
         let verticalScrollView = UIScrollView()
@@ -60,9 +60,8 @@ final class EditUserViewController: UIViewController, Instantiable {
         let profileImageView = UIImageView()
         profileImageView.translatesAutoresizingMaskIntoConstraints = false
         profileImageView.layer.cornerRadius = 60
-        profileImageView.clipsToBounds = true
-        profileImageView.image = UIImage(named: "human")
         profileImageView.contentMode = .scaleAspectFill
+        profileImageView.clipsToBounds = true
         return profileImageView
     }()
     private lazy var changeProfileImageButton: UIButton = {
@@ -93,14 +92,14 @@ final class EditUserViewController: UIViewController, Instantiable {
     let viewModel: EditUserViewModel
     var cancellables: Set<AnyCancellable> = []
     
-    private var listener: () -> Void = {}
-    func listen(_ listener: @escaping () -> Void) {
+    private var listener: (User) -> Void = { _ in }
+    func listen(_ listener: @escaping (User) -> Void) {
         self.listener = listener
     }
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.viewModel = EditUserViewModel(dependencyProvider: dependencyProvider)
+        self.viewModel = EditUserViewModel(dependencyProvider: dependencyProvider, user: input)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -119,7 +118,7 @@ final class EditUserViewController: UIViewController, Instantiable {
     }
     
     func udpate() {
-        let user = viewModel.dependencyProvider.user
+        let user = viewModel.state.user
         displayNameInputView.setText(text: user.name)
         biographyInputView.setText(text: user.biography ?? "")
         switch user.role {
@@ -138,8 +137,8 @@ final class EditUserViewController: UIViewController, Instantiable {
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didEditUser(_):
-                self.listener()
+            case .didEditUser(let user):
+                self.listener(user)
                 self.dismiss(animated: true, completion: nil)
             case .didInjectRole(let role):
                 switch role {

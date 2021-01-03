@@ -14,7 +14,7 @@ import InternalDomain
 
 final class HomeViewController: UIViewController, Instantiable {
 
-    typealias Input = Void
+    typealias Input = User
     var input: Input!
     let dependencyProvider: LoggedInDependencyProvider
 
@@ -39,6 +39,15 @@ final class HomeViewController: UIViewController, Instantiable {
     private var groupPageTitleView: TitleLabelView!
     private var groupPageButton: UIButton!
     private var iconMenu: UIBarButtonItem!
+    private lazy var icon: UIButton = {
+        let icon: UIButton = UIButton(type: .custom)
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        icon.layer.cornerRadius = 20
+        icon.clipsToBounds = true
+        icon.addTarget(self, action: #selector(iconTapped(_:)), for: .touchUpInside)
+        return icon
+    }()
 
     var lives: [LiveFeed] = []
     var feeds: [ArtistFeedSummary] = []
@@ -264,27 +273,27 @@ final class HomeViewController: UIViewController, Instantiable {
         groupPageButton.translatesAutoresizingMaskIntoConstraints = false
         
         setupPages()
-
-        let icon: UIButton = UIButton(type: .custom)
-        icon.translatesAutoresizingMaskIntoConstraints = false
-        icon.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        let image = UIImage(url: dependencyProvider.user.thumbnailURL!)
-        icon.setImage(image, for: .normal)
-        icon.addTarget(self, action: #selector(iconTapped(_:)), for: .touchUpInside)
-        icon.imageView?.layer.cornerRadius = 20
-
-        iconMenu = UIBarButtonItem(customView: icon)
-        self.navigationItem.leftBarButtonItem = iconMenu
+        setupIcon(user: self.dependencyProvider.user)
 
         let constraints = [
             pageStackView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 16),
             pageStackView.heightAnchor.constraint(equalToConstant: 40),
-
-            iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
-            iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
         ]
         NSLayoutConstraint.activate(constraints)
         initializeItems()
+    }
+    
+    private func setupIcon(user: User) {
+        DispatchQueue.main.async { [self] in
+            let image = UIImage(url: user.thumbnailURL!)
+            icon.setImage(image, for: .normal)
+            iconMenu = UIBarButtonItem(customView: icon)
+            self.navigationItem.leftBarButtonItem = iconMenu
+            NSLayoutConstraint.activate([
+                iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
+                iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
+            ])
+        }
     }
     
     private func setupPages() {
@@ -411,13 +420,15 @@ final class HomeViewController: UIViewController, Instantiable {
     }
 
     @objc private func iconTapped(_ sender: Any) {
-        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
+        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: self.input)
         vc.listen { output in
             switch output {
             case .signout:
                 self.dismiss(animated: true, completion: nil)
                 self.listener()
-            case .editUser:
+            case .editUser(let user):
+                self.input = user
+                self.setupIcon(user: user)
                 self.dismiss(animated: true, completion: nil)
                 self.listener()
             case .searchGroup:

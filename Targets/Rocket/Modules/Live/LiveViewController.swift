@@ -62,11 +62,6 @@ final class LiveViewController: UIViewController, Instantiable {
         liveSearchBar.searchTextField.placeholder = "ライブを探す"
         liveSearchBar.searchTextField.textColor = Brand.color(for: .text(.primary))
     }
-
-    @objc func tappedButton(sender: UIButton!) {
-        let vc = HomeViewController(dependencyProvider: dependencyProvider, input: ())
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
 }
 
 extension LiveViewController: UITableViewDelegate, UITableViewDataSource {

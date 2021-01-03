@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import DomainEntity
 
 final class AccountViewController: UIViewController, Instantiable {
-    typealias Input = Void
+    typealias Input = User
+    var input: Input
 
     var dependencyProvider: LoggedInDependencyProvider!
     var items: [AccountSettingItem] = []
@@ -24,6 +26,8 @@ final class AccountViewController: UIViewController, Instantiable {
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
+        self.input = input
+        
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -121,9 +125,9 @@ final class AccountViewController: UIViewController, Instantiable {
     }
 
     private func setProfile() {
-        let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
-        vc.listen {
-            self.listener(.editUser)
+        let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: input)
+        vc.listen { user in
+            self.listener(.editUser(user))
         }
         present(vc, animated: true, completion: nil)
     }
@@ -168,7 +172,7 @@ final class AccountViewController: UIViewController, Instantiable {
     }
     
     enum ListenerOutput {
-        case editUser
+        case editUser(User)
         case signout
         case searchGroup
     }

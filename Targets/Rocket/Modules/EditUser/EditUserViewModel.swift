@@ -20,6 +20,7 @@ class EditUserViewModel {
         var role: RoleProperties
         var profileImage: UIImage?
         let socialInputs: SocialInputs
+        let user: User
     }
     
     enum Output {
@@ -37,11 +38,11 @@ class EditUserViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
     init(
-        dependencyProvider: LoggedInDependencyProvider
+        dependencyProvider: LoggedInDependencyProvider,
+        user: User
     ) {
         self.dependencyProvider = dependencyProvider
-        let user = dependencyProvider.user
-        self.state = State(submittable: true, displayName: user.name, role: user.role, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        self.state = State(submittable: true, displayName: user.name, role: user.role, socialInputs: try! dependencyProvider.masterService.blockingMasterData(), user: user)
     }
     
     func viewDidLoad() {

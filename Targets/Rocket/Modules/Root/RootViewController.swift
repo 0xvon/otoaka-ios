@@ -95,13 +95,13 @@ final class RootViewController: UITabBarController, Instantiable {
 
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
-        let bandViewController = HomeViewController(
-            dependencyProvider: loggedInProvider, input: self.input)
-        let bandVC = BrandNavigationController(rootViewController: bandViewController)
+        let homeViewController = HomeViewController(
+            dependencyProvider: loggedInProvider, input: user)
+        let bandVC = BrandNavigationController(rootViewController: homeViewController)
         bandVC.tabBarItem = UITabBarItem(
             title: "Home", image: UIImage(named: "musicIcon"),
             selectedImage: UIImage(named: "selectedMusicIcon"))
-        bandViewController.signout {
+        homeViewController.signout {
             self.checkSignupStatus()
         }
         
