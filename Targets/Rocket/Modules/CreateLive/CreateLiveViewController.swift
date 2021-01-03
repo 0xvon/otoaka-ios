@@ -5,90 +5,156 @@
 //  Created by Masato TSUTSUMI on 2020/11/23.
 //
 
+import Combine
 import Endpoint
+import SafariServices
+import UIComponent
 import UIKit
-import InternalDomain
 
 final class CreateLiveViewController: UIViewController, Instantiable {
     typealias Input = Void
-    var dependencyProvider: LoggedInDependencyProvider!
 
-    private var verticalScrollView: UIScrollView!
-    private var mainView: UIView!
-    private var mainViewHeightConstraint: NSLayoutConstraint!
-    private var hostGroupInputView: TextFieldView!
-    private var hostGroupPickerView: UIPickerView!
-    private var liveTitleInputView: TextFieldView!
-    private var liveStyleInputView: TextFieldView!
-    private var liveStylePickerView: UIPickerView!
-    private var livePriceInputView: TextFieldView!
-    private var livehouseInputView: TextFieldView!
-    private var livehousePickerView: UIPickerView!
-    private var partnerInputView: TextFieldView!
-    private var openTimeInputView: UIDatePicker!
-    private var startTimeInputView: UIDatePicker!
-    private var endTimeInputView: UIDatePicker!
-    private var thumbnailInputView: UIView!
-    private var thumbnailImageView: UIImageView!
-    private var createButton: PrimaryButton!
+    private lazy var verticalScrollView: UIScrollView = {
+        let verticalScrollView = UIScrollView()
+        verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
+        verticalScrollView.backgroundColor = .clear
+        verticalScrollView.showsVerticalScrollIndicator = false
+        return verticalScrollView
+    }()
+    private lazy var mainView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 48
+        return stackView
+    }()
+    private lazy var liveTitleInputView: TextFieldView = {
+        let liveTitleInputView = TextFieldView(input: (section: "タイトル", text: nil, maxLength: 32))
+        liveTitleInputView.translatesAutoresizingMaskIntoConstraints = false
+        return liveTitleInputView
+    }()
+    private lazy var hostGroupInputView: TextFieldView = {
+        let inputView = TextFieldView(input: (section: "主催バンド", text: nil, maxLength: 40))
+        inputView.translatesAutoresizingMaskIntoConstraints = false
+        return inputView
+    }()
+    private lazy var hostGroupPickerView: UIPickerView = {
+        let pickerView = UIPickerView()
+        pickerView.translatesAutoresizingMaskIntoConstraints = false
+        pickerView.dataSource = self
+        pickerView.delegate = self
+        return pickerView
+    }()
+    private lazy var liveStyleInputView: TextFieldView = {
+        let liveStyleInputView = TextFieldView(input: (section: "ライブ形式", text: nil, maxLength: 10))
+        liveStyleInputView.translatesAutoresizingMaskIntoConstraints = false
+        return liveStyleInputView
+    }()
+    private lazy var liveStylePickerView: UIPickerView = {
+        let liveStylePickerView = UIPickerView()
+        liveStylePickerView.translatesAutoresizingMaskIntoConstraints = false
+        liveStylePickerView.dataSource = self
+        liveStylePickerView.delegate = self
+        return liveStylePickerView
+    }()
+    private lazy var livePriceInputView: TextFieldView = {
+        let livePriceInputView = TextFieldView(input: (section: "チケット料金", text: nil, maxLength: 12))
+        livePriceInputView.translatesAutoresizingMaskIntoConstraints = false
+        livePriceInputView.keyboardType(.numberPad)
+        return livePriceInputView
+    }()
+    private lazy var livehouseInputView: TextFieldView = {
+        let livehouseInputView = TextFieldView(input: (section: "会場", text: nil, maxLength: 40))
+        livehouseInputView.translatesAutoresizingMaskIntoConstraints = false
+        return livehouseInputView
+    }()
+    private lazy var livehousePickerView: UIPickerView = {
+        let livehousePickerView = UIPickerView()
+        livehousePickerView.translatesAutoresizingMaskIntoConstraints = false
+        livehousePickerView.dataSource = self
+        livehousePickerView.delegate = self
+        return livehousePickerView
+    }()
+    private lazy var performersStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 48
+        return stackView
+    }()
+    private lazy var addPerformerButton: PrimaryButton = {
+        let button = PrimaryButton(text: "対バン相手を追加する")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 25
+        button.addTarget(self, action: #selector(addPartner(_:)), for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
+    private lazy var openTimeInputView: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.date = Date()
+        datePicker.datePickerMode = .dateAndTime
+        datePicker.addTarget(
+            self, action: #selector(openTimeChanged(_:)), for: .valueChanged)
+        datePicker.tintColor = Brand.color(for: .text(.primary))
+        datePicker.backgroundColor = .clear
+        return datePicker
+    }()
+//    private var startTimeInputView: UIDatePicker!
+//    private var endTimeInputView: UIDatePicker!
+    private var thumbnailInputView: UIView = {
+        let thumbnailInputView = UIView()
+        thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return thumbnailInputView
+    }()
+    private lazy var profileImageView: UIImageView = {
+        let profileImageView = UIImageView()
+        profileImageView.translatesAutoresizingMaskIntoConstraints = false
+        profileImageView.layer.cornerRadius = 16
+        profileImageView.clipsToBounds = true
+        profileImageView.image = UIImage(named: "human")
+        profileImageView.contentMode = .scaleAspectFill
+        return profileImageView
+    }()
+    private lazy var changeProfileImageButton: UIButton = {
+        let changeProfileImageButton = UIButton()
+        changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
+        changeProfileImageButton.addTarget(
+            self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
+        return changeProfileImageButton
+    }()
+    private lazy var profileImageTitle: UILabel = {
+        let profileImageTitle = UILabel()
+        profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
+        profileImageTitle.text = "プロフィール画像"
+        profileImageTitle.textAlignment = .center
+        profileImageTitle.font = Brand.font(for: .medium)
+        profileImageTitle.textColor = Brand.color(for: .text(.primary))
+        return profileImageTitle
+    }()
+    private lazy var registerButton: PrimaryButton = {
+        let registerButton = PrimaryButton(text: "ライブ作成")
+        registerButton.translatesAutoresizingMaskIntoConstraints = false
+        registerButton.layer.cornerRadius = 25
+        registerButton.isEnabled = false
+        return registerButton
+    }()
 
-    var hostGroups: [Endpoint.Group] = []
-    let socialInputs: SocialInputs
-
-    var hostGroup: Endpoint.Group!
-    var partnerGroups: [Endpoint.Group] = []
-    var liveStyle: Endpoint.LiveStyleInput!
-    var livehouse: String!
-    var thumbnail: UIImage!
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM月dd日 HH:mm"
         return dateFormatter
     }()
-
-    lazy var viewModel = CreateLiveViewModel(
-        apiClient: dependencyProvider.apiClient,
-        s3Client: dependencyProvider.s3Client,
-        user: dependencyProvider.user,
-        outputHander: { output in
-            switch output {
-            case .createLive(let live):
-                DispatchQueue.main.async {
-                    self.navigationController?.popViewController(animated: true)
-                }
-            case .getHostGroups(let groups):
-                DispatchQueue.main.async {
-                    if groups.isEmpty {
-                        let alertController = UIAlertController(
-                            title: "バンドに所属していません", message: "先にバンドを作成するかバンドに所属してください", preferredStyle: UIAlertController.Style.alert)
-
-                        let cancelAction = UIAlertAction(
-                            title: "OK", style: UIAlertAction.Style.cancel,
-                            handler: { action in
-                                self.navigationController?.popViewController(animated: true)
-                            })
-                        alertController.addAction(cancelAction)
-
-                        self.present(alertController, animated: true, completion: nil)
-                    } else {
-                        self.hostGroup = groups[0]
-                        self.hostGroupInputView.setText(text: self.hostGroup.name)
-                        self.hostGroups = groups
-                        self.hostGroupPickerView.reloadAllComponents()
-                    }
-                    
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
+    
+    let dependencyProvider: LoggedInDependencyProvider
+    let viewModel: CreateLiveViewModel
+    var cancellables: Set<AnyCancellable> = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.socialInputs = try! dependencyProvider.masterService.blockingMasterData()
+        self.viewModel = CreateLiveViewModel(dependencyProvider: dependencyProvider)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -100,307 +166,233 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        bind()
+        
+        viewModel.viewDidLoad()
+    }
+    
+    func bind() {
+        registerButton.controlEventPublisher(for: .touchUpInside)
+            .sink(receiveValue: viewModel.didRegisterButtonTapped)
+            .store(in: &cancellables)
+        
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didCreateLive(_):
+                self.dismiss(animated: true, completion: nil)
+            case .didGetMemberships(let memberships):
+                if !memberships.isEmpty {
+                    self.hostGroupInputView.setText(text: memberships[0].name)
+                    self.hostGroupPickerView.reloadAllComponents()
+                } else {
+                    let alertController = UIAlertController(
+                        title: "バンドに所属していません", message: "先にバンドを作成するかバンドに所属してください", preferredStyle: UIAlertController.Style.alert)
+
+                    let cancelAction = UIAlertAction(
+                        title: "OK", style: UIAlertAction.Style.cancel,
+                        handler: { action in
+//                            self.dismiss(animated: true, completion: nil)
+                        })
+                    alertController.addAction(cancelAction)
+
+                    self.present(alertController, animated: true, completion: nil)
+                }
+            case .didUpdatePerformers(let groups):
+                print(groups)
+            case .didUpdateLiveStyle(let liveStyle):
+                switch liveStyle {
+                case .oneman(_):
+                    performersStackView.isHidden = true
+                    addPerformerButton.isHidden = true
+                case .battle(_):
+                    performersStackView.isHidden = false
+                    addPerformerButton.isHidden = false
+                case .festival(_):
+                    performersStackView.isHidden = false
+                    addPerformerButton.isHidden = false
+                default:
+                    break
+                }
+            case .didUpdateDatePickers(_):
+                print("halo")
+            case .updateSubmittableState(let isSubmittable):
+                self.registerButton.isEnabled = isSubmittable
+            case .reportError(let error):
+                self.showAlert(title: "エラー", message: error.localizedDescription)
+            }
+        }
+        .store(in: &cancellables)
+        
+        liveTitleInputView.listen { [unowned self] in
+            didInputValue()
+        }
+        
+        hostGroupInputView.listen { [unowned self] in
+            hostGroupInputView.setText(text: self.viewModel.state.memberships[self.hostGroupPickerView.selectedRow(inComponent: 0)].name)
+            didInputValue()
+        }
+        
+        liveStyleInputView.listen { [unowned self] in
+            liveStyleInputView.setText(text: self.viewModel.state.socialInputs.liveStyles[self.liveStylePickerView.selectedRow(inComponent: 0)])
+            didInputValue()
+        }
+        
+        livePriceInputView.listen { [unowned self] in
+            didInputValue()
+        }
+        
+        livehouseInputView.listen { [unowned self] in
+            livehouseInputView.setText(text: self.viewModel.state.socialInputs.livehouses[self.livehousePickerView.selectedRow(inComponent: 0)])
+            didInputValue()
+        }
     }
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "ライブ作成"
         self.navigationItem.largeTitleDisplayMode = .never
-
-        verticalScrollView = UIScrollView()
-        verticalScrollView.translatesAutoresizingMaskIntoConstraints = false
-        verticalScrollView.backgroundColor = .clear
-        verticalScrollView.showsVerticalScrollIndicator = false
+        
         self.view.addSubview(verticalScrollView)
-
-        mainView = UIView()
-        mainView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.backgroundColor = Brand.color(for: .background(.primary))
-        verticalScrollView.addSubview(mainView)
-
-        mainViewHeightConstraint = NSLayoutConstraint(
-            item: mainView!,
-            attribute: .height,
-            relatedBy: .equal,
-            toItem: nil,
-            attribute: .height,
-            multiplier: 1,
-            constant: 1400
-        )
-        mainView.addConstraint(mainViewHeightConstraint)
-
-        hostGroupInputView = TextFieldView(input: (section: "主催バンド", text: nil,  maxLength: 20))
-        hostGroupInputView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(hostGroupInputView)
-
-        hostGroupPickerView = UIPickerView()
-        hostGroupPickerView.translatesAutoresizingMaskIntoConstraints = false
-        hostGroupPickerView.dataSource = self
-        hostGroupPickerView.delegate = self
-        hostGroupInputView.selectInputView(inputView: hostGroupPickerView)
-
-        liveTitleInputView = TextFieldView(input: (section: "タイトル", text: nil, maxLength: 32))
-        liveTitleInputView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(liveTitleInputView)
-
-        liveStyleInputView = TextFieldView(input: (section: "形式", text: nil, maxLength: 20))
-        liveStyleInputView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(liveStyleInputView)
-
-        liveStylePickerView = UIPickerView()
-        liveStylePickerView.translatesAutoresizingMaskIntoConstraints = false
-        liveStylePickerView.dataSource = self
-        liveStylePickerView.delegate = self
-        liveStyleInputView.selectInputView(inputView: liveStylePickerView)
-        
-        livePriceInputView = TextFieldView(input: (section: "チケット料金", text: nil, maxLength: 10))
-        livePriceInputView.translatesAutoresizingMaskIntoConstraints = false
-        livePriceInputView.keyboardType(.numberPad)
-        mainView.addSubview(livePriceInputView)
-
-        livehouseInputView = TextFieldView(input: (section: "会場", text: nil, maxLength: 40))
-        livehouseInputView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(livehouseInputView)
-
-        livehousePickerView = UIPickerView()
-        livehousePickerView.translatesAutoresizingMaskIntoConstraints = false
-        livehousePickerView.dataSource = self
-        livehousePickerView.delegate = self
-        livehouseInputView.selectInputView(inputView: livehousePickerView)
-
-        partnerInputView = TextFieldView(input: (section: "対バン相手を追加する", text: nil, maxLength: 20))
-        partnerInputView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(partnerInputView)
-        
-        let partnerInputButton = UIButton()
-        partnerInputButton.translatesAutoresizingMaskIntoConstraints = false
-        partnerInputButton.backgroundColor = .clear
-        partnerInputButton.addTarget(self, action: #selector(addPartner(_:)), for: .touchUpInside)
-        mainView.addSubview(partnerInputButton)
-
-        openTimeInputView = UIDatePicker()
-        openTimeInputView.translatesAutoresizingMaskIntoConstraints = false
-        openTimeInputView.date = Date()
-        openTimeInputView.datePickerMode = .dateAndTime
-        openTimeInputView.addTarget(
-            self, action: #selector(openTimeChanged(_:)), for: .valueChanged)
-        openTimeInputView.tintColor = Brand.color(for: .text(.primary))
-        openTimeInputView.backgroundColor = .clear
-        mainView.addSubview(openTimeInputView)
-
-        let openTimeLabel = UILabel()
-        openTimeLabel.text = "開場時間"
-        openTimeLabel.font = Brand.font(for: .medium)
-        openTimeLabel.textColor = Brand.color(for: .text(.primary))
-        openTimeLabel.textAlignment = .center
-        openTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(openTimeLabel)
-
-        startTimeInputView = UIDatePicker()
-        startTimeInputView.translatesAutoresizingMaskIntoConstraints = false
-        startTimeInputView.date = Date()
-        startTimeInputView.datePickerMode = .dateAndTime
-        startTimeInputView.addTarget(
-            self, action: #selector(startTimeChanged(_:)), for: .valueChanged)
-        startTimeInputView.tintColor = Brand.color(for: .text(.primary))
-        startTimeInputView.backgroundColor = .clear
-        mainView.addSubview(startTimeInputView)
-
-        let startTimeLabel = UILabel()
-        startTimeLabel.text = "開演時間"
-        startTimeLabel.font = Brand.font(for: .medium)
-        startTimeLabel.textColor = Brand.color(for: .text(.primary))
-        startTimeLabel.textAlignment = .center
-        startTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(startTimeLabel)
-
-        endTimeInputView = UIDatePicker()
-        endTimeInputView.translatesAutoresizingMaskIntoConstraints = false
-        endTimeInputView.date = Date()
-        endTimeInputView.datePickerMode = .dateAndTime
-        endTimeInputView.addTarget(self, action: #selector(endTimeChanged(_:)), for: .valueChanged)
-        endTimeInputView.tintColor = Brand.color(for: .text(.primary))
-        endTimeInputView.backgroundColor = .clear
-        mainView.addSubview(endTimeInputView)
-
-        let endTimeLabel = UILabel()
-        endTimeLabel.text = "終演時間"
-        endTimeLabel.font = Brand.font(for: .medium)
-        endTimeLabel.textColor = Brand.color(for: .text(.primary))
-        endTimeLabel.textAlignment = .center
-        endTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(endTimeLabel)
-
-        restrictDatePickers()
-        
-        thumbnailInputView = UIView()
-        thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
-        mainView.addSubview(thumbnailInputView)
-
-        thumbnailImageView = UIImageView()
-        thumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
-        thumbnailImageView.layer.cornerRadius = 16
-        thumbnailImageView.clipsToBounds = true
-        thumbnailImageView.layer.opacity = 0.6
-        thumbnailImageView.contentMode = .scaleAspectFill
-        thumbnailImageView.backgroundColor = Brand.color(for: .background(.cellSelected))
-        thumbnailInputView.addSubview(thumbnailImageView)
-
-        let changeThumbnailButton = UIButton()
-        changeThumbnailButton.backgroundColor = .clear
-        changeThumbnailButton.translatesAutoresizingMaskIntoConstraints = false
-        changeThumbnailButton.layer.cornerRadius = 16
-        changeThumbnailButton.addTarget(
-            self, action: #selector(changeThumbnail(_:)), for: .touchUpInside)
-        thumbnailInputView.addSubview(changeThumbnailButton)
-
-        let thumbnailLabel = UILabel()
-        thumbnailLabel.font = Brand.font(for: .medium)
-        thumbnailLabel.textColor = Brand.color(for: .text(.primary))
-        thumbnailLabel.textAlignment = .center
-        thumbnailLabel.text = "サムネイル画像"
-        thumbnailLabel.translatesAutoresizingMaskIntoConstraints = false
-        thumbnailInputView.addSubview(thumbnailLabel)
-
-        createButton = PrimaryButton(text: "ライブを作成")
-        createButton.translatesAutoresizingMaskIntoConstraints = false
-        createButton.layer.cornerRadius = 18
-        createButton.listen {
-            self.createLive()
-        }
-        mainView.addSubview(createButton)
-
-        let constraints: [NSLayoutConstraint] = [
+        NSLayoutConstraint.activate([
             verticalScrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
             verticalScrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            verticalScrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-            verticalScrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            verticalScrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+            verticalScrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
+        ])
 
+        verticalScrollView.addSubview(mainView)
+        NSLayoutConstraint.activate([
             mainView.topAnchor.constraint(equalTo: verticalScrollView.topAnchor),
             mainView.bottomAnchor.constraint(equalTo: verticalScrollView.bottomAnchor),
             mainView.rightAnchor.constraint(equalTo: verticalScrollView.rightAnchor),
             mainView.leftAnchor.constraint(equalTo: verticalScrollView.leftAnchor),
             mainView.centerXAnchor.constraint(equalTo: verticalScrollView.centerXAnchor),
-
-            hostGroupInputView.topAnchor.constraint(equalTo: mainView.topAnchor, constant: 16),
-            hostGroupInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            hostGroupInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            hostGroupInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-
-            liveTitleInputView.topAnchor.constraint(
-                equalTo: hostGroupInputView.bottomAnchor, constant: 24),
-            liveTitleInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            liveTitleInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+        ])
+        
+        let topSpacer = UIView()
+        mainView.addArrangedSubview(topSpacer) // Spacer
+        NSLayoutConstraint.activate([
+            topSpacer.heightAnchor.constraint(equalToConstant: 32),
+        ])
+        
+        mainView.addArrangedSubview(liveTitleInputView)
+        NSLayoutConstraint.activate([
             liveTitleInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
+        mainView.addArrangedSubview(hostGroupInputView)
+        hostGroupInputView.selectInputView(inputView: hostGroupPickerView)
+        NSLayoutConstraint.activate([
+            hostGroupInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
 
-            liveStyleInputView.topAnchor.constraint(
-                equalTo: liveTitleInputView.bottomAnchor, constant: 24),
-            liveStyleInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            liveStyleInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+        mainView.addArrangedSubview(liveStyleInputView)
+        liveStyleInputView.selectInputView(inputView: liveStylePickerView)
+        NSLayoutConstraint.activate([
             liveStyleInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-            
-            livePriceInputView.topAnchor.constraint(
-                equalTo: liveStyleInputView.bottomAnchor, constant: 24),
-            livePriceInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            livePriceInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+        ])
+        
+        mainView.addArrangedSubview(livePriceInputView)
+        NSLayoutConstraint.activate([
             livePriceInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
 
-            livehouseInputView.topAnchor.constraint(
-                equalTo: livePriceInputView.bottomAnchor, constant: 24),
-            livehouseInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            livehouseInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
+        mainView.addArrangedSubview(livehouseInputView)
+        livehouseInputView.selectInputView(inputView: livehousePickerView)
+        NSLayoutConstraint.activate([
             livehouseInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
 
-            partnerInputView.topAnchor.constraint(
-                equalTo: livehouseInputView.bottomAnchor, constant: 24),
-            partnerInputView.rightAnchor.constraint(
-                equalTo: mainView.rightAnchor, constant: -16),
-            partnerInputView.leftAnchor.constraint(
-                equalTo: mainView.leftAnchor, constant: 16),
-            partnerInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-            
-            partnerInputButton.topAnchor.constraint(equalTo: partnerInputView.topAnchor),
-            partnerInputButton.bottomAnchor.constraint(equalTo: partnerInputView.bottomAnchor),
-            partnerInputButton.rightAnchor.constraint(equalTo: partnerInputView.rightAnchor),
-            partnerInputButton.leftAnchor.constraint(equalTo: partnerInputView.leftAnchor),
+        mainView.addArrangedSubview(performersStackView)
+        mainView.addArrangedSubview(addPerformerButton)
+        NSLayoutConstraint.activate([
+            addPerformerButton.heightAnchor.constraint(equalToConstant: 50),
+        ])
 
-            openTimeLabel.topAnchor.constraint(
-                equalTo: partnerInputView.bottomAnchor, constant: 24),
-            openTimeLabel.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            openTimeLabel.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        mainView.addArrangedSubview(openTimeInputView)
 
-            openTimeInputView.topAnchor.constraint(equalTo: openTimeLabel.topAnchor),
-            openTimeInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            openTimeInputView.leftAnchor.constraint(
-                equalTo: openTimeLabel.rightAnchor, constant: 16),
-            openTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        let openTimeLabel = UILabel()
+//        openTimeLabel.text = "開場時間"
+//        openTimeLabel.font = Brand.font(for: .medium)
+//        openTimeLabel.textColor = Brand.color(for: .text(.primary))
+//        openTimeLabel.textAlignment = .center
+//        openTimeLabel.translatesAutoresizingMaskIntoConstraints = false
+//        mainView.addSubview(openTimeLabel)
 
-            startTimeLabel.topAnchor.constraint(
-                equalTo: openTimeInputView.bottomAnchor, constant: 24),
-            startTimeLabel.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            startTimeLabel.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
-            startTimeInputView.topAnchor.constraint(equalTo: startTimeLabel.topAnchor),
-            startTimeInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            startTimeInputView.leftAnchor.constraint(
-                equalTo: startTimeLabel.rightAnchor, constant: 16),
-            startTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 
-            endTimeLabel.topAnchor.constraint(equalTo: startTimeLabel.bottomAnchor, constant: 24),
-            endTimeLabel.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            endTimeLabel.heightAnchor.constraint(equalToConstant: textFieldHeight),
-
-            endTimeInputView.topAnchor.constraint(equalTo: endTimeLabel.topAnchor),
-            endTimeInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            endTimeInputView.leftAnchor.constraint(equalTo: endTimeLabel.rightAnchor, constant: 16),
-            endTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-
-            thumbnailInputView.topAnchor.constraint(
-                equalTo: endTimeInputView.bottomAnchor, constant: 48),
-            thumbnailInputView.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -16),
-            thumbnailInputView.leftAnchor.constraint(equalTo: mainView.leftAnchor, constant: 16),
-            thumbnailInputView.heightAnchor.constraint(equalToConstant: 300),
-
-            thumbnailImageView.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
-            thumbnailImageView.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
-            thumbnailImageView.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
-            thumbnailImageView.heightAnchor.constraint(equalToConstant: 250),
-
-            changeThumbnailButton.topAnchor.constraint(equalTo: thumbnailImageView.topAnchor),
-            changeThumbnailButton.bottomAnchor.constraint(equalTo: thumbnailImageView.bottomAnchor),
-            changeThumbnailButton.rightAnchor.constraint(equalTo: thumbnailImageView.rightAnchor),
-            changeThumbnailButton.leftAnchor.constraint(equalTo: thumbnailImageView.leftAnchor),
-
-            thumbnailLabel.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
-            thumbnailLabel.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
-            thumbnailLabel.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
-            thumbnailLabel.heightAnchor.constraint(equalToConstant: 50),
-
-            createButton.topAnchor.constraint(
-                equalTo: thumbnailInputView.bottomAnchor, constant: 54),
-            createButton.widthAnchor.constraint(equalToConstant: 300),
-            createButton.heightAnchor.constraint(equalToConstant: 50),
-            createButton.centerXAnchor.constraint(equalTo: mainView.centerXAnchor),
-        ]
-        NSLayoutConstraint.activate(constraints)
-        updatePickerComponents()
+//        restrictDatePickers()
+        
+        mainView.addArrangedSubview(thumbnailInputView)
+        NSLayoutConstraint.activate([
+            thumbnailInputView.heightAnchor.constraint(equalToConstant: 200),
+        ])
+        
+        thumbnailInputView.addSubview(profileImageView)
+        NSLayoutConstraint.activate([
+            profileImageView.heightAnchor.constraint(equalToConstant: 180),
+            profileImageView.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
+            profileImageView.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
+            profileImageView.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
+        ])
+        
+        thumbnailInputView.addSubview(profileImageTitle)
+        NSLayoutConstraint.activate([
+            profileImageTitle.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
+            profileImageTitle.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
+            profileImageTitle.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
+        ])
+        
+        thumbnailInputView.addSubview(changeProfileImageButton)
+        NSLayoutConstraint.activate([
+            changeProfileImageButton.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
+            changeProfileImageButton.rightAnchor.constraint(
+                equalTo: thumbnailInputView.rightAnchor),
+            changeProfileImageButton.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
+            changeProfileImageButton.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
+        ])
+        
+        mainView.addArrangedSubview(registerButton)
+        NSLayoutConstraint.activate([
+            registerButton.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
+        let bottomSpacer = UIView()
+        mainView.addArrangedSubview(bottomSpacer) // Spacer
+        NSLayoutConstraint.activate([
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 64),
+        ])
+        
+        liveTitleInputView.focus()
     }
-
-    func updatePickerComponents() {
-        viewModel.getMyGroups()
+    
+    private func didInputValue() {
+        let title = liveTitleInputView.getText()
+        let liveStyle = liveStyleInputView.getText()
+        let price: Int? = {
+            if let priceText = livePriceInputView.getText() {
+                return Int(priceText)
+            } else { return nil }
+        }()
+        let hostGroupId = {
+            return !self.viewModel.state.memberships.isEmpty ?
+            self.viewModel.state.memberships[self.hostGroupPickerView.selectedRow(inComponent: 0)].id : nil
+        }()
+        let livehouse = livehouseInputView.getText()
+        let openAt = openTimeInputView.date
+        
+        viewModel.didUpdateInputItems(title: title, hostGroup: hostGroupId, liveStyle: liveStyle, price: price, livehouse: livehouse, openAt: openAt, startAt: nil, endAt: nil)
     }
 
     @objc private func addPartner(_ sender: Any) {
-        let vc = SelectPerformersViewController(dependencyProvider: dependencyProvider, input: self.partnerGroups)
+        let vc = SelectPerformersViewController(dependencyProvider: dependencyProvider, input: viewModel.state.performers)
         vc.listen { groups in
-            self.partnerGroups = groups
-            let text = groups.map { $0.name }.joined(separator: ",")
-            self.partnerInputView.setText(text: text)
+            // TODO
         }
         present(vc, animated: true, completion: nil)
     }
 
-    @objc private func changeThumbnail(_ sender: Any) {
+    @objc private func selectProfileImage(_ sender: Any) {
         if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
             let picker = UIImagePickerController()
             picker.sourceType = .photoLibrary
@@ -410,48 +402,15 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     }
 
     @objc private func openTimeChanged(_ sender: Any) {
-        restrictDatePickers()
+        viewModel.didUpdateDatePicker(pickerType: .openAt(Date()))
     }
 
     @objc private func startTimeChanged(_ sender: Any) {
-        restrictDatePickers()
+        
     }
 
     @objc private func endTimeChanged(_ sender: Any) {
-        restrictDatePickers()
-    }
-    
-    private func restrictDatePickers() {
-        openTimeInputView.minimumDate = Date()
-        startTimeInputView.minimumDate = openTimeInputView.date
-        endTimeInputView.minimumDate = startTimeInputView.date
-    }
-
-    func createLive() {
-        guard let title: String = liveTitleInputView.getText() else { return }
-        guard let livehouse = livehouseInputView.getText() else { return }
-        guard let style = getLiveStyle() else { return }
-        guard let price = livePriceInputView.getText() else { return }
-
-        viewModel.createLive(
-            title: title, style: style, price: Int(price) ?? 0, hostGroupId: self.hostGroup.id, livehouse: livehouse,
-            openAt: openTimeInputView.date, startAt: startTimeInputView.date, endAt: endTimeInputView.date, thumbnail: self.thumbnail
-        )
-    }
-
-    func getLiveStyle() -> Endpoint.LiveStyleInput? {
-        let styleText = liveStyleInputView.getText()
-        switch styleText {
-        case "ワンマン":
-            return .oneman(performer: self.hostGroup.id)
-        case "対バン":
-            return .battle(performers: partnerGroups.map { $0.id })
-        case "フェス":
-            return .festival(performers: partnerGroups.map { $0.id })
-        default:
-            return nil
-
-        }
+        
     }
 }
 
@@ -464,8 +423,8 @@ extension CreateLiveViewController: UIImagePickerControllerDelegate, UINavigatio
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
             return
         }
-        thumbnailImageView.image = image
-        self.thumbnail = image
+        profileImageView.image = image
+        viewModel.didUpdateArtwork(thumbnail: image)
         self.dismiss(animated: true, completion: nil)
     }
 }
@@ -480,11 +439,11 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
     {
         switch pickerView {
         case self.hostGroupPickerView:
-            return hostGroups[row].name
+            return viewModel.state.memberships[row].name
         case self.liveStylePickerView:
-            return socialInputs.liveStyles[row]
+            return viewModel.state.socialInputs.liveStyles[row]
         case self.livehousePickerView:
-            return socialInputs.livehouses[row]
+            return viewModel.state.socialInputs.livehouses[row]
         default:
             return "yo"
         }
@@ -493,30 +452,13 @@ extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch pickerView {
         case self.hostGroupPickerView:
-            return hostGroups.count
+            return viewModel.state.memberships.count
         case self.liveStylePickerView:
-            return socialInputs.liveStyles.count
+            return viewModel.state.socialInputs.liveStyles.count
         case self.livehousePickerView:
-            return socialInputs.livehouses.count
+            return viewModel.state.socialInputs.livehouses.count
         default:
             return 1
-        }
-    }
-
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        switch pickerView {
-        case self.hostGroupPickerView:
-            let text = self.hostGroups[row]
-            self.hostGroupInputView.setText(text: text.name)
-            self.hostGroup = text
-        case self.liveStylePickerView:
-            self.liveStyleInputView.setText(text: socialInputs.liveStyles[row])
-            self.liveStyle = getLiveStyle()
-        case self.livehousePickerView:
-            self.livehouseInputView.setText(text: socialInputs.livehouses[row])
-            self.livehouse = socialInputs.livehouses[row]
-        default:
-            print("hello")
         }
     }
 }

@@ -5,81 +5,175 @@
 //  Created by Masato TSUTSUMI on 2020/11/23.
 //
 
+import Combine
 import Endpoint
 import Foundation
+import InternalDomain
+import UIComponent
 import UIKit
 
 class CreateLiveViewModel {
+    struct State {
+        var groupId: Group.ID?
+        var memberships: [Group] = []
+        var title: String?
+        var liveStyle: LiveStyle<Group.ID>?
+        var price: Int?
+        var livehouse: String?
+        var performers: [Group] = []
+        var openAt: Date?
+        var startAt: Date?
+        var endAt: Date?
+        var thumbnail: UIImage?
+        var submittable: Bool
+        let socialInputs: SocialInputs
+    }
+    
+    enum DatePickerType {
+        case openAt(Date)
+        case startAt(Date)
+        case endAt(Date)
+    }
+    
     enum Output {
-        case createLive(Endpoint.Live)
-        case getHostGroups([Endpoint.Group])
-        case error(Error)
+        case didCreateLive(Live)
+        case updateSubmittableState(Bool)
+        case didUpdateDatePickers(DatePickerType)
+        case didUpdateLiveStyle(LiveStyle<Group.ID>?)
+        case didUpdatePerformers([Group])
+        case didGetMemberships([Group])
+        case reportError(Error)
     }
 
-    let apiClient: APIClient
-    let s3Client: S3Client
-    let user: User
-    let outputHandler: (Output) -> Void
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    private(set) var state: State
+
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
     init(
-        apiClient: APIClient, s3Client: S3Client, user: User, outputHander: @escaping (Output) -> Void
+        dependencyProvider: LoggedInDependencyProvider
     ) {
-        self.apiClient = apiClient
-        self.s3Client = s3Client
-        self.user = user
-        self.outputHandler = outputHander
+        self.dependencyProvider = dependencyProvider
+        self.state = State(submittable: false, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
     }
-
-    func getMyGroups() {
-        let request = Empty()
-        var uri = Endpoint.GetMemberships.URI()
-        uri.artistId = self.user.id
-        apiClient.request(GetMemberships.self, request: request, uri: uri) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.getHostGroups(res))
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
+    
+    func viewDidLoad() {
+        getMemberships()
+        didUpdateDatePicker(pickerType: .openAt(Date()))
+    }
+    
+    func didUpdateInputItems(
+        title: String?, hostGroup: Group.ID?, liveStyle: String?,
+        price: Int?, livehouse: String?, openAt: Date?, startAt: Date?, endAt: Date?
+    ) {
+        state.title = title
+        state.groupId = hostGroup
+        state.price = price
+        state.livehouse = livehouse
+        state.openAt = openAt
+        state.startAt = startAt
+        state.endAt = endAt
+        
+        let liveStyle: LiveStyle<Group.ID>? = {
+            if let hostGroup = hostGroup {
+                switch liveStyle {
+                case "ワンマン":
+                    return .oneman(performer: hostGroup)
+                case "対バン":
+                    return .battle(performers: state.performers.map { $0.id })
+                case "フェス":
+                    return .festival(performers: state.performers.map { $0.id })
+                default:
+                    return nil
+                }
+            } else { return nil }
+        }()
+        state.liveStyle = liveStyle
+        
+        
+        let isSubmittable: Bool = (title != nil && hostGroup != nil && liveStyle != nil && price != nil && livehouse != nil)
+        state.submittable = isSubmittable
+        outputSubject.send(.updateSubmittableState(isSubmittable))
+        outputSubject.send(.didUpdateLiveStyle(liveStyle))
+    }
+    
+    func didUpdateDatePicker(pickerType: DatePickerType) {
+        switch pickerType {
+        case .openAt(let openAt):
+            state.openAt = openAt
+            state.startAt = openAt
+            state.endAt = openAt
+        case .startAt(let startAt):
+            state.endAt = startAt
+        default:
+            break
         }
+        outputSubject.send(.didUpdateDatePickers(pickerType))
     }
-
-//    func getGroups() {
-//        let request = Empty()
-//        var uri = Endpoint.GetAllGroups.URI()
-//        uri.page = 1
-//        uri.per = 1000
-//        apiClient.request(GetAllGroups.self, request: request, uri: uri) { result in
-//            switch result {
-//            case .success(let res):
-//                self.outputHandler(.getPerformers(res.items))
-//            case .failure(let error):
-//                self.outputHandler(.error(error))
-//            }
-//        }
-//    }
-
-    func createLive(
-        title: String, style: LiveStyleInput, price: Int, hostGroupId: Endpoint.Group.ID, livehouse: String?,
-        openAt: Date?, startAt: Date?, endAt: Date?, thumbnail: UIImage?
-    ) {
-        self.s3Client.uploadImage(image: thumbnail) { [apiClient] result in
+    
+    func didAddPerformer(performer: Group) {
+        let performers = self.state.performers + [performer]
+        self.state.performers = performers
+        outputSubject.send(.didUpdatePerformers(performers))
+    }
+    
+    func didRemovePerformer(performer: Group) {
+        let performers = self.state.performers.filter { $0.id != performer.id }
+        self.state.performers = performers
+        outputSubject.send(.didUpdatePerformers(performers))
+    }
+    
+    func didUpdateArtwork(thumbnail: UIImage?) {
+        self.state.thumbnail = thumbnail
+    }
+    
+    func didRegisterButtonTapped() {
+        outputSubject.send(.updateSubmittableState(false))
+        guard let title = state.title else { return }
+        guard let groupId = state.groupId else { return }
+        guard let liveStyle = state.liveStyle else { return }
+        guard let price = state.price else { return }
+        guard let livehouse = state.livehouse else { return }
+        self.dependencyProvider.s3Client.uploadImage(image: state.thumbnail) { [unowned self] result in
             switch result {
             case .success(let imageUrl):
                 let req = CreateLive.Request(
-                    title: title, style: style, price: price, artworkURL: URL(string: imageUrl),
-                    hostGroupId: hostGroupId, liveHouse: livehouse,
-                    openAt: openAt, startAt: startAt, endAt: endAt)
-                apiClient.request(CreateLive.self, request: req) { result in
-                    switch result {
-                    case .success(let res):
-                        self.outputHandler(.createLive(res))
-                    case .failure(let error):
-                        self.outputHandler(.error(error))
-                    }
+                    title: title, style: liveStyle, price: price, artworkURL: URL(string: imageUrl),
+                    hostGroupId: groupId, liveHouse: livehouse,
+                    openAt: state.openAt, startAt: state.startAt, endAt: state.endAt)
+                apiClient.request(CreateLive.self, request: req) { [unowned self] result in
+                    updateState(with: result)
                 }
             case .failure(let error):
-                self.outputHandler(.error(error))
+                outputSubject.send(.updateSubmittableState(true))
+                outputSubject.send(.reportError(error))
+            }
+        }
+    }
+    
+    private func updateState(with result: Result<Live, Error>) {
+        outputSubject.send(.updateSubmittableState(true))
+        switch result {
+        case .success(let live):
+            outputSubject.send(.didCreateLive(live))
+        case .failure(let error):
+            outputSubject.send(.reportError(error))
+        }
+    }
+
+    func getMemberships() {
+        let request = Empty()
+        var uri = Endpoint.GetMemberships.URI()
+        uri.artistId = self.dependencyProvider.user.id
+        apiClient.request(GetMemberships.self, request: request, uri: uri) { [unowned self] result in
+            switch result {
+            case .success(let res):
+                state.memberships = res
+                outputSubject.send(.didGetMemberships(res))
+            case .failure(let error):
+                outputSubject.send(.reportError(error))
             }
         }
     }
