@@ -85,16 +85,6 @@ extension DependencyProvider {
             adapter: YoutubeDataAPIAdapter(apiKey: config.youTubeApiKey),
             interceptor: httpInterceptor
         )
-
-        if credentialProvider.identityId == nil {
-            credentialProvider.getIdentityId().continueWith(block: {(task) -> AnyObject? in
-                if let error = task.error { fatalError(error.localizedDescription) }
-                if let identityId = task.result {
-                    print("Identity ID is: \(identityId)")
-                }
-                return task
-            })
-        }
         
         let s3Client = S3Client(s3Bucket: config.s3Bucket, cognitoIdentityPoolCredentialProvider: credentialProvider)
         let masterServiceClient = HTTPClient<WebAPIAdapter>(
