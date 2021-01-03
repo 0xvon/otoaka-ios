@@ -142,7 +142,6 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
             return emptyCollectionView
         }()
         tableView.backgroundView = self.viewModel.state.groups.isEmpty ? emptyCollectionView : nil
-        tableView.backgroundView = emptyCollectionView
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
                 backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),

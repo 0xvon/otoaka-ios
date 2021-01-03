@@ -124,7 +124,6 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
             return emptyCollectionView
         }()
         tableView.backgroundView = requests.isEmpty ? emptyCollectionView : nil
-        tableView.backgroundView = emptyCollectionView
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
                 backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),

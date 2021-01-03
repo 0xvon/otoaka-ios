@@ -567,7 +567,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 return emptyCollectionView
             }()
             tableView.backgroundView = feeds.isEmpty ? emptyCollectionView : nil
-            tableView.backgroundView = emptyCollectionView
         case self.liveTableView:
             let emptyCollectionView: EmptyCollectionView = {
                 let emptyCollectionView = EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す")
@@ -577,8 +576,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 }
                 return emptyCollectionView
             }()
-            tableView.backgroundView = lives.isEmpty ? emptyCollectionView : nil
-            tableView.backgroundView = emptyCollectionView
+            tableView.backgroundView = self.lives.isEmpty ? emptyCollectionView : nil
         case self.chartsTableView:
             let emptyCollectionView: EmptyCollectionView = {
                 let emptyCollectionView = EmptyCollectionView(emptyType: .chart, actionButtonTitle: "バンドを探す")
@@ -589,7 +587,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 return emptyCollectionView
             }()
             tableView.backgroundView = charts.isEmpty ? emptyCollectionView : nil
-            tableView.backgroundView = emptyCollectionView
         case self.groupTableView:
             let emptyCollectionView: EmptyCollectionView = {
                 let emptyCollectionView = EmptyCollectionView(emptyType: .group, actionButtonTitle: nil)
@@ -597,7 +594,6 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 return emptyCollectionView
             }()
             tableView.backgroundView = groups.isEmpty ? emptyCollectionView : nil
-            tableView.backgroundView = emptyCollectionView
         default:
             break
         }

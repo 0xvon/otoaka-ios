@@ -90,19 +90,21 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         button.isHidden = true
         return button
     }()
-    private lazy var openTimeInputView: UIDatePicker = {
-        let datePicker = UIDatePicker()
-        datePicker.translatesAutoresizingMaskIntoConstraints = false
-        datePicker.date = Date()
-        datePicker.datePickerMode = .dateAndTime
-        datePicker.addTarget(
-            self, action: #selector(openTimeChanged(_:)), for: .valueChanged)
-        datePicker.tintColor = Brand.color(for: .text(.primary))
-        datePicker.backgroundColor = .clear
-        return datePicker
+    private lazy var openTimeInputView: DateInputView = {
+        let dateInputView = DateInputView(section: "オープン時間")
+        dateInputView.translatesAutoresizingMaskIntoConstraints = false
+        return dateInputView
     }()
-//    private var startTimeInputView: UIDatePicker!
-//    private var endTimeInputView: UIDatePicker!
+    private lazy var startTimeInputView: DateInputView = {
+        let dateInputView = DateInputView(section: "スタート時間")
+        dateInputView.translatesAutoresizingMaskIntoConstraints = false
+        return dateInputView
+    }()
+    private lazy var endTimeInputView: DateInputView = {
+        let dateInputView = DateInputView(section: "クローズ時間")
+        dateInputView.translatesAutoresizingMaskIntoConstraints = false
+        return dateInputView
+    }()
     private var thumbnailInputView: UIView = {
         let thumbnailInputView = UIView()
         thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -213,8 +215,19 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                 default:
                     break
                 }
-            case .didUpdateDatePickers(_):
-                print("halo")
+            case .didUpdateDatePickers(let pickerType):
+                openTimeInputView.date = viewModel.state.openAt
+                startTimeInputView.date = viewModel.state.startAt
+                endTimeInputView.date = viewModel.state.endAt
+                switch pickerType {
+                case .openAt(let openAt):
+                    startTimeInputView.maximumDate = openAt
+                    endTimeInputView.maximumDate = openAt
+                case .startAt(let startAt):
+                    endTimeInputView.maximumDate = startAt
+                default:
+                    break
+                }
             case .updateSubmittableState(let isSubmittable):
                 self.registerButton.isEnabled = isSubmittable
             case .reportError(let error):
@@ -244,6 +257,18 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         livehouseInputView.listen { [unowned self] in
             livehouseInputView.setText(text: self.viewModel.state.socialInputs.livehouses[self.livehousePickerView.selectedRow(inComponent: 0)])
             didInputValue()
+        }
+        
+        openTimeInputView.listen { [unowned self] in
+            viewModel.didUpdateDatePicker(pickerType: .openAt(openTimeInputView.date))
+        }
+        
+        startTimeInputView.listen { [unowned self] in
+            viewModel.didUpdateDatePicker(pickerType: .startAt(startTimeInputView.date))
+        }
+        
+        endTimeInputView.listen { [unowned self] in
+            viewModel.didUpdateDatePicker(pickerType: .endAt(endTimeInputView.date))
         }
     }
 
@@ -309,7 +334,20 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             addPerformerButton.heightAnchor.constraint(equalToConstant: 50),
         ])
 
-//        mainView.addArrangedSubview(openTimeInputView)
+        mainView.addArrangedSubview(openTimeInputView)
+        NSLayoutConstraint.activate([
+            openTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
+        mainView.addArrangedSubview(startTimeInputView)
+        NSLayoutConstraint.activate([
+            startTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
+        mainView.addArrangedSubview(endTimeInputView)
+        NSLayoutConstraint.activate([
+            endTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
 
 //        let openTimeLabel = UILabel()
 //        openTimeLabel.text = "開場時間"
@@ -379,9 +417,8 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             self.viewModel.state.memberships[self.hostGroupPickerView.selectedRow(inComponent: 0)].id : nil
         }()
         let livehouse = livehouseInputView.getText()
-        let openAt = openTimeInputView.date
         
-        viewModel.didUpdateInputItems(title: title, hostGroup: hostGroupId, liveStyle: liveStyle, price: price, livehouse: livehouse, openAt: openAt, startAt: nil, endAt: nil)
+        viewModel.didUpdateInputItems(title: title, hostGroup: hostGroupId, liveStyle: liveStyle, price: price, livehouse: livehouse)
     }
 
     @objc private func addPartner(_ sender: Any) {

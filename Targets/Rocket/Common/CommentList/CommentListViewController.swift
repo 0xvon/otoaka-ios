@@ -226,7 +226,6 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
             return emptyCollectionView
         }()
         tableView.backgroundView = comments.isEmpty ? emptyCollectionView : nil
-        tableView.backgroundView = emptyCollectionView
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
                 backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 300),

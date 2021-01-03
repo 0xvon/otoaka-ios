@@ -157,7 +157,6 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
             return emptyCollectionView
         }()
         tableView.backgroundView = tickets.isEmpty ? emptyCollectionView : nil
-        tableView.backgroundView = emptyCollectionView
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
                 backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),

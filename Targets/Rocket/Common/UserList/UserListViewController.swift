@@ -176,7 +176,6 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
             return emptyCollectionView
         }()
         tableView.backgroundView = self.users.isEmpty ? emptyCollectionView : nil
-        tableView.backgroundView = emptyCollectionView
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
                 backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),

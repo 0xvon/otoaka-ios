@@ -21,9 +21,9 @@ class CreateLiveViewModel {
         var price: Int?
         var livehouse: String?
         var performers: [Group] = []
-        var openAt: Date?
-        var startAt: Date?
-        var endAt: Date?
+        var openAt: Date = Date()
+        var startAt: Date = Date()
+        var endAt: Date = Date()
         var thumbnail: UIImage?
         var submittable: Bool
         let socialInputs: SocialInputs
@@ -66,15 +66,12 @@ class CreateLiveViewModel {
     
     func didUpdateInputItems(
         title: String?, hostGroup: Group.ID?, liveStyle: String?,
-        price: Int?, livehouse: String?, openAt: Date?, startAt: Date?, endAt: Date?
+        price: Int?, livehouse: String?
     ) {
         state.title = title
         state.groupId = hostGroup
         state.price = price
         state.livehouse = livehouse
-        state.openAt = openAt
-        state.startAt = startAt
-        state.endAt = endAt
         
         let liveStyle: LiveStyle<Group.ID>? = {
             if let hostGroup = hostGroup {
@@ -103,12 +100,13 @@ class CreateLiveViewModel {
         switch pickerType {
         case .openAt(let openAt):
             state.openAt = openAt
-            state.startAt = openAt
-            state.endAt = openAt
+            state.startAt = openAt > state.startAt ? openAt : state.startAt
+            state.endAt = openAt > state.endAt ? openAt : state.endAt
         case .startAt(let startAt):
-            state.endAt = startAt
-        default:
-            break
+            state.startAt = startAt
+            state.endAt = startAt > state.endAt ? startAt : state.endAt
+        case .endAt(let endAt):
+            state.endAt = endAt
         }
         outputSubject.send(.didUpdateDatePickers(pickerType))
     }
