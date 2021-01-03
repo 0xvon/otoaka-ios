@@ -425,66 +425,15 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        setTableViewBackgroundView(tableView: tableView)
         switch tableView {
         case self.groupFeedTableView:
-            if self.feeds.isEmpty {
-                let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
-                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-                tableView.backgroundView = emptyCollectionView
-                NSLayoutConstraint.activate([
-                    emptyCollectionView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
-                ])
-                emptyCollectionView.listen {
-                    print("hello")
-                }
-            } else {
-                tableView.backgroundView = nil
-            }
             return self.feeds.count
         case self.liveTableView:
-            if self.lives.isEmpty {
-                let emptyCollectionView = EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す")
-                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-                tableView.backgroundView = emptyCollectionView
-                NSLayoutConstraint.activate([
-                    emptyCollectionView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
-                ])
-                emptyCollectionView.listen {
-                    print("hello")
-                }
-            } else {
-                tableView.backgroundView = nil
-            }
             return self.lives.count
         case self.chartsTableView:
-            if self.charts.isEmpty {
-                let emptyCollectionView = EmptyCollectionView(emptyType: .chart, actionButtonTitle: "バンドを探す")
-                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-                tableView.backgroundView = emptyCollectionView
-                NSLayoutConstraint.activate([
-                    emptyCollectionView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
-                ])
-                emptyCollectionView.listen {
-                    print("hello")
-                }
-            } else {
-                tableView.backgroundView = nil
-            }
             return self.charts.count
         case self.groupTableView:
-            if self.groups.isEmpty {
-                let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
-                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-                tableView.backgroundView = emptyCollectionView
-                NSLayoutConstraint.activate([
-                    emptyCollectionView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
-                ])
-                emptyCollectionView.listen {
-                    print("hello")
-                }
-            } else {
-                tableView.backgroundView = nil
-            }
             return self.groups.count
         default:
             return 10
@@ -578,6 +527,68 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             print("hello")
         }
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    private func setTableViewBackgroundView(tableView: UITableView) {
+        switch tableView {
+        case self.groupFeedTableView:
+            let emptyCollectionView: EmptyCollectionView = {
+                let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                emptyCollectionView.listen {
+                    self.didSearchButtonTapped()
+                }
+                return emptyCollectionView
+            }()
+            tableView.backgroundView = feeds.isEmpty ? emptyCollectionView : nil
+            tableView.backgroundView = emptyCollectionView
+        case self.liveTableView:
+            let emptyCollectionView: EmptyCollectionView = {
+                let emptyCollectionView = EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                emptyCollectionView.listen {
+                    self.didSearchButtonTapped()
+                }
+                return emptyCollectionView
+            }()
+            tableView.backgroundView = lives.isEmpty ? emptyCollectionView : nil
+            tableView.backgroundView = emptyCollectionView
+        case self.chartsTableView:
+            let emptyCollectionView: EmptyCollectionView = {
+                let emptyCollectionView = EmptyCollectionView(emptyType: .chart, actionButtonTitle: "バンドを探す")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                emptyCollectionView.listen {
+                    self.didSearchButtonTapped()
+                }
+                return emptyCollectionView
+            }()
+            tableView.backgroundView = charts.isEmpty ? emptyCollectionView : nil
+            tableView.backgroundView = emptyCollectionView
+        case self.groupTableView:
+            let emptyCollectionView: EmptyCollectionView = {
+                let emptyCollectionView = EmptyCollectionView(emptyType: .group, actionButtonTitle: nil)
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                return emptyCollectionView
+            }()
+            tableView.backgroundView = groups.isEmpty ? emptyCollectionView : nil
+            tableView.backgroundView = emptyCollectionView
+        default:
+            break
+        }
+        if let backgroundView = tableView.backgroundView {
+            NSLayoutConstraint.activate([
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            ])
+        }
+    }
+    
+    private func didSearchButtonTapped() {
+        let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
+        vc.inject(.group(""))
+        let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
+        nav.navigationBar.barTintColor = .clear
+        self.present(nav, animated: true)
     }
 
     private func listenButtonTapped(cellIndex: Int) {

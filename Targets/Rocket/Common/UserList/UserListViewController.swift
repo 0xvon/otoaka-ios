@@ -134,6 +134,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        setTableViewBackgroundView(tableView: tableView)
         return self.users.count
         
     }
@@ -162,6 +163,21 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if (self.users.count - indexPath.section) == 2 && self.users.count % per == 0 {
             self.getUsers()
+        }
+    }
+    
+    func setTableViewBackgroundView(tableView: UITableView) {
+        let emptyCollectionView: EmptyCollectionView = {
+            let emptyCollectionView = EmptyCollectionView(emptyType: .userList, actionButtonTitle: nil)
+            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+            return emptyCollectionView
+        }()
+        tableView.backgroundView = self.users.isEmpty ? emptyCollectionView : nil
+        tableView.backgroundView = emptyCollectionView
+        if let backgroundView = tableView.backgroundView {
+            NSLayoutConstraint.activate([
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            ])
         }
     }
 }

@@ -124,6 +124,7 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        setTableViewBackgroundView(tableView: tableView)
         return max(1, self.comments.count)
     }
 
@@ -214,6 +215,22 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     
     private func comment(text: String) {
         viewModel.postFeedComment(text: text)
+    }
+    
+    func setTableViewBackgroundView(tableView: UITableView) {
+        let emptyCollectionView: EmptyCollectionView = {
+            let emptyCollectionView = EmptyCollectionView(emptyType: .feedComment, actionButtonTitle: nil)
+            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+            return emptyCollectionView
+        }()
+        tableView.backgroundView = comments.isEmpty ? emptyCollectionView : nil
+        tableView.backgroundView = emptyCollectionView
+        if let backgroundView = tableView.backgroundView {
+            NSLayoutConstraint.activate([
+                backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 300),
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            ])
+        }
     }
 }
 

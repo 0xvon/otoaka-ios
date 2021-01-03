@@ -103,7 +103,35 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        setTableViewBackgroundView(tableView: tableView)
         return self.requests.count
+    }
+    
+    func setTableViewBackgroundView(tableView: UITableView) {
+        let emptyCollectionView: EmptyCollectionView = {
+            let emptyCollectionView = EmptyCollectionView(emptyType: .request, actionButtonTitle: "バンドを探す")
+            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+            emptyCollectionView.listen {
+                self.didSearchButtonTapped()
+            }
+            return emptyCollectionView
+        }()
+        tableView.backgroundView = requests.isEmpty ? emptyCollectionView : nil
+        tableView.backgroundView = emptyCollectionView
+        if let backgroundView = tableView.backgroundView {
+            NSLayoutConstraint.activate([
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            ])
+        }
+    }
+    
+    func didSearchButtonTapped() {
+        let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
+        vc.inject(.group(""))
+        let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
+        nav.navigationBar.barTintColor = .clear
+        self.present(nav, animated: true)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

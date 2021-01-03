@@ -85,6 +85,7 @@ final class TicketViewController: UIViewController, Instantiable {
 
 extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
+        setTableViewBackgroundView(tableView: tableView)
         return self.tickets.count
     }
 
@@ -143,6 +144,33 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
         if (self.tickets.count - indexPath.section) == 2 && self.tickets.count % per == 0 {
             self.getMyTickets()
         }
+    }
+    
+    func setTableViewBackgroundView(tableView: UITableView) {
+        let emptyCollectionView: EmptyCollectionView = {
+            let emptyCollectionView = EmptyCollectionView(emptyType: .ticket, actionButtonTitle: "バンドを探す")
+            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+            emptyCollectionView.listen {
+                self.didSearchButtonTapped()
+            }
+            return emptyCollectionView
+        }()
+        tableView.backgroundView = tickets.isEmpty ? emptyCollectionView : nil
+        tableView.backgroundView = emptyCollectionView
+        if let backgroundView = tableView.backgroundView {
+            NSLayoutConstraint.activate([
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            ])
+        }
+    }
+    
+    func didSearchButtonTapped() {
+        let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
+        vc.inject(.group(""))
+        let nav = UINavigationController(rootViewController: vc)
+        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
+        nav.navigationBar.barTintColor = .clear
+        self.present(nav, animated: true)
     }
 
     private func listenButtonTapped(cellIndex: Int) {

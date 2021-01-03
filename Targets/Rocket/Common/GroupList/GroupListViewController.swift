@@ -98,6 +98,7 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        setTableViewBackgroundView(tableView: tableView)
         return self.viewModel.state.groups.count
         
     }
@@ -133,5 +134,20 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         self.viewModel.willDisplay(rowAt: indexPath)
+    }
+    
+    func setTableViewBackgroundView(tableView: UITableView) {
+        let emptyCollectionView: EmptyCollectionView = {
+            let emptyCollectionView = EmptyCollectionView(emptyType: .groupList, actionButtonTitle: nil)
+            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+            return emptyCollectionView
+        }()
+        tableView.backgroundView = self.viewModel.state.groups.isEmpty ? emptyCollectionView : nil
+        tableView.backgroundView = emptyCollectionView
+        if let backgroundView = tableView.backgroundView {
+            NSLayoutConstraint.activate([
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            ])
+        }
     }
 }

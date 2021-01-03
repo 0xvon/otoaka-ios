@@ -9,11 +9,15 @@ import UIKit
 
 public final class EmptyCollectionView: UIStackView {
     public enum EmptyType: String {
-        case feed = "Feedがまだありません。試しにバンドをフォローしてみましょう。"
-        case live = "Liveがまだありません。試しにバンドをフォローしてみましょう。"
-        case band = "Bandがまだありません。"
+        case feed = "Feed一覧がまだありません。ここにはフォローしているバンドのフィードが表示されます。試しにバンドをフォローしてみましょう。"
+        case feedComment = "コメントがまだありません。試しにコメントを投稿してみましょう。"
+        case live = "Live一覧がまだありません。ここにはフォローしているバンドのライブ予定が表示されます。試しにバンドをフォローしてみましょう。"
+        case group = "バンドがまだありません。他のバンドにこのアプリを教えてあげましょう。"
+        case groupList = "バンドがいません。"
+        case userList = "ユーザーがいません。"
         case chart = "Chartがまだありません。"
-        case ticket = "Ticketがまだありません。いきたいライブを探して予約しましょう。"
+        case request = "リクエストがまだありません。ここには他のバンドからの対バンリクエストが表示されます。試しに他のバンドにコンタクトを取ってみましょう。"
+        case ticket = "Ticketがまだありません。ここには取り置き予約したライブチケットが表示されます。いきたいライブを探して予約しましょう。"
     }
     
     private let titleLabel: UILabel = {
@@ -118,7 +122,7 @@ struct EmptyCollectionView_Previews: PreviewProvider {
         .background(Color.black)
         
         Group {
-            ViewWrapper(view: EmptyCollectionView(emptyType: .band, actionButtonTitle: nil))
+            ViewWrapper(view: EmptyCollectionView(emptyType: .group, actionButtonTitle: nil))
                 .previewLayout(.fixed(width: 320, height: 220))
         }
         .background(Color.black)
