@@ -10,10 +10,7 @@ import InternalDomain
 import UIKit
 
 public final class LiveDetailHeaderView: UIView {
-    public typealias Input = (
-        live: Live,
-        performers: [Group]
-    )
+    public typealias Input = Live
     
     private lazy var horizontalScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -56,8 +53,8 @@ public final class LiveDetailHeaderView: UIView {
     }
     
     public func update(input: Input) {
-        liveInformationView.update(input: input.live)
-        liveThumbnailView.loadImageAsynchronously(url: input.live.artworkURL)
+        liveInformationView.update(input: input)
+        liveThumbnailView.loadImageAsynchronously(url: input.artworkURL)
     }
     
     func bind() {}

@@ -210,6 +210,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .didGetLiveDetail(let liveDetail):
                 self.title = liveDetail.live.title
                 self.reserveTicketViewModel.didGetLiveDetail(ticket: liveDetail.ticket, participantsCount: liveDetail.participants)
+                headerView.update(input: liveDetail.live)
             case .updatePerformers(let performers):
                 let performersContents: [UIView] = performers.map { performer in
                     let cellContent = GroupBannerCell()
@@ -271,7 +272,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     func setupViews() {
-        headerView.update(input: (live: viewModel.state.live, performers: viewModel.state.live.performers))
+        headerView.update(input: viewModel.state.live)
     }
     
     func setupPerformersContents(arrangedSubviews: [UIView]) {
