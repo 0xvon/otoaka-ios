@@ -130,7 +130,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
     private lazy var profileImageTitle: UILabel = {
         let profileImageTitle = UILabel()
         profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
-        profileImageTitle.text = "プロフィール画像"
+        profileImageTitle.text = "サムネイル画像"
         profileImageTitle.textAlignment = .center
         profileImageTitle.font = Brand.font(for: .medium)
         profileImageTitle.textColor = Brand.color(for: .text(.primary))
@@ -142,12 +142,6 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         registerButton.layer.cornerRadius = 25
         registerButton.isEnabled = false
         return registerButton
-    }()
-
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM月dd日 HH:mm"
-        return dateFormatter
     }()
     
     let dependencyProvider: LoggedInDependencyProvider
