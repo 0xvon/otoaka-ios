@@ -107,27 +107,13 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 60 : 16
+        return 16
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        switch section {
-        case 0:
-            let view = UIView(
-                frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 32, height: 60))
-            let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 300, height: 40))
-            let titleView = TitleLabelView(
-                input: (
-                    title: "TICKETS", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary))
-                ))
-            titleBaseView.addSubview(titleView)
-            view.addSubview(titleBaseView)
-            return view
-        default:
-            let view = UIView()
-            view.backgroundColor = .clear
-            return view
-        }
+        let view = UIView()
+        view.backgroundColor = .clear
+        return view
     }
 
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
