@@ -18,6 +18,7 @@ public final class EmptyCollectionView: UIStackView {
         case chart = "Chartがまだありません。"
         case request = "リクエストがまだありません。ここには他のバンドからの対バンリクエストが表示されます。試しに他のバンドにコンタクトを取ってみましょう。"
         case ticket = "Ticketがまだありません。ここには取り置き予約したライブチケットが表示されます。いきたいライブを探して予約しましょう。"
+        case search = "検索結果はありません。"
     }
     
     private let titleLabel: UILabel = {

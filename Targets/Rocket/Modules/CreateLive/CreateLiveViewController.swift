@@ -79,14 +79,14 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
-        stackView.spacing = 48
+        stackView.spacing = 0
         return stackView
     }()
     private lazy var addPerformerButton: PrimaryButton = {
         let button = PrimaryButton(text: "対バン相手を追加する")
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 25
-        button.addTarget(self, action: #selector(addPartner(_:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addPerformerButtonTapped(_:)), for: .touchUpInside)
         button.isHidden = true
         return button
     }()
@@ -199,8 +199,20 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
                     self.present(alertController, animated: true, completion: nil)
                 }
-            case .didUpdatePerformers(let groups):
-                print(groups)
+            case .didUpdatePerformers(let performers):
+                performersStackView.arrangedSubviews.forEach {
+                    performersStackView.removeArrangedSubview($0)
+                    $0.removeFromSuperview()
+                }
+                performers.enumerated().forEach { (cellIndex, performer) in
+                    let cellContent = GroupBannerCell()
+                    cellContent.update(input: performer)
+                    cellContent.listen { [unowned self] in
+                        performerTapped(cellIndex: cellIndex)
+                    }
+                    performersStackView.addArrangedSubview(cellContent)
+                }
+                performersStackView.isHidden = performers.isEmpty
             case .didUpdateLiveStyle(let liveStyle):
                 switch liveStyle {
                 case .oneman(_):
@@ -421,12 +433,32 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         viewModel.didUpdateInputItems(title: title, hostGroup: hostGroupId, liveStyle: liveStyle, price: price, livehouse: livehouse)
     }
 
-    @objc private func addPartner(_ sender: Any) {
+    @objc private func addPerformerButtonTapped(_ sender: Any) {
         let vc = SelectPerformersViewController(dependencyProvider: dependencyProvider, input: viewModel.state.performers)
-        vc.listen { groups in
-            // TODO
+        vc.listen { [unowned self] group in
+            viewModel.didAddPerformer(performer: group)
         }
         present(vc, animated: true, completion: nil)
+    }
+    
+    private func performerTapped(cellIndex: Int) {
+        let alertController = UIAlertController(
+            title: "削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+
+        let acceptAction = UIAlertAction(
+            title: "OK", style: UIAlertAction.Style.default,
+            handler: { [unowned self] action in
+                viewModel.didRemovePerformer(performer: viewModel.state.performers[cellIndex])
+            })
+        let cancelAction = UIAlertAction(
+            title: "キャンセル", style: UIAlertAction.Style.cancel,
+            handler: { action in
+                print("close")
+            })
+        alertController.addAction(acceptAction)
+        alertController.addAction(cancelAction)
+
+        self.present(alertController, animated: true, completion: nil)
     }
 
     @objc private func selectProfileImage(_ sender: Any) {

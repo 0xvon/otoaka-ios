@@ -338,11 +338,11 @@ final class EditLiveViewController: UIViewController, Instantiable {
 
     @objc private func addPartner(_ sender: Any) {
         let vc = SelectPerformersViewController(dependencyProvider: dependencyProvider, input: self.partnerGroups)
-        vc.listen { groups in
-            self.partnerGroups = groups
+//        vc.listen { group in
+//            self.partnerGroups = groups
 //            let text = groups.map { $0.name }.joined(separator: ",")
 //            self.partnerInputView.setText(text: text)
-        }
+//        }
         present(vc, animated: true, completion: nil)
     }
 

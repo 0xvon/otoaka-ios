@@ -5,29 +5,44 @@
 //  Created by Masato TSUTSUMI on 2020/12/01.
 //
 
-import UIKit
+import Combine
 import Endpoint
-import AWSCognitoAuth
+import Foundation
+import InternalDomain
+import UIComponent
+import UIKit
 
 class SelectPerformersViewModel {
-    enum Output {
-        case paginate([Group])
-        case search([Group])
-        case error(Error)
+    struct State {
+        var selected: [Group]
+        var searchResult: [Group] = []
     }
+    
+    enum Output {
+        case didPaginate([Group])
+        case didSearch([Group])
+        case didSelectPerformer(Group)
+        case reportError(Error)
+    }
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    private(set) var state: State
 
-    let apiClient: APIClient
-    let s3Client: S3Client
-    let outputHandler: (Output) -> Void
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
     var searchGroupPaginationRequest: PaginationRequest<SearchGroup>? = nil
 
     init(
-        apiClient: APIClient, s3Client: S3Client, outputHander: @escaping (Output) -> Void
+        dependencyProvider: LoggedInDependencyProvider,
+        selected: [Group]
     ) {
-        self.apiClient = apiClient
-        self.s3Client = s3Client
-        self.outputHandler = outputHander
+        self.dependencyProvider = dependencyProvider
+        self.state = State(selected: selected)
+    }
+    
+    func didSelectPerformer(group: Group) {
+        outputSubject.send(.didSelectPerformer(group))
     }
     
     func searchGroup(query: String) {
@@ -35,14 +50,16 @@ class SelectPerformersViewModel {
         uri.term = query
         searchGroupPaginationRequest = PaginationRequest<SearchGroup>(apiClient: apiClient, uri: uri)
         
-        searchGroupPaginationRequest?.subscribe { result in
+        searchGroupPaginationRequest?.subscribe { [unowned self] result in
             switch result {
             case .initial(let res):
-                self.outputHandler(.search(res.items))
+                state.searchResult = res.items
+                outputSubject.send(.didSearch(res.items))
             case .next(let res):
-                self.outputHandler(.paginate(res.items))
+                state.searchResult += res.items
+                outputSubject.send(.didPaginate(res.items))
             case .error(let err):
-                self.outputHandler(.error(err))
+                outputSubject.send(.reportError(err))
             }
         }
         

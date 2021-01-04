@@ -30,6 +30,13 @@ class GroupBannerCell: UIView {
         label.sizeToFit()
         return label
     }()
+    private lazy var button: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
+        return button
+    }()
     
     init() {
         super.init(frame: .zero)
@@ -64,5 +71,22 @@ class GroupBannerCell: UIView {
             groupNameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -8),
             groupNameLabel.leftAnchor.constraint(equalTo: groupArtworkView.rightAnchor, constant: 8),
         ])
+        
+        addSubview(button)
+        NSLayoutConstraint.activate([
+            button.topAnchor.constraint(equalTo: topAnchor),
+            button.rightAnchor.constraint(equalTo: rightAnchor),
+            button.leftAnchor.constraint(equalTo: leftAnchor),
+            button.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+    }
+    
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
+        self.listener = listener
+    }
+    
+    @objc private func touchUpInside(_ sender: UIButton) {
+        self.listener()
     }
 }
