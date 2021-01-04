@@ -48,6 +48,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.largeTitleDisplayMode = .never
         setup()
     }
 

@@ -67,9 +67,7 @@ final class RootViewController: UITabBarController, Instantiable {
         let vc = RegistrationViewController(dependencyProvider: dependencyProvider) { [unowned self] in
             self.makeViewFromUserInfo()
         }
-        let nav = ModalNavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        nav.navigationBar.barTintColor = .clear
+        let nav = DismissionSubscribableNavigationController(rootViewController: vc)
         nav.subscribeDismission {
             self.checkSignupStatus()
         }
