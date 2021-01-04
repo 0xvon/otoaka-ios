@@ -193,7 +193,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                     let cancelAction = UIAlertAction(
                         title: "OK", style: UIAlertAction.Style.cancel,
                         handler: { action in
-//                            self.dismiss(animated: true, completion: nil)
+                            self.dismiss(animated: true, completion: nil)
                         })
                     alertController.addAction(cancelAction)
 
@@ -360,18 +360,6 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             endTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
-
-//        let openTimeLabel = UILabel()
-//        openTimeLabel.text = "開場時間"
-//        openTimeLabel.font = Brand.font(for: .medium)
-//        openTimeLabel.textColor = Brand.color(for: .text(.primary))
-//        openTimeLabel.textAlignment = .center
-//        openTimeLabel.translatesAutoresizingMaskIntoConstraints = false
-//        mainView.addSubview(openTimeLabel)
-
-
-
-//        restrictDatePickers()
         
         mainView.addArrangedSubview(thumbnailInputView)
         NSLayoutConstraint.activate([
@@ -468,18 +456,6 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             picker.delegate = self
             self.present(picker, animated: true, completion: nil)
         }
-    }
-
-    @objc private func openTimeChanged(_ sender: Any) {
-        viewModel.didUpdateDatePicker(pickerType: .openAt(Date()))
-    }
-
-    @objc private func startTimeChanged(_ sender: Any) {
-        
-    }
-
-    @objc private func endTimeChanged(_ sender: Any) {
-        
     }
 }
 
