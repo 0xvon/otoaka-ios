@@ -212,12 +212,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.reserveTicketViewModel.didGetLiveDetail(ticket: liveDetail.ticket, participantsCount: liveDetail.participants)
                 headerView.update(input: liveDetail.live)
             case .updatePerformers(let performers):
-                let performersContents: [UIView] = performers.map { performer in
-                    let cellContent = GroupBannerCell()
-                    cellContent.update(input: performer)
-                    return cellContent
-                }
-                self.setupPerformersContents(arrangedSubviews: performersContents)
+                self.setupPerformersContents(performers: performers)
             case .didGetDisplayType(let displayType):
                 self.setupFloatingItems(displayType: displayType)
             case .updateFeedSummary(.none):
@@ -275,14 +270,22 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         headerView.update(input: viewModel.state.live)
     }
     
-    func setupPerformersContents(arrangedSubviews: [UIView]) {
+    func setupPerformersContents(performers: [Group]) {
         performersCellWrapper.arrangedSubviews.forEach {
             performersCellWrapper.removeArrangedSubview($0)
             $0.removeFromSuperview()
         }
-        arrangedSubviews.forEach { performersCellWrapper.addArrangedSubview($0) }
-        performersCellWrapper.isHidden = arrangedSubviews.isEmpty
-        performersSectionHeader.isHidden = arrangedSubviews.isEmpty
+        
+        performers.enumerated().forEach { (cellIndex, performer) in
+            let cellContent = GroupBannerCell()
+            cellContent.update(input: performer)
+            cellContent.listen { [unowned self] in
+                groupBannerTapped(cellIndex: cellIndex)
+            }
+            performersCellWrapper.addArrangedSubview(cellContent)
+        }
+        performersCellWrapper.isHidden = performers.isEmpty
+        performersSectionHeader.isHidden = performers.isEmpty
     }
     
     private func setupFloatingItems(displayType: LiveDetailViewModel.DisplayType) {
@@ -326,4 +329,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
+    
+    private func groupBannerTapped(cellIndex: Int) {
+        let group = viewModel.state.live.performers[cellIndex]
+        viewModel.didSelectRow(at: .performers(group))
+    }
 }
