@@ -116,7 +116,7 @@ class LiveInformationView: UIView {
         NSLayoutConstraint.activate([
             dateBadgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
             dateBadgeView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
-            dateBadgeView.widthAnchor.constraint(equalToConstant: 160),
+            dateBadgeView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
             dateBadgeView.heightAnchor.constraint(equalToConstant: 30),
         ])
 
@@ -124,7 +124,7 @@ class LiveInformationView: UIView {
         NSLayoutConstraint.activate([
             mapBadgeView.bottomAnchor.constraint(equalTo: dateBadgeView.topAnchor, constant: -8),
             mapBadgeView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
-            mapBadgeView.widthAnchor.constraint(equalToConstant: 160),
+            mapBadgeView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
             mapBadgeView.heightAnchor.constraint(equalToConstant: 30),
         ])
     }
