@@ -95,14 +95,19 @@ final class RootViewController: UITabBarController, Instantiable {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let homeViewController = HomeViewController(
             dependencyProvider: loggedInProvider, input: ())
-        let bandVC = BrandNavigationController(rootViewController: homeViewController)
-        bandVC.tabBarItem = UITabBarItem(
+        let homeVC = BrandNavigationController(rootViewController: homeViewController)
+        homeVC.tabBarItem = UITabBarItem(
             title: "Home", image: UIImage(named: "musicIcon"),
             selectedImage: UIImage(named: "selectedMusicIcon"))
         homeViewController.signout {
             self.checkSignupStatus()
         }
-        
+        let groupVC = BrandNavigationController(
+            rootViewController: GroupViewController(dependencyProvider: loggedInProvider)
+        )
+        groupVC.tabBarItem = UITabBarItem(
+            title: "バンド", image: UIImage(systemName: "person.3"),
+            selectedImage: UIImage(systemName: "person.3.fill"))
         let searchViewCotnroller = SearchViewController(dependencyProvider: loggedInProvider)
         let searchVC = BrandNavigationController(rootViewController: searchViewCotnroller)
         searchVC.tabBarItem = UITabBarItem(
@@ -115,7 +120,7 @@ final class RootViewController: UITabBarController, Instantiable {
         ticketVC.tabBarItem = UITabBarItem(
             title: "Ticket", image: UIImage(named: "ticketIcon"),
             selectedImage: UIImage(named: "selectedTicketIcon"))
-        return [bandVC, ticketVC, searchVC]
+        return [homeVC, groupVC, ticketVC, searchVC]
     }
     private func promptAlertViewController(with message: String) {
         let alertController = UIAlertController(
