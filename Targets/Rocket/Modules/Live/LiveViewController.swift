@@ -145,9 +145,9 @@ extension LiveViewController {
         tableView.backgroundView = isDisplay ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
-                backgroundView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
-                backgroundView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -32),
-                backgroundView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 32),
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor, constant: -32),
+                backgroundView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             ])
         }
     }
