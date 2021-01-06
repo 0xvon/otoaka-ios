@@ -102,7 +102,7 @@ final class FeedViewController: UITableViewController {
                 self.dismiss(animated: true, completion: nil)
             case .searchGroup:
                 self.dismiss(animated: true, completion: nil)
-                self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
+                self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![1]
             }
         }
     }
