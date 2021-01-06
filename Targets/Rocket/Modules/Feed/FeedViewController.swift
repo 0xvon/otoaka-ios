@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import UserNotifications
+import SafariServices
 import UIComponent
 import DomainEntity
 import Combine
-import SafariServices
 
 final class FeedViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
@@ -60,6 +61,7 @@ final class FeedViewController: UITableViewController {
         ])
         
         bind()
+        requestNotification()
     }
     
     func bind() {
@@ -101,6 +103,28 @@ final class FeedViewController: UITableViewController {
             case .searchGroup:
                 self.dismiss(animated: true, completion: nil)
                 self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
+            }
+        }
+    }
+    
+    private func requestNotification() {
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+        center.requestAuthorization(options: [
+            .alert, .sound, .badge,
+        ]) {
+            granted, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                }
+                return
+            }
+            
+            if granted {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
             }
         }
     }
@@ -156,5 +180,11 @@ extension FeedViewController {
                 backgroundView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             ])
         }
+    }
+}
+
+extension FeedViewController: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.alert, .sound])
     }
 }
