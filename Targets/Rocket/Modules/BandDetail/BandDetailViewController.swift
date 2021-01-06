@@ -343,6 +343,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 url: URL(string: "https://twitter.com/\(twitterId)")!)
             safari.dismissButtonStyle = .close
             present(safari, animated: true, completion: nil)
+        } else {
+            showAlert(title: "Not Found", message: "このバンドにはTwitterアカウントが登録されていないのでメッセージを送ることができません")
         }
     }
 
