@@ -13,23 +13,23 @@ final class RootViewController: UITabBarController, Instantiable {
     typealias Input = Void
     var input: Input!
     private var shouldSetTabViewControllers = true
-
+    
     var dependencyProvider: DependencyProvider!
-
+    
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         super.init(nibName: nil, bundle: nil)
-
+        
         self.input = input
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         dependencyProvider.auth.delegate = self
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.tabBar.tintColor = Brand.color(for: .text(.primary))
@@ -73,7 +73,7 @@ final class RootViewController: UITabBarController, Instantiable {
         }
         self.present(nav, animated: true)
     }
-
+    
     func makeViewFromUserInfo() {
         dependencyProvider.apiClient.request(GetUserInfo.self) { [unowned self] result in
             switch result {
@@ -90,7 +90,7 @@ final class RootViewController: UITabBarController, Instantiable {
             }
         }
     }
-
+    
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let homeViewController = HomeViewController(
@@ -108,19 +108,13 @@ final class RootViewController: UITabBarController, Instantiable {
         groupVC.tabBarItem = UITabBarItem(
             title: "バンド", image: UIImage(systemName: "person.3"),
             selectedImage: UIImage(systemName: "person.3.fill"))
-        let searchViewCotnroller = SearchViewController(dependencyProvider: loggedInProvider)
-        let searchVC = BrandNavigationController(rootViewController: searchViewCotnroller)
-        searchVC.tabBarItem = UITabBarItem(
-            title: "Search", image: UIImage(named: "searchIcon"),
-            selectedImage: UIImage(named: "selectedSearchIcon"))
-
-        let ticketViewController = TicketViewController(
-            dependencyProvider: loggedInProvider, input: ())
-        let ticketVC = BrandNavigationController(rootViewController: ticketViewController)
-        ticketVC.tabBarItem = UITabBarItem(
-            title: "Ticket", image: UIImage(named: "ticketIcon"),
-            selectedImage: UIImage(named: "selectedTicketIcon"))
-        return [homeVC, groupVC, ticketVC, searchVC]
+        let liveVC = BrandNavigationController(rootViewController: LiveViewController(dependencyProvider: loggedInProvider))
+        liveVC.tabBarItem = UITabBarItem(
+            title: "ライブ",
+            image: UIImage(named: "guitarIcon"),
+            selectedImage: UIImage(named: "selectedGuitarIcon")
+        )
+        return [homeVC, groupVC, liveVC]
     }
     private func promptAlertViewController(with message: String) {
         let alertController = UIAlertController(

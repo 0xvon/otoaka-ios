@@ -5,37 +5,32 @@
 //  Created by Masato TSUTSUMI on 2020/10/20.
 //
 
-import Endpoint
 import UIKit
+import DomainEntity
+import UIComponent
+import Combine
 
-final class LiveViewController: UIViewController, Instantiable {
+final class LiveViewController: UITableViewController {
+    let dependencyProvider: LoggedInDependencyProvider
+    
+    lazy var searchResultController: SearchResultViewController = {
+        SearchResultViewController(dependencyProvider: self.dependencyProvider)
+    }()
+    lazy var searchController: UISearchController = {
+        let controller = BrandSearchController(searchResultsController: self.searchResultController)
+        controller.searchResultsUpdater = self
+        controller.delegate = self
+        controller.searchBar.delegate = self
+        controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
+        return controller
+    }()
+    
+    let viewModel: LiveViewModel
+    private var cancellables: [AnyCancellable] = []
 
-    typealias Input = User
-    var input: Input!
-
-    lazy var viewModel = LiveViewModel(
-        outputHander: { output in
-            switch output {
-            case .get(let lives):
-                self.lives = lives
-                self.liveTableView.reloadData()
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
-
-    var lives: [Live] = []
-    var dependencyProvider: LoggedInDependencyProvider!
-    @IBOutlet weak var liveTableView: UITableView!
-    @IBOutlet weak var liveSearchBar: UISearchBar!
-
-    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
+    init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
-        self.input = input
-
+        self.viewModel = LiveViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -45,85 +40,79 @@ final class LiveViewController: UIViewController, Instantiable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setup()
-        viewModel.get()
+        title = "ライブ"
+        view.backgroundColor = Brand.color(for: .background(.primary))
+        tableView.registerCellClass(LiveCell.self)
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+        refreshControl = BrandRefreshControl()
+        
+        bind()
     }
-
-    func setup() {
-        self.view.backgroundColor = Brand.color(for: .background(.primary))
-        self.view.tintColor = Brand.color(for: .text(.primary))
-
-        liveTableView.delegate = self
-        liveTableView.dataSource = self
-        liveTableView.registerCellClass(LiveCell.self)
-        liveTableView.backgroundColor = Brand.color(for: .background(.primary))
-
-        liveSearchBar.barTintColor = Brand.color(for: .background(.primary))
-        liveSearchBar.searchTextField.placeholder = "ライブを探す"
-        liveSearchBar.searchTextField.textColor = Brand.color(for: .text(.primary))
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        searchController.searchBar.showsScopeBar = true
+    }
+    
+    func bind() {
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .updateSearchResult(let input):
+                self.searchResultController.inject(input)
+            case .reloadData:
+                self.tableView.reloadData()
+            case .isRefreshing(let value):
+                if value {
+                    self.refreshControl?.beginRefreshing()
+                } else {
+                    self.refreshControl?.endRefreshing()
+                }
+            case .reportError(let error):
+                self.showAlert(title: "エラー", message: error.localizedDescription)
+            }
+        }.store(in: &cancellables)
+        
+        refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
+    }
+    
+    @objc private func refresh() {
+        guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
     }
 }
 
-extension LiveViewController: UITableViewDelegate, UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return self.lives.count
+extension LiveViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        viewModel.updateScope.send(selectedScope)
     }
+}
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+extension LiveViewController: UISearchControllerDelegate {
+    func willPresentSearchController(_ searchController: UISearchController) {
+        searchController.searchBar.showsScopeBar = false
     }
+    
+    func willDismissSearchController(_ searchController: UISearchController) {
+        searchController.searchBar.showsScopeBar = true
+    }
+}
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live: Live = self.lives[indexPath.section]
-        let cell: LiveCell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
-        cell.listen { [weak self] output in
-            switch output {
-            case .listenButtonTapped: self?.listenButtonTapped(cellIndex: indexPath.section)
-            case .buyTicketButtonTapped: self?.buyTicketButtonTapped(cellIndex: indexPath.section)
-            }
-        }
+extension LiveViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        viewModel.updateSearchQuery.send(searchController.searchBar.text)
+    }
+}
+
+extension LiveViewController {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let live = viewModel.lives[indexPath.row]
+        let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
         return cell
     }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return section == 0 ? 60 : 16
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.lives.count
     }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        switch section {
-        case 0:
-            let view = UIView(
-                frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 32, height: 60))
-            let titleBaseView = UIView(frame: CGRect(x: 16, y: 16, width: 300, height: 40))
-            let titleView = TitleLabelView(
-                input: (title: "LIVE", font: Brand.font(for: .xlargeStrong), color: Brand.color(for: .text(.primary)))
-            )
-            titleBaseView.addSubview(titleView)
-            view.addSubview(titleBaseView)
-            return view
-        default:
-            let view = UIView()
-            view.backgroundColor = .clear
-            return view
-        }
-    }
-
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return .leastNonzeroMagnitude
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = self.lives[indexPath.section]
-        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
-        self.navigationController?.pushViewController(vc, animated: true)
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-
-    private func listenButtonTapped(cellIndex: Int) {
-        print("listen \(cellIndex) music")
-    }
-
-    private func buyTicketButtonTapped(cellIndex: Int) {
-        print("buy \(cellIndex) ticket")
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        viewModel.willDisplayCell.send(indexPath)
     }
 }
