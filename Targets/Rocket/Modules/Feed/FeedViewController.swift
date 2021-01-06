@@ -13,6 +13,22 @@ import SafariServices
 
 final class FeedViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
+    
+    lazy var icon: UIButton = {
+        let icon: UIButton = UIButton(type: .custom)
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        icon.layer.cornerRadius = 20
+        icon.clipsToBounds = true
+        icon.setImage(UIImage(named: "edit"), for: .normal)
+        icon.addTarget(self, action: #selector(iconTapped(_:)), for: .touchUpInside)
+        return icon
+    }()
+    
+    lazy var iconMenu: UIBarButtonItem = {
+        let iconMenu = UIBarButtonItem(customView: self.icon)
+        return iconMenu
+    }()
 
     let viewModel: FeedViewModel
     private var cancellables: [AnyCancellable] = []
@@ -36,6 +52,12 @@ final class FeedViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.registerCellClass(ArtistFeedCell.self)
         refreshControl = BrandRefreshControl()
+        
+        navigationItem.leftBarButtonItem = iconMenu
+        NSLayoutConstraint.activate([
+            iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
+            iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
+        ])
         
         bind()
     }
@@ -64,6 +86,28 @@ final class FeedViewController: UITableViewController {
     @objc private func refresh() {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
         viewModel.refresh.send(())
+    }
+    
+    @objc private func iconTapped(_ sender: Any) {
+        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
+        present(vc, animated: true, completion: nil)
+        vc.listen { [unowned self] output in
+            switch output {
+            case .signout:
+                self.dismiss(animated: true, completion: nil)
+                self.listener()
+            case .editUser:
+                self.dismiss(animated: true, completion: nil)
+            case .searchGroup:
+                self.dismiss(animated: true, completion: nil)
+                self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
+            }
+        }
+    }
+    
+    private var listener: () -> Void = {}
+    func signout(_ listener: @escaping () -> Void) {
+        self.listener = listener
     }
 }
 
