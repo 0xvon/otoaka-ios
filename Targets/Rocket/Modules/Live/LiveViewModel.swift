@@ -77,8 +77,7 @@ final class LiveViewModel {
                 case .reserved:
                     getReservedPagination.refresh()
                 }
-            }
-            .store(in: &cancellables)
+            }.store(in: &cancellables)
         
         willDisplayCell.combineLatest(lives)
             .filter { indexPath, lives in indexPath.row + 25 > lives.count }

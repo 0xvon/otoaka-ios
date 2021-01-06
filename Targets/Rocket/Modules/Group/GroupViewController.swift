@@ -41,7 +41,11 @@ final class GroupViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "バンド"
+        
         view.backgroundColor = Brand.color(for: .background(.primary))
+        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
         tableView.register(UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -59,9 +63,11 @@ final class GroupViewController: UITableViewController {
             case .updateSearchResult(let input):
                 self.searchResultController.inject(input)
             case .reloadData:
+                self.setTableViewBackgroundView(isDisplay: viewModel.groups.isEmpty)
                 self.tableView.reloadData()
             case .isRefreshing(let value):
                 if value {
+                    self.setTableViewBackgroundView(isDisplay: false)
                     self.refreshControl?.beginRefreshing()
                 } else {
                     self.refreshControl?.endRefreshing()
@@ -108,7 +114,38 @@ extension GroupViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.groups.count
     }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 250
+    }
+    
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         viewModel.willDisplayCell.send(indexPath)
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let group = viewModel.groups[indexPath.row]
+        let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+        self.navigationController?.pushViewController(vc, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func setTableViewBackgroundView(isDisplay: Bool = true) {
+        let emptyCollectionView: EmptyCollectionView = {
+            let emptyCollectionView = searchController.searchBar.selectedScopeButtonIndex == 0 ? EmptyCollectionView(emptyType: .group, actionButtonTitle: nil) : EmptyCollectionView(emptyType: .followingGroup, actionButtonTitle: "バンドを探す")
+            emptyCollectionView.listen { [unowned self] in
+                searchController.searchBar.becomeFirstResponder()
+            }
+            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+            return emptyCollectionView
+        }()
+        tableView.backgroundView = isDisplay ? emptyCollectionView : nil
+        if let backgroundView = tableView.backgroundView {
+            NSLayoutConstraint.activate([
+                backgroundView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
+                backgroundView.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -32),
+                backgroundView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            ])
+        }
     }
 }
