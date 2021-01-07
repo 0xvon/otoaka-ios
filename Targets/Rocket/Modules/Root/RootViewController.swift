@@ -14,7 +14,7 @@ final class RootViewController: UITabBarController, Instantiable {
     var input: Input!
     private var shouldSetTabViewControllers = true
     
-    var dependencyProvider: DependencyProvider!
+    let dependencyProvider: DependencyProvider
     
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -35,8 +35,6 @@ final class RootViewController: UITabBarController, Instantiable {
         self.tabBar.tintColor = Brand.color(for: .text(.primary))
         self.tabBar.barTintColor = Brand.color(for: .background(.primary))
         self.tabBar.backgroundColor = Brand.color(for: .background(.primary))
-        self.navigationController?.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        self.navigationController?.navigationBar.barTintColor = .clear
         checkSignupStatus()
     }
     
@@ -49,7 +47,7 @@ final class RootViewController: UITabBarController, Instantiable {
                         makeViewFromUserInfo()
                     } else {
                         DispatchQueue.main.async {
-                            makeAuth()
+                            presentRegistrationScreen()
                         }
                     }
                 case .failure(let error):
@@ -59,11 +57,11 @@ final class RootViewController: UITabBarController, Instantiable {
                 }
             }
         } else {
-            makeAuth()
+            presentRegistrationScreen()
         }
     }
     
-    func makeAuth() {
+    private func presentRegistrationScreen() {
         let vc = RegistrationViewController(dependencyProvider: dependencyProvider) { [unowned self] in
             self.makeViewFromUserInfo()
         }
@@ -97,9 +95,6 @@ final class RootViewController: UITabBarController, Instantiable {
         homeVC.tabBarItem = UITabBarItem(
             title: "ホーム", image: UIImage(named: "musicIcon"),
             selectedImage: UIImage(named: "selectedMusicIcon"))
-//        homeViewController.signout {
-//            self.checkSignupStatus()
-//        }
         let groupVC = BrandNavigationController(
             rootViewController: GroupViewController(dependencyProvider: loggedInProvider)
         )
@@ -112,7 +107,25 @@ final class RootViewController: UITabBarController, Instantiable {
             image: UIImage(named: "guitarIcon"),
             selectedImage: UIImage(named: "selectedGuitarIcon")
         )
-        return [homeVC, groupVC, liveVC]
+        let accountVC = AccountViewController(dependencyProvider: loggedInProvider, input: ())
+        let accountNav = BrandNavigationController(
+            rootViewController: accountVC
+        )
+        accountNav.tabBarItem = UITabBarItem(
+            title: "アカウント設定",
+            image: UIImage(systemName: "person.crop.circle"),
+            selectedImage: UIImage(systemName: "person.crop.circle.fill")
+        )
+        accountVC.listen { [unowned self] output in
+            switch output {
+            case .signout:
+                self.checkSignupStatus()
+            case .editUser: break
+            case .searchGroup:
+                self.selectedViewController = groupVC
+            }
+        }
+        return [homeVC, groupVC, liveVC, accountNav]
     }
     private func promptAlertViewController(with message: String) {
         let alertController = UIAlertController(
