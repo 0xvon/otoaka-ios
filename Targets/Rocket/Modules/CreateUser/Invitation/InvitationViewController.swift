@@ -53,10 +53,6 @@ final class InvitationViewController: UIViewController, Instantiable {
         setup()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-    }
-
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
 
