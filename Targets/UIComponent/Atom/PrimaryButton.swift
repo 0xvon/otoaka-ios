@@ -20,12 +20,14 @@ public final class PrimaryButton: UIButton {
     }
 
     func setup() {
-        backgroundColor = Brand.color(for: .background(.button))
         layer.cornerRadius = bounds.height / 2
         clipsToBounds = true
         addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
 
         titleLabel?.font = Brand.font(for: .largeStrong)
+
+        setBackgroundImage(Brand.color(for: .background(.button)).image(), for: .normal)
+        setBackgroundImage(Brand.color(for: .background(.cellSelected)).image(), for: .highlighted)
         setTitleColor(Brand.color(for: .text(.button)), for: .normal)
         setTitleColor(Brand.color(for: .text(.button)).pressed(), for: .highlighted)
         imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
@@ -38,6 +40,15 @@ public final class PrimaryButton: UIButton {
     private var listener: () -> Void = {}
     public func listen(_ listener: @escaping () -> Void) {
         self.listener = listener
+    }
+}
+
+fileprivate extension UIColor {
+    func image(_ size: CGSize = CGSize(width: 1, height: 1)) -> UIImage {
+        return UIGraphicsImageRenderer(size: size).image { context in
+            self.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
     }
 }
 
