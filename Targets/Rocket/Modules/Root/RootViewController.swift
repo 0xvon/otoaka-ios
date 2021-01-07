@@ -81,7 +81,7 @@ final class RootViewController: UITabBarController, Instantiable {
                 DispatchQueue.main.async {
                     guard self.shouldSetTabViewControllers else { return }
                     self.shouldSetTabViewControllers = false
-                    self.setViewControllers(instantiateTabs(with: user), animated: true)
+                    self.setViewControllers(instantiateTabs(with: user), animated: false)
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
