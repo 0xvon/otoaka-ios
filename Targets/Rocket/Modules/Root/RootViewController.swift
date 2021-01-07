@@ -11,31 +11,36 @@ import UIKit
 
 final class RootViewController: UITabBarController, Instantiable {
     typealias Input = Void
-    var input: Input!
-    private var shouldSetTabViewControllers = true
-    
+
     let dependencyProvider: DependencyProvider
-    
+    private var isFirstViewDidAppear = true
+
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         super.init(nibName: nil, bundle: nil)
-        
-        self.input = input
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        dependencyProvider.auth.delegate = self
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.tabBar.tintColor = Brand.color(for: .text(.primary))
         self.tabBar.barTintColor = Brand.color(for: .background(.primary))
         self.tabBar.backgroundColor = Brand.color(for: .background(.primary))
-        checkSignupStatus()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        dependencyProvider.auth.delegate = self
+        if isFirstViewDidAppear {
+            isFirstViewDidAppear = false
+            checkSignupStatus()
+        }
     }
     
     func checkSignupStatus() {
@@ -77,8 +82,6 @@ final class RootViewController: UITabBarController, Instantiable {
             switch result {
             case .success(let user):
                 DispatchQueue.main.async {
-                    guard self.shouldSetTabViewControllers else { return }
-                    self.shouldSetTabViewControllers = false
                     self.setViewControllers(instantiateTabs(with: user), animated: false)
                 }
             case .failure(let error):
