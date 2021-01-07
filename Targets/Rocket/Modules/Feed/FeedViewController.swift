@@ -50,7 +50,6 @@ final class FeedViewController: UITableViewController {
                 self.setTableViewBackgroundView(isDisplay: self.viewModel.feeds.isEmpty)
             case .isRefreshing(let value):
                 if value {
-                    self.refreshControl?.beginRefreshing()
                     self.setTableViewBackgroundView(isDisplay: false)
                 } else {
                     self.refreshControl?.endRefreshing()
@@ -65,6 +64,7 @@ final class FeedViewController: UITableViewController {
     
     @objc private func refresh() {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
+        self.refreshControl?.beginRefreshing()
         viewModel.refresh.send(())
     }
     
