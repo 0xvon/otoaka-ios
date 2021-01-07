@@ -147,7 +147,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didCreateGroup(_):
-                self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
             case .didValidateYoutubeChannelId(let isValid):
                 if !isValid {
                     self.showAlert(title: "YouTube Channel IDエラー", message: "入力された値が正しくありません")

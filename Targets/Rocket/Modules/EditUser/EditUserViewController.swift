@@ -137,7 +137,7 @@ final class EditUserViewController: UIViewController, Instantiable {
             switch output {
             case .didEditUser(_):
                 self.listener()
-                self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
             case .didGetUserInfo(let user):
                 self.update(user: user)
             case .didInjectRole(let role):

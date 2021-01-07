@@ -133,7 +133,7 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     
     func didSearchButtonTapped() {
         self.listener()
-        self.dismiss(animated: true, completion: nil)
+        self.navigationController?.popToRootViewController(animated: true)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

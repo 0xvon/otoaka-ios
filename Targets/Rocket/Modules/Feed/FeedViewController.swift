@@ -92,7 +92,8 @@ final class FeedViewController: UITableViewController {
     
     @objc private func iconTapped(_ sender: Any) {
         let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
-        present(vc, animated: true, completion: nil)
+        let nav = BrandNavigationController(rootViewController: vc)
+        present(nav, animated: true, completion: nil)
         vc.listen { [unowned self] output in
             switch output {
             case .signout:

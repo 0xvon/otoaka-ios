@@ -16,13 +16,45 @@ final class AccountViewController: UIViewController, Instantiable {
     var items: [AccountSettingItem] = []
     var pendingRequestCount = 0
 
-    private var tableView: UITableView!
-    private var profileSettingItem: AccountSettingItem!
-    private var seeRequestsItem: AccountSettingItem!
-    private var createBandItem: AccountSettingItem!
-    private var inputInvitationItem: AccountSettingItem!
-    private var membershipItem: AccountSettingItem!
-    private var logoutItem: AccountSettingItem!
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .clear
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.separatorColor = Brand.color(for: .background(.cellSelected))
+        tableView.register(
+            UINib(nibName: "AccountCell", bundle: nil), forCellReuseIdentifier: "AccountCell")
+        return tableView
+    }()
+    private lazy var profileSettingItem: AccountSettingItem = {
+        return AccountSettingItem(
+            title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile,
+            hasNotification: false)
+    }()
+    private lazy var seeRequestsItem: AccountSettingItem = {
+        return AccountSettingItem(
+            title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
+            hasNotification: self.pendingRequestCount > 0)
+    }()
+    private lazy var createBandItem: AccountSettingItem = {
+        AccountSettingItem(
+            title: "新規バンド作成", image: UIImage(named: "selectedGuitarIcon"), action: self.createBand, hasNotification: false)
+    }()
+    private lazy var inputInvitationItem: AccountSettingItem = {
+        AccountSettingItem(
+            title: "招待コードを入力してバンドに参加", image: UIImage(named: "selectedGuitarIcon"), action: self.joinBand, hasNotification: false)
+    }()
+    private lazy var membershipItem: AccountSettingItem = {
+        AccountSettingItem(
+            title: "所属バンド一覧", image: UIImage(named: "people"), action: self.memberships, hasNotification: false)
+    }()
+    private lazy var logoutItem: AccountSettingItem = {
+        AccountSettingItem(
+            title: "ログアウト", image: UIImage(named: "logout"), action: self.logout,
+            hasNotification: false)
+    }()
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -49,7 +81,7 @@ final class AccountViewController: UIViewController, Instantiable {
             case .getRequestCount(let count):
                 DispatchQueue.main.async {
                     self.pendingRequestCount = count
-                    self.seeRequestsItem?.hasNotification = count > 0
+                    self.seeRequestsItem.hasNotification = count > 0
                     self.tableView.reloadData()
                 }
             case .error(let error):
@@ -61,48 +93,19 @@ final class AccountViewController: UIViewController, Instantiable {
     )
 
     func setup() {
-        self.view.translatesAutoresizingMaskIntoConstraints = false
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
         
-        profileSettingItem = {
-            return AccountSettingItem(
-                title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile,
-                hasNotification: false)
-        }()
-        seeRequestsItem = AccountSettingItem(
-            title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
-            hasNotification: self.pendingRequestCount > 0)
-        createBandItem = AccountSettingItem(
-            title: "新規バンド作成", image: UIImage(named: "selectedGuitarIcon"), action: self.createBand, hasNotification: false)
-        inputInvitationItem = AccountSettingItem(
-            title: "招待コードを入力してバンドに参加", image: UIImage(named: "selectedGuitarIcon"), action: self.joinBand, hasNotification: false)
-        membershipItem = AccountSettingItem(
-            title: "所属バンド一覧", image: UIImage(named: "people"), action: self.memberships, hasNotification: false)
-        logoutItem = AccountSettingItem(
-            title: "ログアウト", image: UIImage(named: "logout"), action: self.logout,
-            hasNotification: false)
-
+        title = "アカウント設定"
         setAccountSetting()
         viewModel.getPerformanceRequest()
-
-        self.view.backgroundColor = Brand.color(for: .background(.primary))
-        tableView = UITableView()
-        tableView.backgroundColor = .clear
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.tableFooterView = UIView(frame: .zero)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.separatorColor = Brand.color(for: .background(.cellSelected))
-        tableView.register(
-            UINib(nibName: "AccountCell", bundle: nil), forCellReuseIdentifier: "AccountCell")
+        
         self.view.addSubview(tableView)
-
-        let constraints = [
+        NSLayoutConstraint.activate([
             tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
             tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
             tableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 48),
             tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-        ]
-        NSLayoutConstraint.activate(constraints)
+        ])
     }
 
     private func setAccountSetting() {
@@ -126,44 +129,33 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func setProfile() {
         let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
-        vc.listen {
+        vc.listen { [unowned self] in
             self.listener(.editUser)
         }
-        present(vc, animated: true, completion: nil)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
-        vc.listen {
+        vc.listen { [unowned self] in
             self.listener(.searchGroup)
         }
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        nav.navigationBar.barTintColor = .clear
-        present(nav, animated: true, completion: nil)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func createBand() {
         let vc = CreateBandViewController(dependencyProvider: dependencyProvider, input: ())
-        present(vc, animated: true, completion: nil)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
     private func memberships() {
         let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .memberships(dependencyProvider.user.id))
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        nav.navigationBar.barTintColor = .clear
-        
-        present(nav, animated: true, completion: nil)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func joinBand() {
         let vc = InvitationViewController(dependencyProvider: dependencyProvider, input: ())
-        let nav = UINavigationController(rootViewController: vc)
-        nav.navigationBar.tintColor = Brand.color(for: .text(.primary))
-        nav.navigationBar.barTintColor = .clear
-        
-        present(nav, animated: true, completion: nil)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
     private func logout() {

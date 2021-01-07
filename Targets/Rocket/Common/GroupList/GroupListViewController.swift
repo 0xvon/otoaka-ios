@@ -12,7 +12,6 @@ import Combine
 final class GroupListViewController: UIViewController, Instantiable {
     typealias Input = GroupListViewModel.Input
 
-
     let dependencyProvider: LoggedInDependencyProvider
     private var groupTableView: UITableView!
 
