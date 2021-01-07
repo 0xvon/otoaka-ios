@@ -159,8 +159,12 @@ final class AccountViewController: UIViewController, Instantiable {
     }
 
     private func logout() {
-        dependencyProvider.auth.signOutLocally()
-        self.listener(.signout)
+        dependencyProvider.auth.signOut(self) { error in
+            if let error = error {
+                self.showAlert(title: "エラー", message: String(describing: error))
+            }
+            self.listener(.signout)
+        }
     }
     
     enum ListenerOutput {
