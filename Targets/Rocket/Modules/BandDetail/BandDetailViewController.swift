@@ -309,8 +309,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     private func showInviteCode(invitationCode: String) {
+        UIPasteboard.general.string = invitationCode
         let alertController = UIAlertController(
-            title: "招待コード", message: nil, preferredStyle: UIAlertController.Style.alert)
+            title: "招待コード", message: "コピーしました", preferredStyle: UIAlertController.Style.alert)
 
         let cancelAction = UIAlertAction(
             title: "OK", style: UIAlertAction.Style.cancel,
