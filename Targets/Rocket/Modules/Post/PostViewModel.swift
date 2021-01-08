@@ -8,30 +8,69 @@
 import UIKit
 import Endpoint
 import AWSCognitoAuth
+import Photos
+import PhotosUI
+import AVKit
+import Combine
+import InternalDomain
 
 class PostViewModel {
-    enum Output {
-        case post(ArtistFeed)
-        case error(Error)
+    enum PostType {
+        case movie(URL, PHAsset?)
+        case youtube(URL)
+        case spotify(URL)
     }
-
-    let apiClient: APIClient
-    let s3Client: S3Client
-    let user: User
-    let outputHandler: (Output) -> Void
+    
+    struct State {
+        var post: PostType?
+        var text: String?
+        let maxLength: Int = 140
+    }
+    
+    enum Output {
+        case didPostArtistFeed(ArtistFeed)
+        case updateSubmittableState(Bool)
+        case didGetThumbnail(URL)
+        case reportError(Error)
+    }
+    
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    private(set) var state: State
+    
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
     init(
-        apiClient: APIClient, s3Client: S3Client, user: User,
-        outputHander: @escaping (Output) -> Void
+        dependencyProvider: LoggedInDependencyProvider
     ) {
-        self.apiClient = apiClient
-        self.s3Client = s3Client
-        self.user = user
-        self.outputHandler = outputHander
+        self.dependencyProvider = dependencyProvider
+        self.state = State()
+    }
+    
+    func didUpdateInputText(text: String?) {
+        self.state.text = text
+        
+        outputSubject.send(.updateSubmittableState((text != nil && state.post != nil)))
+    }
+    
+    func didUpdatePost(post: PostType?) {
+        self.state.post = post
+        
+        outputSubject.send(.updateSubmittableState((state.text != nil && post != nil)))
+    }
+    
+    func getYouTubeThumbnail(url: String) {
+        let youTubeClient = YouTubeClient(url: url)
+        guard let thumbnail = youTubeClient.getThumbnailUrl() else { return }
+        outputSubject.send(.didGetThumbnail(thumbnail))
     }
 
-    func post(postType: PostViewController.PostType, text: String) {
-        switch postType {
+    func post() {
+        outputSubject.send(.updateSubmittableState(false))
+        guard let text = state.text else { return }
+        guard let post = state.post else { return }
+        switch post {
         case .movie(_, _):
             break
 //            if let url = url, let asset = asset {
@@ -45,18 +84,25 @@ class PostViewModel {
 //                    self.outputHandler(.post)
 //                }
 //            }
-        case .spotify(let url):
-            print(url!)
+        case .spotify(_):
+            break
         case .youtube(let url):
-            let request = CreateArtistFeed.Request(text: text, feedType: .youtube(url!))
-            apiClient.request(CreateArtistFeed.self, request: request) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.post(res))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
+            let request = CreateArtistFeed.Request(text: text, feedType: .youtube(url))
+            apiClient.request(CreateArtistFeed.self, request: request) { [unowned self] result in
+                self.updateState(with: result)
             }
+        }
+    }
+    
+    private func updateState(with result: Result<ArtistFeed, Error>) {
+        outputSubject.send(.updateSubmittableState(true))
+        switch result {
+        case .success(let feed):
+            outputSubject.send(.updateSubmittableState(true))
+            outputSubject.send(.didPostArtistFeed(feed))
+        case .failure(let error):
+            outputSubject.send(.updateSubmittableState(true))
+            outputSubject.send(.reportError(error))
         }
     }
 }
