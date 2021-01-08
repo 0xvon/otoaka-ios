@@ -19,7 +19,7 @@ public final class LoadingCollectionView: UIActivityIndicatorView {
     }
 
     func setup() {
-        backgroundColor = Brand.color(for: .background(.primary))
+        backgroundColor = .clear
         color = Brand.color(for: .text(.primary))
     }
 }

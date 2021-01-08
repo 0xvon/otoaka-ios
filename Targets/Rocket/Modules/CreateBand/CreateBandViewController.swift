@@ -116,6 +116,11 @@ final class CreateBandViewController: UIViewController, Instantiable {
         registerButton.isEnabled = false
         return registerButton
     }()
+    private lazy var activityIndicator: LoadingCollectionView = {
+        let activityIndicator = LoadingCollectionView()
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
     
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: CreateBandViewModel
@@ -151,9 +156,19 @@ final class CreateBandViewController: UIViewController, Instantiable {
             case .didValidateYoutubeChannelId(let isValid):
                 if !isValid {
                     self.showAlert(title: "YouTube Channel IDエラー", message: "入力された値が正しくありません")
+                    self.youTubeIdInputView.setText(text: "")
                 }
-            case .updateSubmittableState(let isSubmittable):
-                self.registerButton.isEnabled = isSubmittable
+            case .updateSubmittableState(let state):
+                switch state {
+                case .completed:
+                    self.registerButton.isEnabled = false
+                    self.activityIndicator.stopAnimating()
+                case .editting(let submittable):
+                    self.registerButton.isEnabled = submittable
+                case .loading:
+                    self.registerButton.isEnabled = false
+                    self.activityIndicator.startAnimating()
+                }
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
             }
@@ -293,6 +308,12 @@ final class CreateBandViewController: UIViewController, Instantiable {
         mainView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
             bottomSpacer.heightAnchor.constraint(equalToConstant: 414),
+        ])
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        NSLayoutConstraint.activate([
+            activityIndicator.heightAnchor.constraint(equalToConstant: 40),
+            activityIndicator.widthAnchor.constraint(equalToConstant: 40),
         ])
         
         displayNameInputView.focus()
