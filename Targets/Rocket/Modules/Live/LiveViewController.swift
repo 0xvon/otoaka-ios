@@ -69,7 +69,6 @@ final class LiveViewController: UITableViewController {
             case .isRefreshing(let value):
                 if value {
                     self.setTableViewBackgroundView(isDisplay: false)
-                    self.refreshControl?.beginRefreshing()
                 } else {
                     self.refreshControl?.endRefreshing()
                 }
@@ -83,6 +82,7 @@ final class LiveViewController: UITableViewController {
     
     @objc private func refresh() {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
+        self.refreshControl?.beginRefreshing()
         viewModel.refresh.send(())
     }
 }
