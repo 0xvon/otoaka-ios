@@ -392,7 +392,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
-            bottomSpacer.heightAnchor.constraint(equalToConstant: 64),
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 414),
         ])
         
         liveTitleInputView.focus()
