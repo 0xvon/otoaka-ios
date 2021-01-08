@@ -8,11 +8,13 @@
 import DomainEntity
 import InternalDomain
 import UIKit
+import ImagePipeline
 
 public final class BandDetailHeaderView: UIView {
     public typealias Input = (
         group: DomainEntity.Group,
-        groupItem: ChannelDetail.ChannelItem?
+        groupItem: ChannelDetail.ChannelItem?,
+        imagePipeline: ImagePipeline
     )
 
     private lazy var horizontalScrollView: UIScrollView = {
@@ -81,7 +83,9 @@ public final class BandDetailHeaderView: UIView {
         if let groupItem = input.groupItem {
             trackInformationView.update(input: groupItem)
         }
-        bandImageView.loadImageAsynchronously(url: input.group.artworkURL)
+        if let artworkURL = input.group.artworkURL {
+            input.imagePipeline.loadImage(artworkURL, into: bandImageView)
+        }
         biographyTextView.text = input.group.biography
     }
 

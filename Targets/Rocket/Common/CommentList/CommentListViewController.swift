@@ -201,7 +201,11 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
             return view
         }
         let comment = self.comments[indexPath.section]
-        let cell = tableView.dequeueReusableCell(CommentCell.self, input: comment, for: indexPath)
+        let cell = tableView.dequeueReusableCell(
+            CommentCell.self,
+            input: (comment: comment, imagePipeline: dependencyProvider.imagePipeline),
+            for: indexPath
+        )
         return cell
     }
 

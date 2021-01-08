@@ -208,7 +208,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 )
                 self.setupFloatingItems(displayType: displayType)
             case let .didGetChart(group, item):
-                headerView.update(input: (group: group, groupItem: item))
+                headerView.update(input: (group: group, groupItem: item, imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
             case .updateLiveSummary(.none):
                 self.liveSectionHeader.isHidden = true
@@ -285,7 +285,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func setupViews() {
-        headerView.update(input: (group: viewModel.state.group, groupItem: nil))
+        headerView.update(input: (group: viewModel.state.group, groupItem: nil, imagePipeline: dependencyProvider.imagePipeline))
     }
 
     private func setupFloatingItems(displayType: BandDetailViewModel.DisplayType) {

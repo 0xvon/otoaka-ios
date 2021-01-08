@@ -280,7 +280,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         performers.enumerated().forEach { (cellIndex, performer) in
             let cellContent = GroupBannerCell()
-            cellContent.update(input: performer)
+            cellContent.update(input: (group: performer, imagePipeline: dependencyProvider.imagePipeline))
             cellContent.listen { [unowned self] in
                 groupBannerTapped(cellIndex: cellIndex)
             }

@@ -7,10 +7,11 @@
 
 import DomainEntity
 import UIKit
+import ImagePipeline
 
 class GroupBannerCell: UIView {
 
-    typealias Input = Group
+    typealias Input = (group: Group, imagePipeline: ImagePipeline)
     private lazy var groupArtworkView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -51,8 +52,10 @@ class GroupBannerCell: UIView {
     }
     
     func update(input: Input) {
-        groupArtworkView.loadImageAsynchronously(url: input.artworkURL)
-        groupNameLabel.text = input.name
+        if let artworkURL = input.group.artworkURL {
+            input.imagePipeline.loadImage(artworkURL, into: groupArtworkView)
+        }
+        groupNameLabel.text = input.group.name
     }
 
     func setup() {

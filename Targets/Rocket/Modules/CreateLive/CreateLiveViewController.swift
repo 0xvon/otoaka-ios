@@ -206,7 +206,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                 }
                 performers.enumerated().forEach { (cellIndex, performer) in
                     let cellContent = GroupBannerCell()
-                    cellContent.update(input: performer)
+                    cellContent.update(input: (group: performer, imagePipeline: dependencyProvider.imagePipeline))
                     cellContent.listen { [unowned self] in
                         performerTapped(cellIndex: cellIndex)
                     }

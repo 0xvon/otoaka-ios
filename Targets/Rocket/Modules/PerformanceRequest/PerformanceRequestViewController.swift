@@ -134,7 +134,10 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let request = self.requests[indexPath.section]
-        let cell = tableView.dequeueReusableCell(PerformanceRequestCell.self, input: request, for: indexPath)
+        let cell = tableView.dequeueReusableCell(
+            PerformanceRequestCell.self, input: (request: request, imagePipeline: dependencyProvider.imagePipeline),
+            for: indexPath
+        )
         cell.jumbToBandPage { [weak self] in
             self?.viewBandPage(cellIndex: indexPath.section)
         }

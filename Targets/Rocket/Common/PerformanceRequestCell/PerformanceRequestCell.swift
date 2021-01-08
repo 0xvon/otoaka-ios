@@ -7,12 +7,12 @@
 
 import Endpoint
 import UIKit
+import ImagePipeline
 
 class PerformanceRequestCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "PerformanceRequestCell" }
 
-    typealias Input = PerformanceRequest
-    var input: Input!
+    typealias Input = (request: PerformanceRequest, imagePipeline: ImagePipeline)
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM月dd日 HH:mm"
@@ -34,41 +34,18 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
     }
 
     func inject(input: Input) {
-        self.input = input
         setup()
-    }
+        let imagePipeline = input.imagePipeline
+        let input = input.request
 
-    func setup() {
-        self.backgroundColor = .clear
-        self.layer.borderWidth = 1
-        self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-        self.layer.cornerRadius = 10
-
-        liveArtworkImageView.loadImageAsynchronously(url: input.live.artworkURL)
-        liveArtworkImageView.contentMode = .scaleAspectFill
-        liveArtworkImageView.layer.opacity = 0.6
-        liveArtworkImageView.layer.cornerRadius = 10
-        liveArtworkImageView.clipsToBounds = true
-
-        bandImageView.loadImageAsynchronously(url: input.live.hostGroup.artworkURL)
-        bandImageView.contentMode = .scaleAspectFill
-        bandImageView.layer.cornerRadius = 30
-        bandImageView.clipsToBounds = true
-
+        if let liveArtworkURL = input.live.artworkURL {
+            imagePipeline.loadImage(liveArtworkURL, into: liveArtworkImageView)
+        }
+        if let hostGroupArtworkURL = input.live.hostGroup.artworkURL {
+            imagePipeline.loadImage(hostGroupArtworkURL, into: bandImageView)
+        }
         hostGroupNameLabel.text = "\(input.live.hostGroup.name)から"
-        hostGroupNameLabel.font = Brand.font(for: .medium)
-        hostGroupNameLabel.textColor = Brand.color(for: .text(.primary))
-        hostGroupNameLabel.backgroundColor = .clear
-
         liveTitleLabel.text = input.live.title
-        liveTitleLabel.font = Brand.font(for: .xlargeStrong)
-        liveTitleLabel.textColor = Brand.color(for: .text(.primary))
-        liveTitleLabel.backgroundColor = .clear
-        liveTitleLabel.lineBreakMode = .byWordWrapping
-        liveTitleLabel.numberOfLines = 0
-        liveTitleLabel.adjustsFontSizeToFitWidth = false
-        liveTitleLabel.sizeToFit()
-
         switch input.live.style {
         case .oneman(_):
             self.performersLabel.text = input.live.hostGroup.name
@@ -77,6 +54,39 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
         case .festival(let groups):
             self.performersLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
+        let date: String =
+            (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
+        dateBadgeLabel.title = date
+        livehouseBadgeView.title = input.live.liveHouse ?? "会場未定"
+    }
+
+    func setup() {
+        self.backgroundColor = .clear
+        self.layer.borderWidth = 1
+        self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+        self.layer.cornerRadius = 10
+
+        liveArtworkImageView.contentMode = .scaleAspectFill
+        liveArtworkImageView.layer.opacity = 0.6
+        liveArtworkImageView.layer.cornerRadius = 10
+        liveArtworkImageView.clipsToBounds = true
+        
+        bandImageView.contentMode = .scaleAspectFill
+        bandImageView.layer.cornerRadius = 30
+        bandImageView.clipsToBounds = true
+        
+        hostGroupNameLabel.font = Brand.font(for: .medium)
+        hostGroupNameLabel.textColor = Brand.color(for: .text(.primary))
+        hostGroupNameLabel.backgroundColor = .clear
+
+        liveTitleLabel.font = Brand.font(for: .xlargeStrong)
+        liveTitleLabel.textColor = Brand.color(for: .text(.primary))
+        liveTitleLabel.backgroundColor = .clear
+        liveTitleLabel.lineBreakMode = .byWordWrapping
+        liveTitleLabel.numberOfLines = 0
+        liveTitleLabel.adjustsFontSizeToFitWidth = false
+        liveTitleLabel.sizeToFit()
+
         performersLabel.font = Brand.font(for: .medium)
         performersLabel.textColor = Brand.color(for: .text(.primary))
         performersLabel.lineBreakMode = .byWordWrapping
@@ -86,11 +96,8 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
 
         bandButton.backgroundColor = .clear
 
-        let date: String =
-            (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
-        dateBadgeLabel.title = date
+
         dateBadgeLabel.image = UIImage(named: "calendar")!
-        livehouseBadgeView.title = input.live.liveHouse ?? "会場未定"
         livehouseBadgeView.image = UIImage(named: "map")!
         ticketBadgeView.title = "￥1500"
         ticketBadgeView.image = UIImage(named: "ticket")

@@ -55,7 +55,6 @@ final class PostViewController: UIViewController, Instantiable {
     private lazy var avatarImageView: UIImageView = {
         let avatarImageView = UIImageView()
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        avatarImageView.loadImageAsynchronously(url: URL(string: dependencyProvider.user.thumbnailURL!))
         avatarImageView.layer.cornerRadius = 30
         avatarImageView.clipsToBounds = true
         avatarImageView.contentMode = .scaleAspectFill
@@ -146,7 +145,7 @@ final class PostViewController: UIViewController, Instantiable {
                     movieThumbnailImageView.image = image
                     cancelMovieButton.isHidden = false
                 case .youtube(let url):
-                    movieThumbnailImageView.loadImageAsynchronously(url: url)
+                    dependencyProvider.imagePipeline.loadImage(url, into: movieThumbnailImageView)
                     cancelMovieButton.isHidden = false
                 case .none:
                     movieThumbnailImageView.image = nil
@@ -231,6 +230,10 @@ final class PostViewController: UIViewController, Instantiable {
             activityIndicator.widthAnchor.constraint(equalToConstant: 40),
         ])
         
+        if let thumbnailURL = dependencyProvider.user.thumbnailURL.flatMap(URL.init(string: )) {
+            dependencyProvider.imagePipeline.loadImage(thumbnailURL, into: avatarImageView)
+        }
+
         textView.becomeFirstResponder()
     }
     

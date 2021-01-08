@@ -136,7 +136,9 @@ final class EditUserViewController: UIViewController, Instantiable {
         case .artist(let artist):
             partInputView.setText(text: artist.part)
         }
-        profileImageView.loadImageAsynchronously(url: URL(string: user.thumbnailURL!))
+        if let thumbnailURL = user.thumbnailURL.flatMap(URL.init(string: )) {
+            dependencyProvider.imagePipeline.loadImage(thumbnailURL, into: profileImageView)
+        }
     }
     
     func bind() {

@@ -139,7 +139,11 @@ final class EditLiveViewController: UIViewController, Instantiable {
             case .didInject:
                 liveTitleInputView.setText(text: viewModel.state.title ?? "")
                 livehouseInputView.setText(text: viewModel.state.livehouse ?? "")
-                profileImageView.loadImageAsynchronously(url: viewModel.state.live.artworkURL)
+                if let liveArtworkURL = viewModel.state.live.artworkURL {
+                    dependencyProvider.imagePipeline.loadImage(liveArtworkURL, into: profileImageView)
+                } else {
+                    profileImageView.image = nil
+                }
             case .didEditLive(_):
                 self.navigationController?.popViewController(animated: true)
             case .didUpdateDatePickers(let pickerType):
