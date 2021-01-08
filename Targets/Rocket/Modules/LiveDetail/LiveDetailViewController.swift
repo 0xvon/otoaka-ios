@@ -211,6 +211,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.title = liveDetail.live.title
                 self.reserveTicketViewModel.didGetLiveDetail(ticket: liveDetail.ticket, participantsCount: liveDetail.participants)
                 headerView.update(input: liveDetail.live)
+                refreshControl.endRefreshing()
             case .updatePerformers(let performers):
                 self.setupPerformersContents(performers: performers)
             case .didGetDisplayType(let displayType):
@@ -245,9 +246,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         .store(in: &cancellables)
         
         refreshControl.controlEventPublisher(for: .valueChanged)
-            .sink { [refreshControl, viewModel] _ in
+            .sink { [viewModel] _ in
                 viewModel.refresh()
-                refreshControl.endRefreshing()
             }
             .store(in: &cancellables)
         

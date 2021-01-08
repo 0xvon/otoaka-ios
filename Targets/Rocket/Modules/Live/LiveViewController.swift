@@ -135,9 +135,14 @@ extension LiveViewController {
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = searchController.searchBar.selectedScopeButtonIndex == 0 ? EmptyCollectionView(emptyType: .live, actionButtonTitle: nil) : EmptyCollectionView(emptyType: .ticket, actionButtonTitle: "ライブを探す")
+            let emptyCollectionView = searchController.searchBar.selectedScopeButtonIndex == 0 ? EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す") : EmptyCollectionView(emptyType: .ticket, actionButtonTitle: "ライブを探す")
             emptyCollectionView.listen { [unowned self] in
-                searchController.searchBar.selectedScopeButtonIndex = 0
+                if searchController.searchBar.selectedScopeButtonIndex == 0 {
+                    self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![1]
+                } else {
+                    searchController.searchBar.selectedScopeButtonIndex = 0
+                    viewModel.updateScope.send(0)
+                }
             }
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView

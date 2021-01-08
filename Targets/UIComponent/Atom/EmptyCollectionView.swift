@@ -11,7 +11,7 @@ public final class EmptyCollectionView: UIStackView {
     public enum EmptyType: String {
         case feed = "フィード一覧がまだありません。ここにはフォローしているバンドのフィードが表示されます。試しにバンドをフォローしてみましょう。"
         case feedComment = "コメントがまだありません。試しにコメントを投稿してみましょう。"
-        case live = "Live一覧がまだありません。ここにはバンドのライブ予定が表示されます。"
+        case live = "Live一覧がまだありません。ここにはフォローしているバンドのライブ予定が表示されます。試しにバンドをフォローしてみましょう。"
         case group = "バンドがまだありません。他のバンドにこのアプリを教えてあげましょう。"
         case followingGroup = "フォローしているバンドがまだいません。試しにバンドをフォローしてみましょう。"
         case groupList = "バンドがいません。"

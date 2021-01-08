@@ -48,7 +48,6 @@ class BandDetailViewModel {
         case updateFeedSummary(ArtistFeedSummary?)
         case didGetChart(Group, ChannelDetail.ChannelItem?)
         case didCreatedInvitation(InviteGroup.Invitation)
-
         case pushToLiveDetail(LiveDetailViewController.Input)
         case pushToChartList(ChartListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)

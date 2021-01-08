@@ -207,9 +207,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     followersCount: response.followersCount
                 )
                 self.setupFloatingItems(displayType: displayType)
+                refreshControl.endRefreshing()
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item))
-
             case .updateLiveSummary(.none):
                 self.liveSectionHeader.isHidden = true
                 self.liveCellWrapper.isHidden = true
@@ -260,9 +260,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
             viewModel.headerEvent(event: output)
         }
         refreshControl.controlEventPublisher(for: .valueChanged)
-            .sink { [refreshControl, viewModel] _ in
+            .sink { [viewModel] _ in
                 viewModel.refresh()
-                refreshControl.endRefreshing()
             }
             .store(in: &cancellables)
 
