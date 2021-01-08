@@ -11,6 +11,7 @@ import Endpoint
 import Photos
 import PhotosUI
 import AVKit
+import KeyboardGuide
 
 final class PostViewController: UIViewController, Instantiable {
     typealias Input = Void
@@ -20,17 +21,6 @@ final class PostViewController: UIViewController, Instantiable {
         postView.translatesAutoresizingMaskIntoConstraints = false
         postView.backgroundColor = Brand.color(for: .background(.primary))
         return postView
-    }()
-    private lazy var postViewHeightConstraint: NSLayoutConstraint = {
-        NSLayoutConstraint(
-            item: postView,
-            attribute: .height,
-            relatedBy: .equal,
-            toItem: nil,
-            attribute: .height,
-            multiplier: 1,
-            constant: 300
-        )
     }()
     private lazy var textView: UITextView = {
         let textView = UITextView()
@@ -174,11 +164,11 @@ final class PostViewController: UIViewController, Instantiable {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         
         self.view.addSubview(postView)
-        postView.addConstraint(postViewHeightConstraint)
         NSLayoutConstraint.activate([
             postView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
             postView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             postView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            postView.bottomAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.bottomAnchor),
         ])
         
         postView.addSubview(numOfTextLabel)
@@ -240,10 +230,6 @@ final class PostViewController: UIViewController, Instantiable {
             activityIndicator.heightAnchor.constraint(equalToConstant: 40),
             activityIndicator.widthAnchor.constraint(equalToConstant: 40),
         ])
-
-        NotificationCenter.default.addObserver(
-            self, selector: #selector(keyboardWillShow(notification:)),
-            name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
         
         textView.becomeFirstResponder()
     }
@@ -348,17 +334,6 @@ final class PostViewController: UIViewController, Instantiable {
         ]
         NSLayoutConstraint.activate(constraints)
     }
-
-    @objc private func keyboardWillShow(notification: NSNotification) {
-        if let userInfo = notification.userInfo {
-            if let keyboard = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                resizePostView(keyboardRect: keyboard.cgRectValue)
-            } else {
-                resizePostView(keyboardRect: CGRect(x: 0, y: 0, width: 0, height: 0))
-            }
-                
-        }
-    }
     
     @objc private func searchMovie(_ sender: Any) {
         if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
@@ -403,12 +378,6 @@ final class PostViewController: UIViewController, Instantiable {
     
     @objc private func cancelMovie(_ sender: UIButton) {
         self.viewModel.didUpdatePost(post: nil)
-    }
-    
-    func resizePostView(keyboardRect: CGRect) {
-        let viewHeight = self.view.frame.height - self.view.safeAreaInsets.top
-        let postViewHeight = viewHeight - keyboardRect.height
-        postViewHeightConstraint.constant = postViewHeight
     }
 }
 

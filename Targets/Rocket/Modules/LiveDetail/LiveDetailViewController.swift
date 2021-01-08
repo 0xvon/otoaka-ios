@@ -312,7 +312,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     @objc func editLive() {
         let vc = EditLiveViewController(
             dependencyProvider: dependencyProvider, input: viewModel.state.live)
-        present(vc, animated: true, completion: nil)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func createShare(_ sender: UIBarButtonItem) {

@@ -141,8 +141,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
                 livehouseInputView.setText(text: viewModel.state.livehouse ?? "")
                 profileImageView.loadImageAsynchronously(url: viewModel.state.live.artworkURL)
             case .didEditLive(_):
-                print("editted")
-                self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
             case .didUpdateDatePickers(let pickerType):
                 openTimeInputView.date = viewModel.state.openAt
                 startTimeInputView.date = viewModel.state.startAt
@@ -201,10 +200,10 @@ final class EditLiveViewController: UIViewController, Instantiable {
 
         self.view.addSubview(verticalScrollView)
         NSLayoutConstraint.activate([
-            verticalScrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            verticalScrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            verticalScrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            verticalScrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
+            verticalScrollView.topAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.topAnchor),
+            verticalScrollView.bottomAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.bottomAnchor),
+            verticalScrollView.rightAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.rightAnchor, constant: -16),
+            verticalScrollView.leftAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.leftAnchor, constant: 16),
         ])
 
         verticalScrollView.addSubview(mainView)
@@ -219,7 +218,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
         let topSpacer = UIView()
         mainView.addArrangedSubview(topSpacer) // Spacer
         NSLayoutConstraint.activate([
-            topSpacer.heightAnchor.constraint(equalToConstant: 32),
+            topSpacer.heightAnchor.constraint(equalToConstant: 16),
         ])
         
         mainView.addArrangedSubview(liveTitleInputView)
@@ -285,7 +284,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
-            bottomSpacer.heightAnchor.constraint(equalToConstant: 414),
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 16),
         ])
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)

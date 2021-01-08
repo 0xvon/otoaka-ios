@@ -10,6 +10,7 @@ import Endpoint
 import SafariServices
 import UIComponent
 import UIKit
+import KeyboardGuide
 
 final class CreateBandViewController: UIViewController, Instantiable {
     typealias Input = Void
@@ -212,10 +213,10 @@ final class CreateBandViewController: UIViewController, Instantiable {
         
         self.view.addSubview(verticalScrollView)
         NSLayoutConstraint.activate([
-            verticalScrollView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            verticalScrollView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            verticalScrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            verticalScrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
+            verticalScrollView.topAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.topAnchor),
+            verticalScrollView.bottomAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.bottomAnchor),
+            verticalScrollView.rightAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.rightAnchor, constant: -16),
+            verticalScrollView.leftAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.leftAnchor, constant: 16),
         ])
         
         verticalScrollView.addSubview(mainView)
@@ -230,7 +231,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         let topSpacer = UIView()
         mainView.addArrangedSubview(topSpacer) // Spacer
         NSLayoutConstraint.activate([
-            topSpacer.heightAnchor.constraint(equalToConstant: 32),
+            topSpacer.heightAnchor.constraint(equalToConstant: 16),
         ])
         
         mainView.addArrangedSubview(displayNameInputView)
@@ -307,7 +308,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
-            bottomSpacer.heightAnchor.constraint(equalToConstant: 414),
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 16),
         ])
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)

@@ -10,6 +10,7 @@ import AWSCore
 import Endpoint
 import UIKit
 import UserNotifications
+import KeyboardGuide
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -22,7 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         // Override point for customization after application launch.
-
+        KeyboardGuide.shared.activate()
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         dependencyProvider = .make(config: DevelopmentConfig.self, windowScene: window!.windowScene!)
         let viewController = RootViewController(dependencyProvider: dependencyProvider, input: ())
