@@ -58,6 +58,7 @@ final class LiveViewModel {
         .eraseToAnyPublisher()
         
         let lives = getAllPagination.items().map { $0.map { $0.live } }
+            // responseにはrefundedなliveも含まれているため
             .merge(with: getReservedPagination.items().map { $0.filter { $0.status == .reserved }.map { $0.live } })
             .multicast(subject: self._lives)
         
