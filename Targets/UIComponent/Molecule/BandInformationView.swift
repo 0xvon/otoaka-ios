@@ -78,15 +78,10 @@ class BandInformationView: UIView {
 */
 
     func update(input: Input) {
-        let startYear: String = {
-            guard let since = input.group.since else { return "不明" }
-            return "\(dateFormatter.string(from: since))結成"
-                
-        }()
-
+        let startYear: String = input.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
         dateBadgeView.title = startYear
         bandNameLabel.text = input.group.name
-        mapBadgeView.title = input.group.hometown != nil ? "\(input.group.hometown!)出身" : "出身不明"
+        mapBadgeView.title = input.group.hometown.map { "\($0)出身" } ?? "出身不明"
     }
 
     private func setup() {
