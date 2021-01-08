@@ -226,7 +226,11 @@ final class EditBandViewController: UIViewController, Instantiable {
         hometownInputView.setText(text: group.hometown ?? "")
         youTubeIdInputView.setText(text: group.youtubeChannelId ?? "")
         twitterIdInputView.setText(text: group.twitterId ?? "")
-        profileImageView.loadImageAsynchronously(url: group.artworkURL)
+        if let artworkURL = group.artworkURL {
+            dependencyProvider.imagePipeline.loadImage(artworkURL, into: profileImageView)
+        } else {
+            // TODO: Set profile image placeholder
+        }
     }
     
 

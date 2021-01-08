@@ -117,7 +117,11 @@ extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSourc
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let content = self.feeds[indexPath.section]
-        let cell = tableView.dequeueReusableCell(ArtistFeedCell.self, input: content, for: indexPath)
+        let cell = tableView.dequeueReusableCell(
+            ArtistFeedCell.self,
+            input: (feed: content, imagePipeline: dependencyProvider.imagePipeline),
+            for: indexPath
+        )
         cell.listen { [weak self] _ in
             self?.feedCommentButtonTapped(cellIndex: indexPath.section)
         }

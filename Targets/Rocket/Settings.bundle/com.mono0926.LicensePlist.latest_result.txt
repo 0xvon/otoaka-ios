@@ -152,6 +152,14 @@ name: nanopb, nameSpecified:
 body: Copyright (c) 2011 P…
 version: 2.30906.0
 
+name: Nuke, nameSpecified: 
+body: The MIT License (MIT…
+version: 9.2.3
+
+name: Nuke, nameSpecified: 
+body: The MIT License (MIT…
+version: 9.2.3
+
 name: PromisesObjC, nameSpecified: 
 body: 
                    …

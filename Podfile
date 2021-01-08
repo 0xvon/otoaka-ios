@@ -16,6 +16,7 @@ target 'Rocket' do
   pod 'Firebase/Analytics', '7.3-M1'
   pod 'SwiftGen', '~> 6.0'
   pod 'KeyboardGuide', :podspec => './KeyboardGuide.podspec'
+  pod 'Nuke', '~> 9.0'
 
   target 'RocketTests' do
     inherit! :search_paths

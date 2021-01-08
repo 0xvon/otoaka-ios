@@ -21,6 +21,10 @@ targets:
     sources: [Targets/InternalDomain]
     dependencies:
       - package: DomainEntity
+  ImagePipeline:
+    type: library.static
+    platform: iOS
+    sources: [Targets/ImagePipeline]
   Networking:
     type: library.static
     platform: iOS
@@ -36,6 +40,7 @@ targets:
     dependencies:
       - package: DomainEntity
       - target: InternalDomain
+      - target: ImagePipeline
   UIComponentPreview:
     type: application
     platform: iOS
@@ -174,3 +179,4 @@ targetTemplates:
       - target: Networking
       - target: UIComponent
       - target: InternalDomain
+      - target: ImagePipeline

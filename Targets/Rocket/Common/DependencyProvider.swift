@@ -11,6 +11,7 @@ import Firebase
 import Endpoint
 import Foundation
 import Networking
+import ImagePipeline
 
 @dynamicMemberLookup
 struct LoggedInDependencyProvider {
@@ -29,6 +30,7 @@ struct DependencyProvider {
     var s3Client: S3Client
     var viewHierarchy: ViewHierarchy
     var masterService: MasterSerivice
+    var imagePipeline: ImagePipeline
 }
 
 extension DependencyProvider {
@@ -97,7 +99,8 @@ extension DependencyProvider {
             youTubeDataApiClient: youTubeDataApiClient,
             s3Client: s3Client,
             viewHierarchy: ViewHierarchy(windowScene: windowScene),
-            masterService: MasterSerivice(httpClient: masterServiceClient)
+            masterService: MasterSerivice(httpClient: masterServiceClient),
+            imagePipeline: NukeImagePipeline()
         )
     }
 }

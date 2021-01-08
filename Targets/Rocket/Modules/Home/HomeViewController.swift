@@ -495,7 +495,11 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         switch tableView {
         case self.groupFeedTableView:
             let feed = self.feeds[indexPath.section]
-            let cell = tableView.dequeueReusableCell(ArtistFeedCell.self, input: feed, for: indexPath)
+            let cell = tableView.dequeueReusableCell(
+                ArtistFeedCell.self,
+                input: (feed: feed, imagePipeline: dependencyProvider.imagePipeline),
+                for: indexPath
+            )
             cell.listen { [weak self] _ in
                 self?.feedCommentButtonTapped(cellIndex: indexPath.section)
             }

@@ -80,6 +80,7 @@ PODS:
     - nanopb/encode (= 2.30906.0)
   - nanopb/decode (2.30906.0)
   - nanopb/encode (2.30906.0)
+  - Nuke (9.2.3)
   - PromisesObjC (1.2.12)
   - SwiftGen (6.4.0)
 
@@ -91,6 +92,7 @@ DEPENDENCIES:
   - KeyboardGuide (from `./KeyboardGuide.podspec`)
   - KeychainAccess
   - LicensePlist
+  - Nuke (~> 9.0)
   - SwiftGen (~> 6.0)
 
 SPEC REPOS:
@@ -111,6 +113,7 @@ SPEC REPOS:
     - KeychainAccess
     - LicensePlist
     - nanopb
+    - Nuke
     - PromisesObjC
     - SwiftGen
 
@@ -136,9 +139,10 @@ SPEC CHECKSUMS:
   KeychainAccess: 9b07f665298d13c3a85881bd3171f6f49b8151c1
   LicensePlist: 11c638fa9dc22ddb5771cdf910242ae1ba2684da
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
+  Nuke: 3dd19fd03612c179036d2af7f56ec57cb84144e2
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
 
-PODFILE CHECKSUM: c56cb52b7c9434c22e22d1918cdafd8ebf218b92
+PODFILE CHECKSUM: 27674214fea7d3c4736820e2a28b25016be68dcd
 
 COCOAPODS: 1.10.0

@@ -223,7 +223,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .updateFeedSummary(.some(let feed)):
                 self.feedSectionHeader.isHidden = false
                 self.feedCellWrapper.isHidden = false
-                self.feedCellContent.inject(input: feed)
+                self.feedCellContent.inject(
+                    input: (feed: feed, imagePipeline: dependencyProvider.imagePipeline)
+                )
 
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)

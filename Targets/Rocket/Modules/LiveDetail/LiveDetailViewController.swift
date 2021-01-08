@@ -222,7 +222,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .updateFeedSummary(.some(let feed)):
                 self.feedSectionHeader.isHidden = false
                 self.feedCellWrapper.isHidden = false
-                self.feedCellContent.inject(input: feed)
+                self.feedCellContent.inject(
+                    input: (feed: feed, imagePipeline: dependencyProvider.imagePipeline)
+                )
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: String(describing: error))
             case .pushToGroupFeedList(let input):

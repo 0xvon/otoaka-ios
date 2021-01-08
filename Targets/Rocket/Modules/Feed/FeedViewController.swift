@@ -94,7 +94,11 @@ final class FeedViewController: UITableViewController {
 extension FeedViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let feed = viewModel.feeds[indexPath.row]
-        let cell = tableView.dequeueReusableCell(ArtistFeedCell.self, input: feed, for: indexPath)
+        let cell = tableView.dequeueReusableCell(
+            ArtistFeedCell.self,
+            input: (feed: feed, imagePipeline: dependencyProvider.imagePipeline),
+            for: indexPath
+        )
         cell.listen { [weak self] _ in
             self?.feedCommentButtonTapped(cellIndex: indexPath.section)
         }

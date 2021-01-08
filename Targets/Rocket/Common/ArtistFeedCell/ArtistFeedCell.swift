@@ -7,6 +7,7 @@
 
 import UIKit
 import Endpoint
+import ImagePipeline
 
 class ArtistFeedCell: UITableViewCell, ReusableCell {
     typealias Input = ArtistFeedCellContent.Input
@@ -46,7 +47,10 @@ class ArtistFeedCell: UITableViewCell, ReusableCell {
 
 
 class ArtistFeedCellContent: UIView {
-    typealias Input = ArtistFeedSummary
+    typealias Input = (
+        feed: ArtistFeedSummary,
+        imagePipeline: ImagePipeline
+    )
     enum Output {
         case commentButtonTapped
     }
@@ -81,16 +85,16 @@ class ArtistFeedCellContent: UIView {
     func inject(input: Input) {
         setup()
         
-        switch input.feedType {
+        switch input.feed.feedType {
         case .youtube(let url):
             let youTubeClient = YouTubeClient(url: url.absoluteString)
             let thumbnail = youTubeClient.getThumbnailUrl()
-            thumbnailImageView.loadImageAsynchronously(url: thumbnail)
+            input.imagePipeline.loadImage(thumbnail!, into: thumbnailImageView)
         }
-        feedTitleLabel.text = input.text
-        dateLabel.text = dateFormatter.string(from: input.createdAt)
-        artistNameLabel.text = input.author.name
-        commentButton.setTitle("\(input.commentCount)", for: .normal)
+        feedTitleLabel.text = input.feed.text
+        dateLabel.text = dateFormatter.string(from: input.feed.createdAt)
+        artistNameLabel.text = input.feed.author.name
+        commentButton.setTitle("\(input.feed.commentCount)", for: .normal)
     }
 
     func setup() {
