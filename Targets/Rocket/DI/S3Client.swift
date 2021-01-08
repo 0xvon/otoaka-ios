@@ -11,6 +11,11 @@ import Photos
 import AVFoundation
 import AVKit
 
+enum S3Error: Error {
+    case invalidUrl(String)
+    case uploadFailed(String)
+}
+
 class S3Client {
     let s3Bucket: String
     let cognitoIdentityPoolCredentialProvider: AWSCognitoCredentialsProvider

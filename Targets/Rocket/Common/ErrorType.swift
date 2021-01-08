@@ -10,8 +10,3 @@ import Foundation
 enum ViewModelError: Error {
     case notFoundError(String)
 }
-
-enum S3Error: Error {
-    case invalidUrl(String)
-    case uploadFailed(String)
-}
