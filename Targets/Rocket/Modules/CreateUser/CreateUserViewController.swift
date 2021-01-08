@@ -185,6 +185,16 @@ final class CreateUserViewController: UIViewController, Instantiable {
         registerButton.isEnabled = false
         return registerButton
     }()
+    private lazy var activityIndicator: LoadingCollectionView = {
+        let activityIndicator = LoadingCollectionView()
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        NSLayoutConstraint.activate([
+            activityIndicator.heightAnchor.constraint(equalToConstant: 40),
+            activityIndicator.widthAnchor.constraint(equalToConstant: 40),
+        ])
+        return activityIndicator
+    }()
     
     let dependencyProvider: DependencyProvider
     let viewModel: CreateUserViewModel
@@ -228,8 +238,17 @@ final class CreateUserViewController: UIViewController, Instantiable {
                 
             case .switchUserRole(let role):
                 didSwitchedRole(role: role)
-            case .updateSubmittableState(let submittable):
-                self.registerButton.isEnabled = submittable
+            case .updateSubmittableState(let state):
+                switch state {
+                case .completed:
+                    self.registerButton.isEnabled = true
+                    self.activityIndicator.stopAnimating()
+                case .editting(let submittable):
+                    self.registerButton.isEnabled = submittable
+                case .loading:
+                    self.registerButton.isEnabled = false
+                    self.activityIndicator.startAnimating()
+                }
             case .reportError(let error):
                 showAlert(title: "エラー", message: error.localizedDescription)
             }

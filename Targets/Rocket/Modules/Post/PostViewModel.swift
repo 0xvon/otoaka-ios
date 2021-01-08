@@ -27,9 +27,15 @@ class PostViewModel {
         let maxLength: Int = 140
     }
     
+    enum PageState {
+        case loading
+        case completed
+        case editting(Bool)
+    }
+    
     enum Output {
         case didPostArtistFeed(ArtistFeed)
-        case updateSubmittableState(Bool)
+        case updateSubmittableState(PageState)
         case didGetThumbnail(URL)
         case reportError(Error)
     }
@@ -51,13 +57,15 @@ class PostViewModel {
     func didUpdateInputText(text: String?) {
         self.state.text = text
         
-        outputSubject.send(.updateSubmittableState((text != nil && state.post != nil)))
+        let submittable = (state.text != nil && state.post != nil)
+        outputSubject.send(.updateSubmittableState(.editting(submittable)))
     }
     
     func didUpdatePost(post: PostType?) {
         self.state.post = post
         
-        outputSubject.send(.updateSubmittableState((state.text != nil && post != nil)))
+        let submittable = (state.text != nil && state.post != nil)
+        outputSubject.send(.updateSubmittableState(.editting(submittable)))
     }
     
     func getYouTubeThumbnail(url: String) {
@@ -67,7 +75,7 @@ class PostViewModel {
     }
 
     func post() {
-        outputSubject.send(.updateSubmittableState(false))
+        outputSubject.send(.updateSubmittableState(.loading))
         guard let text = state.text else { return }
         guard let post = state.post else { return }
         switch post {
@@ -95,13 +103,11 @@ class PostViewModel {
     }
     
     private func updateState(with result: Result<ArtistFeed, Error>) {
-        outputSubject.send(.updateSubmittableState(true))
+        outputSubject.send(.updateSubmittableState(.completed))
         switch result {
         case .success(let feed):
-            outputSubject.send(.updateSubmittableState(true))
             outputSubject.send(.didPostArtistFeed(feed))
         case .failure(let error):
-            outputSubject.send(.updateSubmittableState(true))
             outputSubject.send(.reportError(error))
         }
     }

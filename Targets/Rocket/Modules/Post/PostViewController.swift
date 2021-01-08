@@ -102,6 +102,12 @@ final class PostViewController: UIViewController, Instantiable {
         cancelMovieButton.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         return cancelMovieButton
     }()
+    private lazy var activityIndicator: LoadingCollectionView = {
+        let activityIndicator = LoadingCollectionView()
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
+    
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: PostViewModel
     var cancellables: Set<AnyCancellable> = []
@@ -132,8 +138,17 @@ final class PostViewController: UIViewController, Instantiable {
             switch output {
             case .didPostArtistFeed(_):
                 self.dismiss(animated: true, completion: nil)
-            case .updateSubmittableState(let submittable):
-                self.postButton.isHidden = !submittable
+            case .updateSubmittableState(let pageState):
+                switch pageState {
+                case .completed:
+                    activityIndicator.stopAnimating()
+                case .editting(let submittable):
+                    navigationItem.rightBarButtonItem = submittable ? UIBarButtonItem(customView: postButton): nil
+                    postButton.isHidden = !submittable
+                case .loading:
+                    navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+                    activityIndicator.startAnimating()
+                }
             case .didGetThumbnail(let url):
                 switch viewModel.state.post {
                 case .movie(_, _):
@@ -220,13 +235,15 @@ final class PostViewController: UIViewController, Instantiable {
             sectionBorderView.heightAnchor.constraint(equalToConstant: 1),
         ])
         setupSectionView()
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.heightAnchor.constraint(equalToConstant: 40),
+            activityIndicator.widthAnchor.constraint(equalToConstant: 40),
+        ])
 
         NotificationCenter.default.addObserver(
             self, selector: #selector(keyboardWillShow(notification:)),
             name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
-        
-        let barButtonItem = UIBarButtonItem(customView: postButton)
-        self.navigationItem.rightBarButtonItem = barButtonItem
         
         textView.becomeFirstResponder()
     }

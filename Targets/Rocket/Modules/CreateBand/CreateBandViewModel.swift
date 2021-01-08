@@ -78,10 +78,7 @@ class CreateBandViewModel {
                 state.youtubeChannelId = isValid ? youtubeChannelId : nil
                 outputSubject.send(.didValidateYoutubeChannelId(isValid))
             }
-            
         }
-        
-        
     }
     
     func didUpdateArtwork(artwork: UIImage?) {

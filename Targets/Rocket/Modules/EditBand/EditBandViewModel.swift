@@ -23,13 +23,18 @@ class EditBandViewModel {
         var youtubeChannelId: String?
         var twitterId: String?
         var hometown: String?
-        var submittable: Bool
         let socialInputs: SocialInputs
+    }
+    
+    enum PageState {
+        case loading
+        case completed
+        case editting(Bool)
     }
     
     enum Output {
         case didEditGroup(Group)
-        case updateSubmittableState(Bool)
+        case updateSubmittableState(PageState)
         case didValidateYoutubeChannelId(Bool)
         case reportError(Error)
     }
@@ -46,7 +51,7 @@ class EditBandViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         
-        self.state = State(group: group, name: group.name, englishName: group.englishName, biography: group.biography, since: group.since, artwork: nil, youtubeChannelId: group.youtubeChannelId, twitterId: group.twitterId, hometown: group.hometown, submittable: true, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        self.state = State(group: group, name: group.name, englishName: group.englishName, biography: group.biography, since: group.since, artwork: nil, youtubeChannelId: group.youtubeChannelId, twitterId: group.twitterId, hometown: group.hometown, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
     }
     
     func validateYoutubeChannelId(youtubeChannelId: String?, callback: @escaping ((Bool) -> Void)) {
@@ -68,9 +73,15 @@ class EditBandViewModel {
         state.twitterId = twitterId
         state.hometown = hometown
         
-        validateYoutubeChannelId(youtubeChannelId: youtubeChannelId) { [unowned self] isValid in
-            let isSubmittable: Bool = (name != nil && isValid)
-            outputSubject.send(.updateSubmittableState(isSubmittable))
+        let isSubmittable: Bool = (name != nil && englishName != nil)
+        outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
+        
+        if let youtubeChannelId = youtubeChannelId {
+            validateYoutubeChannelId(youtubeChannelId: youtubeChannelId) { [unowned self] isValid in
+                state.youtubeChannelId = isValid ? youtubeChannelId : nil
+                outputSubject.send(.didValidateYoutubeChannelId(isValid))
+            }
+            
         }
     }
     
@@ -79,14 +90,14 @@ class EditBandViewModel {
     }
     
     func didEditButtonTapped() {
-        outputSubject.send(.updateSubmittableState(false))
+        outputSubject.send(.updateSubmittableState(.loading))
         if let artwork = self.state.artwork {
             self.dependencyProvider.s3Client.uploadImage(image: artwork) { [unowned self] result in
                 switch result {
                 case .success(let imageUrl):
                     editBand(imageUrl: URL(string: imageUrl))
                 case .failure(let error):
-                    outputSubject.send(.updateSubmittableState(true))
+                    outputSubject.send(.updateSubmittableState(.completed))
                     outputSubject.send(.reportError(error))
                 }
             }
@@ -114,7 +125,7 @@ class EditBandViewModel {
     }
     
     private func updateState(with result: Result<Group, Error>) {
-        outputSubject.send(.updateSubmittableState(true))
+        outputSubject.send(.updateSubmittableState(.completed))
         switch result {
         case .success(let group):
             outputSubject.send(.didEditGroup(group))

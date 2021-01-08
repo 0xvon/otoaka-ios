@@ -25,8 +25,13 @@ class CreateLiveViewModel {
         var startAt: Date = Date()
         var endAt: Date = Date()
         var thumbnail: UIImage?
-        var submittable: Bool
         let socialInputs: SocialInputs
+    }
+    
+    enum PageState {
+        case loading
+        case completed
+        case editting(Bool)
     }
     
     enum DatePickerType {
@@ -37,7 +42,7 @@ class CreateLiveViewModel {
     
     enum Output {
         case didCreateLive(Live)
-        case updateSubmittableState(Bool)
+        case updateSubmittableState(PageState)
         case didUpdateDatePickers(DatePickerType)
         case didUpdateLiveStyle(LiveStyle<Group.ID>?)
         case didUpdatePerformers([Group])
@@ -56,7 +61,7 @@ class CreateLiveViewModel {
         dependencyProvider: LoggedInDependencyProvider
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(submittable: false, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        self.state = State(socialInputs: try! dependencyProvider.masterService.blockingMasterData())
     }
     
     func viewDidLoad() {
@@ -91,8 +96,7 @@ class CreateLiveViewModel {
         
         
         let isSubmittable: Bool = (title != nil && hostGroup != nil && liveStyle != nil && price != nil && livehouse != nil)
-        state.submittable = isSubmittable
-        outputSubject.send(.updateSubmittableState(isSubmittable))
+        outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
         outputSubject.send(.didUpdateLiveStyle(liveStyle))
     }
     
@@ -128,7 +132,7 @@ class CreateLiveViewModel {
     }
     
     func didRegisterButtonTapped() {
-        outputSubject.send(.updateSubmittableState(false))
+        outputSubject.send(.updateSubmittableState(.loading))
         guard let title = state.title else { return }
         guard let groupId = state.groupId else { return }
         guard let liveStyle = state.liveStyle else { return }
@@ -145,14 +149,14 @@ class CreateLiveViewModel {
                     updateState(with: result)
                 }
             case .failure(let error):
-                outputSubject.send(.updateSubmittableState(true))
+                outputSubject.send(.updateSubmittableState(.completed))
                 outputSubject.send(.reportError(error))
             }
         }
     }
     
     private func updateState(with result: Result<Live, Error>) {
-        outputSubject.send(.updateSubmittableState(true))
+        outputSubject.send(.updateSubmittableState(.completed))
         switch result {
         case .success(let live):
             outputSubject.send(.didCreateLive(live))

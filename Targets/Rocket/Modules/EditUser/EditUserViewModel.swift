@@ -14,7 +14,6 @@ import UIKit
 
 class EditUserViewModel {
     struct State {
-        var submittable: Bool
         var displayName: String?
         var biography: String?
         var role: RoleProperties
@@ -22,10 +21,16 @@ class EditUserViewModel {
         let socialInputs: SocialInputs
     }
     
+    enum PageState {
+        case loading
+        case completed
+        case editting(Bool)
+    }
+    
     enum Output {
         case didEditUser(User)
         case didGetUserInfo(User)
-        case updateSubmittableState(Bool)
+        case updateSubmittableState(PageState)
         case didInjectRole(RoleProperties)
         case reportError(Error)
     }
@@ -41,7 +46,7 @@ class EditUserViewModel {
         dependencyProvider: LoggedInDependencyProvider
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(submittable: true, role: dependencyProvider.user.role, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        self.state = State(role: dependencyProvider.user.role, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
     }
     
     func viewDidLoad() {
@@ -69,8 +74,7 @@ class EditUserViewModel {
         state.biography = biography
         
         let isSubmittable = (displayName != nil)
-        state.submittable = isSubmittable
-        outputSubject.send(.updateSubmittableState(isSubmittable))
+        outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
     }
     
     func didUpdateArtwork(artwork: UIImage?) {
@@ -78,14 +82,14 @@ class EditUserViewModel {
     }
     
     func didEditButtonTapped() {
-        outputSubject.send(.updateSubmittableState(false))
+        outputSubject.send(.updateSubmittableState(.loading))
         if let prifileImage = state.profileImage {
             self.dependencyProvider.s3Client.uploadImage(image: prifileImage) { [unowned self] result in
                 switch result {
                 case .success(let imageUrl):
                     editUser(imageUrl: imageUrl)
                 case .failure(let error):
-                    outputSubject.send(.updateSubmittableState(true))
+                    outputSubject.send(.updateSubmittableState(.completed))
                     outputSubject.send(.reportError(error))
                 }
             }
@@ -104,7 +108,7 @@ class EditUserViewModel {
     }
     
     private func updateState(with result: Result<User, Error>) {
-        outputSubject.send(.updateSubmittableState(true))
+        outputSubject.send(.updateSubmittableState(.completed))
         switch result {
         case .success(let user):
             outputSubject.send(.didEditUser(user))

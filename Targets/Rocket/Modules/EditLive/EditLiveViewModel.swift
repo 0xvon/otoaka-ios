@@ -19,9 +19,14 @@ class EditLiveViewModel {
         var startAt: Date
         var endAt: Date
         var thumbnail: UIImage?
-        var submittable: Bool
         let socialInputs: SocialInputs
         let live: Live
+    }
+    
+    enum PageState {
+        case loading
+        case completed
+        case editting(Bool)
     }
     
     enum DatePickerType {
@@ -33,7 +38,7 @@ class EditLiveViewModel {
     enum Output {
         case didEditLive(Live)
         case didInject
-        case updateSubmittableState(Bool)
+        case updateSubmittableState(PageState)
         case didUpdateDatePickers(DatePickerType)
         case reportError(Error)
     }
@@ -49,7 +54,7 @@ class EditLiveViewModel {
         dependencyProvider: LoggedInDependencyProvider, live: Live
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(title: live.title, livehouse: live.liveHouse, openAt: live.openAt ?? Date(), startAt: live.startAt ?? Date(), endAt: live.endAt ?? Date(), thumbnail: nil, submittable: true, socialInputs: try! dependencyProvider.masterService.blockingMasterData(), live: live)
+        self.state = State(title: live.title, livehouse: live.liveHouse, openAt: live.openAt ?? Date(), startAt: live.startAt ?? Date(), endAt: live.endAt ?? Date(), thumbnail: nil, socialInputs: try! dependencyProvider.masterService.blockingMasterData(), live: live)
     }
     
     func viewDidLoad() {
@@ -68,8 +73,7 @@ class EditLiveViewModel {
         state.livehouse = livehouse
         
         let isSubmittable: Bool = (title != nil && livehouse != nil)
-        state.submittable = isSubmittable
-        outputSubject.send(.updateSubmittableState(isSubmittable))
+        outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
     }
     
     func didUpdateDatePicker(pickerType: DatePickerType) {
@@ -92,14 +96,14 @@ class EditLiveViewModel {
     }
 
     func didEditButtonTapped() {
-        outputSubject.send(.updateSubmittableState(false))
+        outputSubject.send(.updateSubmittableState(.loading))
         if let image = state.thumbnail {
             dependencyProvider.s3Client.uploadImage(image: image) { [unowned self] result in
                 switch result {
                 case .success(let imageUrl):
                     editLive(imageUrl: URL(string: imageUrl))
                 case .failure(let error):
-                    outputSubject.send(.updateSubmittableState(true))
+                    outputSubject.send(.updateSubmittableState(.completed))
                     outputSubject.send(.reportError(error))
                 }
             }
@@ -120,7 +124,7 @@ class EditLiveViewModel {
     }
     
     private func updateState(with result: Result<Live, Error>) {
-        outputSubject.send(.updateSubmittableState(true))
+        outputSubject.send(.updateSubmittableState(.completed))
         switch result {
         case .success(let live):
             outputSubject.send(.didEditLive(live))

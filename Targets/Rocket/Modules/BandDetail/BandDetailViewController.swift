@@ -207,9 +207,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     followersCount: response.followersCount
                 )
                 self.setupFloatingItems(displayType: displayType)
-                refreshControl.endRefreshing()
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item))
+                refreshControl.endRefreshing()
             case .updateLiveSummary(.none):
                 self.liveSectionHeader.isHidden = true
                 self.liveCellWrapper.isHidden = true
@@ -217,7 +217,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.liveSectionHeader.isHidden = false
                 self.liveCellWrapper.isHidden = false
                 self.liveCellContent.inject(input: live)
-
             case .updateFeedSummary(.none):
                 self.feedSectionHeader.isHidden = true
                 self.feedCellWrapper.isHidden = true

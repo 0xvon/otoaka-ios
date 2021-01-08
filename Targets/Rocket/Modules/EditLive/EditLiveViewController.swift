@@ -99,6 +99,11 @@ final class EditLiveViewController: UIViewController, Instantiable {
         registerButton.isEnabled = false
         return registerButton
     }()
+    private lazy var activityIndicator: LoadingCollectionView = {
+        let activityIndicator = LoadingCollectionView()
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
     
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: EditLiveViewModel
@@ -151,8 +156,17 @@ final class EditLiveViewController: UIViewController, Instantiable {
                 default:
                     break
                 }
-            case .updateSubmittableState(let isSubmittable):
-                self.editButton.isEnabled = isSubmittable
+            case .updateSubmittableState(let state):
+                switch state {
+                case .completed:
+                    self.editButton.isEnabled = true
+                    self.activityIndicator.stopAnimating()
+                case .editting(let submittable):
+                    self.editButton.isEnabled = submittable
+                case .loading:
+                    self.editButton.isEnabled = false
+                    self.activityIndicator.startAnimating()
+                }
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
             }
@@ -272,6 +286,12 @@ final class EditLiveViewController: UIViewController, Instantiable {
         mainView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
             bottomSpacer.heightAnchor.constraint(equalToConstant: 414),
+        ])
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        NSLayoutConstraint.activate([
+            activityIndicator.heightAnchor.constraint(equalToConstant: 40),
+            activityIndicator.widthAnchor.constraint(equalToConstant: 40),
         ])
         
         liveTitleInputView.focus()

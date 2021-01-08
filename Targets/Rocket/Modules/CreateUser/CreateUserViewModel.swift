@@ -14,17 +14,22 @@ import UIKit
 
 class CreateUserViewModel {
     struct State {
-        var submittable: Bool
         var displayName: String?
         var role: RoleProperties
         var profileImage: UIImage?
         let socialInputs: SocialInputs
     }
     
+    enum PageState {
+        case loading
+        case completed
+        case editting(Bool)
+    }
+    
     enum Output {
         case didCreateUser(User)
         case switchUserRole(RoleProperties)
-        case updateSubmittableState(Bool)
+        case updateSubmittableState(PageState)
         case reportError(Error)
     }
 
@@ -39,7 +44,7 @@ class CreateUserViewModel {
         dependencyProvider: DependencyProvider
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(submittable: false, role: .fan(Fan()), socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        self.state = State(role: .fan(Fan()), socialInputs: try! dependencyProvider.masterService.blockingMasterData())
     }
     
     func viewDidLoad() {
@@ -62,8 +67,7 @@ class CreateUserViewModel {
         }
         
         let isSubmittable = (displayName != nil)
-        state.submittable = isSubmittable
-        outputSubject.send(.updateSubmittableState(isSubmittable))
+        outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
     }
     
     func didUpdateArtwork(artwork: UIImage?) {
@@ -71,7 +75,7 @@ class CreateUserViewModel {
     }
 
     func didSignupButtonTapped() {
-        outputSubject.send(.updateSubmittableState(false))
+        outputSubject.send(.updateSubmittableState(.loading))
         guard let displayName = state.displayName else { return }
         self.dependencyProvider.s3Client.uploadImage(image: state.profileImage) { [unowned self] result in
             switch result {
@@ -82,14 +86,14 @@ class CreateUserViewModel {
                     updateState(with: result)
                 }
             case .failure(let error):
-                outputSubject.send(.updateSubmittableState(true))
+                outputSubject.send(.updateSubmittableState(.completed))
                 outputSubject.send(.reportError(error))
             }
         }
     }
     
     private func updateState(with result: Result<User, Error>) {
-        outputSubject.send(.updateSubmittableState(true))
+        outputSubject.send(.updateSubmittableState(.completed))
         switch result {
         case .success(let user):
             outputSubject.send(.didCreateUser(user))
