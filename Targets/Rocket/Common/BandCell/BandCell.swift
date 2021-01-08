@@ -54,10 +54,10 @@ final class BandCell: UITableViewCell, ReusableCell {
         labelBadgeView.title = "Intact Records"
         labelBadgeView.image = UIImage(named: "record")!
         let startYear: String =
-            (input.since != nil) ? dateFormatter.string(from: input.since!) : "不明"
+            (input.since != nil) ? "\(dateFormatter.string(from: input.since!))結成" : "結成年不明"
         yearBadgeView.title = startYear
         yearBadgeView.image = UIImage(named: "calendar")!
-        hometownBadgeView.title = input.hometown ?? "不明"
+        hometownBadgeView.title = input.hometown != nil ? "\(input.hometown!)出身" : "出身不明"
         hometownBadgeView.image = UIImage(named: "map")!
     }
 }
