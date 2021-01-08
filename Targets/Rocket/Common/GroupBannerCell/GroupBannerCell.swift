@@ -35,6 +35,8 @@ class GroupBannerCell: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .clear
         button.addTarget(self, action: #selector(touchUpInside(_:)), for: .touchUpInside)
+        button.setBackgroundImage(Brand.color(for: .background(.primary)).image, for: .highlighted)
+        button.alpha = 0.5
         return button
     }()
     

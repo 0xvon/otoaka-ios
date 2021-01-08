@@ -12,6 +12,21 @@ let per = 20
 let textFieldHeight: CGFloat = 60
 let dummySocialInputs: SocialInputs = try! JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: Bundle.main.url(forResource: "SocialInputs", withExtension: "json")!))
 
+extension UIColor {
+    var image: UIImage? {
+        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContext(rect.size)
+        guard let context = UIGraphicsGetCurrentContext() else {
+            return nil
+        }
+        context.setFillColor(self.cgColor)
+        context.fill(rect)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
+}
+
 extension UIImage {
     public convenience init(url: String) {
         let url = URL(string: url)

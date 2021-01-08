@@ -158,7 +158,6 @@ final class PostViewController: UIViewController, Instantiable {
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         
-        
         self.view.addSubview(postView)
         postView.addConstraint(postViewHeightConstraint)
         NSLayoutConstraint.activate([
@@ -173,7 +172,6 @@ final class PostViewController: UIViewController, Instantiable {
             numOfTextLabel.bottomAnchor.constraint(equalTo: sectionView.topAnchor, constant: -16),
         ])
         
-        
         postView.addSubview(avatarImageView)
         NSLayoutConstraint.activate([
             avatarImageView.topAnchor.constraint(equalTo: postView.topAnchor, constant: 16),
@@ -182,14 +180,12 @@ final class PostViewController: UIViewController, Instantiable {
             avatarImageView.widthAnchor.constraint(equalToConstant: 60),
         ])
         
-        
         postView.addSubview(textView)
         NSLayoutConstraint.activate([
             textView.topAnchor.constraint(equalTo: postView.topAnchor, constant: 16),
             textView.rightAnchor.constraint(equalTo: postView.rightAnchor, constant: -16),
             textView.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
         ])
-        
         
         postView.addSubview(movieThumbnailImageView)
         NSLayoutConstraint.activate([
@@ -199,7 +195,6 @@ final class PostViewController: UIViewController, Instantiable {
             movieThumbnailImageView.bottomAnchor.constraint(equalTo: numOfTextLabel.topAnchor, constant: -16),
             movieThumbnailImageView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
         ])
-        
         
         postView.addSubview(cancelMovieButton)
         NSLayoutConstraint.activate([
@@ -216,7 +211,6 @@ final class PostViewController: UIViewController, Instantiable {
             sectionView.rightAnchor.constraint(equalTo: postView.rightAnchor),
             sectionView.bottomAnchor.constraint(equalTo: postView.bottomAnchor),
         ])
-        
         
         sectionView.addSubview(sectionBorderView)
         NSLayoutConstraint.activate([
@@ -349,23 +343,6 @@ final class PostViewController: UIViewController, Instantiable {
         }
     }
     
-    private func didInputText() {
-        let text: String? = textView.text.isEmpty ? nil : textView.text
-        viewModel.didUpdateInputText(text: text)
-    }
-    
-    private func didInputMovie() {
-        
-    }
-    
-    private func didInputYouTube(url: URL?) {
-        if let url = url {
-            viewModel.didUpdatePost(post: .youtube(url))
-        } else {
-            viewModel.didUpdatePost(post: nil)
-        }
-    }
-    
     @objc private func searchMovie(_ sender: Any) {
         if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
             let picker = UIImagePickerController()
@@ -422,6 +399,9 @@ extension PostViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let textCount = textView.text.count
         numOfTextLabel.text = "\(viewModel.state.maxLength - textCount)"
+        
+        let text: String? = textView.text.isEmpty ? nil : textView.text
+        viewModel.didUpdateInputText(text: text)
     }
 }
 

@@ -95,6 +95,9 @@ extension FeedViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let feed = viewModel.feeds[indexPath.row]
         let cell = tableView.dequeueReusableCell(ArtistFeedCell.self, input: feed, for: indexPath)
+        cell.listen { [weak self] _ in
+            self?.feedCommentButtonTapped(cellIndex: indexPath.section)
+        }
         return cell
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -136,6 +139,12 @@ extension FeedViewController {
                 backgroundView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             ])
         }
+    }
+    
+    private func feedCommentButtonTapped(cellIndex: Int) {
+        let feed = self.viewModel.feeds[cellIndex]
+        let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
+        present(vc, animated: true, completion: nil)
     }
 }
 
