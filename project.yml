@@ -158,7 +158,7 @@ targetTemplates:
         path: /bin/sh
         script: |
           if [ $CONFIGURATION = "Debug" ]; then
-            "${PODS_ROOT}/LicensePlist/license-plist" --output-path ${SRCROOT}/Rocket/Settings.bundle
+            "${PODS_ROOT}/LicensePlist/license-plist" --output-path ${SRCROOT}/Targets/Rocket/Settings.bundle
           fi
     postBuildScripts:
       - name: "Crashlytics Logs"

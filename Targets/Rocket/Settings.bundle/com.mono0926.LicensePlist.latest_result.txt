@@ -1,44 +1,52 @@
 name: AWSCognitoAuth, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.21.1
+version: 2.22.0
 
 name: AWSCognitoAuth, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.21.1
+version: 2.22.0
 
 name: AWSCognitoIdentityProviderASF, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.21.1
+version: 2.22.0
 
 name: AWSCognitoIdentityProviderASF, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.21.1
+version: 2.22.0
 
 name: AWSCore, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.21.1
+version: 2.22.0
 
 name: AWSCore, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.21.1
+version: 2.22.0
 
 name: AWSS3, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.21.1
+version: 2.22.0
 
 name: AWSS3, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.21.1
+version: 2.22.0
 
 name: Firebase, nameSpecified: 
 body: 
                    …
-version: 7.3.0
+version: 
 
 name: Firebase, nameSpecified: 
 body: 
                    …
-version: 7.3.0
+version: 
+
+name: FirebaseAnalytics, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 
+
+name: FirebaseAnalytics, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 
 
 name: FirebaseCore, nameSpecified: 
 body: 
@@ -80,6 +88,14 @@ body:
                    …
 version: 7.3.0
 
+name: GoogleAppMeasurement, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 
+
+name: GoogleAppMeasurement, nameSpecified: 
+body: Copyright 2020 Googl…
+version: 
+
 name: GoogleDataTransport, nameSpecified: 
 body: 
                    …
@@ -99,6 +115,14 @@ name: GoogleUtilities, nameSpecified:
 body: 
                    …
 version: 7.1.1
+
+name: KeyboardGuide, nameSpecified: 
+body: Copyright (c) 2020 Y…
+version: 0.2.0
+
+name: KeyboardGuide, nameSpecified: 
+body: Copyright (c) 2020 Y…
+version: 0.2.0
 
 name: KeychainAccess, nameSpecified: 
 body: The MIT License (MIT…
@@ -151,6 +175,8 @@ Copyrig…
 version: 6.4.0
 
 name: CodableURL, nameSpecified: CodableURL, owner: kateinoigakukun, version: 0.3.1
+
+name: StubKit, nameSpecified: StubKit, owner: kateinoigakukun, version: 0.1.7
 
 add-version-numbers: false
 
