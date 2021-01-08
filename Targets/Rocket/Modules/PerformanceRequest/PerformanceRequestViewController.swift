@@ -23,11 +23,6 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
 
     private var requestTableView: UITableView!
     private var requests: [PerformanceRequest] = []
-    
-    private var listener: () -> Void = {}
-    func listen(_ listener: @escaping () -> Void) {
-        self.listener = listener
-    }
 
     lazy var viewModel = PerformanceRequestViewModel(
         apiClient: dependencyProvider.apiClient,
@@ -132,8 +127,9 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     }
     
     func didSearchButtonTapped() {
-        self.listener()
-        self.navigationController?.popToRootViewController(animated: true)
+        let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
+        vc.inject(.group(""))
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

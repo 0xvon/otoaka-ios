@@ -137,9 +137,6 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
-        vc.listen { [unowned self] in
-            self.listener(.searchGroup)
-        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

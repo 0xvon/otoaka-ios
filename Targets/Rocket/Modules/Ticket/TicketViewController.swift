@@ -151,7 +151,6 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func didSearchButtonTapped() {
-        self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
     }
 
     private func listenButtonTapped(cellIndex: Int) {

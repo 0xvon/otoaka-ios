@@ -126,7 +126,9 @@ extension FeedViewController {
         let emptyCollectionView: EmptyCollectionView = {
             let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
             emptyCollectionView.listen { [unowned self] in
-                self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![1]
+                let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
+                vc.inject(.group(""))
+                self.navigationController?.pushViewController(vc, animated: true)
             }
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
