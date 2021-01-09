@@ -21,6 +21,12 @@ class PostViewModel {
         case spotify(URL)
     }
     
+    enum ThumbnailType {
+        case movie(URL)
+        case youtube(URL)
+        case none
+    }
+    
     struct State {
         var post: PostType?
         var text: String?
@@ -36,7 +42,7 @@ class PostViewModel {
     enum Output {
         case didPostArtistFeed(ArtistFeed)
         case updateSubmittableState(PageState)
-        case didGetThumbnail(URL)
+        case didGetThumbnail(ThumbnailType)
         case reportError(Error)
     }
     
@@ -66,12 +72,13 @@ class PostViewModel {
         
         let submittable = (state.text != nil && state.post != nil)
         outputSubject.send(.updateSubmittableState(.editting(submittable)))
+        if post == nil { outputSubject.send(.didGetThumbnail(.none)) }
     }
     
     func getYouTubeThumbnail(url: String) {
         let youTubeClient = YouTubeClient(url: url)
         guard let thumbnail = youTubeClient.getThumbnailUrl() else { return }
-        outputSubject.send(.didGetThumbnail(thumbnail))
+        outputSubject.send(.didGetThumbnail(.youtube(thumbnail)))
     }
 
     func post() {

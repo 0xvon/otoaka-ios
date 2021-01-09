@@ -94,6 +94,10 @@ final class PostViewController: UIViewController, Instantiable {
     private lazy var activityIndicator: LoadingCollectionView = {
         let activityIndicator = LoadingCollectionView()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicator.heightAnchor.constraint(equalToConstant: 40),
+            activityIndicator.widthAnchor.constraint(equalToConstant: 40),
+        ])
         return activityIndicator
     }()
     
@@ -138,9 +142,9 @@ final class PostViewController: UIViewController, Instantiable {
                     navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
                     activityIndicator.startAnimating()
                 }
-            case .didGetThumbnail(let url):
-                switch viewModel.state.post {
-                case .movie(_, _):
+            case .didGetThumbnail(let state):
+                switch state {
+                case .movie(let url):
                     let image = generateThumbnailFromVideo(url)
                     movieThumbnailImageView.image = image
                     cancelMovieButton.isHidden = false
@@ -150,8 +154,6 @@ final class PostViewController: UIViewController, Instantiable {
                 case .none:
                     movieThumbnailImageView.image = nil
                     cancelMovieButton.isHidden = true
-                default:
-                    break
                 }
             case .reportError(let error):
                 showAlert(title: "エラー", message: error.localizedDescription)
@@ -161,6 +163,8 @@ final class PostViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
+        self.title = "フィード投稿"
+        self.navigationItem.largeTitleDisplayMode = .never
         
         self.view.addSubview(postView)
         NSLayoutConstraint.activate([
@@ -169,6 +173,23 @@ final class PostViewController: UIViewController, Instantiable {
             postView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             postView.bottomAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.bottomAnchor),
         ])
+        
+        postView.addSubview(sectionView)
+        NSLayoutConstraint.activate([
+            sectionView.heightAnchor.constraint(equalToConstant: 92),
+            sectionView.leftAnchor.constraint(equalTo: postView.leftAnchor),
+            sectionView.rightAnchor.constraint(equalTo: postView.rightAnchor),
+            sectionView.bottomAnchor.constraint(equalTo: postView.bottomAnchor),
+        ])
+        
+        sectionView.addSubview(sectionBorderView)
+        NSLayoutConstraint.activate([
+            sectionBorderView.rightAnchor.constraint(equalTo: sectionView.rightAnchor),
+            sectionBorderView.leftAnchor.constraint(equalTo: sectionView.leftAnchor),
+            sectionBorderView.topAnchor.constraint(equalTo: sectionView.topAnchor),
+            sectionBorderView.heightAnchor.constraint(equalToConstant: 1),
+        ])
+        setupSectionView()
         
         postView.addSubview(numOfTextLabel)
         NSLayoutConstraint.activate([
@@ -206,28 +227,6 @@ final class PostViewController: UIViewController, Instantiable {
             cancelMovieButton.rightAnchor.constraint(equalTo: movieThumbnailImageView.rightAnchor, constant: 12),
             cancelMovieButton.widthAnchor.constraint(equalToConstant: 24),
             cancelMovieButton.heightAnchor.constraint(equalToConstant: 24),
-        ])
-        
-        postView.addSubview(sectionView)
-        NSLayoutConstraint.activate([
-            sectionView.heightAnchor.constraint(equalToConstant: 92),
-            sectionView.leftAnchor.constraint(equalTo: postView.leftAnchor),
-            sectionView.rightAnchor.constraint(equalTo: postView.rightAnchor),
-            sectionView.bottomAnchor.constraint(equalTo: postView.bottomAnchor),
-        ])
-        
-        sectionView.addSubview(sectionBorderView)
-        NSLayoutConstraint.activate([
-            sectionBorderView.rightAnchor.constraint(equalTo: sectionView.rightAnchor),
-            sectionBorderView.leftAnchor.constraint(equalTo: sectionView.leftAnchor),
-            sectionBorderView.topAnchor.constraint(equalTo: sectionView.topAnchor),
-            sectionBorderView.heightAnchor.constraint(equalToConstant: 1),
-        ])
-        setupSectionView()
-        
-        NSLayoutConstraint.activate([
-            activityIndicator.heightAnchor.constraint(equalToConstant: 40),
-            activityIndicator.widthAnchor.constraint(equalToConstant: 40),
         ])
         
         if let thumbnailURL = dependencyProvider.user.thumbnailURL.flatMap(URL.init(string: )) {
