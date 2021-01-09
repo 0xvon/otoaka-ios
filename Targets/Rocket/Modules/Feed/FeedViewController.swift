@@ -18,6 +18,14 @@ final class FeedViewController: UITableViewController {
     let viewModel: FeedViewModel
     private var cancellables: [AnyCancellable] = []
     
+    lazy var createButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("+", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .xlargeStrong)
+        button.addTarget(self, action: #selector(createFeed), for: .touchUpInside)
+        return button
+    }()
+    
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = FeedViewModel(dependencyProvider: dependencyProvider)
@@ -37,7 +45,10 @@ final class FeedViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.registerCellClass(ArtistFeedCell.self)
         refreshControl = BrandRefreshControl()
-
+        if case .artist = dependencyProvider.user.role  {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createButton)
+        }
+        
         bind()
         requestNotification()
     }
@@ -88,6 +99,12 @@ final class FeedViewController: UITableViewController {
                 }
             }
         }
+    }
+    
+    @objc func createFeed() {
+        let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
+        let nav = BrandNavigationController(rootViewController: vc)
+        present(nav, animated: true, completion: nil)
     }
 }
 

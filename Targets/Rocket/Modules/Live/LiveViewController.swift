@@ -24,6 +24,13 @@ final class LiveViewController: UITableViewController {
         controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
         return controller
     }()
+    lazy var createButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("+", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .xlargeStrong)
+        button.addTarget(self, action: #selector(createLive), for: .touchUpInside)
+        return button
+    }()
     
     let viewModel: LiveViewModel
     private var cancellables: [AnyCancellable] = []
@@ -49,6 +56,9 @@ final class LiveViewController: UITableViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
+        if case .artist = dependencyProvider.user.role  {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createButton)
+        }
         
         bind()
     }
@@ -85,6 +95,12 @@ final class LiveViewController: UITableViewController {
         self.refreshControl?.beginRefreshing()
         viewModel.refresh.send(())
     }
+    
+    @objc func createLive() {
+        let vc = CreateLiveViewController(dependencyProvider: self.dependencyProvider, input: ())
+        let nav = BrandNavigationController(rootViewController: vc)
+        present(nav, animated: true, completion: nil)
+    }
 }
 
 extension LiveViewController: UISearchBarDelegate {
@@ -93,6 +109,13 @@ extension LiveViewController: UISearchBarDelegate {
     }
 }
 
+extension LiveViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        viewModel.updateSearchQuery.send(searchController.searchBar.text)
+    }
+}
+
+
 extension LiveViewController: UISearchControllerDelegate {
     func willPresentSearchController(_ searchController: UISearchController) {
         searchController.searchBar.showsScopeBar = false
@@ -100,12 +123,6 @@ extension LiveViewController: UISearchControllerDelegate {
     
     func willDismissSearchController(_ searchController: UISearchController) {
         searchController.searchBar.showsScopeBar = true
-    }
-}
-
-extension LiveViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        viewModel.updateSearchQuery.send(searchController.searchBar.text)
     }
 }
 
