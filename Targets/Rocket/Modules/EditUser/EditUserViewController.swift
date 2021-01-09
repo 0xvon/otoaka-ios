@@ -194,6 +194,8 @@ final class EditUserViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
+        self.title = "プロフィール設定"
+        self.navigationItem.largeTitleDisplayMode = .never
         
         self.view.addSubview(verticalScrollView)
         NSLayoutConstraint.activate([

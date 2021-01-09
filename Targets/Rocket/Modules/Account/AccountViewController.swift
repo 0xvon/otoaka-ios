@@ -35,16 +35,12 @@ final class AccountViewController: UIViewController, Instantiable {
     }()
     private lazy var seeRequestsItem: AccountSettingItem = {
         return AccountSettingItem(
-            title: "リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
+            title: "出演リクエスト一覧", image: UIImage(named: "mail"), action: self.seeRequests,
             hasNotification: self.pendingRequestCount > 0)
-    }()
-    private lazy var createBandItem: AccountSettingItem = {
-        AccountSettingItem(
-            title: "新規バンド作成", image: UIImage(named: "selectedGuitarIcon"), action: self.createBand, hasNotification: false)
     }()
     private lazy var inputInvitationItem: AccountSettingItem = {
         AccountSettingItem(
-            title: "招待コードを入力してバンドに参加", image: UIImage(named: "selectedGuitarIcon"), action: self.joinBand, hasNotification: false)
+            title: "招待コードを入力してバンドに参加", image: UIImage(systemName: "person.3.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal), action: self.joinBand, hasNotification: false)
     }()
     private lazy var membershipItem: AccountSettingItem = {
         AccountSettingItem(
@@ -115,7 +111,6 @@ final class AccountViewController: UIViewController, Instantiable {
                 profileSettingItem,
                 membershipItem,
                 seeRequestsItem,
-                createBandItem,
                 inputInvitationItem,
                 logoutItem,
             ]
@@ -137,11 +132,6 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func seeRequests() {
         let vc = PerformanceRequestViewController(dependencyProvider: dependencyProvider, input: ())
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    private func createBand() {
-        let vc = CreateBandViewController(dependencyProvider: dependencyProvider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
     }
 

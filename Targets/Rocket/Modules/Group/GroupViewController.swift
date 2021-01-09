@@ -24,6 +24,13 @@ final class GroupViewController: UITableViewController {
         controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
         return controller
     }()
+    lazy var createButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("+", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .xlargeStrong)
+        button.addTarget(self, action: #selector(createBand), for: .touchUpInside)
+        return button
+    }()
 
     let viewModel: GroupViewModel
     private var cancellables: [AnyCancellable] = []
@@ -50,6 +57,10 @@ final class GroupViewController: UITableViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
+        if case .artist = dependencyProvider.user.role  {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createButton)
+        }
+        
         bind()
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -81,6 +92,12 @@ final class GroupViewController: UITableViewController {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
         self.refreshControl?.beginRefreshing()
         viewModel.refresh.send(())
+    }
+    
+    @objc private func createBand() {
+        let vc = CreateBandViewController(dependencyProvider: dependencyProvider, input: ())
+        let nav = BrandNavigationController(rootViewController: vc)
+        present(nav, animated: true, completion: nil)
     }
 }
 

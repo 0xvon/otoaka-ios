@@ -236,7 +236,8 @@ final class EditBandViewController: UIViewController, Instantiable {
 
     private func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        self.title = "バンド編集"
+        self.navigationItem.largeTitleDisplayMode = .never
         
         self.view.addSubview(verticalScrollView)
         NSLayoutConstraint.activate([

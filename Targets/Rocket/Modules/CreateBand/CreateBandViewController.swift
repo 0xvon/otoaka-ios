@@ -140,6 +140,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setup()
         bind()
         
@@ -209,7 +210,8 @@ final class CreateBandViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        self.title = "ライブ作成"
+        self.navigationItem.largeTitleDisplayMode = .never
         
         self.view.addSubview(verticalScrollView)
         NSLayoutConstraint.activate([

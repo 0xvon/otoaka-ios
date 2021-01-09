@@ -201,6 +201,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "ライブ編集"
+        self.navigationItem.largeTitleDisplayMode = .never
 
         self.view.addSubview(verticalScrollView)
         NSLayoutConstraint.activate([
