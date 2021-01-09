@@ -124,9 +124,6 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func setProfile() {
         let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
-        vc.listen { [unowned self] in
-            self.listener(.editUser)
-        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
 
@@ -150,19 +147,15 @@ final class AccountViewController: UIViewController, Instantiable {
         dependencyProvider.auth.signOut(self) { error in
             if let error = error {
                 self.showAlert(title: "エラー", message: String(describing: error))
+            } else {
+                self.showAlert(title: "See you soon", message: "ログアウトが完了しました")
             }
-            self.listener(.signout)
+            self.listener()
         }
     }
     
-    enum ListenerOutput {
-        case editUser
-        case signout
-        case searchGroup
-    }
-    
-    private var listener: (ListenerOutput) -> Void = { _ in }
-    func listen(_ listener: @escaping (ListenerOutput) -> Void) {
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
         self.listener = listener
     }
 }

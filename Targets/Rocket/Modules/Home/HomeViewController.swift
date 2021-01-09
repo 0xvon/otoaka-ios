@@ -38,16 +38,6 @@ final class HomeViewController: UIViewController, Instantiable {
     private var groupTableView: UITableView!
     private var groupPageTitleView: TitleLabelView!
     private var groupPageButton: UIButton!
-    private var iconMenu: UIBarButtonItem!
-    private lazy var icon: UIButton = {
-        let icon: UIButton = UIButton(type: .custom)
-        icon.translatesAutoresizingMaskIntoConstraints = false
-        icon.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        icon.layer.cornerRadius = 20
-        icon.clipsToBounds = true
-        icon.addTarget(self, action: #selector(iconTapped(_:)), for: .touchUpInside)
-        return icon
-    }()
 
     var lives: [LiveFeed] = []
     var feeds: [ArtistFeedSummary] = []
@@ -76,8 +66,6 @@ final class HomeViewController: UIViewController, Instantiable {
                 }
             case .getUserInfo(let user):
                 DispatchQueue.main.async {
-                    let image = UIImage(url: user.thumbnailURL!)
-                    self.icon.setImage(image, for: .normal)
                 }
             case .refreshGroupFeeds(let feeds):
                 DispatchQueue.main.async {
@@ -278,12 +266,6 @@ final class HomeViewController: UIViewController, Instantiable {
         groupPageButton.translatesAutoresizingMaskIntoConstraints = false
         
         setupPages()
-        iconMenu = UIBarButtonItem(customView: icon)
-        self.navigationItem.leftBarButtonItem = iconMenu
-        NSLayoutConstraint.activate([
-            iconMenu.customView!.widthAnchor.constraint(equalToConstant: 40),
-            iconMenu.customView!.heightAnchor.constraint(equalToConstant: 40),
-        ])
 
         let constraints = [
             pageStackView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 16),
@@ -420,30 +402,6 @@ final class HomeViewController: UIViewController, Instantiable {
             self.horizontalScrollView.contentOffset.x = UIScreen.main.bounds.width * CGFloat(sender.tag)
         }
     }
-
-    @objc private func iconTapped(_ sender: Any) {
-        let vc = AccountViewController(dependencyProvider: self.dependencyProvider, input: ())
-        present(vc, animated: true, completion: nil)
-        vc.listen { output in
-            switch output {
-            case .signout:
-                self.dismiss(animated: true, completion: nil)
-                self.listener()
-            case .editUser:
-                self.dismiss(animated: true, completion: nil)
-                self.viewModel.getUserInfo()
-            case .searchGroup:
-                self.dismiss(animated: true, completion: nil)
-                self.tabBarController?.selectedViewController = self.tabBarController?.viewControllers![2]
-            }
-        }
-    }
-    
-    private var listener: () -> Void = {}
-    func signout(_ listener: @escaping () -> Void) {
-        self.listener = listener
-    }
-    
 }
 
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
