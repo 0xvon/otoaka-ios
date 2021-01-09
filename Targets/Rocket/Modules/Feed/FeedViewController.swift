@@ -21,7 +21,7 @@ final class FeedViewController: UITableViewController {
     lazy var createButton: UIButton = {
         let button = UIButton()
         button.setTitle("+", for: .normal)
-        button.titleLabel?.font = Brand.font(for: .xlargeStrong)
+        button.titleLabel?.font = Brand.font(for: .xxlargeStrong)
         button.addTarget(self, action: #selector(createFeed), for: .touchUpInside)
         return button
     }()
