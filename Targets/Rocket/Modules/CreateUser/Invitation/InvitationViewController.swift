@@ -55,6 +55,7 @@ final class InvitationViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
+        self.title = "招待コード入力"
 
         switch dependencyProvider.user.role {
         case .fan(_):

@@ -64,6 +64,7 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
+        self.title = "出演リクエスト一覧"
 
         requestTableView = UITableView(frame: .zero, style: .grouped)
         requestTableView.translatesAutoresizingMaskIntoConstraints = false

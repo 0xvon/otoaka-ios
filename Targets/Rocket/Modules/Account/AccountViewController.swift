@@ -137,6 +137,7 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func memberships() {
         let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .memberships(dependencyProvider.user.id))
+        vc.title = "所属バンド一覧"
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

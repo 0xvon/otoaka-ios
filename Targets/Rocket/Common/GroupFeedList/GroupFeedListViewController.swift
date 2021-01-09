@@ -148,6 +148,7 @@ extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSourc
     private func feedCommentButtonTapped(cellIndex: Int) {
         let feed = self.feeds[cellIndex]
         let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
-        present(vc, animated: true, completion: nil)
+        let nav = BrandNavigationController(rootViewController: vc)
+        present(nav, animated: true, completion: nil)
     }
 }

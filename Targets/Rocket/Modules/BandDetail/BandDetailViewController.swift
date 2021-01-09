@@ -242,7 +242,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .pushToCommentList(let input):
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: input)
-                self.present(vc, animated: true, completion: nil)
+                let nav = BrandNavigationController(rootViewController: vc)
+                self.present(nav, animated: true, completion: nil)
             case .pushToLiveList(let input):
                 let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)

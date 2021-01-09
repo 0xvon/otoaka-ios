@@ -242,7 +242,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .presentCommentList(let input):
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: input)
-                self.present(vc, animated: true, completion: nil)
+                let nav = BrandNavigationController(rootViewController: vc)
+                self.present(nav, animated: true, completion: nil)
             }
         }
         .store(in: &cancellables)

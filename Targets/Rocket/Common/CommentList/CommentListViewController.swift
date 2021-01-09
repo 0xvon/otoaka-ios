@@ -70,6 +70,7 @@ final class CommentListViewController: UIViewController, Instantiable {
         
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
+        self.title = "コメント"
         
         commentTableView = UITableView(frame: .zero, style: .grouped)
         commentTableView.translatesAutoresizingMaskIntoConstraints = false
