@@ -30,7 +30,7 @@ final class AccountViewController: UIViewController, Instantiable {
     }()
     private lazy var profileSettingItem: AccountSettingItem = {
         return AccountSettingItem(
-            title: "プロフィール設定", image: UIImage(named: "profile"), action: self.setProfile,
+            title: "ユーザー編集", image: UIImage(named: "profile"), action: self.setProfile,
             hasNotification: false)
     }()
     private lazy var seeRequestsItem: AccountSettingItem = {
