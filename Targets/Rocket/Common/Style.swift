@@ -37,9 +37,7 @@ extension UIImage {
         } catch let err { print("Error : \(err.localizedDescription)") }
         self.init()
     }
-}
-
-extension UIImage {
+    
     func fill(color: UIColor) -> UIImage? {
         let rect = CGRect(origin: .zero, size: self.size)
         UIGraphicsBeginImageContextWithOptions(rect.size, false, UIScreen.main.scale)
@@ -51,44 +49,6 @@ extension UIImage {
         let coloredImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         return coloredImage
-    }
-}
-
-var cache: [String: UIImage] = NSMutableDictionary() as! [String: UIImage]
-
-extension UIImageView {
-    @available(*, deprecated)
-    func loadImageAsynchronously(url: URL?, defaultUIImage: UIImage? = nil) {
-        
-        guard let url = url else {
-            self.image = defaultUIImage
-            return
-        }
-        let path = url.absoluteString
-        if let data = cache[path] {
-            self.image = data
-            return
-        }
-        
-        DispatchQueue.global().async {
-            do {
-                let imageData: Data? = try Data(contentsOf: url)
-                DispatchQueue.main.async { [weak self] in
-                    if let data = imageData {
-                        cache[path] = UIImage(data: data)
-                        self?.image = UIImage(data: data)
-                    } else {
-                        self?.image = defaultUIImage
-                    }
-                }
-            } catch let error {
-                print(error)
-                DispatchQueue.main.async {
-                    cache[path] = defaultUIImage
-                    self.image = defaultUIImage
-                }
-            }
-        }
     }
 }
 
