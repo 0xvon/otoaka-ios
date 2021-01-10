@@ -30,6 +30,7 @@ class ArtistFeedCell: UITableViewCell, ReusableCell {
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
         ])
+        selectionStyle = .none
     }
     
     required init?(coder: NSCoder) {
@@ -42,6 +43,12 @@ class ArtistFeedCell: UITableViewCell, ReusableCell {
 
     func listen(_ listener: @escaping (Output) -> Void) {
         _contentView.listen(listener)
+    }
+    
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        alpha = highlighted ? 0.6 : 1.0
+        _contentView.alpha = highlighted ? 0.6 : 1.0
     }
 }
 
