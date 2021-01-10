@@ -64,8 +64,7 @@ final class GroupListViewController: UIViewController, Instantiable {
         groupTableView.backgroundColor = Brand.color(for: .background(.primary))
         groupTableView.delegate = self
         groupTableView.dataSource = self
-        groupTableView.register(
-            UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
+        groupTableView.registerCellClass(GroupCell.self)
         self.view.addSubview(groupTableView)
         
         groupTableView.refreshControl = BrandRefreshControl()
@@ -112,12 +111,12 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 250
+        return 282
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let band = self.viewModel.state.groups[indexPath.section]
-        let cell = tableView.dequeueReusableCell(BandCell.self, input: band, for: indexPath)
+        let group = self.viewModel.state.groups[indexPath.section]
+        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
 

@@ -24,10 +24,10 @@ class LiveCell: UITableViewCell, ReusableCell {
         _contentView.isUserInteractionEnabled = false
         backgroundColor = .clear
         NSLayoutConstraint.activate([
-            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
+            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
         ])
     }
     

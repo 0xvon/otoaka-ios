@@ -53,7 +53,7 @@ final class GroupViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
-        tableView.register(UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
+        tableView.registerCellClass(GroupCell.self)
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
@@ -125,7 +125,7 @@ extension GroupViewController: UISearchResultsUpdating {
 extension GroupViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = viewModel.groups[indexPath.row]
-        let cell = tableView.dequeueReusableCell(BandCell.self, input: group, for: indexPath)
+        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -133,7 +133,7 @@ extension GroupViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 250
+        return 282
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

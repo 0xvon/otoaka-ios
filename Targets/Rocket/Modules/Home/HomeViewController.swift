@@ -477,8 +477,8 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(TrackCell.self, input: chart, for: indexPath)
             return cell
         case self.groupTableView:
-            let band = self.groups[indexPath.section]
-            let cell = tableView.dequeueReusableCell(BandCell.self, input: band, for: indexPath)
+            let group = self.groups[indexPath.section]
+            let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
             return cell
         default:
             return UITableViewCell()

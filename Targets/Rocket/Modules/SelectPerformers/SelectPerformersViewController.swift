@@ -36,8 +36,7 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
         groupTableView.refreshControl = BrandRefreshControl()
         groupTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroup(_:)), for: .valueChanged)
-        groupTableView.register(
-            UINib(nibName: "BandCell", bundle: nil), forCellReuseIdentifier: "BandCell")
+        groupTableView.registerCellClass(GroupCell.self)
         return groupTableView
     }()
     
@@ -133,12 +132,12 @@ extension SelectPerformersViewController: UITableViewDelegate, UITableViewDataSo
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 250
+        return 282
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let band = viewModel.state.searchResult[indexPath.section]
-        let cell = tableView.dequeueReusableCell(BandCell.self, input: band, for: indexPath)
+        let group = viewModel.state.searchResult[indexPath.section]
+        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
 

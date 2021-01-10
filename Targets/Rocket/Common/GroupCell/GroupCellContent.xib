@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17504.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,15 +11,12 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="BandCell" customModule="Rocket_Development" customModuleProvider="target">
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="GroupCellContent" customModule="Rocket" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="CUj-QU-1V3">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="250" id="pfY-JY-6YR"/>
-                    </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mcz-II-bDG">
                     <rect key="frame" x="16" y="16" width="382" height="20.5"/>
@@ -77,12 +74,12 @@
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
-                <outlet property="bandName" destination="mcz-II-bDG" id="KgX-SV-Ivc"/>
-                <outlet property="hometownBadgeView" destination="I3s-94-gFE" id="aO6-Fn-NFS"/>
-                <outlet property="jacketImageView" destination="CUj-QU-1V3" id="ebK-eu-feP"/>
-                <outlet property="labelBadgeView" destination="dKS-9Q-Jlh" id="hH8-pa-fJ1"/>
-                <outlet property="productionBadgeView" destination="YGD-6Y-cJe" id="QwJ-As-Cqe"/>
-                <outlet property="yearBadgeView" destination="Xaw-dn-4ak" id="RTv-as-zRf"/>
+                <outlet property="bandNameLabel" destination="mcz-II-bDG" id="QbK-oh-HOR"/>
+                <outlet property="hometownBadgeView" destination="I3s-94-gFE" id="CYZ-58-M5P"/>
+                <outlet property="jacketImageView" destination="CUj-QU-1V3" id="IxM-ni-lOi"/>
+                <outlet property="labelBadgeView" destination="dKS-9Q-Jlh" id="Nx6-z2-3yd"/>
+                <outlet property="productionBadgeView" destination="YGD-6Y-cJe" id="2Zs-OQ-QyA"/>
+                <outlet property="sinceBadgeView" destination="Xaw-dn-4ak" id="Lm1-TW-tLo"/>
             </connections>
             <point key="canvasLocation" x="140.57971014492756" y="-95.758928571428569"/>
         </view>

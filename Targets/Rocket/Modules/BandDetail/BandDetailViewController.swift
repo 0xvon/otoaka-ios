@@ -54,16 +54,25 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private let liveSectionHeader = SummarySectionHeader(title: "LIVE")
     // FIXME: Use a safe way to instantiate views from xib
     private lazy var liveCellContent: LiveCellContent = {
-        UINib(nibName: "LiveCellContent", bundle: nil)
+        let content = UINib(nibName: "LiveCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 300),
+        ])
+        return content
     }()
     private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
 
-
     private let feedSectionHeader = SummarySectionHeader(title: "FEED")
     private lazy var feedCellContent: ArtistFeedCellContent = {
-        UINib(nibName: "ArtistFeedCellContent", bundle: nil)
+        let content = UINib(nibName: "ArtistFeedCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! ArtistFeedCellContent
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 300),
+        ])
+        return content
     }()
     private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
 
