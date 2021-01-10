@@ -86,8 +86,7 @@ final class UserListViewController: UIViewController, Instantiable {
         fanTableView.backgroundColor = Brand.color(for: .background(.primary))
         fanTableView.delegate = self
         fanTableView.dataSource = self
-        fanTableView.register(
-            UINib(nibName: "FanCell", bundle: nil), forCellReuseIdentifier: "FanCell")
+        fanTableView.registerCellClass(FanCell.self)
         self.view.addSubview(fanTableView)
         
         fanTableView.refreshControl = BrandRefreshControl()
@@ -96,10 +95,10 @@ final class UserListViewController: UIViewController, Instantiable {
         self.getUsers()
         
         let constraints: [NSLayoutConstraint] = [
-            fanTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
-            fanTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            fanTableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 32),
-            fanTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -16),
+            fanTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            fanTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            fanTableView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            fanTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -154,7 +153,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = self.users[indexPath.section]
-        let cell = tableView.dequeueReusableCell(FanCell.self, input: user, for: indexPath)
+        let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: user, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
 

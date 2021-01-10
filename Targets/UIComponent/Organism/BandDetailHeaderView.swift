@@ -80,9 +80,7 @@ public final class BandDetailHeaderView: UIView {
 
     public func update(input: Input) {
         bandInformationView.update(input: input)
-        if let groupItem = input.groupItem {
-            trackInformationView.update(input: groupItem)
-        }
+        trackInformationView.update(input: (track: input.groupItem, imagePipeline: input.imagePipeline))
         if let artworkURL = input.group.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: bandImageView)
         }

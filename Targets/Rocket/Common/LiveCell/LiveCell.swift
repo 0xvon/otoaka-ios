@@ -7,6 +7,7 @@
 
 import Endpoint
 import UIKit
+import ImagePipeline
 
 class LiveCell: UITableViewCell, ReusableCell {
     typealias Input = LiveCellContent.Input
@@ -52,7 +53,10 @@ class LiveCell: UITableViewCell, ReusableCell {
 }
 
 class LiveCellContent: UIButton {
-    typealias Input = Live
+    typealias Input = (
+        live: Live,
+        imagePipeline: ImagePipeline
+    )
     enum Output {
         case listenButtonTapped
         case buyTicketButtonTapped
@@ -103,23 +107,22 @@ class LiveCellContent: UIButton {
         setup()
     }
 
-    func inject(input: Live) {
-        self.liveTitleLabel.text = input.title
-        switch input.style {
+    func inject(input: Input) {
+        self.liveTitleLabel.text = input.live.title
+        switch input.live.style {
         case .oneman(_):
-            self.bandsLabel.text = input.hostGroup.name
+            self.bandsLabel.text = input.live.hostGroup.name
         case .battle(let groups):
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         case .festival(let groups):
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
         
-        let date: String =
-            (input.startAt != nil) ? dateFormatter.string(from: input.startAt!) : "時間未定"
-
-        dateView.title = date
-        placeView.title = input.liveHouse
-        self.thumbnailView.loadImageAsynchronously(url: input.artworkURL)
+        dateView.title = input.live.startAt.map { dateFormatter.string(from: $0) } ?? "時間未定"
+        placeView.title = input.live.liveHouse ?? "会場未定"
+        if let artworkURL = input.live.artworkURL {
+            input.imagePipeline.loadImage(artworkURL, into: thumbnailView)
+        }
     }
 
     func setup() { 

@@ -8,9 +8,13 @@
 import UIKit
 import Foundation
 import InternalDomain
+import ImagePipeline
 
 public final class TrackInformationView: UIView {
-    typealias Input = ChannelDetail.ChannelItem
+    typealias Input = (
+        track: ChannelDetail.ChannelItem?,
+        imagePipeline: ImagePipeline
+    )
     // FIXME
     private let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -121,10 +125,18 @@ public final class TrackInformationView: UIView {
     }
 
     func update(input: Input) {
-        let groupItem = input
-        artworkImageView.loadImageAsynchronously(url: URL(string: groupItem.snippet.thumbnails.high.url))
-        releasedDataLabel.text = self.dateFormatter.string(from: groupItem.snippet.publishedAt)
-        trackNameLabel.text = groupItem.snippet.title
+        if let groupItem = input.track {
+            guard let url = URL(string: groupItem.snippet.thumbnails.high.url) else { return }
+            input.imagePipeline.loadImage(url, into: artworkImageView)
+            releasedDataLabel.text = self.dateFormatter.string(from: groupItem.snippet.publishedAt)
+            trackNameLabel.text = groupItem.snippet.title
+            playButton.isHidden = false
+        } else {
+            artworkImageView.image = nil
+            releasedDataLabel.text = ""
+            trackNameLabel.text = ""
+            playButton.isHidden = true
+        }
     }
     private func setup() {
         backgroundColor = .clear

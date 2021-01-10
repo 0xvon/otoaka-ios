@@ -464,7 +464,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         case self.liveTableView:
             let live = self.lives[indexPath.section].live
-            let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
+            let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
             cell.listen { [weak self] output in
                 switch output {
                 case .listenButtonTapped: self?.listenButtonTapped(cellIndex: indexPath.section)

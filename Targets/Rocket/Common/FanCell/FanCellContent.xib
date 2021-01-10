@@ -11,7 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="FanCell" customModule="Rocket_Development" customModuleProvider="target">
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="FanCellContent" customModule="Rocket" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="414" height="200"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
@@ -56,9 +56,9 @@
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
-                <outlet property="biographyTextView" destination="em9-AD-3YP" id="A8Y-1C-39c"/>
-                <outlet property="fanArtworkImageView" destination="qop-du-L8X" id="IYi-a1-dkZ"/>
-                <outlet property="fanNameLabel" destination="6gH-JE-5g9" id="t0u-Jp-P6v"/>
+                <outlet property="biographyTextView" destination="em9-AD-3YP" id="e7H-Ig-5Pz"/>
+                <outlet property="fanArtworkImageView" destination="qop-du-L8X" id="Bz6-aw-s0E"/>
+                <outlet property="fanNameLabel" destination="6gH-JE-5g9" id="VU3-zF-bUr"/>
             </connections>
             <point key="canvasLocation" x="273.91304347826087" y="20.758928571428569"/>
         </view>

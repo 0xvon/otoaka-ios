@@ -225,7 +225,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .updateLiveSummary(.some(let live)):
                 self.liveSectionHeader.isHidden = false
                 self.liveCellWrapper.isHidden = false
-                self.liveCellContent.inject(input: live)
+                self.liveCellContent.inject(input: (live: live, imagePipeline: dependencyProvider.imagePipeline))
             case .updateFeedSummary(.none):
                 self.feedSectionHeader.isHidden = true
                 self.feedCellWrapper.isHidden = true
@@ -385,6 +385,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             dependencyProvider: dependencyProvider,
             input: .followers(viewModel.state.group.id)
         )
+        vc.title = "フォロワー"
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

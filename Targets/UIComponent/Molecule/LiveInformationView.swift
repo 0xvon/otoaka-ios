@@ -10,7 +10,7 @@ import UIKit
 import DomainEntity
 
 class LiveInformationView: UIView {
-    public typealias Input = Live
+    public typealias Input = LiveDetailHeaderView.Input
     init() {
         super.init(frame: .zero)
         setup()
@@ -83,14 +83,14 @@ class LiveInformationView: UIView {
 
     func update(input: Input) {
         let startYear: String = {
-            guard let openAt = input.openAt else { return "不明" }
+            guard let openAt = input.live.openAt else { return "不明" }
             return dateFormatter.string(from: openAt)
         }()
 
         dateBadgeView.title = startYear
-        liveTitleLabel.text = input.title
-        hostGroupNameLabel.text = input.hostGroup.name
-        mapBadgeView.title = input.liveHouse ?? "不明"
+        liveTitleLabel.text = input.live.title
+        hostGroupNameLabel.text = input.live.hostGroup.name
+        mapBadgeView.title = input.live.liveHouse ?? "不明"
     }
 
     private func setup() {

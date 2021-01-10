@@ -8,9 +8,13 @@
 import DomainEntity
 import InternalDomain
 import UIKit
+import ImagePipeline
 
 public final class LiveDetailHeaderView: UIView {
-    public typealias Input = Live
+    public typealias Input = (
+        live: Live,
+        imagePipeline: ImagePipeline
+    )
     
     private lazy var horizontalScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -54,7 +58,9 @@ public final class LiveDetailHeaderView: UIView {
     
     public func update(input: Input) {
         liveInformationView.update(input: input)
-        liveThumbnailView.loadImageAsynchronously(url: input.artworkURL)
+        if let artworkURL = input.live.artworkURL {
+            input.imagePipeline.loadImage(artworkURL, into: liveThumbnailView)
+        }
     }
     
     func bind() {}

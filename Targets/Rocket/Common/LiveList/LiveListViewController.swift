@@ -116,7 +116,7 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let live = self.viewModel.state.lives[indexPath.section]
-        let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
+        let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
 

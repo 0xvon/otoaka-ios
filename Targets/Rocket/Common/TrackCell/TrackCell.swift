@@ -38,7 +38,6 @@ final class TrackCell: UITableViewCell, ReusableCell {
 
         playImageView.image = UIImage(named: "play")
 
-        artWorkImageView.loadImageAsynchronously(url: URL(string: input.snippet.thumbnails.high.url))
         artWorkImageView.layer.opacity = 0.6
         artWorkImageView.layer.cornerRadius = 16
         artWorkImageView.layer.borderWidth = 1

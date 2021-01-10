@@ -215,7 +215,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .didGetLiveDetail(let liveDetail):
                 self.title = liveDetail.live.title
                 self.reserveTicketViewModel.didGetLiveDetail(ticket: liveDetail.ticket, participantsCount: liveDetail.participants)
-                headerView.update(input: liveDetail.live)
+                headerView.update(input: (live: liveDetail.live, imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
             case .updatePerformers(let performers):
                 self.setupPerformersContents(performers: performers)
@@ -275,7 +275,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     func setupViews() {
-        headerView.update(input: viewModel.state.live)
+        headerView.update(input: (live: viewModel.state.live, imagePipeline: dependencyProvider.imagePipeline))
     }
     
     func setupPerformersContents(performers: [Group]) {
@@ -314,6 +314,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     @objc private func numOfParticipantsButtonTapped() {
         let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .tickets(viewModel.state.live.id))
+        vc.title = "予約者"
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

@@ -96,7 +96,7 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let live = self.tickets[indexPath.section].live
-        let cell = tableView.dequeueReusableCell(LiveCell.self, input: live, for: indexPath)
+        let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [weak self] output in
             switch output {
             case .listenButtonTapped: self?.listenButtonTapped(cellIndex: indexPath.section)
