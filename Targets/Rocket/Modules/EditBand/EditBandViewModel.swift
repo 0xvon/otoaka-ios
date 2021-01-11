@@ -56,9 +56,22 @@ class EditBandViewModel {
     
     func validateYoutubeChannelId(youtubeChannelId: String?, callback: @escaping ((Bool) -> Void)) {
         guard let youtubeChannelId = youtubeChannelId else { callback(false); return }
-        let url = URL(string: "https://youtube.com/channel/\(youtubeChannelId)")
-        // TODO: call YouTubeData API Async
-        callback(url != nil)
+        
+        let request = Empty()
+        var uri = ListChannel.URI()
+        uri.channelId = youtubeChannelId
+        uri.part = "snippet"
+        uri.maxResults = 1
+        uri.order = "viewCount"
+        dependencyProvider.youTubeDataApiClient.request(ListChannel.self, request: request, uri: uri) { result in
+            switch result {
+            case .success(_):
+                callback(true)
+            case .failure(let error):
+                print(error)
+                callback(false)
+            }
+        }
     }
     
     func didUpdateInputItems(

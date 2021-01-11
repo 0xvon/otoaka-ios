@@ -27,12 +27,12 @@ class BandDetailViewModel {
         var groupDetail: GetGroup.Response?
         var channelItem: ChannelDetail.ChannelItem?
         let role: RoleProperties
-
+        
         var displayType: DisplayType? {
             guard let detail = groupDetail else { return nil }
             return _displayType(isMember: detail.isMember)
         }
-
+        
         fileprivate func _displayType(isMember: Bool) -> DisplayType {
             switch role {
             case .fan: return .fan
@@ -41,7 +41,7 @@ class BandDetailViewModel {
             }
         }
     }
-
+    
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
         case updateLiveSummary(Live?)
@@ -56,22 +56,22 @@ class BandDetailViewModel {
         case openURLInBrowser(URL)
         case reportError(Error)
     }
-
+    
     let dependencyProvider: LoggedInDependencyProvider
     var apiClient: APIClient { dependencyProvider.apiClient }
-
+    
     private(set) var state: State
-
+    
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
-
+    
     init(
         dependencyProvider: LoggedInDependencyProvider, group: Group
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(group: group, role: dependencyProvider.user.role)
     }
-
+    
     func didTapSeeMore(at row: SummaryRow) {
         switch row {
         case .live:
@@ -80,7 +80,7 @@ class BandDetailViewModel {
             outputSubject.send(.pushToGroupFeedList(state.group))
         }
     }
-
+    
     func didSelectRow(at row: SummaryRow) {
         switch row {
         case .live:
@@ -94,50 +94,50 @@ class BandDetailViewModel {
             }
         }
     }
-
+    
     // MARK: - Inputs
     func viewDidLoad() {
         refresh()
     }
-
+    
     func refresh() {
         getGroupDetail()
         getChartSummary()
         getGroupLiveSummary()
         getGroupFeedSummary()
     }
-
+    
     func headerEvent(event: BandDetailHeaderView.Output) {
         switch event {
         case .track(.seeMoreChartsTapped):
             outputSubject.send(.pushToChartList(state.group))
         case .track(.playButtonTapped):
             guard let item = state.channelItem,
-                let url = URL(string: "https://youtube.com/watch?v=\(item.id.videoId)")
+                  let url = URL(string: "https://youtube.com/watch?v=\(item.id.videoId)")
             else {
                 return
             }
             outputSubject.send(.openURLInBrowser(url))
         case .track(.youtubeButtonTapped):
             guard let channelId = state.group.youtubeChannelId,
-                let url = URL(string: "https://www.youtube.com/channel/\(channelId)")
+                  let url = URL(string: "https://www.youtube.com/channel/\(channelId)")
             else {
                 return
             }
             outputSubject.send(.openURLInBrowser(url))
         case .track(.twitterButtonTapped):
             guard let id = state.group.twitterId,
-                let url = URL(string: "https://twitter.com/\(id)")
+                  let url = URL(string: "https://twitter.com/\(id)")
             else {
                 return
             }
             outputSubject.send(.openURLInBrowser(url))
         case .track(.appleMusicButtonTapped),
-            .track(.spotifyButtonTapped):
+             .track(.spotifyButtonTapped):
             break  // TODO
         }
     }
-
+    
     func feedCellEvent(event: ArtistFeedCellContent.Output) {
         switch event {
         case .commentButtonTapped:
@@ -145,7 +145,7 @@ class BandDetailViewModel {
             outputSubject.send(.pushToCommentList(.feedComment(feed)))
         }
     }
-
+    
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
         apiClient.request(InviteGroup.self, request: request) { [outputSubject] result in
@@ -157,7 +157,7 @@ class BandDetailViewModel {
             }
         }
     }
-
+    
     private func getGroupDetail() {
         var uri = GetGroup.URI()
         uri.groupId = state.group.id
@@ -173,7 +173,7 @@ class BandDetailViewModel {
             }
         }
     }
-
+    
     private func getGroupLiveSummary() {
         let request = Empty()
         var uri = Endpoint.GetGroupLives.URI()
@@ -190,7 +190,7 @@ class BandDetailViewModel {
             }
         }
     }
-
+    
     private func getGroupFeedSummary() {
         var uri = GetGroupFeed.URI()
         uri.groupId = state.group.id
@@ -207,7 +207,7 @@ class BandDetailViewModel {
             }
         }
     }
-
+    
     private func getChartSummary() {
         guard let youtubeChannelId = state.group.youtubeChannelId else { return }
         let request = Empty()
@@ -216,15 +216,14 @@ class BandDetailViewModel {
         uri.part = "snippet"
         uri.maxResults = 1
         uri.order = "viewCount"
-        dependencyProvider.youTubeDataApiClient
-            .request(ListChannel.self, request: request, uri: uri) { [unowned self] result in
-                switch result {
-                case .success(let res):
-                    self.state.channelItem = res.items.first
-                    self.outputSubject.send(.didGetChart(self.state.group, res.items.first))
-                case .failure(let error):
-                    self.outputSubject.send(.reportError(error))
-                }
+        dependencyProvider.youTubeDataApiClient.request(ListChannel.self, request: request, uri: uri) { [unowned self] result in
+            switch result {
+            case .success(let res):
+                self.state.channelItem = res.items.first
+                self.outputSubject.send(.didGetChart(self.state.group, res.items.first))
+            case .failure(let error):
+                self.outputSubject.send(.reportError(error))
             }
+        }
     }
 }
