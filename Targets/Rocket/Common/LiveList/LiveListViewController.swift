@@ -73,10 +73,10 @@ final class LiveListViewController: UIViewController, Instantiable {
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
         
         let constraints: [NSLayoutConstraint] = [
-            liveTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
-            liveTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+            liveTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            liveTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             liveTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
-            liveTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -16),
+            liveTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
