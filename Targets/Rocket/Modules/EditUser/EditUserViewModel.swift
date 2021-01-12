@@ -31,7 +31,7 @@ class EditUserViewModel {
         case didEditUser(User)
         case didGetUserInfo(User)
         case updateSubmittableState(PageState)
-        case didInjectRole(RoleProperties)
+//        case didInjectRole(RoleProperties)
         case reportError(Error)
     }
 
@@ -50,13 +50,13 @@ class EditUserViewModel {
     }
     
     func viewDidLoad() {
-        injectRole()
+//        injectRole()
         getUserInfo()
     }
     
-    func injectRole() {
-        outputSubject.send(.didInjectRole(state.role))
-    }
+//    func injectRole() {
+//        outputSubject.send(.didInjectRole(state.role))
+//    }
     
     func getUserInfo() {
         apiClient.request(GetUserInfo.self) { [unowned self] result in

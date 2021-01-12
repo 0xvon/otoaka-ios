@@ -121,12 +121,12 @@ extension InputTextView: UITextViewDelegate {
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
-        self.listener()
+        textView.text = textView.text.prefix(input.maxLength).description
         underLineColor()
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        textView.text = textView.text.prefix(input.maxLength).description
+        self.listener()
         underLineColor()
     }
 }

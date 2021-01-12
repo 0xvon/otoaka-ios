@@ -39,18 +39,18 @@ final class EditUserViewController: UIViewController, Instantiable {
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         return biographyInputView
     }()
-    private lazy var partInputView: TextFieldView = {
-        let partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
-        partInputView.translatesAutoresizingMaskIntoConstraints = false
-        return partInputView
-    }()
-    private lazy var partPickerView: UIPickerView = {
-        let partPickerView = UIPickerView()
-        partPickerView.translatesAutoresizingMaskIntoConstraints = false
-        partPickerView.dataSource = self
-        partPickerView.delegate = self
-        return partPickerView
-    }()
+//    private lazy var partInputView: TextFieldView = {
+//        let partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
+//        partInputView.translatesAutoresizingMaskIntoConstraints = false
+//        return partInputView
+//    }()
+//    private lazy var partPickerView: UIPickerView = {
+//        let partPickerView = UIPickerView()
+//        partPickerView.translatesAutoresizingMaskIntoConstraints = false
+//        partPickerView.dataSource = self
+//        partPickerView.delegate = self
+//        return partPickerView
+//    }()
     private var thumbnailInputView: UIView = {
         let thumbnailInputView = UIView()
         thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -133,8 +133,9 @@ final class EditUserViewController: UIViewController, Instantiable {
         switch user.role {
         case .fan(_):
             break
-        case .artist(let artist):
-            partInputView.setText(text: artist.part)
+        case .artist(_):
+//            partInputView.setText(text: artist.part)
+        break
         }
         if let thumbnailURL = user.thumbnailURL.flatMap(URL.init(string: )) {
             dependencyProvider.imagePipeline.loadImage(thumbnailURL, into: profileImageView)
@@ -153,14 +154,14 @@ final class EditUserViewController: UIViewController, Instantiable {
                 self.navigationController?.popViewController(animated: true)
             case .didGetUserInfo(let user):
                 self.update(user: user)
-            case .didInjectRole(let role):
-                switch role {
-                case .fan(_):
-                    partInputView.isHidden = true
-                case .artist(let artist):
-                    partInputView.isHidden = false
-                    partInputView.setText(text: artist.part)
-                }
+//            case .didInjectRole(let role):
+//                switch role {
+//                case .fan(_):
+//                    partInputView.isHidden = true
+//                case .artist(let artist):
+//                    partInputView.isHidden = false
+//                    partInputView.setText(text: artist.part)
+//                }
             case .updateSubmittableState(let state):
                 switch state {
                 case .completed:
@@ -186,10 +187,10 @@ final class EditUserViewController: UIViewController, Instantiable {
             self.didInputValue()
         }
         
-        partInputView.listen {
-            self.partInputView.setText(text: self.viewModel.state.socialInputs.parts[self.partPickerView.selectedRow(inComponent: 0)])
-            self.didInputValue()
-        }
+//        partInputView.listen {
+//            self.partInputView.setText(text: self.viewModel.state.socialInputs.parts[self.partPickerView.selectedRow(inComponent: 0)])
+//            self.didInputValue()
+//        }
     }
 
     func setup() {
@@ -230,11 +231,11 @@ final class EditUserViewController: UIViewController, Instantiable {
             biographyInputView.heightAnchor.constraint(equalToConstant: 200),
         ])
         
-        mainView.addArrangedSubview(partInputView)
-        partInputView.selectInputView(inputView: partPickerView)
-        NSLayoutConstraint.activate([
-            partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
+//        mainView.addArrangedSubview(partInputView)
+//        partInputView.selectInputView(inputView: partPickerView)
+//        NSLayoutConstraint.activate([
+//            partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        ])
         
         mainView.addArrangedSubview(thumbnailInputView)
         NSLayoutConstraint.activate([
