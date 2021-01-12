@@ -28,6 +28,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>dev.wall-of-death.Rocket</string>
+				<string>dev.wall-of-death.dev.Rocket</string>
 			</array>
 		</dict>
 	</array>
