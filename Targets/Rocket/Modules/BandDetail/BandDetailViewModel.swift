@@ -77,46 +77,36 @@ class BandDetailViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(group: group, role: dependencyProvider.user.role)
-
-        inviteGroup.elements
-            .map(Output.didCreatedInvitation)
-            .merge(with: inviteGroup.errors.map(Output.reportError))
-            .sink(receiveValue: outputSubject.send)
-            .store(in: &cancellables)
         
-        getGroup.elements
-            .map { result in Output.didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))}
+        let errors = inviteGroup.errors
+        errors
+            .map(Output.reportError)
             .merge(with: getGroup.errors.map(Output.reportError))
-            .sink(receiveValue: outputSubject.send)
-            .store(in: &cancellables)
-        
-        getGroupLives.elements
-            .map { lives in
-                self.state.lives = lives.items
-                return Output.updateLiveSummary(lives.items.first)
-            }
             .merge(with: getGroupLives.errors.map(Output.reportError))
-            .sink(receiveValue: outputSubject.send)
-            .store(in: &cancellables)
-        
-        getGroupFeed.elements
-            .map { feeds in
-                self.state.feeds = feeds.items
-                return Output.updateFeedSummary(feeds.items.first)
-            }
             .merge(with: getGroupFeed.errors.map(Output.reportError))
-            .sink(receiveValue: outputSubject.send)
-            .store(in: &cancellables)
-        
-        listChannel.elements
-            .map { channel in
-                self.state.channelItem = channel.items.first
-                return Output.didGetChart(self.state.group, channel.items.first)
-            }
             .merge(with: listChannel.errors.map(Output.reportError))
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
-        
+
+        let elements = inviteGroup.elements
+        elements
+            .map(Output.didCreatedInvitation)
+            .merge(with: getGroup.elements.map { result in Output.didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))
+            })
+            .merge(with: getGroupLives.elements.map { lives in
+                self.state.lives = lives.items
+                return Output.updateLiveSummary(lives.items.first)
+            })
+            .merge(with: getGroupFeed.elements.map { feeds in
+                self.state.feeds = feeds.items
+                return Output.updateFeedSummary(feeds.items.first)
+            })
+            .merge(with: listChannel.elements.map { channel in
+                self.state.channelItem = channel.items.first
+                return Output.didGetChart(self.state.group, channel.items.first)
+            })
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
     }
     
     func didTapSeeMore(at row: SummaryRow) {

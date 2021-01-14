@@ -43,6 +43,7 @@ class LiveDetailViewModel {
     var apiClient: APIClient { dependencyProvider.apiClient }
     private(set) var state: State
     
+    
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
