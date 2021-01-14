@@ -64,6 +64,7 @@ class BandDetailViewModel {
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
     
     init(
         dependencyProvider: LoggedInDependencyProvider, group: Group
@@ -148,14 +149,16 @@ class BandDetailViewModel {
     
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
-        apiClient.request(InviteGroup.self, request: request) { [outputSubject] result in
-            switch result {
-            case .success(let invitation):
-                outputSubject.send(.didCreatedInvitation(invitation))
-            case .failure(let error):
-                outputSubject.send(.reportError(error))
-            }
-        }
+        apiClient.request(InviteGroup.self, request: request)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { error in
+                    print(error) // Type of Subscribers.Completion<Error>
+                },
+                receiveValue: { [unowned self] result in
+                    outputSubject.send(.didCreatedInvitation(result))
+                }
+            ).store(in: &cancellables)
     }
     
     private func getGroupDetail() {
