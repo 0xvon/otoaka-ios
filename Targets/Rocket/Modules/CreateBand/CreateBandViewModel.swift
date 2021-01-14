@@ -102,18 +102,19 @@ class CreateBandViewModel {
         outputSubject.send(.updateSubmittableState(.loading))
         guard let name = state.name else { return }
         guard let englishName = state.englishName else { return }
-        self.dependencyProvider.s3Client.uploadImage(image: state.artwork) { [unowned self] result in
+        self.dependencyProvider.s3Client.uploadImage(image: state.artwork) { [weak self] result in
             switch result {
             case .success(let imageUrl):
+                guard let state = self?.state else { return }
                 let req = CreateGroup.Request(
-                    name: name, englishName: englishName, biography: self.state.biography, since: self.state.since,
-                    artworkURL: URL(string: imageUrl),twitterId: self.state.twitterId, youtubeChannelId: self.state.youtubeChannelId, hometown: self.state.hometown)
-                apiClient.request(CreateGroup.self, request: req) { [unowned self] result in
-                    updateState(with: result)
+                    name: name, englishName: englishName, biography: state.biography, since: state.since,
+                    artworkURL: URL(string: imageUrl),twitterId: state.twitterId, youtubeChannelId: state.youtubeChannelId, hometown: state.hometown)
+                self?.apiClient.request(CreateGroup.self, request: req) { [weak self] result in
+                    self?.updateState(with: result)
                 }
             case .failure(let error):
-                outputSubject.send(.updateSubmittableState(.completed))
-                outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.updateSubmittableState(.completed))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }

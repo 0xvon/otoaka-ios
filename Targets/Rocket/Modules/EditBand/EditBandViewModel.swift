@@ -105,13 +105,13 @@ class EditBandViewModel {
     func didEditButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
         if let artwork = self.state.artwork {
-            self.dependencyProvider.s3Client.uploadImage(image: artwork) { [unowned self] result in
+            self.dependencyProvider.s3Client.uploadImage(image: artwork) { [weak self] result in
                 switch result {
                 case .success(let imageUrl):
-                    editBand(imageUrl: URL(string: imageUrl))
+                    self?.editBand(imageUrl: URL(string: imageUrl))
                 case .failure(let error):
-                    outputSubject.send(.updateSubmittableState(.completed))
-                    outputSubject.send(.reportError(error))
+                    self?.outputSubject.send(.updateSubmittableState(.completed))
+                    self?.outputSubject.send(.reportError(error))
                 }
             }
         } else {
@@ -132,8 +132,8 @@ class EditBandViewModel {
             twitterId: self.state.twitterId,
             youtubeChannelId: self.state.youtubeChannelId,
             hometown: self.state.hometown)
-        apiClient.request(EditGroup.self, request: req, uri: uri) { [unowned self] result in
-            updateState(with: result)
+        apiClient.request(EditGroup.self, request: req, uri: uri) { [weak self] result in
+            self?.updateState(with: result)
         }
     }
     

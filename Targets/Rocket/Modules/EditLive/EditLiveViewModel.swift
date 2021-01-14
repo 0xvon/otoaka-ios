@@ -98,13 +98,13 @@ class EditLiveViewModel {
     func didEditButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
         if let image = state.thumbnail {
-            dependencyProvider.s3Client.uploadImage(image: image) { [unowned self] result in
+            dependencyProvider.s3Client.uploadImage(image: image) { [weak self] result in
                 switch result {
                 case .success(let imageUrl):
-                    editLive(imageUrl: URL(string: imageUrl))
+                    self?.editLive(imageUrl: URL(string: imageUrl))
                 case .failure(let error):
-                    outputSubject.send(.updateSubmittableState(.completed))
-                    outputSubject.send(.reportError(error))
+                    self?.outputSubject.send(.updateSubmittableState(.completed))
+                    self?.outputSubject.send(.reportError(error))
                 }
             }
         } else {
@@ -118,8 +118,8 @@ class EditLiveViewModel {
         let req = EditLive.Request(
             title: state.title ?? state.live.title, artworkURL: imageUrl, liveHouse: state.livehouse ?? state.live.liveHouse, openAt: state.openAt, startAt: state.startAt,
             endAt: state.endAt)
-        apiClient.request(EditLive.self, request: req, uri: uri) { [unowned self] result in
-            updateState(with: result)
+        apiClient.request(EditLive.self, request: req, uri: uri) { [weak self] result in
+            self?.updateState(with: result)
         }
     }
     

@@ -138,19 +138,20 @@ class CreateLiveViewModel {
         guard let liveStyle = state.liveStyle else { return }
         guard let price = state.price else { return }
         guard let livehouse = state.livehouse else { return }
-        self.dependencyProvider.s3Client.uploadImage(image: state.thumbnail) { [unowned self] result in
+        self.dependencyProvider.s3Client.uploadImage(image: state.thumbnail) { [weak self] result in
             switch result {
             case .success(let imageUrl):
+                guard let state = self?.state else { return }
                 let req = CreateLive.Request(
                     title: title, style: liveStyle, price: price, artworkURL: URL(string: imageUrl),
                     hostGroupId: groupId, liveHouse: livehouse,
                     openAt: state.openAt, startAt: state.startAt, endAt: state.endAt)
-                apiClient.request(CreateLive.self, request: req) { [unowned self] result in
-                    updateState(with: result)
+                self?.apiClient.request(CreateLive.self, request: req) { [weak self] result in
+                    self?.updateState(with: result)
                 }
             case .failure(let error):
-                outputSubject.send(.updateSubmittableState(.completed))
-                outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.updateSubmittableState(.completed))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }
@@ -169,13 +170,13 @@ class CreateLiveViewModel {
         let request = Empty()
         var uri = Endpoint.GetMemberships.URI()
         uri.artistId = self.dependencyProvider.user.id
-        apiClient.request(GetMemberships.self, request: request, uri: uri) { [unowned self] result in
+        apiClient.request(GetMemberships.self, request: request, uri: uri) { [weak self] result in
             switch result {
             case .success(let res):
-                state.memberships = res
-                outputSubject.send(.didGetMemberships(res))
+                self?.state.memberships = res
+                self?.outputSubject.send(.didGetMemberships(res))
             case .failure(let error):
-                outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }

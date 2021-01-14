@@ -103,8 +103,8 @@ class PostViewModel {
             break
         case .youtube(let url):
             let request = CreateArtistFeed.Request(text: text, feedType: .youtube(url))
-            apiClient.request(CreateArtistFeed.self, request: request) { [unowned self] result in
-                self.updateState(with: result)
+            apiClient.request(CreateArtistFeed.self, request: request) { [weak self] result in
+                self?.updateState(with: result)
             }
         }
     }

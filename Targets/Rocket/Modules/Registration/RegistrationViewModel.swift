@@ -26,16 +26,16 @@ class RegistrationViewModel {
     }
 
     func getSignupStatus() {
-        apiClient.request(SignupStatus.self) { [unowned self] result in
+        apiClient.request(SignupStatus.self) { [weak self] result in
             switch result {
             case .success(let res):
-                self.outputSubject.send(.signupStatus(res.isSignedup))
+                self?.outputSubject.send(.signupStatus(res.isSignedup))
             case .failure(let error as NSError) where
                     error.domain == AWSCognitoAuthErrorDomain &&
                     error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue:
                 break
             case .failure(let error):
-                self.outputSubject.send(.error(error))
+                self?.outputSubject.send(.error(error))
             }
         }
     }

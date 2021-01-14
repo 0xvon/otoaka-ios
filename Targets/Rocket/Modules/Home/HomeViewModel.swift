@@ -101,12 +101,12 @@ class HomeViewModel {
     }
 
     func getUserInfo() {
-        apiClient.request(GetUserInfo.self) { [unowned self] result in
+        apiClient.request(GetUserInfo.self) { [weak self] result in
             switch result {
             case .success(let user):
-                outputHandler(.getUserInfo(user))
+                self?.outputHandler(.getUserInfo(user))
             case .failure(let error):
-                outputHandler(.error(error))
+                self?.outputHandler(.error(error))
             }
         }
     }

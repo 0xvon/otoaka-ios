@@ -59,12 +59,12 @@ class EditUserViewModel {
 //    }
     
     func getUserInfo() {
-        apiClient.request(GetUserInfo.self) { [unowned self] result in
+        apiClient.request(GetUserInfo.self) { [weak self] result in
             switch result {
             case .success(let user):
-                outputSubject.send(.didGetUserInfo(user))
+                self?.outputSubject.send(.didGetUserInfo(user))
             case .failure(let error):
-                outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }
@@ -84,13 +84,13 @@ class EditUserViewModel {
     func didEditButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
         if let prifileImage = state.profileImage {
-            self.dependencyProvider.s3Client.uploadImage(image: prifileImage) { [unowned self] result in
+            self.dependencyProvider.s3Client.uploadImage(image: prifileImage) { [weak self] result in
                 switch result {
                 case .success(let imageUrl):
-                    editUser(imageUrl: imageUrl)
+                    self?.editUser(imageUrl: imageUrl)
                 case .failure(let error):
-                    outputSubject.send(.updateSubmittableState(.completed))
-                    outputSubject.send(.reportError(error))
+                    self?.outputSubject.send(.updateSubmittableState(.completed))
+                    self?.outputSubject.send(.reportError(error))
                 }
             }
         } else {
@@ -102,8 +102,8 @@ class EditUserViewModel {
         guard let displayName = state.displayName else { return }
         let req = EditUserInfo.Request(
             name: displayName, biography: state.biography, thumbnailURL: imageUrl, role: state.role)
-        apiClient.request(EditUserInfo.self, request: req) { [unowned self] result in
-            updateState(with: result)
+        apiClient.request(EditUserInfo.self, request: req) { [weak self] result in
+            self?.updateState(with: result)
         }
     }
     

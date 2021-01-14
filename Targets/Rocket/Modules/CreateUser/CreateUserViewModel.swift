@@ -77,17 +77,18 @@ class CreateUserViewModel {
     func didSignupButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
         guard let displayName = state.displayName else { return }
-        self.dependencyProvider.s3Client.uploadImage(image: state.profileImage) { [unowned self] result in
+        self.dependencyProvider.s3Client.uploadImage(image: state.profileImage) { [weak self] result in
             switch result {
             case .success(let imageUrl):
+                guard let state = self?.state else { return }
                 let req = Signup.Request(
                     name: displayName, biography: nil, thumbnailURL: imageUrl, role: state.role)
-                apiClient.request(Signup.self, request: req) { [unowned self] result in
-                    updateState(with: result)
+                self?.apiClient.request(Signup.self, request: req) { [weak self] result in
+                    self?.updateState(with: result)
                 }
             case .failure(let error):
-                outputSubject.send(.updateSubmittableState(.completed))
-                outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.updateSubmittableState(.completed))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }

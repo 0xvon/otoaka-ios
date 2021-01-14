@@ -50,16 +50,16 @@ class SelectPerformersViewModel {
         uri.term = query
         searchGroupPaginationRequest = PaginationRequest<SearchGroup>(apiClient: apiClient, uri: uri)
         
-        searchGroupPaginationRequest?.subscribe { [unowned self] result in
+        searchGroupPaginationRequest?.subscribe { [weak self] result in
             switch result {
             case .initial(let res):
-                state.searchResult = res.items
-                outputSubject.send(.didSearch(res.items))
+                self?.state.searchResult = res.items
+                self?.outputSubject.send(.didSearch(res.items))
             case .next(let res):
-                state.searchResult += res.items
-                outputSubject.send(.didPaginate(res.items))
+                self?.state.searchResult += res.items
+                self?.outputSubject.send(.didPaginate(res.items))
             case .error(let err):
-                outputSubject.send(.reportError(err))
+                self?.outputSubject.send(.reportError(err))
             }
         }
         
