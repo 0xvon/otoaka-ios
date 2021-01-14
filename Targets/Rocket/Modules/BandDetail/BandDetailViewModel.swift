@@ -63,6 +63,11 @@ class BandDetailViewModel {
     private(set) var state: State
 
     private lazy var inviteGroup = Action(InviteGroup.self, httpClient: self.apiClient)
+    private lazy var getGroup = Action(GetGroup.self, httpClient: self.apiClient)
+    private lazy var getGroupLives = Action(GetGroupLives.self, httpClient: self.apiClient)
+    private lazy var getGroupFeed = Action(GetGroupFeed.self, httpClient: self.apiClient)
+    private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
+    
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     var cancellables: Set<AnyCancellable> = []
@@ -73,12 +78,45 @@ class BandDetailViewModel {
         self.dependencyProvider = dependencyProvider
         self.state = State(group: group, role: dependencyProvider.user.role)
 
-        let errors = inviteGroup.errors
         inviteGroup.elements
             .map(Output.didCreatedInvitation)
-            .merge(with: errors.map(Output.reportError))
+            .merge(with: inviteGroup.errors.map(Output.reportError))
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
+        
+        getGroup.elements
+            .map { result in Output.didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))}
+            .merge(with: getGroup.errors.map(Output.reportError))
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
+        
+        getGroupLives.elements
+            .map { lives in
+                self.state.lives = lives.items
+                return Output.updateLiveSummary(lives.items.first)
+            }
+            .merge(with: getGroupLives.errors.map(Output.reportError))
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
+        
+        getGroupFeed.elements
+            .map { feeds in
+                self.state.feeds = feeds.items
+                return Output.updateFeedSummary(feeds.items.first)
+            }
+            .merge(with: getGroupFeed.errors.map(Output.reportError))
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
+        
+        listChannel.elements
+            .map { channel in
+                self.state.channelItem = channel.items.first
+                return Output.didGetChart(self.state.group, channel.items.first)
+            }
+            .merge(with: listChannel.errors.map(Output.reportError))
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
+        
     }
     
     func didTapSeeMore(at row: SummaryRow) {
@@ -163,20 +201,7 @@ class BandDetailViewModel {
     private func getGroupDetail() {
         var uri = GetGroup.URI()
         uri.groupId = state.group.id
-        apiClient.request(GetGroup.self, request: Empty(), uri: uri)
-            .sink(
-                receiveCompletion: { [unowned self] error in
-                    switch error {
-                    case .failure(let error):
-                        outputSubject.send(.reportError(error))
-                    default:
-                        break
-                    }
-                },
-                receiveValue: { [unowned self] result in
-                    outputSubject.send(.didGetGroupDetail(result, displayType: state._displayType(isMember: result.isMember)))
-                }
-            ).store(in: &cancellables)
+        getGroup.input((request: Empty(), uri: uri))
     }
     
     private func getGroupLiveSummary() {
@@ -185,15 +210,7 @@ class BandDetailViewModel {
         uri.page = 1
         uri.per = 1
         uri.groupId = state.group.id
-        apiClient.request(GetGroupLives.self, request: request, uri: uri) { [weak self] result in
-            switch result {
-            case .success(let lives):
-                self?.state.lives = lives.items
-                self?.outputSubject.send(.updateLiveSummary(lives.items.first))
-            case .failure(let error):
-                self?.outputSubject.send(.reportError(error))
-            }
-        }
+        getGroupLives.input((request: request, uri: uri))
     }
     
     private func getGroupFeedSummary() {
@@ -202,15 +219,8 @@ class BandDetailViewModel {
         uri.per = 1
         uri.page = 1
         let request = Empty()
-        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { [weak self] result in
-            switch result {
-            case .success(let res):
-                self?.state.feeds = res.items
-                self?.outputSubject.send(.updateFeedSummary(res.items.first))
-            case .failure(let error):
-                self?.outputSubject.send(.reportError(error))
-            }
-        }
+        
+        getGroupFeed.input((request: request, uri: uri))
     }
     
     private func getChartSummary() {
@@ -221,15 +231,7 @@ class BandDetailViewModel {
         uri.part = "snippet"
         uri.maxResults = 1
         uri.order = "viewCount"
-        dependencyProvider.youTubeDataApiClient.request(ListChannel.self, request: request, uri: uri) { [weak self] result in
-            switch result {
-            case .success(let res):
-                self?.state.channelItem = res.items.first
-                guard let group = self?.state.group else { return }
-                self?.outputSubject.send(.didGetChart(group, res.items.first))
-            case .failure(let error):
-                self?.outputSubject.send(.reportError(error))
-            }
-        }
+        
+        listChannel.input((request: request, uri: uri))
     }
 }
