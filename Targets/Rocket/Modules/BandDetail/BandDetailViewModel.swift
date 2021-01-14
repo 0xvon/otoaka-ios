@@ -150,10 +150,14 @@ class BandDetailViewModel {
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
         apiClient.request(InviteGroup.self, request: request)
-            .receive(on: DispatchQueue.main)
             .sink(
-                receiveCompletion: { error in
-                    print(error) // Type of Subscribers.Completion<Error>
+                receiveCompletion: { [unowned self] error in
+                    switch error {
+                    case .failure(let error):
+                        outputSubject.send(.reportError(error))
+                    default:
+                        break
+                    }
                 },
                 receiveValue: { [unowned self] result in
                     outputSubject.send(.didCreatedInvitation(result))
@@ -164,17 +168,20 @@ class BandDetailViewModel {
     private func getGroupDetail() {
         var uri = GetGroup.URI()
         uri.groupId = state.group.id
-        apiClient.request(GetGroup.self, request: Empty(), uri: uri) { [weak self] result in
-            switch result {
-            case .success(let response):
-                self?.state.group = response.group
-                self?.state.groupDetail = response
-                guard let displayType = self?.state._displayType(isMember: response.isMember) else { return }
-                self?.outputSubject.send(.didGetGroupDetail(response, displayType: displayType))
-            case .failure(let error):
-                self?.outputSubject.send(.reportError(error))
-            }
-        }
+        apiClient.request(GetGroup.self, request: Empty(), uri: uri)
+            .sink(
+                receiveCompletion: { [unowned self] error in
+                    switch error {
+                    case .failure(let error):
+                        outputSubject.send(.reportError(error))
+                    default:
+                        break
+                    }
+                },
+                receiveValue: { [unowned self] result in
+                    outputSubject.send(.didGetGroupDetail(result, displayType: state._displayType(isMember: result.isMember)))
+                }
+            ).store(in: &cancellables)
     }
     
     private func getGroupLiveSummary() {
