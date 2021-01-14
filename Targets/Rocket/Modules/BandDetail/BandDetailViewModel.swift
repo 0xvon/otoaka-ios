@@ -61,7 +61,8 @@ class BandDetailViewModel {
     var apiClient: APIClient { dependencyProvider.apiClient }
     
     private(set) var state: State
-    
+
+    private lazy var inviteGroup = Action(InviteGroup.self, httpClient: self.apiClient)
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     var cancellables: Set<AnyCancellable> = []
@@ -71,6 +72,13 @@ class BandDetailViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(group: group, role: dependencyProvider.user.role)
+
+        let errors = inviteGroup.errors
+        inviteGroup.elements
+            .map(Output.didCreatedInvitation)
+            .merge(with: errors.map(Output.reportError))
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
     }
     
     func didTapSeeMore(at row: SummaryRow) {
@@ -149,20 +157,7 @@ class BandDetailViewModel {
     
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
-        apiClient.request(InviteGroup.self, request: request)
-            .sink(
-                receiveCompletion: { [unowned self] error in
-                    switch error {
-                    case .failure(let error):
-                        outputSubject.send(.reportError(error))
-                    default:
-                        break
-                    }
-                },
-                receiveValue: { [unowned self] result in
-                    outputSubject.send(.didCreatedInvitation(result))
-                }
-            ).store(in: &cancellables)
+        _ = inviteGroup.inputs.receive((request: request, uri: InviteGroup.URI()))
     }
     
     private func getGroupDetail() {
