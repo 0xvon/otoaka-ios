@@ -81,12 +81,12 @@ version: 7.3.0
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.3.0
+version: 7.4.0
 
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.3.0
+version: 7.4.0
 
 name: GoogleAppMeasurement, nameSpecified: 
 body: Copyright 2020 Googl…
@@ -109,12 +109,12 @@ version: 8.1.0
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.1.1
+version: 7.2.0
 
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.1.1
+version: 7.2.0
 
 name: KeyboardGuide, nameSpecified: 
 body: Copyright (c) 2020 Y…
