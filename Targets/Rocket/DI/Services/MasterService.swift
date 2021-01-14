@@ -15,7 +15,7 @@ public final class MasterSerivice {
     init(httpClient: HTTPClient<WebAPIAdapter>) {
         self.httpClient = httpClient
     }
-    public func fetchMasterData() -> Future<SocialInputs, Error> {
+    public func fetchMasterData() -> AnyPublisher<SocialInputs, Error> {
         httpClient.request(MasterAPIRequest.self)
     }
 
