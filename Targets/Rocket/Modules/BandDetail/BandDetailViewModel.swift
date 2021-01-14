@@ -161,15 +161,15 @@ class BandDetailViewModel {
     private func getGroupDetail() {
         var uri = GetGroup.URI()
         uri.groupId = state.group.id
-        apiClient.request(GetGroup.self, request: Empty(), uri: uri) { [unowned self] result in
+        apiClient.request(GetGroup.self, request: Empty(), uri: uri) { [weak self] result in
             switch result {
             case .success(let response):
-                state.group = response.group
-                state.groupDetail = response
-                let displayType = state._displayType(isMember: response.isMember)
-                outputSubject.send(.didGetGroupDetail(response, displayType: displayType))
+                self?.state.group = response.group
+                self?.state.groupDetail = response
+                guard let displayType = self?.state._displayType(isMember: response.isMember) else { return }
+                self?.outputSubject.send(.didGetGroupDetail(response, displayType: displayType))
             case .failure(let error):
-                self.outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }
@@ -180,13 +180,13 @@ class BandDetailViewModel {
         uri.page = 1
         uri.per = 1
         uri.groupId = state.group.id
-        apiClient.request(GetGroupLives.self, request: request, uri: uri) { [unowned self] result in
+        apiClient.request(GetGroupLives.self, request: request, uri: uri) { [weak self] result in
             switch result {
             case .success(let lives):
-                self.state.lives = lives.items
-                self.outputSubject.send(.updateLiveSummary(lives.items.first))
+                self?.state.lives = lives.items
+                self?.outputSubject.send(.updateLiveSummary(lives.items.first))
             case .failure(let error):
-                self.outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }
@@ -197,13 +197,13 @@ class BandDetailViewModel {
         uri.per = 1
         uri.page = 1
         let request = Empty()
-        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { [unowned self] result in
+        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { [weak self] result in
             switch result {
             case .success(let res):
-                self.state.feeds = res.items
-                self.outputSubject.send(.updateFeedSummary(res.items.first))
+                self?.state.feeds = res.items
+                self?.outputSubject.send(.updateFeedSummary(res.items.first))
             case .failure(let error):
-                self.outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }
@@ -216,13 +216,14 @@ class BandDetailViewModel {
         uri.part = "snippet"
         uri.maxResults = 1
         uri.order = "viewCount"
-        dependencyProvider.youTubeDataApiClient.request(ListChannel.self, request: request, uri: uri) { [unowned self] result in
+        dependencyProvider.youTubeDataApiClient.request(ListChannel.self, request: request, uri: uri) { [weak self] result in
             switch result {
             case .success(let res):
-                self.state.channelItem = res.items.first
-                self.outputSubject.send(.didGetChart(self.state.group, res.items.first))
+                self?.state.channelItem = res.items.first
+                guard let group = self?.state.group else { return }
+                self?.outputSubject.send(.didGetChart(group, res.items.first))
             case .failure(let error):
-                self.outputSubject.send(.reportError(error))
+                self?.outputSubject.send(.reportError(error))
             }
         }
     }
