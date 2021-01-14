@@ -10,7 +10,7 @@ public final class Action<Input, Element> {
 
     public let workFactory: WorkFactory
 
-    public let inputs: AnySubscriber<Input, Never>
+    private let inputsSubject = PassthroughSubject<Input, Never>()
 
     /// Errors aggrevated from invocations of execute().
     /// Delivered on whatever scheduler they were sent from.
@@ -43,13 +43,6 @@ public final class Action<Input, Element> {
 
         let errorsSubject = PassthroughSubject<ActionError, Never>()
         errors = errorsSubject.eraseToAnyPublisher()
-        
-        let inputsSubject = PassthroughSubject<Input, Never>()
-        
-        inputs = AnySubscriber<Input, Never>(receiveValue: {
-            inputsSubject.send($0)
-            return .unlimited
-        })
         
         let executionObservables = inputsSubject
             .map { [enabledSubject] input in (input, enabledSubject.value) }
@@ -86,5 +79,9 @@ public final class Action<Input, Element> {
             .map { !$0 && $1 }
             .sink(receiveValue: { enabledSubject.value = $0 })
             .store(in: &cancellables)
+    }
+
+    public func input(_ value: Input) {
+        inputsSubject.send(value)
     }
 }

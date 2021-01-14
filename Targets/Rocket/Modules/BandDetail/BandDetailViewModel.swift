@@ -157,7 +157,7 @@ class BandDetailViewModel {
     
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
-        _ = inviteGroup.inputs.receive((request: request, uri: InviteGroup.URI()))
+        inviteGroup.input((request: request, uri: InviteGroup.URI()))
     }
     
     private func getGroupDetail() {
