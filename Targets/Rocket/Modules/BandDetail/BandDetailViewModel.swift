@@ -80,11 +80,11 @@ class BandDetailViewModel {
         
         let errors = inviteGroup.errors
         errors
+            .merge(with: getGroup.errors)
+            .merge(with: getGroupLives.errors)
+            .merge(with: getGroupFeed.errors)
+            .merge(with: listChannel.errors)
             .map(Output.reportError)
-            .merge(with: getGroup.errors.map(Output.reportError))
-            .merge(with: getGroupLives.errors.map(Output.reportError))
-            .merge(with: getGroupFeed.errors.map(Output.reportError))
-            .merge(with: listChannel.errors.map(Output.reportError))
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
 
@@ -93,20 +93,38 @@ class BandDetailViewModel {
             .map(Output.didCreatedInvitation)
             .merge(with: getGroup.elements.map { result in Output.didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))
             })
-            .merge(with: getGroupLives.elements.map { lives in
-                self.state.lives = lives.items
-                return Output.updateLiveSummary(lives.items.first)
-            })
-            .merge(with: getGroupFeed.elements.map { feeds in
-                self.state.feeds = feeds.items
-                return Output.updateFeedSummary(feeds.items.first)
-            })
-            .merge(with: listChannel.elements.map { channel in
-                self.state.channelItem = channel.items.first
-                return Output.didGetChart(self.state.group, channel.items.first)
-            })
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
+        
+        getGroupLives.elements.map { lives in
+            return Output.updateLiveSummary(lives.items.first)
+        }
+        .combineLatest(getGroupLives.elements) { $1 }
+        .sink { [unowned self] lives in
+            state.lives = lives.items
+            outputSubject.send(.updateLiveSummary(lives.items.first))
+        }
+        .store(in: &cancellables)
+        
+        getGroupFeed.elements.map { feeds in
+            return Output.updateFeedSummary(feeds.items.first)
+        }
+        .combineLatest(getGroupFeed.elements) { $1 }
+        .sink { [unowned self] feeds in
+            state.feeds = feeds.items
+            outputSubject.send(.updateFeedSummary(feeds.items.first))
+        }
+        .store(in: &cancellables)
+        
+        listChannel.elements.map { channel in
+            return Output.didGetChart(self.state.group, channel.items.first)
+        }
+        .combineLatest(listChannel.elements) { $1 }
+        .sink { [unowned self] channel in
+            state.channelItem = channel.items.first
+            outputSubject.send(.didGetChart(state.group, channel.items.first))
+        }
+        .store(in: &cancellables)
     }
     
     func didTapSeeMore(at row: SummaryRow) {
