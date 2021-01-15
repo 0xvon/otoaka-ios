@@ -154,7 +154,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didCreateGroup(_):
-                self.navigationController?.popViewController(animated: true)
+                self.dismiss(animated: true, completion: nil)
             case .didValidateYoutubeChannelId(let isValid):
                 if !isValid {
                     self.showAlert(title: "YouTube Channel IDエラー", message: "入力された値が正しくありません")
@@ -210,7 +210,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        self.title = "ライブ作成"
+        self.title = "バンド作成"
         self.navigationItem.largeTitleDisplayMode = .never
         
         self.view.addSubview(verticalScrollView)
