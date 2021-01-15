@@ -49,12 +49,27 @@ class EditLiveViewModel {
 
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var editLiveAction = Action(EditLive.self, httpClient: self.apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, live: Live
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(title: live.title, livehouse: live.liveHouse, openAt: live.openAt ?? Date(), startAt: live.startAt ?? Date(), endAt: live.endAt ?? Date(), thumbnail: nil, socialInputs: try! dependencyProvider.masterService.blockingMasterData(), live: live)
+        
+        editLiveAction.elements
+            .map(Output.didEditLive).eraseToAnyPublisher()
+            .merge(with: editLiveAction.errors.map(Output.reportError).eraseToAnyPublisher())
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
+        
+        editLiveAction.elements
+            .sink(receiveValue: { [unowned self] _ in
+                outputSubject.send(.updateSubmittableState(.completed))
+            })
+            .store(in: &cancellables)
     }
     
     func viewDidLoad() {
@@ -118,18 +133,6 @@ class EditLiveViewModel {
         let req = EditLive.Request(
             title: state.title ?? state.live.title, artworkURL: imageUrl, liveHouse: state.livehouse ?? state.live.liveHouse, openAt: state.openAt, startAt: state.startAt,
             endAt: state.endAt)
-        apiClient.request(EditLive.self, request: req, uri: uri) { [weak self] result in
-            self?.updateState(with: result)
-        }
-    }
-    
-    private func updateState(with result: Result<Live, Error>) {
-        outputSubject.send(.updateSubmittableState(.completed))
-        switch result {
-        case .success(let live):
-            outputSubject.send(.didEditLive(live))
-        case .failure(let error):
-            outputSubject.send(.reportError(error))
-        }
+        editLiveAction.input((request: req, uri: uri))
     }
 }
