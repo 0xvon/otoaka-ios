@@ -74,8 +74,6 @@ class CreateBandViewModel {
                 outputSubject.send(.didValidateYoutubeChannelId(false))
             })
             .store(in: &cancellables)
-        
-        
     }
     
     func validateYoutubeChannelId(youtubeChannelId: String?) {

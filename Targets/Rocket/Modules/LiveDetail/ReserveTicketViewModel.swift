@@ -32,10 +32,57 @@ class ReserveTicketViewModel {
     private let apiClient: APIClient
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var reserveTicketAction = Action(ReserveTicket.self, httpClient: self.apiClient)
+    private lazy var refundTicketAction = Action(RefundTicket.self, httpClient: self.apiClient)
 
     init(live: Live, apiClient: APIClient) {
         self.apiClient = apiClient
         self.state = State(live: live)
+        
+        let errors = Publishers.MergeMany(
+            reserveTicketAction.errors,
+            refundTicketAction.errors
+        )
+        
+        Publishers.MergeMany(
+            reserveTicketAction.elements.map { ticket in
+                .updateHasTicket("予約済")
+            }.eraseToAnyPublisher(),
+            refundTicketAction.elements.map { ticket in
+                .updateHasTicket("￥\(ticket.live.price)")
+            }.eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+        
+        reserveTicketAction.elements
+            .sink(receiveValue: { [unowned self] ticket in
+                guard let count = state.participantsCount else {
+                    preconditionFailure("Button shouldn't be enabled before got followersCount")
+                }
+                state.ticket = ticket
+                let newCount = count + 1
+                state.participantsCount = newCount
+                outputSubject.send(.updateParticipantsCount(newCount))
+                outputSubject.send(.updateIsButtonEnabled(true))
+            })
+            .store(in: &cancellables)
+        
+        refundTicketAction.elements
+            .sink(receiveValue: { [unowned self] ticket in
+                guard let count = state.participantsCount else {
+                    preconditionFailure("Button shouldn't be enabled before got followersCount")
+                }
+                state.ticket = ticket
+                let newCount = count - 1
+                state.participantsCount = newCount
+                outputSubject.send(.updateParticipantsCount(newCount))
+                outputSubject.send(.updateIsButtonEnabled(true))
+            })
+            .store(in: &cancellables)
     }
 
     func viewDidLoad() {
@@ -58,32 +105,10 @@ class ReserveTicketViewModel {
                 preconditionFailure("Button shouldn't be enabled before got ticket")
             }
             let req = RefundTicket.Request(ticketId: ticket.id)
-            apiClient.request(RefundTicket.self, request: req) { [unowned self] in
-                self.updateState(with: $0.map { _ in nil })
-            }
+            refundTicketAction.input((request: req, uri: RefundTicket.URI()))
         } else {
             let req = ReserveTicket.Request(liveId: state.live.id)
-            apiClient.request(ReserveTicket.self, request: req) { [unowned self] in
-                self.updateState(with: $0.map { $0 })
-            }
-        }
-    }
-
-    private func updateState(with result: Result<Ticket?, Error>) {
-        guard let count = state.participantsCount else {
-            preconditionFailure("Button shouldn't be enabled before got followersCount")
-        }
-        outputSubject.send(.updateIsButtonEnabled(true))
-        switch result {
-        case .success(let ticket):
-            let didReserve = ticket != nil
-            state.ticket = ticket
-            let newCount = count + (didReserve ? 1 : -1)
-            state.participantsCount = newCount
-            outputSubject.send(.updateParticipantsCount(newCount))
-            outputSubject.send(.updateHasTicket(didReserve ? "予約済" : "￥\(state.live.price)"))
-        case .failure(let error):
-            outputSubject.send(.reportError(error))
+            reserveTicketAction.input((request: req, uri: ReserveTicket.URI()))
         }
     }
 }
