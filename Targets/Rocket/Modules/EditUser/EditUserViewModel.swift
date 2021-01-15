@@ -41,12 +41,35 @@ class EditUserViewModel {
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var getUserInfoAction = Action(GetUserInfo.self, httpClient: self.apiClient)
+    private lazy var editUserAction = Action(EditUserInfo.self, httpClient: self.apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(role: dependencyProvider.user.role, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        
+        let errors = Publishers.MergeMany(
+            getUserInfoAction.errors,
+            editUserAction.errors
+        )
+        
+        Publishers.MergeMany(
+            getUserInfoAction.elements.map(Output.didGetUserInfo).eraseToAnyPublisher(),
+            editUserAction.elements.map(Output.didEditUser).eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+        
+        editUserAction.elements
+            .sink(receiveValue: { [unowned self] _ in
+                outputSubject.send(.updateSubmittableState(.completed))
+            })
+            .store(in: &cancellables)
     }
     
     func viewDidLoad() {
@@ -59,14 +82,7 @@ class EditUserViewModel {
 //    }
     
     func getUserInfo() {
-        apiClient.request(GetUserInfo.self) { [weak self] result in
-            switch result {
-            case .success(let user):
-                self?.outputSubject.send(.didGetUserInfo(user))
-            case .failure(let error):
-                self?.outputSubject.send(.reportError(error))
-            }
-        }
+        getUserInfoAction.input((request: Empty(), uri: GetUserInfo.URI()))
     }
     
     func didUpdateInputItems(displayName: String?, biography: String?) {
@@ -102,18 +118,6 @@ class EditUserViewModel {
         guard let displayName = state.displayName else { return }
         let req = EditUserInfo.Request(
             name: displayName, biography: state.biography, thumbnailURL: imageUrl, role: state.role)
-        apiClient.request(EditUserInfo.self, request: req) { [weak self] result in
-            self?.updateState(with: result)
-        }
-    }
-    
-    private func updateState(with result: Result<User, Error>) {
-        outputSubject.send(.updateSubmittableState(.completed))
-        switch result {
-        case .success(let user):
-            outputSubject.send(.didEditUser(user))
-        case .failure(let error):
-            outputSubject.send(.reportError(error))
-        }
+        editUserAction.input((request: req, uri: EditUserInfo.URI()))
     }
 }
