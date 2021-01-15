@@ -7,13 +7,18 @@
 
 import Endpoint
 import UIKit
+import Combine
 
 final class PerformanceRequestViewController: UIViewController, Instantiable {
     typealias Input = Void
-    var dependencyProvider: LoggedInDependencyProvider!
+    let dependencyProvider: LoggedInDependencyProvider
+    let viewModel: PerformanceRequestViewModel
+    var cancellables: Set<AnyCancellable> = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
+        self.viewModel = PerformanceRequestViewModel(dependencyProvider: dependencyProvider)
+        
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -21,52 +26,8 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private var requestTableView: UITableView!
-    private var requests: [PerformanceRequest] = []
-
-    lazy var viewModel = PerformanceRequestViewModel(
-        apiClient: dependencyProvider.apiClient,
-        s3Client: dependencyProvider.s3Client,
-        user: dependencyProvider.user,
-        outputHander: { output in
-            switch output {
-            case .getRequests(let requests):
-                DispatchQueue.main.async {
-                    self.requests += requests
-                    self.setTableViewBackgroundView(tableView: self.requestTableView)
-                    self.requestTableView.reloadData()
-                }
-            case .refreshRequests(let requests):
-                DispatchQueue.main.async {
-                    self.requests = requests
-                    self.setTableViewBackgroundView(tableView: self.requestTableView)
-                    self.requestTableView.reloadData()
-                }
-            case .replyRequest(let index):
-                DispatchQueue.main.async {
-                    self.requests.remove(at: index)
-                    self.setTableViewBackgroundView(tableView: self.requestTableView)
-                    self.requestTableView.reloadData()
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setup()
-        viewModel.getRequests()
-    }
-
-    func setup() {
-        self.view.backgroundColor = Brand.color(for: .background(.primary))
-        self.title = "出演リクエスト一覧"
-
-        requestTableView = UITableView(frame: .zero, style: .grouped)
+    private lazy var requestTableView: UITableView = {
+        let requestTableView = UITableView(frame: .zero, style: .grouped)
         requestTableView.translatesAutoresizingMaskIntoConstraints = false
         requestTableView.separatorStyle = .none
         requestTableView.showsVerticalScrollIndicator = false
@@ -79,6 +40,34 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
         requestTableView.register(
             UINib(nibName: "PerformanceRequestCell", bundle: nil),
             forCellReuseIdentifier: "PerformanceRequestCell")
+        return requestTableView
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+        bind()
+        viewModel.getRequests()
+    }
+    
+    func bind() {
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .reloadTableView:
+                setTableViewBackgroundView(tableView: self.requestTableView)
+                requestTableView.reloadData()
+            case .didReplyRequest:
+                setTableViewBackgroundView(tableView: self.requestTableView)
+                requestTableView.reloadData()
+            case .reportError(let error):
+                self.showAlert(title: "エラー", message: String(describing: error))
+            }
+        }.store(in: &cancellables)
+    }
+
+    func setup() {
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
+        self.title = "出演リクエスト一覧"
 
         self.view.addSubview(requestTableView)
 
@@ -107,7 +96,7 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.requests.count
+        return viewModel.state.requests.count
     }
     
     func setTableViewBackgroundView(tableView: UITableView) {
@@ -119,7 +108,7 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
             }
             return emptyCollectionView
         }()
-        tableView.backgroundView = requests.isEmpty ? emptyCollectionView : nil
+        tableView.backgroundView = viewModel.state.requests.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
                 backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
@@ -134,7 +123,7 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let request = self.requests[indexPath.section]
+        let request = viewModel.state.requests[indexPath.section]
         let cell = tableView.dequeueReusableCell(
             PerformanceRequestCell.self, input: (request: request, imagePipeline: dependencyProvider.imagePipeline),
             for: indexPath
@@ -182,19 +171,19 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
         tableView.deselectRow(at: indexPath, animated: true)
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if (self.requests.count - indexPath.section) == 2 && self.requests.count % per == 0 {
+        if (viewModel.state.requests.count - indexPath.section) == 2 && viewModel.state.requests.count % per == 0 {
             self.viewModel.getRequests()
         }
     }
 
     private func viewBandPage(cellIndex: Int) {
-        let band = self.requests[cellIndex].live.hostGroup
+        let band = viewModel.state.requests[cellIndex].live.hostGroup
         let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: band)
         present(vc, animated: true, completion: nil)
     }
 
     private func showAlertView(cellIndex: Int) {
-        let request = self.requests[cellIndex]
+        let request = viewModel.state.requests[cellIndex]
         let alertController = UIAlertController(
             title: "参加を承認しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 

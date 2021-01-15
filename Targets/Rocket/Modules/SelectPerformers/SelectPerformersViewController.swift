@@ -94,8 +94,8 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
         view.addSubview(groupTableView)
         NSLayoutConstraint.activate([
             groupTableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
-            groupTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            groupTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
+            groupTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            groupTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             groupTableView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             groupTableView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height - textFieldHeight),
         ])

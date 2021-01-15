@@ -8,41 +8,54 @@
 import AWSCognitoAuth
 import Endpoint
 import UIKit
+import Combine
 
 class PerformanceRequestViewModel {
+    struct State {
+        var requests: [PerformanceRequest] = []
+    }
+    
     enum Output {
-        case getRequests([PerformanceRequest])
-        case refreshRequests([PerformanceRequest])
-        case replyRequest(Int)
-        case error(Error)
+        case reloadTableView
+        case didReplyRequest
+        case reportError(Error)
     }
 
-    let apiClient: APIClient
-    let s3Client: S3Client
-    let user: User
-    let outputHandler: (Output) -> Void
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    private(set) var state: State
+
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
     
-    let getPerformanceRequestsPaginationRequest: PaginationRequest<GetPerformanceRequests>
+    private lazy var getPerformanceRequestsPaginationRequest: PaginationRequest<GetPerformanceRequests> = PaginationRequest<GetPerformanceRequests>(apiClient: self.apiClient)
+    private lazy var replyPerformanceRequestAction = Action(ReplyPerformanceRequest.self, httpClient: self.apiClient)
 
     init(
-        apiClient: APIClient, s3Client: S3Client, user: User, outputHander: @escaping (Output) -> Void
+        dependencyProvider: LoggedInDependencyProvider
     ) {
-        self.apiClient = apiClient
-        self.s3Client = s3Client
-        self.user = user
-        self.outputHandler = outputHander
-        self.getPerformanceRequestsPaginationRequest = PaginationRequest<GetPerformanceRequests>(apiClient: apiClient)
+        self.dependencyProvider = dependencyProvider
+        self.state = State()
         
-        getPerformanceRequestsPaginationRequest.subscribe { result in
+        getPerformanceRequestsPaginationRequest.subscribe { [unowned self] result in
             switch result {
             case .initial(let res):
-                self.outputHandler(.refreshRequests(res.items.filter { $0.status == .pending }))
+                state.requests = res.items
+                outputSubject.send(.reloadTableView)
             case .next(let res):
-                self.outputHandler(.getRequests(res.items.filter { $0.status == .pending }))
+                state.requests += res.items
+                outputSubject.send(.reloadTableView)
             case .error(let err):
-                self.outputHandler(.error(err))
+                outputSubject.send(.reportError(err))
             }
         }
+        
+        replyPerformanceRequestAction.elements
+            .map { _ in .didReplyRequest }.eraseToAnyPublisher()
+            .merge(with: replyPerformanceRequestAction.errors.map(Output.reportError).eraseToAnyPublisher())
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
     }
 
     func getRequests() {
@@ -54,15 +67,9 @@ class PerformanceRequestViewModel {
     }
 
     func replyRequest(requestId: PerformanceRequest.ID, accept: Bool, cellIndex: Int) {
+        self.state.requests.remove(at: cellIndex)
         let req = ReplyPerformanceRequest.Request(
             requestId: requestId, reply: accept ? .accept : .deny)
-        apiClient.request(ReplyPerformanceRequest.self, request: req) { result in
-            switch result {
-            case .success(_):
-                self.outputHandler(.replyRequest(cellIndex))
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
-        }
+        replyPerformanceRequestAction.input((request: req, uri: ReplyPerformanceRequest.URI()))
     }
 }
