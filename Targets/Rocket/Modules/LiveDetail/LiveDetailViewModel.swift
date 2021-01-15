@@ -43,15 +43,54 @@ class LiveDetailViewModel {
     var apiClient: APIClient { dependencyProvider.apiClient }
     private(set) var state: State
     
+    private lazy var getLive = Action(GetLive.self, httpClient: self.apiClient)
+    private lazy var getGroup = Action(GetGroup.self, httpClient: self.apiClient)
+    private lazy var getGroupFeed = Action(GetGroupFeed.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
     
     init(
         dependencyProvider: LoggedInDependencyProvider, live: Live
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(live: live, role: dependencyProvider.user.role)
+        
+        let errors = Publishers.MergeMany(
+            getLive.errors,
+            getGroup.errors,
+            getGroupFeed.errors
+        )
+        
+        Publishers.MergeMany(
+            getLive.elements.map(Output.didGetLiveDetail).eraseToAnyPublisher(),
+            getGroup.elements.map { result in
+                let displayType: DisplayType = {
+                    switch self.state.role {
+                    case .fan(_):
+                        return .fan
+                    case .artist(_):
+                        return result.isMember ? .host : .group
+                    }
+                }()
+                return .didGetDisplayType(displayType)
+            }.eraseToAnyPublisher(),
+            getGroupFeed.elements.map { result in
+                .updateFeedSummary(result.items.first)
+            }.eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+        
+        getLive.elements
+            .combineLatest(getGroupFeed.elements)
+            .sink(receiveValue: { [unowned self] liveDetail, feeds in
+                state.feeds = feeds.items
+                outputSubject.send(.updatePerformers(liveDetail.live.performers))
+            })
+            .store(in: &cancellables)
     }
     
     func didTapSeeMore(at row: SummaryRow) {
@@ -83,7 +122,7 @@ class LiveDetailViewModel {
     func refresh() {
         getLiveDetail()
         getHostGroup()
-        getGroupFeed()
+        getGroupFeedSummary()
     }
     
     func feedCellEvent(event: ArtistFeedCellContent.Output) {
@@ -98,54 +137,22 @@ class LiveDetailViewModel {
         var uri = GetLive.URI()
         uri.liveId = self.state.live.id
         let req = Empty()
-        apiClient.request(GetLive.self, request: req, uri: uri) { [outputSubject] result in
-            switch result {
-            case .success(let res):
-                self.state.live = res.live
-                outputSubject.send(.didGetLiveDetail(res))
-                outputSubject.send(.updatePerformers(res.live.performers))
-            case .failure(let error):
-                outputSubject.send(.reportError(error))
-            }
-        }
+        getLive.input((request: req, uri: uri))
     }
     
     func getHostGroup() {
         var uri = GetGroup.URI()
         uri.groupId = state.live.hostGroup.id
-        apiClient.request(GetGroup.self, request: Empty(), uri: uri) { [outputSubject] result in
-            switch result {
-            case .success(let res):
-                let displayType: DisplayType = {
-                    switch self.state.role {
-                    case .fan(_):
-                        return .fan
-                    case .artist(_):
-                        return res.isMember ? .host : .group
-                    }
-                }()
-                outputSubject.send(.didGetDisplayType(displayType))
-            case .failure(let error):
-                outputSubject.send(.reportError(error))
-            }
-        }
+        getGroup.input((request: Empty(), uri: uri))
     }
     
-    func getGroupFeed() {
+    func getGroupFeedSummary() {
         var uri = GetGroupFeed.URI()
         uri.groupId = state.live.hostGroup.id
         uri.per = 1
         uri.page = 1
         let request = Empty()
-        apiClient.request(GetGroupFeed.self, request: request, uri: uri) { [outputSubject] result in
-            switch result {
-            case .success(let res):
-                self.state.feeds = res.items
-                outputSubject.send(.updateFeedSummary(res.items.first))
-            case .failure(let error):
-                outputSubject.send(.reportError(error))
-            }
-        }
+        getGroupFeed.input((request: request, uri: uri))
     }
     
     //    func likeLive() {
