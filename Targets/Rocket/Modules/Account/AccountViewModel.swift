@@ -8,37 +8,46 @@
 import AWSCognitoAuth
 import Endpoint
 import UIKit
+import Combine
 
 class AccountViewModel {
     enum Output {
-        case getRequestCount(Int)
-        case error(Error)
+        case didGetRequestCount(Int)
+        case reportError(Error)
     }
-
-    let auth: AWSCognitoAuth
-    let apiClient: APIClient
-    let user: User
-    let outputHandler: (Output) -> Void
+    
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var getPendingRequestCountAction = Action(GetPendingRequestCount.self, httpClient: self.apiClient)
 
     init(
-        apiClient: APIClient, user: User, auth: AWSCognitoAuth,
-        outputHander: @escaping (Output) -> Void
+        dependencyProvider: LoggedInDependencyProvider
     ) {
-        self.apiClient = apiClient
-        self.user = user
-        self.auth = auth
-        self.outputHandler = outputHander
+        self.dependencyProvider = dependencyProvider
+        
+        let errors = Publishers.MergeMany(
+            getPendingRequestCountAction.errors
+        )
+        
+        Publishers.MergeMany(
+            getPendingRequestCountAction.elements.map { res in .didGetRequestCount(res.pendingRequestCount) }.eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+    }
+    
+    func viewDidLoad() {
+        getPerformanceRequest()
     }
     
     func getPerformanceRequest() {
         let req = Empty()
-        apiClient.request(GetPendingRequestCount.self, request: req) { result in
-            switch result {
-            case .success(let res):
-                self.outputHandler(.getRequestCount(res.pendingRequestCount))
-            case .failure(let error):
-                self.outputHandler(.error(error))
-            }
-        }
+        let uri = GetPendingRequestCount.URI()
+        getPendingRequestCountAction.input((request: req, uri: uri))
     }
 }

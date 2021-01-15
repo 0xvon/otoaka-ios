@@ -143,7 +143,6 @@ final class CreateBandViewController: UIViewController, Instantiable {
         
         setup()
         bind()
-        
     }
     
     func bind() {

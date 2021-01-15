@@ -7,12 +7,12 @@
 
 import UIKit
 import DomainEntity
+import Combine
 
 final class AccountViewController: UIViewController, Instantiable {
     typealias Input = Void
     var input: Input
-
-    var dependencyProvider: LoggedInDependencyProvider!
+    
     var items: [AccountSettingItem] = []
     var pendingRequestCount = 0
 
@@ -52,9 +52,14 @@ final class AccountViewController: UIViewController, Instantiable {
             hasNotification: false)
     }()
     
+    let dependencyProvider: LoggedInDependencyProvider
+    let viewModel: AccountViewModel
+    var cancellables: Set<AnyCancellable> = []
+    
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
+        self.viewModel = AccountViewModel(dependencyProvider: dependencyProvider)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -66,34 +71,28 @@ final class AccountViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        bind()
+        viewModel.viewDidLoad()
     }
-
-    lazy var viewModel = AccountViewModel(
-        apiClient: dependencyProvider.apiClient,
-        user: dependencyProvider.user,
-        auth: dependencyProvider.auth,
-        outputHander: { output in
+    
+    func bind() {
+        viewModel.output.receive(on: DispatchQueue.main).sink { [ unowned self] output in
             switch output {
-            case .getRequestCount(let count):
-                DispatchQueue.main.async {
-                    self.pendingRequestCount = count
-                    self.seeRequestsItem.hasNotification = count > 0
-                    self.tableView.reloadData()
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
+            case .didGetRequestCount(let count):
+                self.pendingRequestCount = count
+                self.seeRequestsItem.hasNotification = count > 0
+                self.tableView.reloadData()
+            case .reportError(let error):
+                self.showAlert(title: "エラー", message: String(describing: error))
             }
-        }
-    )
+        }.store(in: &cancellables)
+    }
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         
         title = "アカウント設定"
         setAccountSetting()
-        viewModel.getPerformanceRequest()
         
         self.view.addSubview(tableView)
         NSLayoutConstraint.activate([
