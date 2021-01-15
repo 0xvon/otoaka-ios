@@ -45,6 +45,10 @@ class EditBandViewModel {
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var listChannelAction = Action(ListChannel.self, httpClient: dependencyProvider.youTubeDataApiClient)
+    private lazy var editGroupAction = Action(EditGroup.self, httpClient: apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, group: Group
@@ -52,10 +56,30 @@ class EditBandViewModel {
         self.dependencyProvider = dependencyProvider
         
         self.state = State(group: group, name: group.name, englishName: group.englishName, biography: group.biography, since: group.since, artwork: nil, youtubeChannelId: group.youtubeChannelId, twitterId: group.twitterId, hometown: group.hometown, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        
+        let errors = Publishers.MergeMany(
+            editGroupAction.errors
+        )
+        
+        Publishers.MergeMany(
+            listChannelAction.elements.map { _ in .didValidateYoutubeChannelId(true) }.eraseToAnyPublisher(),
+            editGroupAction.elements.map { _ in .updateSubmittableState(.completed) }.eraseToAnyPublisher(),
+            editGroupAction.elements.map(Output.didEditGroup).eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+        
+        listChannelAction.errors
+            .sink(receiveValue: { [unowned self] _ in
+                state.youtubeChannelId = nil
+                outputSubject.send(.didValidateYoutubeChannelId(false))
+            })
+            .store(in: &cancellables)
     }
     
-    func validateYoutubeChannelId(youtubeChannelId: String?, callback: @escaping ((Bool) -> Void)) {
-        guard let youtubeChannelId = youtubeChannelId else { callback(false); return }
+    func validateYoutubeChannelId(youtubeChannelId: String?) {
+        guard let youtubeChannelId = youtubeChannelId else { return }
         
         let request = Empty()
         var uri = ListChannel.URI()
@@ -63,15 +87,7 @@ class EditBandViewModel {
         uri.part = "snippet"
         uri.maxResults = 1
         uri.order = "viewCount"
-        dependencyProvider.youTubeDataApiClient.request(ListChannel.self, request: request, uri: uri) { result in
-            switch result {
-            case .success(_):
-                callback(true)
-            case .failure(let error):
-                print(error)
-                callback(false)
-            }
-        }
+        listChannelAction.input((request: request, uri: uri))
     }
     
     func didUpdateInputItems(
@@ -88,14 +104,7 @@ class EditBandViewModel {
         
         let isSubmittable: Bool = (name != nil && englishName != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
-        
-        if let youtubeChannelId = youtubeChannelId {
-            validateYoutubeChannelId(youtubeChannelId: youtubeChannelId) { [unowned self] isValid in
-                state.youtubeChannelId = isValid ? youtubeChannelId : nil
-                outputSubject.send(.didValidateYoutubeChannelId(isValid))
-            }
-            
-        }
+        validateYoutubeChannelId(youtubeChannelId: youtubeChannelId)
     }
     
     func didUpdateArtwork(artwork: UIImage?) {
@@ -108,18 +117,18 @@ class EditBandViewModel {
             self.dependencyProvider.s3Client.uploadImage(image: artwork) { [weak self] result in
                 switch result {
                 case .success(let imageUrl):
-                    self?.editBand(imageUrl: URL(string: imageUrl))
+                    self?.editGroup(imageUrl: URL(string: imageUrl))
                 case .failure(let error):
                     self?.outputSubject.send(.updateSubmittableState(.completed))
                     self?.outputSubject.send(.reportError(error))
                 }
             }
         } else {
-            editBand(imageUrl: state.group.artworkURL)
+            editGroup(imageUrl: state.group.artworkURL)
         }
     }
     
-    private func editBand(imageUrl: URL?) {
+    private func editGroup(imageUrl: URL?) {
         guard let name = state.name else { return }
         var uri = EditGroup.URI()
         uri.id = self.state.group.id
@@ -132,18 +141,6 @@ class EditBandViewModel {
             twitterId: self.state.twitterId,
             youtubeChannelId: self.state.youtubeChannelId,
             hometown: self.state.hometown)
-        apiClient.request(EditGroup.self, request: req, uri: uri) { [weak self] result in
-            self?.updateState(with: result)
-        }
-    }
-    
-    private func updateState(with result: Result<Group, Error>) {
-        outputSubject.send(.updateSubmittableState(.completed))
-        switch result {
-        case .success(let group):
-            outputSubject.send(.didEditGroup(group))
-        case .failure(let error):
-            outputSubject.send(.reportError(error))
-        }
+        editGroupAction.input((request: req, uri: uri))
     }
 }
