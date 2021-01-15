@@ -49,6 +49,9 @@ class PostViewModel {
     let dependencyProvider: LoggedInDependencyProvider
     var apiClient: APIClient { dependencyProvider.apiClient }
     private(set) var state: State
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var createArtistFeedAction = Action(CreateArtistFeed.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -58,6 +61,18 @@ class PostViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State()
+        
+        createArtistFeedAction.elements
+            .map(Output.didPostArtistFeed).eraseToAnyPublisher()
+            .merge(with: createArtistFeedAction.errors.map(Output.reportError))
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
+        
+        createArtistFeedAction.elements
+            .sink(receiveValue: { [unowned self] _ in
+                outputSubject.send(.updateSubmittableState(.completed))
+            })
+            .store(in: &cancellables)
     }
     
     func didUpdateInputText(text: String?) {
@@ -103,19 +118,7 @@ class PostViewModel {
             break
         case .youtube(let url):
             let request = CreateArtistFeed.Request(text: text, feedType: .youtube(url))
-            apiClient.request(CreateArtistFeed.self, request: request) { [weak self] result in
-                self?.updateState(with: result)
-            }
-        }
-    }
-    
-    private func updateState(with result: Result<ArtistFeed, Error>) {
-        outputSubject.send(.updateSubmittableState(.completed))
-        switch result {
-        case .success(let feed):
-            outputSubject.send(.didPostArtistFeed(feed))
-        case .failure(let error):
-            outputSubject.send(.reportError(error))
+            createArtistFeedAction.input((request: request, uri: CreateArtistFeed.URI()))
         }
     }
 }
