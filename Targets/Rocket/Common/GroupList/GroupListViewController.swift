@@ -21,9 +21,8 @@ final class GroupListViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = GroupListViewModel(
-            apiClient: dependencyProvider.apiClient,
-            input: input,
-            auth: dependencyProvider.auth
+            dependencyProvider: dependencyProvider,
+            input: input
         )
 
         super.init(nibName: nil, bundle: nil)

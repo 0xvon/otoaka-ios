@@ -58,18 +58,32 @@ class GroupListViewModel {
     private(set) var state: State
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
-    let auth: AWSCognitoAuth
-    let apiClient: APIClient
+    var cancellables: Set<AnyCancellable> = []
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    
+    private lazy var getMemberShipsAction = Action(GetMemberships.self, httpClient: self.apiClient)
 
     init(
-        apiClient: APIClient, input: DataSource, auth: AWSCognitoAuth
+        dependencyProvider: LoggedInDependencyProvider, input: DataSource
     ) {
-        self.apiClient = apiClient
-        self.auth = auth
-        self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        self.dependencyProvider = dependencyProvider
+        self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
         self.state = State()
 
         subscribe(storage: storage)
+        
+        getMemberShipsAction.elements
+            .map { _ in .reloadTableView }.eraseToAnyPublisher()
+            .merge(with: getMemberShipsAction.errors.map(Output.error)).eraseToAnyPublisher()
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
+        
+        getMemberShipsAction.elements
+            .sink(receiveValue: { [unowned self] groups in
+                state.groups = groups
+            })
+            .store(in: &cancellables)
     }
 
     private func subscribe(storage: DataSourceStorage) {
@@ -115,18 +129,11 @@ class GroupListViewModel {
             let request = Empty()
             var uri = Endpoint.GetMemberships.URI()
             uri.artistId = userId
-            apiClient.request(GetMemberships.self, request: request, uri: uri) { [weak self] result in
-                switch result {
-                case .success(let res):
-                    self?.state.groups = res
-                    self?.outputSubject.send(.reloadTableView)
-                case .failure(let error):
-                    self?.outputSubject.send(.error(error))
-                }
-            }
+            getMemberShipsAction.input((request: request, uri: uri))
         case .none: break
         }
     }
+    
     func willDisplay(rowAt indexPath: IndexPath) {
         guard indexPath.section + 25 > state.groups.count else { return }
         switch storage {
