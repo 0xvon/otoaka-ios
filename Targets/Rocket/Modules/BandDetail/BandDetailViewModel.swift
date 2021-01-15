@@ -100,12 +100,17 @@ class BandDetailViewModel {
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
-
+        
         getGroupLives.elements
-            .combineLatest(getGroupFeed.elements, listChannel.elements)
-            .sink(receiveValue: { [unowned self] lives, feeds, channel in
+            .combineLatest(getGroupFeed.elements)
+            .sink(receiveValue: { [unowned self] lives, feeds in
                 state.lives = lives.items
                 state.feeds = feeds.items
+            })
+            .store(in: &cancellables)
+        
+        listChannel.elements
+            .sink(receiveValue: { [unowned self] channel in
                 state.channelItem = channel.items.first
             })
             .store(in: &cancellables)

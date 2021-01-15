@@ -56,12 +56,36 @@ class CreateLiveViewModel {
 
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+
+    private lazy var getMembershipsAction = Action(GetMemberships.self, httpClient: self.apiClient)
+    private lazy var createLiveAction = Action(CreateLive.self, httpClient: self.apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        
+        let errors = Publishers.MergeMany(
+            getMembershipsAction.errors,
+            createLiveAction.errors
+        )
+        
+        Publishers.MergeMany(
+            getMembershipsAction.elements.map(Output.didGetMemberships).eraseToAnyPublisher(),
+            createLiveAction.elements.map(Output.didCreateLive).eraseToAnyPublisher(),
+            createLiveAction.elements.map { _ in .updateSubmittableState(.completed) }.eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+        
+        getMembershipsAction.elements
+            .sink(receiveValue: { [unowned self] groups in
+                state.memberships = groups
+            })
+            .store(in: &cancellables)
     }
     
     func viewDidLoad() {
@@ -133,22 +157,10 @@ class CreateLiveViewModel {
     
     func didRegisterButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
-        guard let title = state.title else { return }
-        guard let groupId = state.groupId else { return }
-        guard let liveStyle = state.liveStyle else { return }
-        guard let price = state.price else { return }
-        guard let livehouse = state.livehouse else { return }
         self.dependencyProvider.s3Client.uploadImage(image: state.thumbnail) { [weak self] result in
             switch result {
             case .success(let imageUrl):
-                guard let state = self?.state else { return }
-                let req = CreateLive.Request(
-                    title: title, style: liveStyle, price: price, artworkURL: URL(string: imageUrl),
-                    hostGroupId: groupId, liveHouse: livehouse,
-                    openAt: state.openAt, startAt: state.startAt, endAt: state.endAt)
-                self?.apiClient.request(CreateLive.self, request: req) { [weak self] result in
-                    self?.updateState(with: result)
-                }
+                self?.createLive(imageUrl: imageUrl)
             case .failure(let error):
                 self?.outputSubject.send(.updateSubmittableState(.completed))
                 self?.outputSubject.send(.reportError(error))
@@ -156,28 +168,24 @@ class CreateLiveViewModel {
         }
     }
     
-    private func updateState(with result: Result<Live, Error>) {
-        outputSubject.send(.updateSubmittableState(.completed))
-        switch result {
-        case .success(let live):
-            outputSubject.send(.didCreateLive(live))
-        case .failure(let error):
-            outputSubject.send(.reportError(error))
-        }
+    private func createLive(imageUrl: String) {
+        guard let title = state.title else { return }
+        guard let groupId = state.groupId else { return }
+        guard let liveStyle = state.liveStyle else { return }
+        guard let price = state.price else { return }
+        guard let livehouse = state.livehouse else { return }
+        
+        let req = CreateLive.Request(
+            title: title, style: liveStyle, price: price, artworkURL: URL(string: imageUrl),
+            hostGroupId: groupId, liveHouse: livehouse,
+            openAt: state.openAt, startAt: state.startAt, endAt: state.endAt)
+        createLiveAction.input((request: req, uri: CreateLive.URI()))
     }
 
     func getMemberships() {
         let request = Empty()
         var uri = Endpoint.GetMemberships.URI()
         uri.artistId = self.dependencyProvider.user.id
-        apiClient.request(GetMemberships.self, request: request, uri: uri) { [weak self] result in
-            switch result {
-            case .success(let res):
-                self?.state.memberships = res
-                self?.outputSubject.send(.didGetMemberships(res))
-            case .failure(let error):
-                self?.outputSubject.send(.reportError(error))
-            }
-        }
+        getMembershipsAction.input((request: request, uri: uri))
     }
 }
