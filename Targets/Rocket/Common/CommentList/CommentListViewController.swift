@@ -7,6 +7,7 @@
 
 import UIKit
 import Endpoint
+import Combine
 
 final class CommentListViewController: UIViewController, Instantiable {
     typealias Input = ListType
@@ -14,65 +15,13 @@ final class CommentListViewController: UIViewController, Instantiable {
     enum ListType {
         case feedComment(ArtistFeedSummary)
     }
-
-    var dependencyProvider: LoggedInDependencyProvider!
-    var input: Input!
-    var comments: [ArtistFeedComment] = []
-    private var commentTableView: UITableView!
-
-    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
-        self.dependencyProvider = dependencyProvider
-        self.input = input
-
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
-    lazy var viewModel = CommentListViewModel(
-        apiClient: dependencyProvider.apiClient,
-        type: input,
-        auth: dependencyProvider.auth,
-        outputHander: { output in
-            switch output {
-            case .getFeedComments(let comments):
-                DispatchQueue.main.async {
-                    self.comments += comments
-                    self.setTableViewBackgroundView(tableView: self.commentTableView)
-                    self.commentTableView.reloadData()
-                }
-            case .refreshFeedComments(let comments):
-                DispatchQueue.main.async {
-                    self.comments = comments
-                    self.setTableViewBackgroundView(tableView: self.commentTableView)
-                    self.commentTableView.reloadData()
-                }
-            case .postComment(let comment):
-                DispatchQueue.main.async {
-                    self.comments = [comment] + self.comments
-                    self.setTableViewBackgroundView(tableView: self.commentTableView)
-                    self.commentTableView.reloadData()
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setup()
-    }
-        
-    func setup() {
-        view.backgroundColor = Brand.color(for: .background(.primary))
-        self.title = "コメント"
-        
-        commentTableView = UITableView(frame: .zero, style: .grouped)
+    let dependencyProvider: LoggedInDependencyProvider
+    let viewModel: CommentListViewModel
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var commentTableView: UITableView = {
+       let commentTableView = UITableView(frame: .zero, style: .grouped)
         commentTableView.translatesAutoresizingMaskIntoConstraints = false
         commentTableView.showsVerticalScrollIndicator = false
         commentTableView.tableFooterView = UIView(frame: .zero)
@@ -82,13 +31,53 @@ final class CommentListViewController: UIViewController, Instantiable {
         commentTableView.dataSource = self
         commentTableView.register(
             UINib(nibName: "CommentCell", bundle: nil), forCellReuseIdentifier: "CommentCell")
-        self.view.addSubview(commentTableView)
         
         commentTableView.refreshControl = BrandRefreshControl()
         commentTableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
-        self.getComments()
+        return commentTableView
+    }()
+
+    init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
+        self.dependencyProvider = dependencyProvider
+        self.viewModel = CommentListViewModel(dependencyProvider: dependencyProvider, type: input)
         
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+        bind()
+    }
+    
+    func bind() {
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didGetFeedComments(_):
+                commentTableView.reloadData()
+                setTableViewBackgroundView(tableView: self.commentTableView)
+            case .didRefreshFeedComments(_):
+                commentTableView.reloadData()
+                setTableViewBackgroundView(tableView: self.commentTableView)
+            case .didPostComment(_):
+                commentTableView.reloadData()
+                setTableViewBackgroundView(tableView: self.commentTableView)
+            case .reportError(let error):
+                self.showAlert(title: "エラー", message: String(describing: error))
+            }
+        }.store(in: &cancellables)
+    }
+        
+    func setup() {
+        view.backgroundColor = Brand.color(for: .background(.primary))
+        self.title = "コメント"
+        self.view.addSubview(commentTableView)
+        self.getComments()
         let constraints: [NSLayoutConstraint] = [
             commentTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
             commentTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
@@ -99,20 +88,16 @@ final class CommentListViewController: UIViewController, Instantiable {
     }
     
     func getComments() {
-        switch input {
+        switch viewModel.state.type {
         case .feedComment(_):
             self.viewModel.getFeedComments()
-        case .none:
-            break
         }
     }
     
     func refreshComments() {
-        switch input {
+        switch viewModel.state.type {
         case .feedComment(_):
             self.viewModel.refreshFeedComments()
-        case .none:
-            break
         }
     }
     
@@ -128,7 +113,7 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return max(1, self.comments.count)
+        return max(1, viewModel.state.comments.count)
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -196,12 +181,12 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if self.comments.isEmpty {
+        if viewModel.state.comments.isEmpty {
             let view = UITableViewCell()
             view.backgroundColor = .clear
             return view
         }
-        let comment = self.comments[indexPath.section]
+        let comment = viewModel.state.comments[indexPath.section]
         let cell = tableView.dequeueReusableCell(
             CommentCell.self,
             input: (comment: comment, imagePipeline: dependencyProvider.imagePipeline),
@@ -215,13 +200,13 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if (self.comments.count - indexPath.section) == 2 && self.comments.count % per == 0 {
+        if (viewModel.state.comments.count - indexPath.section) == 2 && viewModel.state.comments.count % per == 0 {
             self.getComments()
         }
     }
     
-    private func comment(text: String) {
-        viewModel.postFeedComment(text: text)
+    private func comment(comment: String?) {
+        viewModel.postFeedComment(comment: comment)
     }
     
     func setTableViewBackgroundView(tableView: UITableView) {
@@ -230,7 +215,7 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
         }()
-        tableView.backgroundView = comments.isEmpty ? emptyCollectionView : nil
+        tableView.backgroundView = viewModel.state.comments.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
                 backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 300),
@@ -242,7 +227,8 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
 
 extension CommentListViewController: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
-        self.comment(text: textView.text!)
+        let text: String? = textView.text.isEmpty ? nil : textView.text
+        self.comment(comment: text)
         textView.text = ""
         self.resignFirstResponder()
     }

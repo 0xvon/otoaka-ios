@@ -8,30 +8,38 @@
 import UIKit
 import AWSCognitoAuth
 import Endpoint
+import Combine
 
 class CommentListViewModel {
+    struct State {
+        var comments: [ArtistFeedComment] = []
+        let type: CommentListViewController.ListType
+    }
+    
     enum Output {
-        case getFeedComments([ArtistFeedComment])
-        case refreshFeedComments([ArtistFeedComment])
-        case postComment(ArtistFeedComment)
-        case error(Error)
+        case didGetFeedComments([ArtistFeedComment])
+        case didRefreshFeedComments([ArtistFeedComment])
+        case didPostComment(ArtistFeedComment)
+        case reportError(Error)
     }
 
-    let auth: AWSCognitoAuth
-    let type: CommentListViewController.ListType
-    let apiClient: APIClient
-    let outputHandler: (Output) -> Void
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    private(set) var state: State
+
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var postFeedCommentAction = Action(PostFeedComment.self, httpClient: self.apiClient)
     
     var getFeedCommentsPaginationRequest: PaginationRequest<GetFeedComments>? = nil
 
     init(
-        apiClient: APIClient, type: CommentListViewController.ListType, auth: AWSCognitoAuth,
-        outputHander: @escaping (Output) -> Void
+        dependencyProvider: LoggedInDependencyProvider, type: CommentListViewController.ListType
     ) {
-        self.apiClient = apiClient
-        self.type = type
-        self.auth = auth
-        self.outputHandler = outputHander
+        self.dependencyProvider = dependencyProvider
+        self.state = State(type: type)
         
         switch type {
         case .feedComment(let feed):
@@ -40,16 +48,35 @@ class CommentListViewModel {
             getFeedCommentsPaginationRequest = PaginationRequest<GetFeedComments>(apiClient: apiClient, uri: uri)
         }
         
-        getFeedCommentsPaginationRequest?.subscribe { result in
+        getFeedCommentsPaginationRequest?.subscribe { [unowned self] result in
             switch result {
             case .initial(let res):
-                self.outputHandler(.refreshFeedComments(res.items))
+                state.comments = res.items
+                outputSubject.send(.didRefreshFeedComments(res.items))
             case .next(let res):
-                self.outputHandler(.getFeedComments(res.items))
+                state.comments += res.items
+                outputSubject.send(.didGetFeedComments(res.items))
             case .error(let err):
-                self.outputHandler(.error(err))
+                outputSubject.send(.reportError(err))
             }
         }
+        
+        let errors = Publishers.MergeMany(
+            postFeedCommentAction.errors
+        )
+        
+        Publishers.MergeMany(
+            postFeedCommentAction.elements.map(Output.didPostComment).eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+        
+        postFeedCommentAction.elements
+            .sink(receiveValue: { [unowned self] comment in
+                state.comments = [comment] + state.comments
+            })
+            .store(in: &cancellables)
     }
     
     func getFeedComments() {
@@ -60,18 +87,12 @@ class CommentListViewModel {
         getFeedCommentsPaginationRequest?.refresh()
     }
     
-    func postFeedComment(text: String) {
-        switch self.type {
+    func postFeedComment(comment: String?) {
+        guard let comment = comment else { return }
+        switch state.type {
         case .feedComment(let feed):
-            let request = PostFeedComment.Request(feedId: feed.id, text: text)
-            apiClient.request(PostFeedComment.self, request: request) { result in
-                switch result {
-                case .success(let res):
-                    self.outputHandler(.postComment(res))
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
-            }
+            let request = PostFeedComment.Request(feedId: feed.id, text: comment)
+            postFeedCommentAction.input((request: request, uri: PostFeedComment.URI()))
         }
     }
 }
