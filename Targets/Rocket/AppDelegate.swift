@@ -11,12 +11,14 @@ import Endpoint
 import UIKit
 import UserNotifications
 import KeyboardGuide
+import Combine
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var dependencyProvider: DependencyProvider!
+    var cancellables: Set<AnyCancellable> = []
 
     func application(
         _ application: UIApplication,
@@ -54,7 +56,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         let token = deviceToken.map { (byte: UInt8) in String(format: "%02.2hhx", byte) }.joined()
         let req = RegisterDeviceToken.Request(deviceToken: token)
-        dependencyProvider.apiClient.request(RegisterDeviceToken.self, request: req) { _ in }
+        let registerDeviceToken = Action(RegisterDeviceToken.self, httpClient: dependencyProvider.apiClient)
+        
+        registerDeviceToken.elements
+            .sink(receiveValue: { _ in })
+            .store(in: &cancellables)
+        
+        registerDeviceToken.input((request: req, uri: RegisterDeviceToken.URI()))
     }
 
     //    // MARK: UISceneSession Lifecycle
