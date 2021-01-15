@@ -20,23 +20,25 @@ class RegistrationViewModel {
     let apiClient: APIClient
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var signupStatus = Action(SignupStatus.self, httpClient: self.apiClient)
+    
     init(auth: AWSCognitoAuth, apiClient: APIClient) {
         self.auth = auth
         self.apiClient = apiClient
+        
+        Publishers.MergeMany(
+            signupStatus.elements.map {
+                .signupStatus($0.isSignedup)
+            }.eraseToAnyPublisher(),
+            signupStatus.errors.map(Output.error).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
     }
 
     func getSignupStatus() {
-        apiClient.request(SignupStatus.self) { [weak self] result in
-            switch result {
-            case .success(let res):
-                self?.outputSubject.send(.signupStatus(res.isSignedup))
-            case .failure(let error as NSError) where
-                    error.domain == AWSCognitoAuthErrorDomain &&
-                    error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue:
-                break
-            case .failure(let error):
-                self?.outputSubject.send(.error(error))
-            }
-        }
+        signupStatus.input((request: Empty(), uri: SignupStatus.URI()))
     }
 }
