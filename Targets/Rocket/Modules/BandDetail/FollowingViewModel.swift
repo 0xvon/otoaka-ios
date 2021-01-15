@@ -18,20 +18,56 @@ class FollowingViewModel {
 
     enum Output {
         case updateIsButtonEnabled(Bool)
-        case updateFollowing(Bool)
         case updateFollowersCount(Int)
+        case updateFollowing(Bool)
         case reportError(Error)
     }
 
-    private var state: State
+    private(set) var state: State
 
     private let apiClient: APIClient
+    private lazy var unfollowGroupAction = Action(UnfollowGroup.self, httpClient: self.apiClient)
+    private lazy var followGroupAction = Action(FollowGroup.self, httpClient: self.apiClient)
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
 
     init(group: Group.ID, apiClient: APIClient) {
         self.apiClient = apiClient
         self.state = State(group: group, isFollowing: nil)
+        
+        let errors = Publishers.MergeMany(
+            followGroupAction.errors,
+            unfollowGroupAction.errors
+        )
+        
+        Publishers.MergeMany(
+            followGroupAction.elements.map { _ in .updateFollowing(true) }.eraseToAnyPublisher(),
+            unfollowGroupAction.elements.map { _ in .updateFollowing(false) }.eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+        
+        followGroupAction.elements
+            .sink(receiveValue: { [unowned self] _ in
+                guard let count = state.followersCount else { return }
+                state.followersCount = count + 1
+                state.isFollowing = true
+                outputSubject.send(.updateFollowersCount(count + 1))
+                outputSubject.send(.updateIsButtonEnabled(true))
+            })
+            .store(in: &cancellables)
+        
+        unfollowGroupAction.elements
+            .sink(receiveValue: { [unowned self] _ in
+                guard let count = state.followersCount else { return }
+                state.followersCount = count - 1
+                state.isFollowing = false
+                outputSubject.send(.updateFollowersCount(count - 1))
+                outputSubject.send(.updateIsButtonEnabled(true))
+            })
+            .store(in: &cancellables)
     }
 
     func viewDidLoad() {
@@ -53,31 +89,10 @@ class FollowingViewModel {
         outputSubject.send(.updateIsButtonEnabled(false))
         if isFollowing {
             let req = UnfollowGroup.Request(groupId: state.group)
-            apiClient.request(UnfollowGroup.self, request: req) { [unowned self] in
-                self.updateState(with: $0, didFollow: false)
-            }
+            unfollowGroupAction.input((request: req, uri: UnfollowGroup.URI()))
         } else {
             let req = FollowGroup.Request(groupId: state.group)
-            apiClient.request(FollowGroup.self, request: req) { [unowned self] in
-                self.updateState(with: $0, didFollow: true)
-            }
-        }
-    }
-
-    private func updateState<T>(with result: Result<T, Error>, didFollow: Bool) {
-        guard let count = state.followersCount else {
-            preconditionFailure("Button shouldn't be enabled before got followersCount")
-        }
-        outputSubject.send(.updateIsButtonEnabled(true))
-        switch result {
-        case .success(_):
-            state.isFollowing = didFollow
-            let newCount = count + (didFollow ? 1 : -1)
-            state.followersCount = newCount
-            outputSubject.send(.updateFollowersCount(newCount))
-            outputSubject.send(.updateFollowing(didFollow))
-        case .failure(let error):
-            outputSubject.send(.reportError(error))
+            followGroupAction.input((request: req, uri: FollowGroup.URI()))
         }
     }
 }

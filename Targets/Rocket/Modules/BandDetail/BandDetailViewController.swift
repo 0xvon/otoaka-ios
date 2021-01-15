@@ -193,10 +193,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
             switch output {
             case .updateFollowing(let isFollowing):
                 self.followButton.isSelected = isFollowing
-            case .updateIsButtonEnabled(let isEnabled):
-                self.followButton.isEnabled = isEnabled
             case .updateFollowersCount(let count):
                 self.followersSummaryView.update(input: (title: "フォロワー", count: count))
+            case .updateIsButtonEnabled(let isEnabled):
+                self.followButton.isEnabled = isEnabled
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
             }
