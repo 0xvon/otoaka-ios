@@ -30,6 +30,7 @@ struct DependencyProvider {
     var s3Client: S3Client
     var viewHierarchy: ViewHierarchy
     var masterService: MasterSerivice
+    var versioningService: VersioningSerivice
     var imagePipeline: ImagePipeline
 }
 
@@ -93,6 +94,7 @@ extension DependencyProvider {
             baseUrl: URL(string: "https://\(s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/SocialInputs.json")!,
             adapter: WebAPIAdapter()
         )
+        let versionServiceClient = HTTPClient<WebAPIAdapter>(baseUrl: URL(string: "https://\(s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/RequiredVersion.json")!, adapter: WebAPIAdapter())
         
         return DependencyProvider(
             auth: auth, apiClient: apiClient,
@@ -100,6 +102,7 @@ extension DependencyProvider {
             s3Client: s3Client,
             viewHierarchy: ViewHierarchy(windowScene: windowScene),
             masterService: MasterSerivice(httpClient: masterServiceClient),
+            versioningService: VersioningSerivice(httpClient: versionServiceClient),
             imagePipeline: NukeImagePipeline()
         )
     }

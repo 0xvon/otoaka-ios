@@ -9,6 +9,7 @@ import AWSCognitoAuth
 import Endpoint
 import UIKit
 import Combine
+import SafariServices
 
 final class RootViewController: UITabBarController, Instantiable {
     typealias Input = Void
@@ -59,6 +60,8 @@ final class RootViewController: UITabBarController, Instantiable {
             checkSignupStatus()
         }
         
+        checkVersion()
+        
         bind()
     }
     
@@ -79,6 +82,20 @@ final class RootViewController: UITabBarController, Instantiable {
     
     func makeViewFromUserInfo() {
         viewModel.userInfo()
+    }
+    
+    func checkVersion() {
+        let versionData: RequiredVersion =  try! dependencyProvider.versioningService.blockingMasterData()
+        guard let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else { return }
+        let isRequiredUpdate: Bool = {
+            guard let appVersion: Int = Int(appVersion.replacingOccurrences(of: ".", with: "")) else { return false }
+            guard let requiredVersion: Int = Int(versionData.required_version.replacingOccurrences(of: ".", with: "")) else { return false }
+            return appVersion < requiredVersion
+        }()
+        
+        if isRequiredUpdate {
+            promptVersioningViewController(versionData: versionData)
+        }
     }
     
     func instantiateTabs(with user: User) -> [UIViewController] {
@@ -114,11 +131,16 @@ final class RootViewController: UITabBarController, Instantiable {
         }
         return [homeVC, groupVC, liveVC, accountNav]
     }
-    private func promptAlertViewController(with message: String) {
+    
+    private func promptVersioningViewController(versionData: RequiredVersion) {
         let alertController = UIAlertController(
-            title: "エラー", message: message, preferredStyle: UIAlertController.Style.alert
+            title: "アップデートが必要です", message: "version \(versionData.required_version)が利用可能です。アップデートしてください。", preferredStyle: UIAlertController.Style.alert
         )
-        let ok = UIAlertAction(title: "OK", style: .default)
+        let ok = UIAlertAction(title: "OK", style: .default, handler: { [unowned self] _ in
+            let safari = SFSafariViewController(url: URL(string: versionData.update_url)!)
+            safari.dismissButtonStyle = .close
+            present(safari, animated: true, completion: nil)
+        })
         alertController.addAction(ok)
         self.present(alertController, animated: true)
     }

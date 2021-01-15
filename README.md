@@ -52,5 +52,7 @@ set Target as Rocket-Development and enter `cmd + r`
 #### 5. Deploy
 
 ```
+$ aws s3 cp ./Targets/Rocket/SocialInputs.json s3://rocket-auth-storage/items/SocialInputs.json
+$ aws s3 cp ./Targets/Rocket/RequiredVersion.json s3://rocket-auth-storage/items/RequiredVersion.json
 $ fastlane release
 ```
