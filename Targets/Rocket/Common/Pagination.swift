@@ -6,6 +6,7 @@
 //
 
 import Endpoint
+import Combine
 
 enum PaginationEvent<Response> {
     case initial(Response)
@@ -25,7 +26,9 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
                                                    E.Response: PageResponse {
     private var uri: E.URI
     private var apiClient: APIClient
+    private lazy var requestAction = Action(E.self, httpClient: self.apiClient)
     private var subscribers: [(Event) -> Void] = []
+    private var cancellables: Set<AnyCancellable> = []
     
     fileprivate struct State {
         var isInitial = true
@@ -42,6 +45,25 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
         self.uri = uri
         
         self.initialize()
+        
+        requestAction.elements
+            .map { self.state.value.isInitial ? .initial($0) : .next($0) }.eraseToAnyPublisher()
+            .merge(with: requestAction.errors.map { .error($0) }).eraseToAnyPublisher()
+            .sink(receiveValue: notify)
+            .store(in: &cancellables)
+        
+        requestAction.elements
+            .sink(receiveValue: { [unowned self] response in
+                state.value.isInitial = false
+                state.value.isLoading = false
+                let metadata = response.metadata
+                guard (metadata.page + 1) * metadata.per < metadata.total else {
+                    self.state.value.isFinished = true
+                    return
+                }
+                self.uri.page = metadata.page + 1
+            })
+            .store(in: &cancellables)
     }
     
     func subscribe(_ subscriber: @escaping (Event) -> Void) {
@@ -53,7 +75,6 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
     }
     
     private func initialize() {
-        
         self.uri.page = 1
         self.uri.per = per
     }
@@ -70,27 +91,7 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
             return
         }
         state.value.isLoading = true
-        apiClient.request(E.self, uri: uri) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let response):
-                if self.state.value.isInitial {
-                    self.state.value.isInitial = false
-                    self.notify(.initial(response))
-                } else {
-                    self.notify(.next(response))
-                }
-                self.state.value.isLoading = false
-                let metadata = response.metadata
-                guard (metadata.page + 1) * metadata.per < metadata.total else {
-                    self.state.value.isFinished = true
-                    return
-                }
-                self.uri.page = metadata.page + 1
-            case .failure(let error):
-                self.notify(.error(error))
-            }
-        }
+        requestAction.input((request: Empty(), uri: uri))
     }
 }
 
