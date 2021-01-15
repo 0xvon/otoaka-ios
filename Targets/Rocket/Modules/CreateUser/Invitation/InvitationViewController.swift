@@ -8,29 +8,16 @@
 import AWSCognitoAuth
 import Endpoint
 import UIKit
+import Combine
 
 final class InvitationViewController: UIViewController, Instantiable {
 
     typealias Input = Void
 
-    lazy var viewModel = InvitationViewModel(
-        apiClient: dependencyProvider.apiClient,
-        s3Client: dependencyProvider.s3Client,
-        outputHander: { output in
-            switch output {
-            case .joinGroup:
-                DispatchQueue.main.async {
-                    self.dismiss(animated: true)
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
-
     var dependencyProvider: LoggedInDependencyProvider
+    let viewModel: InvitationViewModel
+    var cancellables: Set<AnyCancellable> = []
+    
     var input: Input!
     @IBOutlet weak var invitationView: TextFieldView!
     @IBOutlet weak var registerButtonView: PrimaryButton!
@@ -40,6 +27,7 @@ final class InvitationViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.input = input
+        self.viewModel = InvitationViewModel(dependencyProvider: dependencyProvider)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -51,6 +39,23 @@ final class InvitationViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        bind()
+    }
+    
+    func bind() {
+        registerButtonView.controlEventPublisher(for: .touchUpInside)
+            .map { _ in self.invitationView.getText() }
+            .sink(receiveValue: viewModel.joinGroup)
+            .store(in: &cancellables)
+        
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didJoinGroup:
+                self.dismiss(animated: true, completion: nil)
+            case .reportError(let error):
+                self.showAlert(title: "エラー", message: String(describing: error))
+            }
+        }.store(in: &cancellables)
     }
 
     func setup() {
@@ -70,9 +75,6 @@ final class InvitationViewController: UIViewController, Instantiable {
 
         invitationView.inject(input: (section: "招待コード", text: nil, maxLength: 60))
         registerButtonView.setTitle("登録", for: .normal)
-        registerButtonView.listen {
-            self.register()
-        }
 
         let skipButton = UIButton()
         skipButton.translatesAutoresizingMaskIntoConstraints = false
@@ -98,16 +100,5 @@ final class InvitationViewController: UIViewController, Instantiable {
 
     @objc private func skip(_ sender: Any) {
         self.dismiss(animated: true)
-    }
-
-    private func register() {
-        let invitationCode = invitationView.getText()
-
-        switch dependencyProvider.user.role {
-        case .artist(_):
-            viewModel.joinGroup(invitationCode: invitationCode)
-        case .fan(_):
-            viewModel.enterInvitationCode(invitationCode: invitationCode)
-        }
     }
 }

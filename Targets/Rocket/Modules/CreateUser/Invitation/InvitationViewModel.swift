@@ -7,34 +7,46 @@
 
 import Endpoint
 import Foundation
+import Combine
 
 class InvitationViewModel {
+
     enum Output {
-        case joinGroup
-        case error(Error)
+        case didJoinGroup
+        case reportError(Error)
     }
 
-    let apiClient: APIClient
-    let s3Client: S3Client
-    let outputHandler: (Output) -> Void
+    
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var joinGroupAction = Action(JoinGroup.self, httpClient: self.apiClient)
 
-    init(apiClient: APIClient, s3Client: S3Client, outputHander: @escaping (Output) -> Void) {
-        self.apiClient = apiClient
-        self.s3Client = s3Client
-        self.outputHandler = outputHander
+    init(
+        dependencyProvider: LoggedInDependencyProvider
+    ) {
+        self.dependencyProvider = dependencyProvider
+        
+        let errors = Publishers.MergeMany(
+            joinGroupAction.errors
+        )
+        
+        Publishers.MergeMany(
+            joinGroupAction.elements.map { _ in .didJoinGroup }.eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
     }
 
     func joinGroup(invitationCode: String?) {
         if let invitationCode = invitationCode {
             let req = JoinGroup.Request(invitationId: invitationCode)
-            apiClient.request(JoinGroup.self, request: req) { result in
-                switch result {
-                case .success:
-                    self.outputHandler(.joinGroup)
-                case .failure(let error):
-                    self.outputHandler(.error(error))
-                }
-            }
+            joinGroupAction.input((request: req, uri: JoinGroup.URI()))
         }
     }
 
