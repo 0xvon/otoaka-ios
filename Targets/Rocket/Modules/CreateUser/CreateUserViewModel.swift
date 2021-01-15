@@ -39,12 +39,32 @@ class CreateUserViewModel {
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var cancellables: Set<AnyCancellable> = []
+    
+    private lazy var createUserAction = Action(Signup.self, httpClient: self.apiClient)
 
     init(
         dependencyProvider: DependencyProvider
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(role: .fan(Fan()), socialInputs: try! dependencyProvider.masterService.blockingMasterData())
+        
+        let errors = Publishers.MergeMany(
+            createUserAction.errors
+        )
+        
+        Publishers.MergeMany(
+            createUserAction.elements.map(Output.didCreateUser).eraseToAnyPublisher(),
+            errors.map(Output.reportError).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
+        
+        createUserAction.elements
+            .sink(receiveValue: { [unowned self] _ in
+                outputSubject.send(.updateSubmittableState(.completed))
+            })
+            .store(in: &cancellables)
     }
     
     func viewDidLoad() {
@@ -76,16 +96,10 @@ class CreateUserViewModel {
 
     func didSignupButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
-        guard let displayName = state.displayName else { return }
         self.dependencyProvider.s3Client.uploadImage(image: state.profileImage) { [weak self] result in
             switch result {
             case .success(let imageUrl):
-                guard let state = self?.state else { return }
-                let req = Signup.Request(
-                    name: displayName, biography: nil, thumbnailURL: imageUrl, role: state.role)
-                self?.apiClient.request(Signup.self, request: req) { [weak self] result in
-                    self?.updateState(with: result)
-                }
+                self?.signup(imageUrl: imageUrl)
             case .failure(let error):
                 self?.outputSubject.send(.updateSubmittableState(.completed))
                 self?.outputSubject.send(.reportError(error))
@@ -93,13 +107,10 @@ class CreateUserViewModel {
         }
     }
     
-    private func updateState(with result: Result<User, Error>) {
-        outputSubject.send(.updateSubmittableState(.completed))
-        switch result {
-        case .success(let user):
-            outputSubject.send(.didCreateUser(user))
-        case .failure(let error):
-            outputSubject.send(.reportError(error))
-        }
+    private func signup(imageUrl: String) {
+        guard let displayName = state.displayName else { return }
+        let req = Signup.Request(
+            name: displayName, biography: nil, thumbnailURL: imageUrl, role: state.role)
+        createUserAction.input((request: req, uri: Signup.URI()))
     }
 }
