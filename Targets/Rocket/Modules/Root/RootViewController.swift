@@ -8,15 +8,19 @@
 import AWSCognitoAuth
 import Endpoint
 import UIKit
+import Combine
 
 final class RootViewController: UITabBarController, Instantiable {
     typealias Input = Void
 
     let dependencyProvider: DependencyProvider
     private var isFirstViewDidAppear = true
+    private var cancellables: Set<AnyCancellable> = []
+    let viewModel: RootViewModel
 
     init(dependencyProvider: DependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
+        self.viewModel = RootViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -32,6 +36,19 @@ final class RootViewController: UITabBarController, Instantiable {
         self.tabBar.barTintColor = Brand.color(for: .background(.primary))
         self.tabBar.backgroundColor = Brand.color(for: .background(.primary))
     }
+    
+    func bind() {
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didGetSignupStatus(let isSignedUp):
+                isSignedUp ? makeViewFromUserInfo() : presentRegistrationScreen()
+            case .didGetUserInfo(let user):
+                setViewControllers(instantiateTabs(with: user), animated: false)
+            case .reportError(let error):
+                showAlert(title: "エラー", message: String(describing: error))
+            }
+        }.store(in: &cancellables)
+    }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -41,29 +58,12 @@ final class RootViewController: UITabBarController, Instantiable {
             isFirstViewDidAppear = false
             checkSignupStatus()
         }
+        
+        bind()
     }
     
     func checkSignupStatus() {
-        if dependencyProvider.auth.isSignedIn {
-            dependencyProvider.apiClient.request(SignupStatus.self) { [unowned self] result in
-                switch result {
-                case .success(let res):
-                    if res.isSignedup {
-                        makeViewFromUserInfo()
-                    } else {
-                        DispatchQueue.main.async {
-                            presentRegistrationScreen()
-                        }
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        self.promptAlertViewController(with: String(describing: error))
-                    }
-                }
-            }
-        } else {
-            presentRegistrationScreen()
-        }
+        dependencyProvider.auth.isSignedIn ? viewModel.getSignupStatus() : presentRegistrationScreen()
     }
     
     private func presentRegistrationScreen() {
@@ -78,18 +78,7 @@ final class RootViewController: UITabBarController, Instantiable {
     }
     
     func makeViewFromUserInfo() {
-        dependencyProvider.apiClient.request(GetUserInfo.self) { [unowned self] result in
-            switch result {
-            case .success(let user):
-                DispatchQueue.main.async {
-                    self.setViewControllers(instantiateTabs(with: user), animated: false)
-                }
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    self.promptAlertViewController(with: String(describing: error))
-                }
-            }
-        }
+        viewModel.userInfo()
     }
     
     func instantiateTabs(with user: User) -> [UIViewController] {
