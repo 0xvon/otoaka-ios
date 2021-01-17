@@ -40,11 +40,6 @@
 	<string>spotify</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Rocketにカメラロールへのアクセスを許可します</string>
 	<key>UIApplicationSceneManifest</key>
