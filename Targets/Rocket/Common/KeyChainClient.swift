@@ -12,7 +12,7 @@ class KeyChainClient {
     private let keyChain: Keychain
 
     init() {
-        self.keyChain = Keychain(service: "dev.wall-of-death.Rocket")
+        self.keyChain = Keychain(service: "band.rocketfor")
     }
 
     public func save(key: String, value: String) throws {

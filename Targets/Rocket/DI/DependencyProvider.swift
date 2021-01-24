@@ -54,7 +54,7 @@ extension DependencyProvider {
             idpIdentifier: nil,
             userPoolIdForEnablingASF: nil
         )
-        let cognitoAuthKey = Bundle.main.bundleIdentifier.map { "\($0).cognito-auth" } ?? "dev.wall-of-death.Rocket.cognito-auth"
+        let cognitoAuthKey = Bundle.main.bundleIdentifier.map { "\($0).cognito-auth" } ?? "band.rocketfor.cognito-auth"
         print(cognitoAuthKey)
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: cognitoAuthKey)
         FirebaseApp.configure()
@@ -113,7 +113,7 @@ class CognitoAuthWrapper: APITokenProvider {
         case unexpectedGetSessionResult
     }
     let auth: AWSCognitoAuth
-    let queue = DispatchQueue(label: Bundle.main.bundleIdentifier.map { "\($0).cognito-id-provider" } ?? "dev.wall-of-death.Rocket.cognito-id-provider")
+    let queue = DispatchQueue(label: Bundle.main.bundleIdentifier.map { "\($0).cognito-id-provider" } ?? "band.rocketfor.cognito-id-provider")
     init(awsCognitoAuth: AWSCognitoAuth) {
         self.auth = awsCognitoAuth
     }

@@ -2,7 +2,7 @@ name: Rocket
 options:
   deploymentTarget:
     iOS: "13.0"
-  bundleIdPrefix: dev.wall-of-death
+  bundleIdPrefix: band.rocketfor
 packages:
   Endpoint:
     path: Libraries/rocket-api/Modules/Endpoint
@@ -63,7 +63,7 @@ targets:
         group: Targets/Rocket/FirebaseConfig
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.Rocket
+        PRODUCT_BUNDLE_IDENTIFIER: band.rocketfor
   Rocket-Development:
     templates: [RocketTarget]
     sources:
@@ -71,7 +71,7 @@ targets:
         group: Targets/Rocket/FirebaseConfig
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: dev.wall-of-death.dev.Rocket
+        PRODUCT_BUNDLE_IDENTIFIER: band.rocketfor.dev
   RocketTests:
     type: bundle.unit-test
     platform: iOS
@@ -102,7 +102,7 @@ targetTemplates:
         "-FIRAnalyticsDebugDisabled": true
     settings:
       base:
-        DEVELOPMENT_TEAM: 6WL9GUCS6V
+        DEVELOPMENT_TEAM: 42H4TC9UM5
         VERSIONING_SYSTEM: apple-generic
         CURRENT_PROJECT_VERSION: 1
         PRODUCT_MODULE_NAME: Rocket

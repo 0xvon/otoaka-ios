@@ -9,7 +9,7 @@ import Nuke
 import ImagePipeline
 
 class NukeImagePipeline: ImagePipelineProtocol {
-    private static let dataCache = try? DataCache(name: "dev.wall-of-death.dev.Rocket")
+    private static let dataCache = try? DataCache(name: "band.rocketfor")
     private static let imageCache = ImageCache()
 
     private let pipeline = Nuke.ImagePipeline { configuration in

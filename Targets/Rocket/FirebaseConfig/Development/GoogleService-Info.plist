@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>125825266243-37o19mhal6jg2tjlnt9uvpor78ovef7i.apps.googleusercontent.com</string>
+	<string>125825266243-ncb527dmc5smjk8c18q9tv1l8v4stfhh.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.125825266243-37o19mhal6jg2tjlnt9uvpor78ovef7i</string>
+	<string>com.googleusercontent.apps.125825266243-ncb527dmc5smjk8c18q9tv1l8v4stfhh</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCEEc6j6aZ2dcdv-j4aZYyAxnxsCc2iU4A</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>dev.wall-of-death.dev.Rocket</string>
+	<string>band.rocketfor.dev</string>
 	<key>PROJECT_ID</key>
 	<string>rocket-for-bands-dev</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:125825266243:ios:2a199377dd91e415cd5af6</string>
+	<string>1:125825266243:ios:37728d707545e6d9cd5af6</string>
 </dict>
 </plist>
