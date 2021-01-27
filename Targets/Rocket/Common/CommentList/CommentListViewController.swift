@@ -76,6 +76,7 @@ final class CommentListViewController: UIViewController, Instantiable {
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "コメント"
+        self.navigationItem.largeTitleDisplayMode = .never
         self.view.addSubview(commentTableView)
         self.getComments()
         let constraints: [NSLayoutConstraint] = [
