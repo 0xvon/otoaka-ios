@@ -77,8 +77,8 @@ final class GroupFeedListViewController: UIViewController, Instantiable {
         viewModel.getGroupFeeds()
         
         let constraints: [NSLayoutConstraint] = [
-            contentsTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
-            contentsTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
+            contentsTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            contentsTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             contentsTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
             contentsTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -16),
         ]
@@ -98,7 +98,6 @@ extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSourc
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return self.feeds.count
-        
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
