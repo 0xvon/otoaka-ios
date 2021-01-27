@@ -80,7 +80,6 @@ final class GroupListViewController: UIViewController, Instantiable {
     }
 
     func inject(_ input: Input) {
-        print(input)
         viewModel.inject(input)
     }
     @objc private func refreshGroups(sender: UIRefreshControl) {

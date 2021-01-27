@@ -455,9 +455,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             })
         let cancelAction = UIAlertAction(
             title: "キャンセル", style: UIAlertAction.Style.cancel,
-            handler: { action in
-                print("close")
-            })
+            handler: { action in })
         alertController.addAction(acceptAction)
         alertController.addAction(cancelAction)
 

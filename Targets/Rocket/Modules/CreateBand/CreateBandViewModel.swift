@@ -97,6 +97,7 @@ class CreateBandViewModel {
         state.biography = biography
         state.since = since
         state.twitterId = twitterId
+        state.youtubeChannelId = youtubeChannelId
         state.hometown = hometown
         
         let isSubmittable: Bool = (name != nil && englishName != nil)

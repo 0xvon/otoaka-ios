@@ -199,9 +199,7 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
             })
         let cancelAction = UIAlertAction(
             title: "キャンセル", style: UIAlertAction.Style.cancel,
-            handler: { action in
-                print("close")
-            })
+            handler: { action in })
         alertController.addAction(acceptAction)
         alertController.addAction(denyAction)
         alertController.addAction(cancelAction)

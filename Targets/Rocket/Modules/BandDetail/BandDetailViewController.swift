@@ -325,9 +325,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         let cancelAction = UIAlertAction(
             title: "OK", style: UIAlertAction.Style.cancel,
-            handler: { action in
-                print("close")
-            })
+            handler: { action in })
         alertController.addAction(cancelAction)
 
         alertController.addTextField(configurationHandler: { (text: UITextField!) -> Void in

@@ -65,7 +65,6 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didSearch(_):
-                print("search")
                 setTableViewBackgroundView(tableView: groupTableView)
                 groupTableView.reloadData()
             case .didPaginate(_):

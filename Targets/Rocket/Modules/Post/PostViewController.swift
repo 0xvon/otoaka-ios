@@ -353,9 +353,7 @@ final class PostViewController: UIViewController, Instantiable {
 
         let cancelAction = UIAlertAction(
             title: "cancel", style: UIAlertAction.Style.cancel,
-            handler: { action in
-                print("close")
-        })
+            handler: { action in })
         let doneAction = UIAlertAction(title: "ok", style: .default, handler: { [unowned self] action in
             if let textFields = alertController.textFields, let text = textFields.first!.text, let url = URL(string: text) {
                 viewModel.didUpdatePost(post: .youtube(url))

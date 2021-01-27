@@ -126,7 +126,6 @@ final class RootViewController: UITabBarController, Instantiable {
             selectedImage: UIImage(systemName: "person.crop.circle.fill")
         )
         accountVC.listen { [unowned self] in
-            print("listened")
             checkSignupStatus()
         }
         return [homeVC, groupVC, liveVC, accountNav]
