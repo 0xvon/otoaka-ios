@@ -54,7 +54,6 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
         
         requestAction.elements
             .sink(receiveValue: { [unowned self] response in
-                state.value.isInitial = false
                 state.value.isLoading = false
                 let metadata = response.metadata
                 guard (metadata.page + 1) * metadata.per < metadata.total else {
@@ -71,6 +70,7 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
     }
     
     private func notify(_ response: Event) {
+        state.value.isInitial = false
         subscribers.forEach { $0(response) }
     }
     
