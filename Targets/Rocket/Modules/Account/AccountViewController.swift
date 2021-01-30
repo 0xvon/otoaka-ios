@@ -8,6 +8,7 @@
 import UIKit
 import DomainEntity
 import Combine
+import AWSCognitoAuth
 
 final class AccountViewController: UIViewController, Instantiable {
     typealias Input = Void
@@ -48,7 +49,7 @@ final class AccountViewController: UIViewController, Instantiable {
     }()
     private lazy var logoutItem: AccountSettingItem = {
         AccountSettingItem(
-            title: "ログアウト", image: UIImage(named: "logout"), action: self.logout,
+            title: "ログアウト", image: UIImage(named: "logout"), action: self.logoutButtonTapped,
             hasNotification: false)
     }()
     
@@ -90,6 +91,7 @@ final class AccountViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
+        dependencyProvider.auth.delegate = self
         
         title = "アカウント設定"
         setAccountSetting()
@@ -141,15 +143,33 @@ final class AccountViewController: UIViewController, Instantiable {
         let vc = InvitationViewController(dependencyProvider: dependencyProvider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
+    private func logoutButtonTapped() {
+        let alertController = UIAlertController(
+            title: "ログアウトしますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+
+        let acceptAction = UIAlertAction(
+            title: "OK", style: UIAlertAction.Style.default,
+            handler: { [unowned self] action in
+                logout()
+            })
+        let cancelAction = UIAlertAction(
+            title: "キャンセル", style: UIAlertAction.Style.cancel,
+            handler: { action in })
+        alertController.addAction(acceptAction)
+        alertController.addAction(cancelAction)
+
+        self.present(alertController, animated: true, completion: nil)
+    }
 
     private func logout() {
-        dependencyProvider.auth.signOut(self) { error in
+        
+        dependencyProvider.auth.signOut(self) { [unowned self] error in
             if let error = error {
-                self.showAlert(title: "エラー", message: String(describing: error))
+                showAlert(title: "エラー", message: String(describing: error))
             } else {
-                self.showAlert(title: "See you soon", message: "ログアウトが完了しました")
+                self.listener()
             }
-            self.listener()
         }
     }
     
@@ -181,6 +201,12 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
         let item = items[indexPath.row]
         item.action()
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+extension AccountViewController: AWSCognitoAuthDelegate {
+    func getViewController() -> UIViewController {
+        return self
     }
 }
 

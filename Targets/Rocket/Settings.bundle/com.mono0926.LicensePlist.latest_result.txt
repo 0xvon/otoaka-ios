@@ -1,34 +1,34 @@
 name: AWSCognitoAuth, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.22.0
+version: 2.21.1
 
 name: AWSCognitoAuth, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.22.0
+version: 2.21.1
 
 name: AWSCognitoIdentityProviderASF, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.22.0
+version: 2.21.1
 
 name: AWSCognitoIdentityProviderASF, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.22.0
+version: 2.21.1
 
 name: AWSCore, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.22.0
+version: 2.21.1
 
 name: AWSCore, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.22.0
+version: 2.21.1
 
 name: AWSS3, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.22.0
+version: 2.21.1
 
 name: AWSS3, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.22.0
+version: 2.21.1
 
 name: Firebase, nameSpecified: 
 body: 

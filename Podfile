@@ -8,7 +8,7 @@ target 'Rocket' do
   inhibit_all_warnings!
 
   # Pods for Rocket
-  pod 'AWSCognitoAuth'
+  pod 'AWSCognitoAuth', '~> 2.21.1'
   pod 'AWSS3'
   pod 'KeychainAccess'
   pod 'LicensePlist'
