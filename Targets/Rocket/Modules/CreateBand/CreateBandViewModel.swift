@@ -27,7 +27,6 @@ class CreateBandViewModel {
     
     enum PageState {
         case loading
-        case completed
         case editting(Bool)
     }
     
@@ -61,7 +60,7 @@ class CreateBandViewModel {
         
         Publishers.MergeMany(
             listChannelAction.elements.map { _ in .didValidateYoutubeChannelId(true) }.eraseToAnyPublisher(),
-            createGroupAction.elements.map { _ in .updateSubmittableState(.completed) }.eraseToAnyPublisher(),
+            createGroupAction.elements.map { _ in .updateSubmittableState(.editting(true)) }.eraseToAnyPublisher(),
             createGroupAction.elements.map(Output.didCreateGroup).eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
@@ -100,7 +99,7 @@ class CreateBandViewModel {
         state.youtubeChannelId = youtubeChannelId
         state.hometown = hometown
         
-        let isSubmittable: Bool = (name != nil && englishName != nil)
+        let isSubmittable: Bool = (name != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
         validateYoutubeChannelId(youtubeChannelId: youtubeChannelId)
     }
@@ -116,7 +115,7 @@ class CreateBandViewModel {
             case .success(let imageUrl):
                 self?.createGroup(imageUrl: imageUrl)
             case .failure(let error):
-                self?.outputSubject.send(.updateSubmittableState(.completed))
+                self?.outputSubject.send(.updateSubmittableState(.editting(true)))
                 self?.outputSubject.send(.reportError(error))
             }
         }
@@ -124,9 +123,8 @@ class CreateBandViewModel {
     
     private func createGroup(imageUrl: String) {
         guard let name = state.name else { return }
-        guard let englishName = state.englishName else { return }
         let req = CreateGroup.Request(
-            name: name, englishName: englishName, biography: state.biography, since: state.since,
+            name: name, englishName: state.englishName, biography: state.biography, since: state.since,
             artworkURL: URL(string: imageUrl),twitterId: state.twitterId, youtubeChannelId: state.youtubeChannelId, hometown: state.hometown)
         createGroupAction.input((request: req, uri: CreateGroup.URI()))
     }

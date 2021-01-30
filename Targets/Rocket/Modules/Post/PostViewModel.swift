@@ -35,7 +35,6 @@ class PostViewModel {
     
     enum PageState {
         case loading
-        case completed
         case editting(Bool)
     }
     
@@ -70,7 +69,7 @@ class PostViewModel {
         
         createArtistFeedAction.elements
             .sink(receiveValue: { [unowned self] _ in
-                outputSubject.send(.updateSubmittableState(.completed))
+                outputSubject.send(.updateSubmittableState(.editting(true)))
             })
             .store(in: &cancellables)
     }

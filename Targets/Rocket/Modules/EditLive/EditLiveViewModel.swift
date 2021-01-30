@@ -25,7 +25,6 @@ class EditLiveViewModel {
     
     enum PageState {
         case loading
-        case completed
         case editting(Bool)
     }
     
@@ -67,7 +66,7 @@ class EditLiveViewModel {
         
         editLiveAction.elements
             .sink(receiveValue: { [unowned self] _ in
-                outputSubject.send(.updateSubmittableState(.completed))
+                outputSubject.send(.updateSubmittableState(.editting(true)))
             })
             .store(in: &cancellables)
     }
@@ -118,7 +117,7 @@ class EditLiveViewModel {
                 case .success(let imageUrl):
                     self?.editLive(imageUrl: URL(string: imageUrl))
                 case .failure(let error):
-                    self?.outputSubject.send(.updateSubmittableState(.completed))
+                    self?.outputSubject.send(.updateSubmittableState(.editting(true)))
                     self?.outputSubject.send(.reportError(error))
                 }
             }

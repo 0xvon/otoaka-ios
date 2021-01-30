@@ -30,7 +30,6 @@ class CreateLiveViewModel {
     
     enum PageState {
         case loading
-        case completed
         case editting(Bool)
     }
     
@@ -75,7 +74,7 @@ class CreateLiveViewModel {
         Publishers.MergeMany(
             getMembershipsAction.elements.map(Output.didGetMemberships).eraseToAnyPublisher(),
             createLiveAction.elements.map(Output.didCreateLive).eraseToAnyPublisher(),
-            createLiveAction.elements.map { _ in .updateSubmittableState(.completed) }.eraseToAnyPublisher(),
+            createLiveAction.elements.map { _ in .updateSubmittableState(.editting(true)) }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -162,7 +161,7 @@ class CreateLiveViewModel {
             case .success(let imageUrl):
                 self?.createLive(imageUrl: imageUrl)
             case .failure(let error):
-                self?.outputSubject.send(.updateSubmittableState(.completed))
+                self?.outputSubject.send(.updateSubmittableState(.editting(true)))
                 self?.outputSubject.send(.reportError(error))
             }
         }

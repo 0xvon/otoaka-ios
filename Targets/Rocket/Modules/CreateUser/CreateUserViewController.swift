@@ -241,11 +241,9 @@ final class CreateUserViewController: UIViewController, Instantiable {
                 didSwitchedRole(role: role)
             case .updateSubmittableState(let state):
                 switch state {
-                case .completed:
-                    self.registerButton.isEnabled = true
-                    self.activityIndicator.stopAnimating()
                 case .editting(let submittable):
                     self.registerButton.isEnabled = submittable
+                    self.activityIndicator.stopAnimating()
                 case .loading:
                     self.registerButton.isEnabled = false
                     self.activityIndicator.startAnimating()
