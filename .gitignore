@@ -1,7 +1,6 @@
 /Pods
 xcuserdata/
 build/
-ENV.swift
 DerivedData/
 *.moved-aside
 *.pbxuser
@@ -34,3 +33,6 @@ iOSInjectionProject/
 
 Targets/Rocket/Generated/*
 !.gitkeep
+
+# Secrets
+EnvironmentConfig.swift
