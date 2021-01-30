@@ -117,7 +117,7 @@ extension FeedViewController {
             for: indexPath
         )
         cell.listen { [weak self] _ in
-            self?.feedCommentButtonTapped(cellIndex: indexPath.section)
+            self?.feedCommentButtonTapped(cellIndex: indexPath.row)
         }
         return cell
     }
