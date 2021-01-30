@@ -81,10 +81,12 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
     
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
+        self.title = "対バン相手を選択"
+        self.navigationItem.largeTitleDisplayMode = .never
        
         view.addSubview(searchBar)
         NSLayoutConstraint.activate([
-            searchBar.topAnchor.constraint(equalTo: self.view.topAnchor),
+            searchBar.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
             searchBar.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             searchBar.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             searchBar.heightAnchor.constraint(equalToConstant: textFieldHeight),
