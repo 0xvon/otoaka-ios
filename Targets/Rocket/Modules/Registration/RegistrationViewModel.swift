@@ -27,12 +27,19 @@ class RegistrationViewModel {
     init(auth: AWSCognitoAuth, apiClient: APIClient) {
         self.auth = auth
         self.apiClient = apiClient
-        
+
+        let errors = signupStatus.errors
+            .filter { error in
+                guard case .underlyingError(let error as NSError) = error else { return true }
+                let isCognitoCancellError = error.domain == AWSCognitoAuthErrorDomain
+                    && error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue
+                return !isCognitoCancellError
+            }
         Publishers.MergeMany(
             signupStatus.elements.map {
                 .signupStatus($0.isSignedup)
             }.eraseToAnyPublisher(),
-            signupStatus.errors.map(Output.error).eraseToAnyPublisher()
+            errors.map(Output.error).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
