@@ -64,6 +64,16 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: band.rocketfor
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: PRODUCTION
+  Rocket-Staging:
+    templates: [RocketTarget]
+    sources:
+      - path: Targets/Rocket/FirebaseConfig/Development
+        group: Targets/Rocket/FirebaseConfig
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: band.rocketfor.dev
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: STAGING
   Rocket-Development:
     templates: [RocketTarget]
     sources:
@@ -72,6 +82,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: band.rocketfor.dev
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEVELOPMENT
   RocketTests:
     type: bundle.unit-test
     platform: iOS

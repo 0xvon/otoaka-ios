@@ -36,11 +36,10 @@ struct DependencyProvider {
 
 extension DependencyProvider {
 
-    #if DEBUG
-        static func make(windowScene: UIWindowScene) -> DependencyProvider {
-            .make(config: DevelopmentConfig.self, windowScene: windowScene)
-        }
-    #endif
+    static func make(windowScene: UIWindowScene) -> DependencyProvider {
+        return .make(config: EnvironmentConfig.self, windowScene: windowScene)
+    }
+
     static func make(config: Config.Type, windowScene: UIWindowScene) -> DependencyProvider {
 
         let cognitoConfiguration = AWSCognitoAuthConfiguration(

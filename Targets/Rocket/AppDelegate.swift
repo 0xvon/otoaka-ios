@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         KeyboardGuide.shared.activate()
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        dependencyProvider = .make(config: StagingConfig.self, windowScene: window!.windowScene!)
+        dependencyProvider = .make(windowScene: window!.windowScene!)
         let viewController = RootViewController(dependencyProvider: dependencyProvider, input: ())
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
