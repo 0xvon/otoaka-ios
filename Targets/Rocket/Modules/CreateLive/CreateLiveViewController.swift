@@ -436,10 +436,11 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
     @objc private func addPerformerButtonTapped(_ sender: Any) {
         let vc = SelectPerformersViewController(dependencyProvider: dependencyProvider, input: viewModel.state.performers)
+        let nav = BrandNavigationController(rootViewController: vc)
         vc.listen { [unowned self] group in
             viewModel.didAddPerformer(performer: group)
         }
-        present(vc, animated: true, completion: nil)
+        present(nav, animated: true, completion: nil)
     }
     
     private func performerTapped(cellIndex: Int) {

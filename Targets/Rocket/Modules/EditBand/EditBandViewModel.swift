@@ -101,7 +101,7 @@ class EditBandViewModel {
         state.twitterId = twitterId
         state.hometown = hometown
         
-        let isSubmittable: Bool = (name != nil && englishName != nil)
+        let isSubmittable: Bool = (name != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
         validateYoutubeChannelId(youtubeChannelId: youtubeChannelId)
     }

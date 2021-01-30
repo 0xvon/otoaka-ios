@@ -99,7 +99,7 @@ class CreateBandViewModel {
         state.youtubeChannelId = youtubeChannelId
         state.hometown = hometown
         
-        let isSubmittable: Bool = (name != nil && englishName != nil)
+        let isSubmittable: Bool = (name != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
         validateYoutubeChannelId(youtubeChannelId: youtubeChannelId)
     }
@@ -123,9 +123,8 @@ class CreateBandViewModel {
     
     private func createGroup(imageUrl: String) {
         guard let name = state.name else { return }
-        guard let englishName = state.englishName else { return }
         let req = CreateGroup.Request(
-            name: name, englishName: englishName, biography: state.biography, since: state.since,
+            name: name, englishName: state.englishName, biography: state.biography, since: state.since,
             artworkURL: URL(string: imageUrl),twitterId: state.twitterId, youtubeChannelId: state.youtubeChannelId, hometown: state.hometown)
         createGroupAction.input((request: req, uri: CreateGroup.URI()))
     }
