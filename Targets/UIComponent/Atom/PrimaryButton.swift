@@ -13,6 +13,12 @@ public final class PrimaryButton: UIButton {
         setup()
         setTitle(text, for: .normal)
     }
+    
+    public override var isEnabled: Bool {
+        didSet {
+            layer.opacity = isEnabled ? 1.0 : 0.6
+        }
+    }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
