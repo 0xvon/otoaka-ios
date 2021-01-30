@@ -23,7 +23,6 @@ class EditUserViewModel {
     
     enum PageState {
         case loading
-        case completed
         case editting(Bool)
     }
     
@@ -67,7 +66,7 @@ class EditUserViewModel {
         
         editUserAction.elements
             .sink(receiveValue: { [unowned self] _ in
-                outputSubject.send(.updateSubmittableState(.completed))
+                outputSubject.send(.updateSubmittableState(.editting(true)))
             })
             .store(in: &cancellables)
     }
@@ -105,7 +104,7 @@ class EditUserViewModel {
                 case .success(let imageUrl):
                     self?.editUser(imageUrl: imageUrl)
                 case .failure(let error):
-                    self?.outputSubject.send(.updateSubmittableState(.completed))
+                    self?.outputSubject.send(.updateSubmittableState(.editting(true)))
                     self?.outputSubject.send(.reportError(error))
                 }
             }

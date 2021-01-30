@@ -27,7 +27,6 @@ class CreateBandViewModel {
     
     enum PageState {
         case loading
-        case completed
         case editting(Bool)
     }
     
@@ -61,7 +60,7 @@ class CreateBandViewModel {
         
         Publishers.MergeMany(
             listChannelAction.elements.map { _ in .didValidateYoutubeChannelId(true) }.eraseToAnyPublisher(),
-            createGroupAction.elements.map { _ in .updateSubmittableState(.completed) }.eraseToAnyPublisher(),
+            createGroupAction.elements.map { _ in .updateSubmittableState(.editting(true)) }.eraseToAnyPublisher(),
             createGroupAction.elements.map(Output.didCreateGroup).eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
@@ -116,7 +115,7 @@ class CreateBandViewModel {
             case .success(let imageUrl):
                 self?.createGroup(imageUrl: imageUrl)
             case .failure(let error):
-                self?.outputSubject.send(.updateSubmittableState(.completed))
+                self?.outputSubject.send(.updateSubmittableState(.editting(true)))
                 self?.outputSubject.send(.reportError(error))
             }
         }

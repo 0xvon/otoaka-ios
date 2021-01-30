@@ -242,10 +242,8 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                 }
             case .updateSubmittableState(let state):
                 switch state {
-                case .completed:
-                    self.registerButton.isEnabled = true
-                    self.activityIndicator.stopAnimating()
                 case .editting(let submittable):
+                    self.activityIndicator.stopAnimating()
                     self.registerButton.isEnabled = submittable
                 case .loading:
                     self.registerButton.isEnabled = false

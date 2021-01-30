@@ -161,10 +161,8 @@ final class EditLiveViewController: UIViewController, Instantiable {
                 }
             case .updateSubmittableState(let state):
                 switch state {
-                case .completed:
-                    self.editButton.isEnabled = true
-                    self.activityIndicator.stopAnimating()
                 case .editting(let submittable):
+                    self.activityIndicator.stopAnimating()
                     self.editButton.isEnabled = submittable
                 case .loading:
                     self.editButton.isEnabled = false

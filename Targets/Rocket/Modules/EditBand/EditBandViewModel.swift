@@ -28,7 +28,6 @@ class EditBandViewModel {
     
     enum PageState {
         case loading
-        case completed
         case editting(Bool)
     }
     
@@ -63,7 +62,7 @@ class EditBandViewModel {
         
         Publishers.MergeMany(
             listChannelAction.elements.map { _ in .didValidateYoutubeChannelId(true) }.eraseToAnyPublisher(),
-            editGroupAction.elements.map { _ in .updateSubmittableState(.completed) }.eraseToAnyPublisher(),
+            editGroupAction.elements.map { _ in .updateSubmittableState(.editting(true)) }.eraseToAnyPublisher(),
             editGroupAction.elements.map(Output.didEditGroup).eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
@@ -119,7 +118,7 @@ class EditBandViewModel {
                 case .success(let imageUrl):
                     self?.editGroup(imageUrl: URL(string: imageUrl))
                 case .failure(let error):
-                    self?.outputSubject.send(.updateSubmittableState(.completed))
+                    self?.outputSubject.send(.updateSubmittableState(.editting(true)))
                     self?.outputSubject.send(.reportError(error))
                 }
             }

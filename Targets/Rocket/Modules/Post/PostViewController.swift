@@ -133,9 +133,8 @@ final class PostViewController: UIViewController, Instantiable {
                 self.dismiss(animated: true, completion: nil)
             case .updateSubmittableState(let pageState):
                 switch pageState {
-                case .completed:
-                    activityIndicator.stopAnimating()
                 case .editting(let submittable):
+                    activityIndicator.stopAnimating()
                     navigationItem.rightBarButtonItem = submittable ? UIBarButtonItem(customView: postButton): nil
                     postButton.isHidden = !submittable
                 case .loading:
