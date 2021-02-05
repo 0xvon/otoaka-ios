@@ -109,12 +109,12 @@ version: 8.1.0
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.2.0
+version: 7.2.2
 
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.2.0
+version: 7.2.2
 
 name: KeyboardGuide, nameSpecified: 
 body: Copyright (c) 2020 Y…

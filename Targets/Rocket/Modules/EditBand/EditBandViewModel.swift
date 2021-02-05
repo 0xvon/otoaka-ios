@@ -35,6 +35,7 @@ class EditBandViewModel {
         case didEditGroup(Group)
         case updateSubmittableState(PageState)
         case didValidateYoutubeChannelId(Bool)
+        case deleteGroup
         case reportError(Error)
     }
 
@@ -48,6 +49,7 @@ class EditBandViewModel {
     
     private lazy var listChannelAction = Action(ListChannel.self, httpClient: dependencyProvider.youTubeDataApiClient)
     private lazy var editGroupAction = Action(EditGroup.self, httpClient: apiClient)
+    private lazy var deleteGroupAction = Action(DeleteGroup.self, httpClient: apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, group: Group
@@ -57,13 +59,15 @@ class EditBandViewModel {
         self.state = State(group: group, name: group.name, englishName: group.englishName, biography: group.biography, since: group.since, artwork: nil, youtubeChannelId: group.youtubeChannelId, twitterId: group.twitterId, hometown: group.hometown, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
         
         let errors = Publishers.MergeMany(
-            editGroupAction.errors
+            editGroupAction.errors,
+            deleteGroupAction.errors
         )
         
         Publishers.MergeMany(
             listChannelAction.elements.map { _ in .didValidateYoutubeChannelId(true) }.eraseToAnyPublisher(),
             editGroupAction.elements.map { _ in .updateSubmittableState(.editting(true)) }.eraseToAnyPublisher(),
             editGroupAction.elements.map(Output.didEditGroup).eraseToAnyPublisher(),
+            deleteGroupAction.elements.map { _ in .deleteGroup }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -141,5 +145,11 @@ class EditBandViewModel {
             youtubeChannelId: self.state.youtubeChannelId,
             hometown: self.state.hometown)
         editGroupAction.input((request: req, uri: uri))
+    }
+    
+    func deleteGroup() {
+        let request = DeleteGroup.Request(id: state.group.id)
+        let uri = DeleteGroup.URI()
+        deleteGroupAction.input((request: request, uri: uri))
     }
 }

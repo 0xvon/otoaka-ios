@@ -8,6 +8,12 @@
 import UIKit
 
 public final class PrimaryButton: UIButton {
+    
+    public enum Style {
+        case normal
+        case delete
+    }
+    
     public init(text: String) {
         super.init(frame: .zero)
         setup()
@@ -23,6 +29,15 @@ public final class PrimaryButton: UIButton {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setup()
+    }
+    
+    public func changeButtonStyle(_ style: Style) {
+        switch style {
+        case .normal:
+            setTitleColor(Brand.color(for: .text(.button)), for: .normal)
+        case .delete:
+            setTitleColor(Brand.color(for: .text(.link)), for: .normal)
+        }
     }
 
     func setup() {

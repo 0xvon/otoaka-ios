@@ -115,6 +115,15 @@ final class EditBandViewController: UIViewController, Instantiable {
         registerButton.isEnabled = true
         return registerButton
     }()
+    private lazy var deleteBandButton: PrimaryButton = {
+        let deleteButton = PrimaryButton(text: "バンド削除")
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteButton.layer.cornerRadius = 25
+        deleteButton.changeButtonStyle(.delete)
+        deleteButton.addTarget(self, action: #selector(deleteBandButtonTapped), for: .touchUpInside)
+        deleteButton.isEnabled = true
+        return deleteButton
+    }()
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
@@ -171,8 +180,11 @@ final class EditBandViewController: UIViewController, Instantiable {
                     self.editButton.isEnabled = false
                     self.activityIndicator.startAnimating()
                 }
+            case .deleteGroup:
+                guard let vcCount = navigationController?.viewControllers.count else { return }
+                navigationController?.popToViewController((navigationController?.viewControllers[vcCount - 3])!, animated: true)
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                self.showAlert(title: "エラー", message: String(describing: error))
             }
         }
         .store(in: &cancellables)
@@ -331,6 +343,11 @@ final class EditBandViewController: UIViewController, Instantiable {
             editButton.heightAnchor.constraint(equalToConstant: 50),
         ])
         
+        mainView.addArrangedSubview(deleteBandButton)
+        NSLayoutConstraint.activate([
+            deleteBandButton.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
@@ -368,6 +385,24 @@ final class EditBandViewController: UIViewController, Instantiable {
             picker.delegate = self
             self.present(picker, animated: true, completion: nil)
         }
+    }
+    
+    @objc private func deleteBandButtonTapped() {
+        let alertController = UIAlertController(
+            title: "本当に削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+
+        let acceptAction = UIAlertAction(
+            title: "OK", style: UIAlertAction.Style.default,
+            handler: { [unowned self] action in
+                viewModel.deleteGroup()
+            })
+        let cancelAction = UIAlertAction(
+            title: "キャンセル", style: UIAlertAction.Style.cancel,
+            handler: { action in })
+        alertController.addAction(acceptAction)
+        alertController.addAction(cancelAction)
+
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 
