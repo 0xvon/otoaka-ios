@@ -55,6 +55,7 @@ class BandDetailViewModel {
         case pushToGroupFeedList(GroupFeedListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
+        case didDeleteFeedButtonTapped(ArtistFeedSummary)
         case reportError(Error)
     }
     
@@ -193,7 +194,7 @@ class BandDetailViewModel {
             outputSubject.send(.pushToCommentList(.feedComment(feed)))
         case .deleteFeedButtonTapped:
             guard let feed = state.feeds.first else { return }
-            deleteFeed(feed: feed)
+            outputSubject.send(.didDeleteFeedButtonTapped(feed))
         }
     }
     

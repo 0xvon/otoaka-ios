@@ -230,6 +230,22 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.feedCellContent.inject(
                     input: (user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline)
                 )
+            case .didDeleteFeedButtonTapped(let feed):
+                let alertController = UIAlertController(
+                    title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+
+                let acceptAction = UIAlertAction(
+                    title: "OK", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        viewModel.deleteFeed(feed: feed)
+                    })
+                let cancelAction = UIAlertAction(
+                    title: "キャンセル", style: UIAlertAction.Style.cancel,
+                    handler: { action in })
+                alertController.addAction(acceptAction)
+                alertController.addAction(cancelAction)
+
+                self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
                 viewModel.refresh()
             case .reportError(let error):

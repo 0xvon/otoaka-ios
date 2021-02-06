@@ -33,6 +33,7 @@ class LiveDetailViewModel {
         case updatePerformers([Group])
         case didDeleteFeed
         
+        case didDeleteFeedButtonTapped(ArtistFeedSummary)
         case pushToGroupFeedList(GroupFeedListViewController.Input)
         case pushToPerformerDetail(BandDetailViewController.Input)
         case presentCommentList(CommentListViewController.Input)
@@ -136,7 +137,7 @@ class LiveDetailViewModel {
             outputSubject.send(.presentCommentList(.feedComment(feed)))
         case .deleteFeedButtonTapped:
             guard let feed = state.feeds.first else { return }
-            deleteFeed(feed: feed)
+            outputSubject.send(.didDeleteFeedButtonTapped(feed))
         }
     }
     
