@@ -54,6 +54,7 @@ class BandDetailViewModel {
         case pushToLiveList(LiveListViewController.Input)
         case pushToGroupFeedList(GroupFeedListViewController.Input)
         case openURLInBrowser(URL)
+        case didDeleteFeed
         case reportError(Error)
     }
     
@@ -67,6 +68,7 @@ class BandDetailViewModel {
     private lazy var getGroupLives = Action(GetGroupLives.self, httpClient: self.apiClient)
     private lazy var getGroupFeed = Action(GetGroupFeed.self, httpClient: self.apiClient)
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
+    private lazy var deleteFeed = Action(DeleteArtistFeed.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -83,7 +85,8 @@ class BandDetailViewModel {
             getGroup.errors,
             getGroupLives.errors,
             getGroupFeed.errors,
-            listChannel.errors
+            listChannel.errors,
+            deleteFeed.errors
         )
 
         Publishers.MergeMany(
@@ -96,6 +99,7 @@ class BandDetailViewModel {
             listChannel.elements.map { [unowned self] in
                 .didGetChart(self.state.group, $0.items.first)
             }.eraseToAnyPublisher(),
+            deleteFeed.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -187,6 +191,9 @@ class BandDetailViewModel {
         case .commentButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.pushToCommentList(.feedComment(feed)))
+        case .deleteFeedButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            deleteFeed(feed: feed)
         }
     }
     
@@ -230,5 +237,11 @@ class BandDetailViewModel {
         uri.order = "viewCount"
         
         listChannel.input((request: request, uri: uri))
+    }
+    
+    func deleteFeed(feed: ArtistFeedSummary) {
+        let request = DeleteArtistFeed.Request(id: feed.id)
+        let uri = DeleteArtistFeed.URI()
+        deleteFeed.input((request: request, uri: uri))
     }
 }

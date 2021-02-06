@@ -31,6 +31,7 @@ class LiveDetailViewModel {
         case didGetDisplayType(DisplayType)
         case updateFeedSummary(ArtistFeedSummary?)
         case updatePerformers([Group])
+        case didDeleteFeed
         
         case pushToGroupFeedList(GroupFeedListViewController.Input)
         case pushToPerformerDetail(BandDetailViewController.Input)
@@ -46,6 +47,7 @@ class LiveDetailViewModel {
     private lazy var getLive = Action(GetLive.self, httpClient: self.apiClient)
     private lazy var getGroup = Action(GetGroup.self, httpClient: self.apiClient)
     private lazy var getGroupFeed = Action(GetGroupFeed.self, httpClient: self.apiClient)
+    private lazy var deleteFeed = Action(DeleteArtistFeed.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -60,7 +62,8 @@ class LiveDetailViewModel {
         let errors = Publishers.MergeMany(
             getLive.errors,
             getGroup.errors,
-            getGroupFeed.errors
+            getGroupFeed.errors,
+            deleteFeed.errors
         )
         
         Publishers.MergeMany(
@@ -79,6 +82,7 @@ class LiveDetailViewModel {
             getGroupFeed.elements.map { result in
                 .updateFeedSummary(result.items.first)
             }.eraseToAnyPublisher(),
+            deleteFeed.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -130,6 +134,9 @@ class LiveDetailViewModel {
         case .commentButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.presentCommentList(.feedComment(feed)))
+        case .deleteFeedButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            deleteFeed(feed: feed)
         }
     }
     
@@ -153,6 +160,12 @@ class LiveDetailViewModel {
         uri.page = 1
         let request = Empty()
         getGroupFeed.input((request: request, uri: uri))
+    }
+    
+    func deleteFeed(feed: ArtistFeedSummary) {
+        let request = DeleteArtistFeed.Request(id: feed.id)
+        let uri = DeleteArtistFeed.URI()
+        deleteFeed.input((request: request, uri: uri))
     }
     
     //    func likeLive() {

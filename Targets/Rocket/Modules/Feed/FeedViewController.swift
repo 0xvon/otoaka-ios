@@ -65,6 +65,8 @@ final class FeedViewController: UITableViewController {
                 } else {
                     self.refreshControl?.endRefreshing()
                 }
+            case .didDeleteFeed:
+                viewModel.refresh.send(())
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
             }
@@ -113,11 +115,17 @@ extension FeedViewController {
         let feed = viewModel.feeds[indexPath.row]
         let cell = tableView.dequeueReusableCell(
             ArtistFeedCell.self,
-            input: (feed: feed, imagePipeline: dependencyProvider.imagePipeline),
+            input: (user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline),
             for: indexPath
         )
-        cell.listen { [weak self] _ in
-            self?.feedCommentButtonTapped(cellIndex: indexPath.row)
+        cell.listen { [weak self] output in
+            switch output {
+            case .commentButtonTapped:
+                self?.feedCommentButtonTapped(cellIndex: indexPath.row)
+            case .deleteFeedButtonTapped:
+                self?.deleteFeedButtonTapped(cellIndex: indexPath.row)
+            }
+            
         }
         return cell
     }
@@ -169,6 +177,11 @@ extension FeedViewController {
         let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
         let nav = BrandNavigationController(rootViewController: vc)
         present(nav, animated: true, completion: nil)
+    }
+    
+    private func deleteFeedButtonTapped(cellIndex: Int) {
+        let feed = self.viewModel.feeds[cellIndex]
+        viewModel.deleteFeed(feed: feed)
     }
 }
 

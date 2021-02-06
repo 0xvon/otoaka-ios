@@ -22,7 +22,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bvU-Zc-Bl4">
-                    <rect key="frame" x="16" y="16" width="382" height="20.5"/>
+                    <rect key="frame" x="16" y="16" width="342" height="21"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="lessThanOrEqual" constant="200" id="kc9-vn-HCm"/>
                     </constraints>
@@ -51,11 +51,19 @@
                     </constraints>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lst-D0-Awq">
-                    <rect key="frame" x="16" y="40.5" width="382" height="21"/>
+                    <rect key="frame" x="16" y="41" width="382" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Js6-bK-hAq">
+                    <rect key="frame" x="366" y="16" width="32" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="32" id="SfG-18-LcV"/>
+                        <constraint firstAttribute="width" constant="32" id="WPx-Vr-9tY"/>
+                    </constraints>
+                    <state key="normal" image="trash" catalog="system"/>
+                </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -68,14 +76,16 @@
                 <constraint firstItem="pcy-if-26W" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Ifa-lo-inD"/>
                 <constraint firstItem="uXk-VN-0Vv" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="K85-lx-qgU"/>
                 <constraint firstItem="bvU-Zc-Bl4" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="M3l-hI-Rtu"/>
-                <constraint firstAttribute="trailing" secondItem="bvU-Zc-Bl4" secondAttribute="trailing" constant="16" id="R3f-Mb-d9C"/>
+                <constraint firstItem="Js6-bK-hAq" firstAttribute="leading" secondItem="bvU-Zc-Bl4" secondAttribute="trailing" constant="8" id="R3f-Mb-d9C"/>
                 <constraint firstItem="KaQ-gr-jtr" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="UTh-6h-y9I"/>
                 <constraint firstItem="jse-Ek-ShY" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="VCF-xH-vYa" secondAttribute="trailing" constant="16" id="UnP-HD-Z6I"/>
                 <constraint firstItem="bvU-Zc-Bl4" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="VQn-zM-Gh8"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="VCF-xH-vYa" secondAttribute="bottom" constant="16" id="Wbo-sV-9hB"/>
+                <constraint firstAttribute="trailing" secondItem="Js6-bK-hAq" secondAttribute="trailing" constant="16" id="gym-3O-lUD"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="jse-Ek-ShY" secondAttribute="trailing" constant="16" id="mW9-g5-Qub"/>
                 <constraint firstItem="uXk-VN-0Vv" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="oDe-S2-Ofb"/>
                 <constraint firstItem="KaQ-gr-jtr" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="oJg-kZ-OlE"/>
+                <constraint firstItem="Js6-bK-hAq" firstAttribute="top" secondItem="bvU-Zc-Bl4" secondAttribute="top" id="oZC-Ep-8z7"/>
                 <constraint firstItem="lst-D0-Awq" firstAttribute="leading" secondItem="bvU-Zc-Bl4" secondAttribute="leading" id="os3-bQ-ZGD"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="lst-D0-Awq" secondAttribute="trailing" constant="16" id="pDQ-uM-OSM"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="jse-Ek-ShY" secondAttribute="bottom" constant="16" id="wWW-UT-Xtz"/>
@@ -88,6 +98,7 @@
                 <outlet property="cellButton" destination="uXk-VN-0Vv" id="CWL-bh-Geh"/>
                 <outlet property="commentButton" destination="VCF-xH-vYa" id="tDW-1I-C1z"/>
                 <outlet property="dateLabel" destination="jse-Ek-ShY" id="ESb-ZR-it0"/>
+                <outlet property="deleteFeedButton" destination="Js6-bK-hAq" id="FD1-FM-hVI"/>
                 <outlet property="feedTitleLabel" destination="bvU-Zc-Bl4" id="ZnT-kM-koO"/>
                 <outlet property="playImageView" destination="KaQ-gr-jtr" id="pIe-27-8Ph"/>
                 <outlet property="thumbnailImageView" destination="pcy-if-26W" id="pmq-zo-DnK"/>
@@ -96,6 +107,7 @@
         </view>
     </objects>
     <resources>
+        <image name="trash" catalog="system" width="121" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

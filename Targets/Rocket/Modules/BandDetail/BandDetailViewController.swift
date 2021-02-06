@@ -222,6 +222,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .updateLiveSummary(.none):
                 self.liveSectionHeader.isHidden = true
                 self.liveCellWrapper.isHidden = true
+            case .didDeleteFeed:
+                viewModel.refresh()
             case .updateLiveSummary(.some(let live)):
                 self.liveSectionHeader.isHidden = false
                 self.liveCellWrapper.isHidden = false
@@ -233,7 +235,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.feedSectionHeader.isHidden = false
                 self.feedCellWrapper.isHidden = false
                 self.feedCellContent.inject(
-                    input: (feed: feed, imagePipeline: dependencyProvider.imagePipeline)
+                    input: (user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline)
                 )
 
             case .didCreatedInvitation(let invitation):

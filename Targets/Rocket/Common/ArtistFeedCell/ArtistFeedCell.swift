@@ -55,11 +55,13 @@ class ArtistFeedCell: UITableViewCell, ReusableCell {
 
 class ArtistFeedCellContent: UIView {
     typealias Input = (
+        user: User,
         feed: ArtistFeedSummary,
         imagePipeline: ImagePipeline
     )
     enum Output {
         case commentButtonTapped
+        case deleteFeedButtonTapped
     }
     
     let dateFormatter: DateFormatter = {
@@ -82,6 +84,7 @@ class ArtistFeedCellContent: UIView {
             )
         }
     }
+    @IBOutlet weak var deleteFeedButton: UIButton!
     private var highlightObservation: NSKeyValueObservation!
     @IBOutlet weak var cellButton: UIButton!
 
@@ -102,6 +105,8 @@ class ArtistFeedCellContent: UIView {
         dateLabel.text = dateFormatter.string(from: input.feed.createdAt)
         artistNameLabel.text = input.feed.author.name
         commentButton.setTitle("\(input.feed.commentCount)", for: .normal)
+        
+        deleteFeedButton.isHidden = input.feed.author.id != input.user.id
     }
 
     func setup() {
@@ -124,6 +129,13 @@ class ArtistFeedCellContent: UIView {
 
         artistNameLabel.font = Brand.font(for: .medium)
         artistNameLabel.textColor = Brand.color(for: .text(.primary))
+        
+        deleteFeedButton.setImage(
+            UIImage(systemName: "trash")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        deleteFeedButton.addTarget(self, action: #selector(deleteFeedButtonTapped), for: .touchUpInside)
 
         commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
 
@@ -132,6 +144,10 @@ class ArtistFeedCellContent: UIView {
         highlightObservation = cellButton.observe(\.isHighlighted) { [unowned self] (button, change) in
             alpha = button.isHighlighted ? 0.6 : 1.0
         }
+    }
+    
+    @objc private func deleteFeedButtonTapped() {
+        listener(.deleteFeedButtonTapped)
     }
 
     @objc private func commentButtonTapped() {

@@ -13,6 +13,7 @@ final class FeedViewModel {
     enum Output {
         case reloadData
         case isRefreshing(Bool)
+        case didDeleteFeed
         case reportError(Error)
     }
     
@@ -20,6 +21,8 @@ final class FeedViewModel {
         case all
     }
     
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never>
     private var _feeds = CurrentValueSubject<[ArtistFeedSummary], Never>([])
@@ -29,9 +32,13 @@ final class FeedViewModel {
     let updateScope = PassthroughSubject<Int, Never>()
     let willDisplayCell = PassthroughSubject<IndexPath, Never>()
     
+    private lazy var deleteFeedAction = Action(DeleteArtistFeed.self, httpClient: self.apiClient)
+    
     private var cancellables: [AnyCancellable] = []
     
     init(dependencyProvider: LoggedInDependencyProvider) {
+        self.dependencyProvider = dependencyProvider
+        
         let getAllPagination = PaginationRequest<Endpoint.GetFollowingGroupFeeds>(apiClient: dependencyProvider.apiClient)
         
         let feeds = getAllPagination.items()
@@ -62,6 +69,18 @@ final class FeedViewModel {
             }.store(in: &cancellables)
         
         feeds.connect().store(in: &cancellables)
-        self.output = reloadData.merge(with: isRefreshing).eraseToAnyPublisher()
+        
+        self.output = reloadData
+            .merge(with: isRefreshing).eraseToAnyPublisher()
+        
+        self.output.merge(with: deleteFeedAction.elements.map { _ in .didDeleteFeed }).eraseToAnyPublisher()
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
+    }
+    
+    func deleteFeed(feed: ArtistFeedSummary) {
+        let request = DeleteArtistFeed.Request(id: feed.id)
+        let uri = DeleteArtistFeed.URI()
+        deleteFeedAction.input((request: request, uri: uri))
     }
 }

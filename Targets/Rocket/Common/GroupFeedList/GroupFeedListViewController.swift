@@ -118,7 +118,7 @@ extension GroupFeedListViewController: UITableViewDelegate, UITableViewDataSourc
         let content = self.feeds[indexPath.section]
         let cell = tableView.dequeueReusableCell(
             ArtistFeedCell.self,
-            input: (feed: content, imagePipeline: dependencyProvider.imagePipeline),
+            input: (user: dependencyProvider.user, feed: content, imagePipeline: dependencyProvider.imagePipeline),
             for: indexPath
         )
         cell.listen { [weak self] _ in
