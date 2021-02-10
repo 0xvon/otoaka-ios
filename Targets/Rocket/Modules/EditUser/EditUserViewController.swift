@@ -35,7 +35,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         return displayNameInputView
     }()
     private lazy var biographyInputView: InputTextView = {
-        let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)", text: nil, maxLength: 200))
+        let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)", text: nil, maxLength: 4000))
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         return biographyInputView
     }()

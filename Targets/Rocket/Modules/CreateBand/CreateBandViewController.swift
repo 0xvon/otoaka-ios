@@ -41,7 +41,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         return englishNameInputView
     }()
     private lazy var biographyInputView: InputTextView = {
-        let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)", text: nil, maxLength: 200))
+        let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)(4000文字以内)", text: nil, maxLength: 4000))
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         return biographyInputView
     }()
