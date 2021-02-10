@@ -52,6 +52,7 @@ final class InvitationViewController: UIViewController, Instantiable {
             switch output {
             case .didJoinGroup:
                 self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: String(describing: error))
             }
