@@ -180,11 +180,20 @@ final class CreateUserViewController: UIViewController, Instantiable {
         return profileImageTitle
     }()
     private lazy var registerButton: PrimaryButton = {
-        let registerButton = PrimaryButton(text: "ユーザー作成")
+        let registerButton = PrimaryButton(text: "利用規約に同意してユーザーを作成")
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         registerButton.layer.cornerRadius = 25
         registerButton.isEnabled = false
         return registerButton
+    }()
+    private lazy var TermsOfServiceButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("利用規約", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .mediumStrong)
+        button.setTitleColor(Brand.color(for: .text(.link)), for: .normal)
+        button.addTarget(self, action: #selector(tosDidTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     private lazy var activityIndicator: LoadingCollectionView = {
         let activityIndicator = LoadingCollectionView()
@@ -357,6 +366,11 @@ final class CreateUserViewController: UIViewController, Instantiable {
             registerButton.heightAnchor.constraint(equalToConstant: 50),
         ])
         
+        mainView.addArrangedSubview(TermsOfServiceButton)
+        NSLayoutConstraint.activate([
+            TermsOfServiceButton.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
@@ -386,6 +400,13 @@ final class CreateUserViewController: UIViewController, Instantiable {
             fanRoleSummaryView.layer.borderWidth = 0
             partInputView.isHidden = false
         }
+    }
+    
+    @objc private func tosDidTapped() {
+        guard let url = URL(string: "https://www.notion.so/masatojames/57b1f47c538443249baf1db83abdc462") else { return }
+        let safari = SFSafariViewController(url: url)
+        safari.dismissButtonStyle = .close
+        present(safari, animated: true, completion: nil)
     }
 
     @objc private func fanSectionButtonTapped(_ sender: Any) {

@@ -28,7 +28,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
     }
     @IBOutlet weak var signInButtonView: Button! {
         didSet {
-            signInButtonView.setTitle("ユーザー登録", for: .normal)
+            signInButtonView.setTitle("ユーザー登録/ログイン", for: .normal)
         }
     }
 
