@@ -132,7 +132,7 @@ class S3Client {
     
     func getIdentityId(callback: @escaping (String) -> Void) {
         cognitoIdentityPoolCredentialProvider.getIdentityId().continueWith(block: {(task) -> AnyObject? in
-            if let error = task.error { fatalError(error.localizedDescription) }
+            if let error = task.error { fatalError(String(describing: error)) }
             if let identityId = task.result {
                 callback(identityId as String)
             }

@@ -61,7 +61,8 @@
         "Ba. & Cho.",
         "Dr. & Cho.",
         "Key. & Cho.",
-        "Manager"
+        "Manager",
+        "band"
     ],
     "years": [
         "1998",
@@ -97,10 +98,15 @@
     "liveStyles": [
         "ワンマン",
         "対バン",
-        "フェス"
+        "フェス",
+        "イベント"
     ],
     "livehouses": [
         "ビルボードライブ東京",
+        "下北沢ReG",
+        "新宿ACB",
+        "新宿CLUB SCIENCE",
+        "高田馬場CLUB PHASE",
         "TSUTAYA O-EAST",
         "TSUTAYA O-Crest",
         "SHIBUYA CYCLONE",
