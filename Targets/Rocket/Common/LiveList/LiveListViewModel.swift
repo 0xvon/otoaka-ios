@@ -111,6 +111,7 @@ class LiveListViewModel {
         case .none: break
         }
     }
+    
     func willDisplay(rowAt indexPath: IndexPath) {
         guard indexPath.section + 25 > state.lives.count else { return }
         switch storage {

@@ -10,11 +10,7 @@ import Endpoint
 import Combine
 
 final class CommentListViewController: UIViewController, Instantiable {
-    typealias Input = ListType
-    
-    enum ListType {
-        case feedComment(ArtistFeedSummary)
-    }
+    typealias Input = CommentListViewModel.Input
     
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: CommentListViewModel
@@ -40,7 +36,7 @@ final class CommentListViewController: UIViewController, Instantiable {
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.viewModel = CommentListViewModel(dependencyProvider: dependencyProvider, type: input)
+        self.viewModel = CommentListViewModel(dependencyProvider: dependencyProvider, input: input)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -53,15 +49,13 @@ final class CommentListViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         setup()
         bind()
+        viewModel.refresh()
     }
     
     func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didGetFeedComments(_):
-                commentTableView.reloadData()
-                setTableViewBackgroundView(tableView: self.commentTableView)
-            case .didRefreshFeedComments(_):
+            case .reloadTableView:
                 commentTableView.reloadData()
                 setTableViewBackgroundView(tableView: self.commentTableView)
             case .didPostComment(_):
@@ -72,13 +66,16 @@ final class CommentListViewController: UIViewController, Instantiable {
             }
         }.store(in: &cancellables)
     }
+    
+    func inject(_ input: Input) {
+        viewModel.inject(input)
+    }
         
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "コメント"
         self.navigationItem.largeTitleDisplayMode = .never
         self.view.addSubview(commentTableView)
-        self.getComments()
         let constraints: [NSLayoutConstraint] = [
             commentTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
             commentTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
@@ -88,18 +85,8 @@ final class CommentListViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate(constraints)
     }
     
-    func getComments() {
-        switch viewModel.state.type {
-        case .feedComment(_):
-            self.viewModel.getFeedComments()
-        }
-    }
-    
     func refreshComments() {
-        switch viewModel.state.type {
-        case .feedComment(_):
-            self.viewModel.refreshFeedComments()
-        }
+        viewModel.refresh()
     }
     
     @objc private func refreshGroups(sender: UIRefreshControl) {
@@ -201,9 +188,7 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if (viewModel.state.comments.count - indexPath.section) == 2 && viewModel.state.comments.count % per == 0 {
-            self.getComments()
-        }
+        viewModel.willDisplay(rowAt: indexPath)
     }
     
     private func comment(comment: String?) {

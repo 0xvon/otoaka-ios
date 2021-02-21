@@ -11,20 +11,43 @@ import Endpoint
 import Combine
 
 class CommentListViewModel {
-    struct State {
-        var comments: [ArtistFeedComment] = []
-        let type: CommentListViewController.ListType
+    typealias Input = DataSource
+    
+    enum DataSource {
+        case feedComment(ArtistFeedSummary)
+        case none
+    }
+    
+    enum DataSourceStorage {
+        case feedComment(PaginationRequest<GetFeedComments>, ArtistFeedSummary)
+        case none
+        
+        init(dataSource: DataSource, apiClient: APIClient) {
+            switch dataSource {
+            case .feedComment(let feed):
+                var uri = GetFeedComments.URI()
+                uri.feedId = feed.id
+                let request = PaginationRequest<GetFeedComments>(apiClient: apiClient, uri: uri)
+                self = .feedComment(request, feed)
+            case .none:
+                self = .none
+            }
+        }
     }
     
     enum Output {
-        case didGetFeedComments([ArtistFeedComment])
-        case didRefreshFeedComments([ArtistFeedComment])
+        case reloadTableView
         case didPostComment(ArtistFeedComment)
         case reportError(Error)
+    }
+    
+    struct State {
+        var comments: [ArtistFeedComment] = []
     }
 
     let dependencyProvider: LoggedInDependencyProvider
     var apiClient: APIClient { dependencyProvider.apiClient }
+    private var storage: DataSourceStorage
     private(set) var state: State
 
     private let outputSubject = PassthroughSubject<Output, Never>()
@@ -32,34 +55,15 @@ class CommentListViewModel {
     var cancellables: Set<AnyCancellable> = []
     
     private lazy var postFeedCommentAction = Action(PostFeedComment.self, httpClient: self.apiClient)
-    
-    var getFeedCommentsPaginationRequest: PaginationRequest<GetFeedComments>? = nil
 
     init(
-        dependencyProvider: LoggedInDependencyProvider, type: CommentListViewController.ListType
+        dependencyProvider: LoggedInDependencyProvider, input: DataSource
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(type: type)
+        self.state = State()
+        self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
         
-        switch type {
-        case .feedComment(let feed):
-            var uri = GetFeedComments.URI()
-            uri.feedId = feed.id
-            getFeedCommentsPaginationRequest = PaginationRequest<GetFeedComments>(apiClient: apiClient, uri: uri)
-        }
-        
-        getFeedCommentsPaginationRequest?.subscribe { [unowned self] result in
-            switch result {
-            case .initial(let res):
-                state.comments = res.items
-                outputSubject.send(.didRefreshFeedComments(res.items))
-            case .next(let res):
-                state.comments += res.items
-                outputSubject.send(.didGetFeedComments(res.items))
-            case .error(let err):
-                outputSubject.send(.reportError(err))
-            }
-        }
+        subscribe(storage: storage)
         
         let errors = Publishers.MergeMany(
             postFeedCommentAction.errors
@@ -79,20 +83,62 @@ class CommentListViewModel {
             .store(in: &cancellables)
     }
     
-    func getFeedComments() {
-        getFeedCommentsPaginationRequest?.next()
+    private func subscribe(storage: DataSourceStorage) {
+        switch storage {
+        case let .feedComment(pagination, _):
+            pagination.subscribe { [ weak self] in
+                self?.updateState(with: $0)
+            }
+        case .none:
+            break
+        }
     }
     
-    func refreshFeedComments() {
-        getFeedCommentsPaginationRequest?.refresh()
+    private func updateState(with result: PaginationEvent<Page<ArtistFeedComment>>) {
+        switch result {
+        case .initial(let res):
+            state.comments = res.items
+            self.outputSubject.send(.reloadTableView)
+        case .next(let res):
+            state.comments += res.items
+            self.outputSubject.send(.reloadTableView)
+        case .error(let err):
+            self.outputSubject.send(.reportError(err))
+        }
+    }
+    
+    func inject(_ input: Input)  {
+        self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        subscribe(storage: storage)
+        refresh()
+    }
+    
+    func refresh() {
+        switch storage {
+        case let .feedComment(pagination, _):
+            pagination.refresh()
+        case .none:
+            break
+        }
+    }
+    
+    func willDisplay(rowAt indexPath: IndexPath) {
+        guard indexPath.section + 25 > state.comments.count else { return }
+        switch storage {
+        case let .feedComment(pagination, _):
+            pagination.next()
+        case .none: break
+        }
     }
     
     func postFeedComment(comment: String?) {
         guard let comment = comment else { return }
-        switch state.type {
-        case .feedComment(let feed):
+        switch storage {
+        case let .feedComment(_, feed):
             let request = PostFeedComment.Request(feedId: feed.id, text: comment)
             postFeedCommentAction.input((request: request, uri: PostFeedComment.URI()))
+        case .none:
+            break
         }
     }
 }
