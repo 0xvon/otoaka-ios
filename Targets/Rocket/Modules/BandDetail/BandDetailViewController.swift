@@ -240,6 +240,23 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
                 viewModel.refresh()
+            case .didShareFeedButtonTapped(let feed):
+                switch feed.feedType {
+                case .youtube(let url):
+                    let shareLiveText: String = "\(feed.text.prefix(20))\n\n by \(feed.author.name)\n\n\(url.absoluteString) via @wooruobudesu #ロック好きならロケバン #ロケバンで好きな曲をシェアしよう"
+                    let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
+
+                    let activityItems: [Any] = [shareLiveText, shareUrl]
+                    let activityViewController = UIActivityViewController(
+                        activityItems: activityItems, applicationActivities: [])
+
+                    activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
+                        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+                    }
+                    activityViewController.popoverPresentationController?.permittedArrowDirections = .up
+                    dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+                    self.present(activityViewController, animated: true, completion: nil)
+                }
             case .updateLiveSummary(.some(let live)):
                 self.liveSectionHeader.isHidden = false
                 self.liveCellWrapper.isHidden = false
@@ -275,7 +292,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToGroupFeedList(let input):
-                let vc = GroupFeedListViewController(dependencyProvider: dependencyProvider, input: input)
+                let vc = FeedListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
@@ -376,8 +393,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     @objc func createShare(_ sender: UIBarButtonItem) {
-        let shareLiveText: String = "\(viewModel.state.group.name)がオススメだよ！！\n\n via @rocketforband "
-        let shareUrl = URL(string: "https://apps.apple.com/jp/app/id1500148347")!
+        let shareLiveText: String = "【ロケバンでバンドを応援しよう】\n\n\(viewModel.state.group.name)がオススメだよ！！みんなもオススメのバンドを教えてね\n\n via @wooruobudesu #ロック好きならロケバン"
+        let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
         let shareImage: UIImage = UIImage(url: viewModel.state.group.artworkURL!.absoluteString)
 
         let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]

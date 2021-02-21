@@ -44,10 +44,10 @@
                     </constraints>
                 </imageView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VCF-xH-vYa" customClass="ReactionIndicatorButton" customModule="UIComponent">
-                    <rect key="frame" x="16" y="240" width="100" height="44"/>
+                    <rect key="frame" x="16" y="240" width="60" height="44"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="44" id="6m2-Mw-ZoI"/>
-                        <constraint firstAttribute="width" constant="100" id="DXB-eO-DQ9"/>
+                        <constraint firstAttribute="width" constant="60" id="DXB-eO-DQ9"/>
                     </constraints>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lst-D0-Awq">
@@ -64,6 +64,14 @@
                     </constraints>
                     <state key="normal" image="trash" catalog="system"/>
                 </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cs1-c7-iW0">
+                    <rect key="frame" x="80" y="240" width="44" height="44"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="44" id="hX9-Oo-Ebz"/>
+                        <constraint firstAttribute="height" constant="44" id="zW9-PR-qBM"/>
+                    </constraints>
+                    <state key="normal" image="square.and.arrow.up" catalog="system"/>
+                </button>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -78,7 +86,6 @@
                 <constraint firstItem="bvU-Zc-Bl4" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="M3l-hI-Rtu"/>
                 <constraint firstItem="Js6-bK-hAq" firstAttribute="leading" secondItem="bvU-Zc-Bl4" secondAttribute="trailing" constant="8" id="R3f-Mb-d9C"/>
                 <constraint firstItem="KaQ-gr-jtr" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="UTh-6h-y9I"/>
-                <constraint firstItem="jse-Ek-ShY" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="VCF-xH-vYa" secondAttribute="trailing" constant="16" id="UnP-HD-Z6I"/>
                 <constraint firstItem="bvU-Zc-Bl4" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="VQn-zM-Gh8"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="VCF-xH-vYa" secondAttribute="bottom" constant="16" id="Wbo-sV-9hB"/>
                 <constraint firstAttribute="trailing" secondItem="Js6-bK-hAq" secondAttribute="trailing" constant="16" id="gym-3O-lUD"/>
@@ -88,9 +95,11 @@
                 <constraint firstItem="Js6-bK-hAq" firstAttribute="top" secondItem="bvU-Zc-Bl4" secondAttribute="top" id="oZC-Ep-8z7"/>
                 <constraint firstItem="lst-D0-Awq" firstAttribute="leading" secondItem="bvU-Zc-Bl4" secondAttribute="leading" id="os3-bQ-ZGD"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="lst-D0-Awq" secondAttribute="trailing" constant="16" id="pDQ-uM-OSM"/>
+                <constraint firstItem="Cs1-c7-iW0" firstAttribute="leading" secondItem="VCF-xH-vYa" secondAttribute="trailing" constant="4" id="rbk-3p-XGg"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="jse-Ek-ShY" secondAttribute="bottom" constant="16" id="wWW-UT-Xtz"/>
                 <constraint firstItem="uXk-VN-0Vv" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="xFO-aP-zlR"/>
                 <constraint firstItem="uXk-VN-0Vv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="xi8-pR-Mwn"/>
+                <constraint firstItem="Cs1-c7-iW0" firstAttribute="centerY" secondItem="VCF-xH-vYa" secondAttribute="centerY" id="zCu-OA-N4w"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
@@ -101,12 +110,14 @@
                 <outlet property="deleteFeedButton" destination="Js6-bK-hAq" id="FD1-FM-hVI"/>
                 <outlet property="feedTitleLabel" destination="bvU-Zc-Bl4" id="ZnT-kM-koO"/>
                 <outlet property="playImageView" destination="KaQ-gr-jtr" id="pIe-27-8Ph"/>
+                <outlet property="shareButton" destination="Cs1-c7-iW0" id="vit-FS-g0P"/>
                 <outlet property="thumbnailImageView" destination="pcy-if-26W" id="pmq-zo-DnK"/>
             </connections>
             <point key="canvasLocation" x="189.85507246376812" y="-89.732142857142847"/>
         </view>
     </objects>
     <resources>
+        <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <image name="trash" catalog="system" width="121" height="128"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

@@ -34,7 +34,8 @@ class LiveDetailViewModel {
         case didDeleteFeed
         
         case didDeleteFeedButtonTapped(ArtistFeedSummary)
-        case pushToGroupFeedList(GroupFeedListViewController.Input)
+        case didShareFeedButtonTapped(ArtistFeedSummary)
+        case pushToGroupFeedList(FeedListViewController.Input)
         case pushToPerformerDetail(BandDetailViewController.Input)
         case presentCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
@@ -101,7 +102,7 @@ class LiveDetailViewModel {
     func didTapSeeMore(at row: SummaryRow) {
         switch row {
         case .feed:
-            outputSubject.send(.pushToGroupFeedList(state.live.hostGroup))
+            outputSubject.send(.pushToGroupFeedList(.groupFeed(state.live.hostGroup)))
         default:
             break
         }
@@ -138,6 +139,9 @@ class LiveDetailViewModel {
         case .deleteFeedButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didDeleteFeedButtonTapped(feed))
+        case .shareButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.didShareFeedButtonTapped(feed))
         }
     }
     

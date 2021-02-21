@@ -62,6 +62,7 @@ class ArtistFeedCellContent: UIView {
     enum Output {
         case commentButtonTapped
         case deleteFeedButtonTapped
+        case shareButtonTapped
     }
     
     let dateFormatter: DateFormatter = {
@@ -75,6 +76,7 @@ class ArtistFeedCellContent: UIView {
     @IBOutlet weak var artistNameLabel: UILabel!
     @IBOutlet weak var thumbnailImageView: UIImageView!
     @IBOutlet weak var playImageView: UIImageView!
+    @IBOutlet weak var shareButton: UIButton!
     @IBOutlet weak var commentButton: ReactionIndicatorButton! {
         didSet {
             commentButton.setImage(
@@ -138,6 +140,13 @@ class ArtistFeedCellContent: UIView {
         deleteFeedButton.addTarget(self, action: #selector(deleteFeedButtonTapped), for: .touchUpInside)
 
         commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
+        
+        shareButton.setImage(
+            UIImage(systemName: "square.and.arrow.up")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
 
         playImageView.image = UIImage(named: "play")
         playImageView.layer.opacity = 0.6
@@ -152,6 +161,10 @@ class ArtistFeedCellContent: UIView {
 
     @objc private func commentButtonTapped() {
         listener(.commentButtonTapped)
+    }
+    
+    @objc private func shareButtonTapped() {
+        listener(.shareButtonTapped)
     }
 
     private var listener: (Output) -> Void = { _ in }

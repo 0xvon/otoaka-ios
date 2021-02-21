@@ -9,7 +9,7 @@ import UIKit
 import UserNotifications
 import SafariServices
 import UIComponent
-import DomainEntity
+import Endpoint
 import Combine
 
 final class FeedViewController: UITableViewController {
@@ -124,6 +124,8 @@ extension FeedViewController {
                 self?.feedCommentButtonTapped(cellIndex: indexPath.row)
             case .deleteFeedButtonTapped:
                 self?.deleteFeedButtonTapped(cellIndex: indexPath.row)
+            case .shareButtonTapped:
+                self?.createShare(cellIndex: indexPath.row)
             }
             
         }
@@ -177,6 +179,27 @@ extension FeedViewController {
         let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
         let nav = BrandNavigationController(rootViewController: vc)
         present(nav, animated: true, completion: nil)
+    }
+    
+    private func createShare(cellIndex: Int) {
+        let feed = self.viewModel.feeds[cellIndex]
+        
+        switch feed.feedType {
+        case .youtube(let url):
+            let shareLiveText: String = "\(feed.text.prefix(20))\n\n by \(feed.author.name)\n\n\(url.absoluteString) via @wooruobudesu #ロック好きならロケバン"
+            let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
+
+            let activityItems: [Any] = [shareLiveText, shareUrl]
+            let activityViewController = UIActivityViewController(
+                activityItems: activityItems, applicationActivities: [])
+
+            activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
+                dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+            }
+            activityViewController.popoverPresentationController?.permittedArrowDirections = .up
+            dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+            self.present(activityViewController, animated: true, completion: nil)
+        }
     }
     
     private func deleteFeedButtonTapped(cellIndex: Int) {

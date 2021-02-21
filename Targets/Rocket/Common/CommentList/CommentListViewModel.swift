@@ -89,8 +89,7 @@ class CommentListViewModel {
             pagination.subscribe { [ weak self] in
                 self?.updateState(with: $0)
             }
-        case .none:
-            break
+        case .none: break
         }
     }
     

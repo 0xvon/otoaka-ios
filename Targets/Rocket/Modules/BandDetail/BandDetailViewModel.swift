@@ -52,10 +52,11 @@ class BandDetailViewModel {
         case pushToChartList(ChartListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
         case pushToLiveList(LiveListViewController.Input)
-        case pushToGroupFeedList(GroupFeedListViewController.Input)
+        case pushToGroupFeedList(FeedListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
         case didDeleteFeedButtonTapped(ArtistFeedSummary)
+        case didShareFeedButtonTapped(ArtistFeedSummary)
         case reportError(Error)
     }
     
@@ -126,7 +127,7 @@ class BandDetailViewModel {
         case .live:
             outputSubject.send(.pushToLiveList(.groupLive(state.group)))
         case .feed:
-            outputSubject.send(.pushToGroupFeedList(state.group))
+            outputSubject.send(.pushToGroupFeedList(.groupFeed(state.group)))
         }
     }
     
@@ -195,6 +196,9 @@ class BandDetailViewModel {
         case .deleteFeedButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didDeleteFeedButtonTapped(feed))
+        case .shareButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.didShareFeedButtonTapped(feed))
         }
     }
     

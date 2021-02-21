@@ -248,10 +248,27 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
                 viewModel.refresh()
+            case .didShareFeedButtonTapped(let feed):
+                switch feed.feedType {
+                case .youtube(let url):
+                    let shareLiveText: String = "\(feed.text.prefix(20))\n\n by \(feed.author.name)\n\n\(url.absoluteString) via @wooruobudesu #ロック好きならロケバン"
+                    let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
+
+                    let activityItems: [Any] = [shareLiveText, shareUrl]
+                    let activityViewController = UIActivityViewController(
+                        activityItems: activityItems, applicationActivities: [])
+
+                    activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
+                        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+                    }
+                    activityViewController.popoverPresentationController?.permittedArrowDirections = .up
+                    dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+                    self.present(activityViewController, animated: true, completion: nil)
+                }
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: String(describing: error))
             case .pushToGroupFeedList(let input):
-                let vc = GroupFeedListViewController(
+                let vc = FeedListViewController(
                     dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
@@ -343,8 +360,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     @objc func createShare(_ sender: UIBarButtonItem) {
-        let shareLiveText: String = "\(viewModel.state.live.hostGroup.name)主催の\(viewModel.state.live.title)に集まれ！！\n\n via @rocketforband "
-        let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/id1500148347")!
+        let shareLiveText: String = "【ロケバンでチケットを取り置きしよう】\n\n主催バンド: \(viewModel.state.live.hostGroup.name)\nライブ: \(viewModel.state.live.title)\n\n via @wooruobudesu #ロック好きならロケバン"
+        let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
         let shareImage: UIImage = UIImage(url: viewModel.state.live.artworkURL!.absoluteString)
         
         let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
