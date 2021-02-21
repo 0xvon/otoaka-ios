@@ -7,81 +7,118 @@
 
 import UIKit
 import Endpoint
-import AWSCognitoAuth
+import Combine
 
 class UserListViewModel {
+    typealias Input = DataSource
+    
+    enum DataSource {
+        case followers(Group.ID)
+        case liveParticipants(Live.ID)
+        case none
+    }
+    
+    enum DataSourceStorage {
+        case followers(PaginationRequest<GroupFollowers>)
+        case liveParticipants(PaginationRequest<GetLiveParticipants>)
+        case none
+        
+        init(dataSource: DataSource, apiClient: APIClient) {
+            switch dataSource {
+            case .followers(let groupId):
+                var uri = GroupFollowers.URI()
+                uri.id = groupId
+                let request = PaginationRequest<GroupFollowers>(apiClient: apiClient, uri: uri)
+                self = .followers(request)
+            case .liveParticipants(let liveId):
+                var uri = GetLiveParticipants.URI()
+                uri.liveId = liveId
+                let request = PaginationRequest<GetLiveParticipants>(apiClient: apiClient, uri: uri)
+                self = .liveParticipants(request)
+            case .none:
+                self = .none
+            }
+        }
+    }
+    
+    struct State {
+        var users: [User] = []
+    }
+    
     enum Output {
-        case getFollowers([User])
-        case refreshFollowers([User])
-        case getParticipants([User])
-        case refreshParticipants([User])
+        case reloadTableView
         case error(Error)
     }
 
-    let auth: AWSCognitoAuth
-    let input: UserListViewController.InputType
-    let apiClient: APIClient
-    let outputHandler: (Output) -> Void
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
+    private var storage: DataSourceStorage
+    private(set) var state: State
     
-    var groupFollowersPaginationRequest: PaginationRequest<GroupFollowers>? = nil
-    var liveParticipantsPaginationRequest: PaginationRequest<GetLiveParticipants>? = nil
+    private let outputSubject = PassthroughSubject<Output, Never>()
+    var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
     init(
-        apiClient: APIClient, input: UserListViewController.InputType, auth: AWSCognitoAuth,
-        outputHander: @escaping (Output) -> Void
+        dependencyProvider: LoggedInDependencyProvider, input: Input
     ) {
-        self.apiClient = apiClient
-        self.input = input
-        self.auth = auth
-        self.outputHandler = outputHander
-        
-        switch input {
-        case .followers(let groupId):
-            var uri = GroupFollowers.URI()
-            uri.id = groupId
-            self.groupFollowersPaginationRequest = PaginationRequest<GroupFollowers>(apiClient: apiClient, uri: uri)
-        case .tickets(let liveId):
-            var uri = GetLiveParticipants.URI()
-            uri.liveId = liveId
-            self.liveParticipantsPaginationRequest = PaginationRequest<GetLiveParticipants>(apiClient: apiClient, uri: uri)
-        }
-        
-        self.groupFollowersPaginationRequest?.subscribe { [unowned self] result in
-            switch result {
-            case .initial(let res):
-                self.outputHandler(.refreshFollowers(res.items))
-            case .next(let res):
-                self.outputHandler(.getFollowers(res.items))
-            case .error(let err):
-                self.outputHandler(.error(err))
+        self.dependencyProvider = dependencyProvider
+        self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
+        self.state = State()
+                
+        subscribe(storage: storage)
+    }
+    
+    private func subscribe(storage: DataSourceStorage) {
+        switch storage {
+        case let .followers(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
             }
-        }
-        
-        self.liveParticipantsPaginationRequest?.subscribe { [unowned self] result in
-            switch result {
-            case .initial(let res):
-                self.outputHandler(.refreshParticipants(res.items))
-            case .next(let res):
-                self.outputHandler(.getParticipants(res.items))
-            case .error(let err):
-                self.outputHandler(.error(err))
+        case let .liveParticipants(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
             }
+        case .none: break
         }
     }
     
-    func getFollowers() {
-        groupFollowersPaginationRequest?.next()
+    private func updateState(with result: PaginationEvent<Page<User>>) {
+        switch result {
+        case .initial(let res):
+            state.users = res.items
+            self.outputSubject.send(.reloadTableView)
+        case .next(let res):
+            state.users += res.items
+            self.outputSubject.send(.reloadTableView)
+        case .error(let err):
+            self.outputSubject.send(.error(err))
+        }
     }
     
-    func refreshFollowers() {
-        groupFollowersPaginationRequest?.refresh()
+    func inject(_ input: Input) {
+        self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        subscribe(storage: storage)
+        refresh()
     }
     
-    func getParticipants() {
-        liveParticipantsPaginationRequest?.next()
+    func refresh() {
+        switch storage {
+        case let .followers(pagination):
+            pagination.refresh()
+        case let .liveParticipants(pagination):
+            pagination.refresh()
+        case .none: break
+        }
     }
     
-    func refreshParticipants() {
-        liveParticipantsPaginationRequest?.refresh()
+    func willDisplay(rowAt indexPath: IndexPath) {
+        guard indexPath.section + 25 > state.users.count else { return }
+        switch storage {
+        case let .followers(pagination):
+            pagination.next()
+        case let .liveParticipants(pagination):
+            pagination.next()
+        case .none: break
+        }
     }
 }

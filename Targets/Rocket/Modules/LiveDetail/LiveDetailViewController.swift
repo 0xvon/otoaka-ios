@@ -331,7 +331,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func numOfParticipantsButtonTapped() {
-        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .tickets(viewModel.state.live.id))
+        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveParticipants(viewModel.state.live.id))
         vc.title = "予約者"
         self.navigationController?.pushViewController(vc, animated: true)
     }

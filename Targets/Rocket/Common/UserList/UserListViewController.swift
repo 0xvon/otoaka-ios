@@ -7,23 +7,20 @@
 
 import UIKit
 import Endpoint
+import Combine
 
 final class UserListViewController: UIViewController, Instantiable {
-    typealias Input = InputType
-    
-    enum InputType {
-        case followers(Group.ID)
-        case tickets(Live.ID)
-    }
+    typealias Input = UserListViewModel.Input
 
-    var dependencyProvider: LoggedInDependencyProvider!
-    var input: Input!
-    var users: [User] = []
+    let dependencyProvider: LoggedInDependencyProvider
     private var fanTableView: UITableView!
+    
+    let viewModel: UserListViewModel
+    private var cancellables: [AnyCancellable] = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.input = input
+        self.viewModel = UserListViewModel(dependencyProvider: dependencyProvider, input: input)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -31,48 +28,25 @@ final class UserListViewController: UIViewController, Instantiable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    lazy var viewModel = UserListViewModel(
-        apiClient: dependencyProvider.apiClient,
-        input: input,
-        auth: dependencyProvider.auth,
-        outputHander: { output in
-            switch output {
-            case .getFollowers(let users):
-                DispatchQueue.main.async {
-                    self.users += users
-                    self.setTableViewBackgroundView(tableView: self.fanTableView)
-                    self.fanTableView.reloadData()
-                }
-            case .refreshFollowers(let users):
-                DispatchQueue.main.async {
-                    self.users = users
-                    self.setTableViewBackgroundView(tableView: self.fanTableView)
-                    self.fanTableView.reloadData()
-                }
-            case .getParticipants(let users):
-                DispatchQueue.main.async {
-                    self.users += users
-                    self.setTableViewBackgroundView(tableView: self.fanTableView)
-                    self.fanTableView.reloadData()
-                }
-            case .refreshParticipants(let users):
-                DispatchQueue.main.async {
-                    self.users = users
-                    self.setTableViewBackgroundView(tableView: self.fanTableView)
-                    self.fanTableView.reloadData()
-                }
-            case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
-            }
-        }
-    )
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        bind()
+        viewModel.refresh()
+    }
+    
+    private func bind() {
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .reloadTableView:
+                self.fanTableView.reloadData()
+                self.setTableViewBackgroundView(tableView: self.fanTableView)
+            case .error(let err):
+                self.showAlert(title: "エラー", message: String(describing: err))
+            }
+        }
+        .store(in: &cancellables)
     }
     
     func setup() {
@@ -92,7 +66,6 @@ final class UserListViewController: UIViewController, Instantiable {
         fanTableView.refreshControl = BrandRefreshControl()
         fanTableView.refreshControl?.addTarget(
             self, action: #selector(refreshFan(sender:)), for: .valueChanged)
-        self.getUsers()
         
         let constraints: [NSLayoutConstraint] = [
             fanTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
@@ -103,30 +76,8 @@ final class UserListViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate(constraints)
     }
     
-    func getUsers() {
-        switch input {
-        case .followers(_):
-            viewModel.getFollowers()
-        case .tickets(_):
-            viewModel.getParticipants()
-        case .none:
-            break
-        }
-    }
-    
-    func refreshUsers() {
-        switch input {
-        case .followers(_):
-            viewModel.refreshFollowers()
-        case .tickets(_):
-            viewModel.refreshParticipants()
-        case .none:
-            break
-        }
-    }
-    
     @objc private func refreshFan(sender: UIRefreshControl) {
-        self.refreshUsers()
+        self.viewModel.refresh()
         sender.endRefreshing()
     }
 }
@@ -137,7 +88,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.users.count
+        return self.viewModel.state.users.count
         
     }
 
@@ -152,7 +103,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let user = self.users[indexPath.section]
+        let user = self.viewModel.state.users[indexPath.section]
         let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: user, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
@@ -163,9 +114,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if (self.users.count - indexPath.section) == 2 && self.users.count % per == 0 {
-            self.getUsers()
-        }
+        self.viewModel.willDisplay(rowAt: indexPath)
     }
     
     func setTableViewBackgroundView(tableView: UITableView) {
@@ -174,7 +123,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
         }()
-        tableView.backgroundView = self.users.isEmpty ? emptyCollectionView : nil
+        tableView.backgroundView = self.viewModel.state.users.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
                 backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
