@@ -36,6 +36,7 @@ class PostViewModel {
     enum PageState {
         case loading
         case editting(Bool)
+        case invalidUrl
     }
     
     enum Output {
@@ -82,17 +83,42 @@ class PostViewModel {
     }
     
     func didUpdatePost(post: PostType?) {
-        self.state.post = post
-        
-        let submittable = (state.text != nil && state.post != nil)
-        outputSubject.send(.updateSubmittableState(.editting(submittable)))
-        if post == nil { outputSubject.send(.didGetThumbnail(.none)) }
+        switch post {
+        case .movie(_, _):
+            break
+//            if let url = url, let asset = asset {
+//                print("yo")
+//                self.s3Client.uploadMovie(url: url, asset: asset) { (videoUrl, error) in
+//                    if let error = error {
+//                        self.outputHandler(.error(ViewModelError.notFoundError(error)))
+//                    }
+//                    guard let videoUrl = videoUrl else { return }
+//                    print(videoUrl)
+//                    self.outputHandler(.post)
+//                }
+//            }
+        case .spotify(_):
+            break
+        case .youtube(let url):
+            if let thumbnail = getYouTubeThumbnail(url: url.absoluteString) {
+                self.state.post = post
+                let submittable = (state.text != nil && state.post != nil)
+                outputSubject.send(.updateSubmittableState(.editting(submittable)))
+                outputSubject.send(.didGetThumbnail(.youtube(thumbnail)))
+            } else {
+                state.post = nil
+                outputSubject.send(.updateSubmittableState(.invalidUrl))
+                outputSubject.send(.didGetThumbnail(.none))
+            }
+        case nil:
+            self.state.post = nil
+        }
     }
     
-    func getYouTubeThumbnail(url: String) {
+    func getYouTubeThumbnail(url: String) -> URL?  {
         let youTubeClient = YouTubeClient(url: url)
-        guard let thumbnail = youTubeClient.getThumbnailUrl() else { return }
-        outputSubject.send(.didGetThumbnail(.youtube(thumbnail)))
+        let thumbnail = youTubeClient.getThumbnailUrl()
+        return thumbnail
     }
 
     func post() {

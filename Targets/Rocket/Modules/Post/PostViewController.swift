@@ -140,6 +140,8 @@ final class PostViewController: UIViewController, Instantiable {
                 case .loading:
                     navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
                     activityIndicator.startAnimating()
+                case .invalidUrl:
+                    showAlert(title: "エラー", message: "有効なURLを入力してください")
                 }
             case .didGetThumbnail(let state):
                 switch state {
@@ -155,7 +157,7 @@ final class PostViewController: UIViewController, Instantiable {
                     cancelMovieButton.isHidden = true
                 }
             case .reportError(let error):
-                showAlert(title: "エラー", message: error.localizedDescription)
+                showAlert(title: "エラー", message: String(describing: error))
             }
         }.store(in: &cancellables)
     }
@@ -356,7 +358,6 @@ final class PostViewController: UIViewController, Instantiable {
         let doneAction = UIAlertAction(title: "ok", style: .default, handler: { [unowned self] action in
             if let textFields = alertController.textFields, let text = textFields.first!.text, let url = URL(string: text) {
                 viewModel.didUpdatePost(post: .youtube(url))
-                viewModel.getYouTubeThumbnail(url: text)
             }
         })
         alertController.addTextField(configurationHandler: {(text: UITextField!) -> Void in
