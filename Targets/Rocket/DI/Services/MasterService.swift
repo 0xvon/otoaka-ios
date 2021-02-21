@@ -22,6 +22,8 @@ public final class MasterSerivice {
     private var cancellables: [AnyCancellable] = []
     @available(*, deprecated)
     public func blockingMasterData() throws -> SocialInputs {
+        URLCache.shared.removeAllCachedResponses()
+        
         var result: Result<SocialInputs, Error>!
         let semaphore = DispatchSemaphore(value: 0)
         fetchMasterData().sink(receiveCompletion: {

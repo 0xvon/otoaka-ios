@@ -46,7 +46,7 @@ class UserListViewModel {
             self.liveParticipantsPaginationRequest = PaginationRequest<GetLiveParticipants>(apiClient: apiClient, uri: uri)
         }
         
-        self.groupFollowersPaginationRequest?.subscribe { result in
+        self.groupFollowersPaginationRequest?.subscribe { [unowned self] result in
             switch result {
             case .initial(let res):
                 self.outputHandler(.refreshFollowers(res.items))
@@ -57,7 +57,7 @@ class UserListViewModel {
             }
         }
         
-        self.liveParticipantsPaginationRequest?.subscribe { result in
+        self.liveParticipantsPaginationRequest?.subscribe { [unowned self] result in
             switch result {
             case .initial(let res):
                 self.outputHandler(.refreshParticipants(res.items))

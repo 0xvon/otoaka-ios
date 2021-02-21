@@ -22,6 +22,8 @@ public final class VersioningSerivice {
     private var cancellables: [AnyCancellable] = []
     @available(*, deprecated)
     public func blockingMasterData() throws -> RequiredVersion {
+        URLCache.shared.removeAllCachedResponses()
+        
         var result: Result<RequiredVersion, Error>!
         let semaphore = DispatchSemaphore(value: 0)
         fetchMasterData().sink(receiveCompletion: {
