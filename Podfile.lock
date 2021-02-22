@@ -83,6 +83,7 @@ PODS:
   - Nuke (9.2.4)
   - PromisesObjC (1.2.12)
   - SwiftGen (6.4.0)
+  - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
   - AWSCognitoAuth (~> 2.21.1)
@@ -94,6 +95,7 @@ DEPENDENCIES:
   - LicensePlist
   - Nuke (~> 9.0)
   - SwiftGen (~> 6.0)
+  - "UITextView+Placeholder"
 
 SPEC REPOS:
   trunk:
@@ -116,6 +118,7 @@ SPEC REPOS:
     - Nuke
     - PromisesObjC
     - SwiftGen
+    - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
   KeyboardGuide:
@@ -142,7 +145,8 @@ SPEC CHECKSUMS:
   Nuke: 44439f7a92e665a4f927ecd73cb51f91d93b0e0c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
+  "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: ee6ba1033316a9a882d620325d1f3948813beeaa
+PODFILE CHECKSUM: 5b26c9797f1905ef10085562ea702ea69f4baf2d
 
 COCOAPODS: 1.10.1

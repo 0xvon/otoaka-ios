@@ -17,6 +17,7 @@ target 'Rocket' do
   pod 'SwiftGen', '~> 6.0'
   pod 'KeyboardGuide', :podspec => './KeyboardGuide.podspec'
   pod 'Nuke', '~> 9.0'
+  pod 'UITextView+Placeholder'
 
   target 'RocketTests' do
     inherit! :search_paths

@@ -12,6 +12,7 @@ import Photos
 import PhotosUI
 import AVKit
 import KeyboardGuide
+import UITextView_Placeholder
 
 final class PostViewController: UIViewController, Instantiable {
     typealias Input = Void
@@ -29,6 +30,8 @@ final class PostViewController: UIViewController, Instantiable {
         textView.isScrollEnabled = true
         textView.backgroundColor = .clear
         textView.delegate = self
+        textView.placeholder = "MV・好きな音楽・オススメのバンドを共有しよう"
+        textView.placeholderColor = Brand.color(for: .background(.secondary))
         textView.font = Brand.font(for: .largeStrong)
         textView.textColor = Brand.color(for: .text(.primary))
         return textView
