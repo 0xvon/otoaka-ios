@@ -58,6 +58,11 @@ final class TicketViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         setup()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
 
     func setup() {
         title = "Ticket"

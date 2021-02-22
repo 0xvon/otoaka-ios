@@ -127,6 +127,11 @@ final class EditUserViewController: UIViewController, Instantiable {
         viewModel.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func update(user: User) {
         displayNameInputView.setText(text: user.name)
         biographyInputView.setText(text: user.biography ?? "")

@@ -18,14 +18,6 @@ final class FeedViewController: UITableViewController {
     let viewModel: FeedViewModel
     private var cancellables: [AnyCancellable] = []
     
-    lazy var createButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("+", for: .normal)
-        button.titleLabel?.font = Brand.font(for: .xxlargeStrong)
-        button.addTarget(self, action: #selector(createFeed), for: .touchUpInside)
-        return button
-    }()
-    
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = FeedViewModel(dependencyProvider: dependencyProvider)
@@ -45,12 +37,15 @@ final class FeedViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.registerCellClass(ArtistFeedCell.self)
         refreshControl = BrandRefreshControl()
-        if case .artist = dependencyProvider.user.role  {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createButton)
-        }
         
         bind()
         requestNotification()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+        setupFloatingItems(userRole: dependencyProvider.user.role)
     }
     
     func bind() {
@@ -103,10 +98,23 @@ final class FeedViewController: UITableViewController {
         }
     }
     
+    private func setupFloatingItems(userRole: RoleProperties) {
+        let items: [FloatingButtonItem]
+        switch userRole {
+        case .artist(_):
+            let createFeedView = FloatingButtonItem(icon: UIImage(named: "post")!)
+            createFeedView.addTarget(self, action: #selector(createFeed), for: .touchUpInside)
+            items = [createFeedView]
+        case .fan(_):
+            items = []
+        }
+        let floatingController = dependencyProvider.viewHierarchy.floatingViewController
+        floatingController.setFloatingButtonItems(items)
+    }
+    
     @objc func createFeed() {
         let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
-        let nav = BrandNavigationController(rootViewController: vc)
-        present(nav, animated: true, completion: nil)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

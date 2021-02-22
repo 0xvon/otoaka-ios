@@ -52,6 +52,11 @@ final class DetailFilterViewController: UIViewController, Instantiable {
         setup()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         

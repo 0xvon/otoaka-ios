@@ -229,6 +229,11 @@ final class CreateUserViewController: UIViewController, Instantiable {
         viewModel.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func bind() {
         registerButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: viewModel.didSignupButtonTapped)

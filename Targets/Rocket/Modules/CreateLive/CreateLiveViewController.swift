@@ -173,6 +173,11 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         viewModel.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func bind() {
         registerButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: viewModel.didRegisterButtonTapped)
@@ -181,7 +186,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didCreateLive(_):
-                self.dismiss(animated: true, completion: nil)
+                self.navigationController?.popViewController(animated: true)
             case .didGetMemberships(let memberships):
                 if !memberships.isEmpty {
                     self.hostGroupInputView.setText(text: memberships[0].name)
@@ -193,7 +198,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                     let cancelAction = UIAlertAction(
                         title: "OK", style: UIAlertAction.Style.cancel,
                         handler: { action in
-                            self.dismiss(animated: true, completion: nil)
+                            self.navigationController?.popViewController(animated: true)
                         })
                     alertController.addAction(cancelAction)
 

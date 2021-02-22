@@ -63,9 +63,12 @@ final class GroupViewController: UITableViewController {
         
         bind()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         searchController.searchBar.showsScopeBar = true
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+        setupFloatingItems(userRole: dependencyProvider.user.role)
     }
 
     func bind() {
@@ -94,10 +97,23 @@ final class GroupViewController: UITableViewController {
         viewModel.refresh.send(())
     }
     
+    private func setupFloatingItems(userRole: RoleProperties) {
+        let items: [FloatingButtonItem]
+        switch userRole {
+        case .artist(_):
+            let createGroupView = FloatingButtonItem(icon: UIImage(systemName: "person.3.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal))
+            createGroupView.addTarget(self, action: #selector(createBand), for: .touchUpInside)
+            items = [createGroupView]
+        case .fan(_):
+            items = []
+        }
+        let floatingController = dependencyProvider.viewHierarchy.floatingViewController
+        floatingController.setFloatingButtonItems(items)
+    }
+    
     @objc private func createBand() {
         let vc = CreateBandViewController(dependencyProvider: dependencyProvider, input: ())
-        let nav = BrandNavigationController(rootViewController: vc)
-        present(nav, animated: true, completion: nil)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

@@ -50,6 +50,11 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
         viewModel.getRequests()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {

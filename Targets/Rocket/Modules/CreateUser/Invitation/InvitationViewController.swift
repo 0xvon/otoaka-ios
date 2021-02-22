@@ -42,6 +42,11 @@ final class InvitationViewController: UIViewController, Instantiable {
         bind()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func bind() {
         registerButtonView.controlEventPublisher(for: .touchUpInside)
             .map { _ in self.invitationView.getText() }

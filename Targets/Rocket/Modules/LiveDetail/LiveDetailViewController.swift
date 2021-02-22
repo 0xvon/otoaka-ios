@@ -122,11 +122,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+        viewModel.viewDidLoad()
     }
     
     override func loadView() {
@@ -188,7 +184,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         bind()
         
         reserveTicketViewModel.viewDidLoad()
-        viewModel.viewDidLoad()
     }
     
     func bind() {

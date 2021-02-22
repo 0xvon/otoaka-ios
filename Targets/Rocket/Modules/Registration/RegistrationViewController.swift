@@ -55,6 +55,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.dependencyProvider.auth.delegate = self
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
 
     override func viewDidAppear(_ animated: Bool) {

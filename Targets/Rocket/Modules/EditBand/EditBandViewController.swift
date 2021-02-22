@@ -158,6 +158,11 @@ final class EditBandViewController: UIViewController, Instantiable {
         update()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func bind() {
         editButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: viewModel.didEditButtonTapped)

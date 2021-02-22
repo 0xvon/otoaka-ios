@@ -125,6 +125,11 @@ final class PostViewController: UIViewController, Instantiable {
         bind()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func bind() {
         postButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: viewModel.post)
@@ -133,7 +138,7 @@ final class PostViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didPostArtistFeed(_):
-                self.dismiss(animated: true, completion: nil)
+                navigationController?.popViewController(animated: true)
             case .updateSubmittableState(let pageState):
                 switch pageState {
                 case .editting(let submittable):

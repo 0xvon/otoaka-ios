@@ -116,14 +116,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-        if let displayType = viewModel.state.displayType {
-            setupFloatingItems(displayType: displayType)
-        }
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+        viewModel.viewDidLoad()
     }
 
     override func loadView() {
@@ -185,7 +178,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
         bind()
 
         followingViewModel.viewDidLoad()
-        viewModel.viewDidLoad()
     }
 
     func bind() {
@@ -216,9 +208,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     followersCount: response.followersCount
                 )
                 self.setupFloatingItems(displayType: displayType)
+                refreshControl.endRefreshing()
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item, imagePipeline: dependencyProvider.imagePipeline))
-                refreshControl.endRefreshing()
             case .updateLiveSummary(.none):
                 self.liveSectionHeader.isHidden = true
                 self.liveCellWrapper.isHidden = true

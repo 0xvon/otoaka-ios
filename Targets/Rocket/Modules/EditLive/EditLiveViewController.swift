@@ -129,6 +129,11 @@ final class EditLiveViewController: UIViewController, Instantiable {
         viewModel.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     func bind() {
         editButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: viewModel.didEditButtonTapped)

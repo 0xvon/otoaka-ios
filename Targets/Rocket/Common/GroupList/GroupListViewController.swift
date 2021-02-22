@@ -38,6 +38,12 @@ final class GroupListViewController: UIViewController, Instantiable {
         bind()
         viewModel.refresh()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
     private func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
