@@ -24,13 +24,6 @@ final class GroupViewController: UITableViewController {
         controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
         return controller
     }()
-    lazy var createButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("+", for: .normal)
-        button.titleLabel?.font = Brand.font(for: .xxlargeStrong)
-        button.addTarget(self, action: #selector(createBand), for: .touchUpInside)
-        return button
-    }()
 
     let viewModel: GroupViewModel
     private var cancellables: [AnyCancellable] = []
@@ -57,9 +50,6 @@ final class GroupViewController: UITableViewController {
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
-        if case .artist = dependencyProvider.user.role  {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createButton)
-        }
         
         bind()
     }
