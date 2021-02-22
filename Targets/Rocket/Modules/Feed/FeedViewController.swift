@@ -155,14 +155,27 @@ extension FeedViewController {
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
-            emptyCollectionView.listen { [unowned self] in
-                let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
-                vc.inject(.group(""))
-                self.navigationController?.pushViewController(vc, animated: true)
+            switch dependencyProvider.user.role {
+            case .artist(_):
+                let emptyCollectionView = EmptyCollectionView(emptyType: .feedBand, actionButtonTitle: "フィードを投稿してみる")
+                emptyCollectionView.listen { [unowned self] in
+                    let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
+                    let nav = BrandNavigationController(rootViewController: vc)
+                    present(nav, animated: true, completion: nil)
+                }
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                return emptyCollectionView
+            case .fan(_):
+                let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
+                emptyCollectionView.listen { [unowned self] in
+                    let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
+                    vc.inject(.group(""))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                return emptyCollectionView
             }
-            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-            return emptyCollectionView
+            
         }()
         tableView.backgroundView = isDisplay ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
