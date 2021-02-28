@@ -56,7 +56,17 @@ public final class UserDetailHeaderView: UIView {
         userInformationView.update(input: input)
     }
     
-    func bind() {}
+    func bind() {
+        userInformationView.listen { [unowned self] output in
+            switch output {
+            case .arrowButtonTapped: break
+            case .followerCountButtonTapped:
+                self.listener(.followersButtonTapped)
+            case .followingUserCountButtonTapped:
+                self.listener(.followingUsersButtonTapped)
+            }
+        }
+    }
     
     private func setup() {
         backgroundColor = .clear

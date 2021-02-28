@@ -115,6 +115,7 @@ class UserInformationView: UIView {
     }
     
     @objc private func followersSummaryViewTapped() {
+        print("tapped")
         listener(.followerCountButtonTapped)
     }
     

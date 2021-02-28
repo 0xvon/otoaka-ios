@@ -54,7 +54,6 @@ extension DependencyProvider {
             userPoolIdForEnablingASF: nil
         )
         let cognitoAuthKey = Bundle.main.bundleIdentifier.map { "\($0).cognito-auth" } ?? "band.rocketfor.cognito-auth"
-        print(cognitoAuthKey)
         AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: cognitoAuthKey)
         FirebaseApp.configure()
         let auth = AWSCognitoAuth(forKey: cognitoAuthKey)

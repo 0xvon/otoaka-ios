@@ -119,7 +119,6 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let user = self.viewModel.state.users[indexPath.section]
-        print(user)
         let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
         let nav = self.navigationController ?? presentingViewController?.navigationController
         nav?.pushViewController(vc, animated: true)

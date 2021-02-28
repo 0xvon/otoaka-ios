@@ -77,6 +77,7 @@ final class UserViewController: UITableViewController {
     @objc private func refresh() {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
 //        self.refreshControl?.beginRefreshing()
+        self.refreshControl?.endRefreshing()
     }
 }
 

@@ -40,6 +40,7 @@ class UserDetailViewModel {
         case didRefreshFollowingGroupSummary
         case pushToFeedList(FeedListViewController.Input)
         case pushToGroupList(GroupListViewController.Input)
+        case pushToUserList(UserListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
@@ -112,7 +113,12 @@ class UserDetailViewModel {
     }
     
     func headerEvent(output: UserDetailHeaderView.Output) {
-        
+        switch output {
+        case .followersButtonTapped:
+            outputSubject.send(.pushToUserList(.userFollowers(state.user.id)))
+        case .followingUsersButtonTapped:
+            outputSubject.send(.pushToUserList(.followingUsers(state.user.id)))
+        }
     }
     
     func feedCellEvent(event: UserFeedCellContent.Output) {

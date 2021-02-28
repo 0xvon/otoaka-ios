@@ -200,10 +200,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
             .store(in: &cancellables)
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
-            print("received output")
             switch output {
             case .didRefreshUserDetail(let userDetail):
-                print(userDetail)
                 switch viewModel.state.displayType {
                 case .account:
                     dependencyProvider.user = userDetail.user
@@ -250,6 +248,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 break // TODO
             case .pushToFeedList(_):
                 break
+            case .pushToUserList(let input):
+                let vc = UserListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .pushToGroupList(_):
                 break
             case .pushToCommentList(let feed):
