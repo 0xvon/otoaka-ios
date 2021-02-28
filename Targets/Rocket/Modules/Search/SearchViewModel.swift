@@ -14,11 +14,12 @@ final class SearchViewModel {
     }
 
     enum Scope: CaseIterable {
-        case live, group
+        case live, group, user
         var title: String {
             switch self {
             case .live: return "ライブ"
             case .group: return "バンド"
+            case .user: return "ユーザー"
             }
         }
     }
@@ -40,6 +41,8 @@ final class SearchViewModel {
             outputSubject.send(.updateSearchResult(.group(query)))
         case .live:
             outputSubject.send(.updateSearchResult(.live(query)))
+        case .user:
+            outputSubject.send(.updateSearchResult(.user(query)))
         }
     }
 }

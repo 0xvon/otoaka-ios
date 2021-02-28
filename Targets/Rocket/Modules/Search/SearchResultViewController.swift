@@ -12,6 +12,7 @@ final class SearchResultViewController: UIViewController {
         case none
         case live(String)
         case group(String)
+        case user(String)
     }
     
     typealias State = Input
@@ -26,6 +27,11 @@ final class SearchResultViewController: UIViewController {
         controller.view.isHidden = true
         return controller
     }()
+    private lazy var userListViewController: UserListViewController = {
+        let controller = UserListViewController(dependencyProvider: dependencyProvider, input: .none)
+        controller.view.isHidden = true
+        return controller
+    }()
 
     private var state: State {
         didSet {
@@ -33,11 +39,18 @@ final class SearchResultViewController: UIViewController {
             case .group(let query):
                 groupListViewController.view.isHidden = false
                 liveListViewController.view.isHidden = true
+                userListViewController.view.isHidden = true
                 groupListViewController.inject(.searchResults(query))
             case .live(let query):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = false
+                userListViewController.view.isHidden = true
                 liveListViewController.inject(.searchResult(query))
+            case .user(let query):
+                groupListViewController.view.isHidden = true
+                liveListViewController.view.isHidden = true
+                userListViewController.view.isHidden = false
+                userListViewController.inject(.searchResults(query))
             case .none:
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = true
@@ -58,7 +71,7 @@ final class SearchResultViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let children = [liveListViewController, groupListViewController]
+        let children = [liveListViewController, groupListViewController, userListViewController]
         for child in children {
             addChild(child)
             view.addSubview(child.view)

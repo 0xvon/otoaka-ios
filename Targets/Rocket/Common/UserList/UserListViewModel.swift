@@ -14,13 +14,19 @@ class UserListViewModel {
     
     enum DataSource {
         case followers(Group.ID)
+        case userFollowers(User.ID)
+        case followingUsers(User.ID)
         case liveParticipants(Live.ID)
+        case searchResults(String)
         case none
     }
     
     enum DataSourceStorage {
         case followers(PaginationRequest<GroupFollowers>)
+        case userFollowers(PaginationRequest<UserFollowers>)
+        case followingUsers(PaginationRequest<FollowingUsers>)
         case liveParticipants(PaginationRequest<GetLiveParticipants>)
+        case searchResults(PaginationRequest<SearchUser>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -30,11 +36,26 @@ class UserListViewModel {
                 uri.id = groupId
                 let request = PaginationRequest<GroupFollowers>(apiClient: apiClient, uri: uri)
                 self = .followers(request)
+            case .userFollowers(let userId):
+                var uri = UserFollowers.URI()
+                uri.id = userId
+                let request = PaginationRequest<UserFollowers>(apiClient: apiClient, uri: uri)
+                self = .userFollowers(request)
+            case .followingUsers(let userId):
+                var uri = FollowingUsers.URI()
+                uri.id = userId
+                let request = PaginationRequest<FollowingUsers>(apiClient: apiClient, uri: uri)
+                self = .followingUsers(request)
             case .liveParticipants(let liveId):
                 var uri = GetLiveParticipants.URI()
                 uri.liveId = liveId
                 let request = PaginationRequest<GetLiveParticipants>(apiClient: apiClient, uri: uri)
                 self = .liveParticipants(request)
+            case .searchResults(let query):
+                var uri = SearchUser.URI()
+                uri.term = query
+                let request = PaginationRequest<SearchUser>(apiClient: apiClient, uri: uri)
+                self = .searchResults(request)
             case .none:
                 self = .none
             }
@@ -74,7 +95,19 @@ class UserListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .userFollowers(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .followingUsers(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case let .liveParticipants(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .searchResults(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
@@ -105,7 +138,13 @@ class UserListViewModel {
         switch storage {
         case let .followers(pagination):
             pagination.refresh()
+        case let .userFollowers(pagination):
+            pagination.refresh()
+        case let .followingUsers(pagination):
+            pagination.refresh()
         case let .liveParticipants(pagination):
+            pagination.refresh()
+        case let .searchResults(pagination):
             pagination.refresh()
         case .none: break
         }
@@ -116,7 +155,13 @@ class UserListViewModel {
         switch storage {
         case let .followers(pagination):
             pagination.next()
+        case let .userFollowers(pagination):
+            pagination.next()
+        case let .followingUsers(pagination):
+            pagination.next()
         case let .liveParticipants(pagination):
+            pagination.next()
+        case let .searchResults(pagination):
             pagination.next()
         case .none: break
         }

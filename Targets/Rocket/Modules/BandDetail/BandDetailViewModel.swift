@@ -44,7 +44,7 @@ class BandDetailViewModel {
     
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
-        case updateLiveSummary(Live?)
+//        case updateLiveSummary(Live?)
         case updateFeedSummary(UserFeedSummary?)
         case didGetChart(Group, ChannelDetail.ChannelItem?)
         case didCreatedInvitation(InviteGroup.Invitation)
@@ -85,7 +85,7 @@ class BandDetailViewModel {
         let errors = Publishers.MergeMany(
             inviteGroup.errors,
             getGroup.errors,
-            getGroupLives.errors,
+//            getGroupLives.errors,
             getGroupFeed.errors,
             listChannel.errors,
             deleteFeed.errors
@@ -96,7 +96,7 @@ class BandDetailViewModel {
             getGroup.elements.map { result in
                 .didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))
             }.eraseToAnyPublisher(),
-            getGroupLives.elements.map { .updateLiveSummary($0.items.first) }.eraseToAnyPublisher(),
+//            getGroupLives.elements.map { .updateLiveSummary($0.items.first) }.eraseToAnyPublisher(),
             getGroupFeed.elements.map { .updateFeedSummary($0.items.first) }.eraseToAnyPublisher(),
             listChannel.elements.map { [unowned self] in
                 .didGetChart(self.state.group, $0.items.first)
@@ -153,7 +153,7 @@ class BandDetailViewModel {
     func refresh() {
         getGroupDetail()
         getChartSummary()
-        getGroupLiveSummary()
+//        getGroupLiveSummary()
         getGroupFeedSummary()
     }
     

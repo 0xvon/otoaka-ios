@@ -36,7 +36,7 @@ class YouTubeClient {
     func getThumbnailUrl() -> URL? {
         guard let id = self.getId() else { return nil }
         
-        let thumbnail = "https://i.ytimg.com/vi/\(id)/hqdefault.jpg"
+        let thumbnail = "https://i.ytimg.com/vi/\(id)/maxresdefault.jpg"
         return URL(string: thumbnail)
     }
     
@@ -45,7 +45,7 @@ class YouTubeClient {
         @Query public var v: String
         public init() {}
     }
-
+    
     struct YouTubeShorterURI: CodableURL {
         @DynamicPath public var v: String
         public init() {}

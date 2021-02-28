@@ -5,14 +5,16 @@
 //  Created by Masato TSUTSUMI on 2021/02/28.
 //
 
-import Endpoint
+import DomainEntity
 import InternalDomain
 import UIKit
 import ImagePipeline
 
 public final class UserDetailHeaderView: UIView {
     public typealias Input = (
-        userDetail: UserDetail,
+        user: User,
+        followersCount: Int,
+        followingUsersCount: Int,
         imagePipeline: ImagePipeline
     )
     

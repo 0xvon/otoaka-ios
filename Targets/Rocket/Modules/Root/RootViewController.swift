@@ -110,25 +110,31 @@ final class RootViewController: UITabBarController, Instantiable {
         groupVC.tabBarItem = UITabBarItem(
             title: "バンド", image: UIImage(systemName: "person.3"),
             selectedImage: UIImage(systemName: "person.3.fill"))
-        let liveVC = BrandNavigationController(rootViewController: LiveViewController(dependencyProvider: loggedInProvider))
-        liveVC.tabBarItem = UITabBarItem(
-            title: "ライブ",
-            image: UIImage(named: "guitarIcon"),
-            selectedImage: UIImage(named: "selectedGuitarIcon")
+//        let liveVC = BrandNavigationController(rootViewController: LiveViewController(dependencyProvider: loggedInProvider))
+//        liveVC.tabBarItem = UITabBarItem(
+//            title: "ライブ",
+//            image: UIImage(named: "guitarIcon"),
+//            selectedImage: UIImage(named: "selectedGuitarIcon")
+//        )
+        let userVC = BrandNavigationController(rootViewController: UserViewController(dependencyProvider: loggedInProvider))
+        userVC.tabBarItem = UITabBarItem(
+            title: "検索",
+            image: UIImage(named: "searchIcon"),
+            selectedImage: UIImage(named: "selectedSearchIcon")
         )
         let accountVC = UserDetailViewController(dependencyProvider: loggedInProvider, input: loggedInProvider.user)
         let accountNav = BrandNavigationController(
             rootViewController: accountVC
         )
         accountNav.tabBarItem = UITabBarItem(
-            title: "アカウント設定",
+            title: "マイページ",
             image: UIImage(systemName: "person.crop.circle"),
             selectedImage: UIImage(systemName: "person.crop.circle.fill")
         )
 //        accountVC.listen { [unowned self] in
 //            checkSignupStatus()
 //        }
-        return [homeVC, groupVC, liveVC, accountNav]
+        return [homeVC, groupVC, userVC, accountNav]
     }
     
     private func promptVersioningViewController(versionData: RequiredVersion) {

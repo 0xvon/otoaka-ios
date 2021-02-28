@@ -180,7 +180,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
             switch output {
             case .updateFollowersCount(let count):
                 guard let userDetail = viewModel.state.userDetail else { return }
-                headerView.update(input: (userDetail: UserDetail(user: viewModel.state.user, followersCount: count, followingUsersCount: userDetail.followingUsersCount, feedCount: userDetail.feedCount, likeFeedCount: userDetail.likeFeedCount, followingGroupsCount: userDetail.followingGroupsCount, isFollowed: userDetail.isFollowed, isFollowing: userDetail.isFollowing), imagePipeline: dependencyProvider.imagePipeline))
+                headerView.update(input: (user: viewModel.state.user, followersCount: count, followingUsersCount: userDetail.followingUsersCount,  imagePipeline: dependencyProvider.imagePipeline))
             case .updateIsButtonEnabled(let enabled):
                 followButton.isEnabled = enabled
             case .updateFollowing(let isFollowing):
@@ -217,8 +217,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 }
                 
                 userFollowingViewModel.didGetUserDetail(isFollowing: userDetail.isFollowing, followersCount: userDetail.followersCount)
-                
-                headerView.update(input: (userDetail: userDetail, imagePipeline: dependencyProvider.imagePipeline))
+                headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount,  imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
             case .didRefreshFeedSummary(let feed):
                 let isHidden = feed == nil
@@ -307,8 +306,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }
     
     func setupViews() {
-        guard let userDetail = viewModel.state.userDetail else { return }
-        headerView.update(input: (userDetail: userDetail, imagePipeline: dependencyProvider.imagePipeline))
+        headerView.update(input: (user: viewModel.state.user, followersCount: 0, followingUsersCount: 0, imagePipeline: dependencyProvider.imagePipeline))
     }
     
     func didEditProfileButtonTapped() {

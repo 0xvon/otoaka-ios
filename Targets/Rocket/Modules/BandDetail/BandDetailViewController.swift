@@ -51,18 +51,18 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
 
-    private let liveSectionHeader = SummarySectionHeader(title: "LIVE")
+//    private let liveSectionHeader = SummarySectionHeader(title: "LIVE")
     // FIXME: Use a safe way to instantiate views from xib
-    private lazy var liveCellContent: LiveCellContent = {
-        let content = UINib(nibName: "LiveCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
-        content.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300),
-        ])
-        return content
-    }()
-    private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
+//    private lazy var liveCellContent: LiveCellContent = {
+//        let content = UINib(nibName: "LiveCellContent", bundle: nil)
+//            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            content.heightAnchor.constraint(equalToConstant: 300),
+//        ])
+//        return content
+//    }()
+//    private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
 
     private let feedSectionHeader = SummarySectionHeader(title: "FEED")
     private lazy var feedCellContent: UserFeedCellContent = {
@@ -146,12 +146,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         scrollStackView.addArrangedSubview(followStackView)
 
-        scrollStackView.addArrangedSubview(liveSectionHeader)
-        NSLayoutConstraint.activate([
-            liveSectionHeader.heightAnchor.constraint(equalToConstant: 64),
-        ])
-        liveCellWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(liveCellWrapper)
+//        scrollStackView.addArrangedSubview(liveSectionHeader)
+//        NSLayoutConstraint.activate([
+//            liveSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+//        ])
+//        liveCellWrapper.isHidden = true
+//        scrollStackView.addArrangedSubview(liveCellWrapper)
 
         scrollStackView.addArrangedSubview(feedSectionHeader)
         NSLayoutConstraint.activate([
@@ -211,9 +211,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 refreshControl.endRefreshing()
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item, imagePipeline: dependencyProvider.imagePipeline))
-            case .updateLiveSummary(.none):
-                self.liveSectionHeader.isHidden = true
-                self.liveCellWrapper.isHidden = true
+//            case .updateLiveSummary(.none):
+//                self.liveSectionHeader.isHidden = true
+//                self.liveCellWrapper.isHidden = true
             case .didDeleteFeedButtonTapped(let feed):
                 let alertController = UIAlertController(
                     title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -249,10 +249,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
                     self.present(activityViewController, animated: true, completion: nil)
                 }
-            case .updateLiveSummary(.some(let live)):
-                self.liveSectionHeader.isHidden = false
-                self.liveCellWrapper.isHidden = false
-                self.liveCellContent.inject(input: (live: live, imagePipeline: dependencyProvider.imagePipeline))
+//            case .updateLiveSummary(.some(let live)):
+//                self.liveSectionHeader.isHidden = false
+//                self.liveCellWrapper.isHidden = false
+//                self.liveCellContent.inject(input: (live: live, imagePipeline: dependencyProvider.imagePipeline))
             case .updateFeedSummary(.none):
                 self.feedSectionHeader.isHidden = true
                 self.feedCellWrapper.isHidden = true
@@ -307,13 +307,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
             self.viewModel.feedCellEvent(event: output)
         }
 
-        liveSectionHeader.listen { [unowned self] in
-            self.viewModel.didTapSeeMore(at: .live)
-        }
-        feedSectionHeader.listen { [unowned self] in
-            self.viewModel.didTapSeeMore(at: .feed)
-        }
-        liveCellContent.addTarget(self, action: #selector(liveCellTaped), for: .touchUpInside)
+//        liveSectionHeader.listen { [unowned self] in
+//            self.viewModel.didTapSeeMore(at: .live)
+//        }
+//        feedSectionHeader.listen { [unowned self] in
+//            self.viewModel.didTapSeeMore(at: .feed)
+//        }
+//        liveCellContent.addTarget(self, action: #selector(liveCellTaped), for: .touchUpInside)
         feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
 
         followersSummaryView.addGestureRecognizer(

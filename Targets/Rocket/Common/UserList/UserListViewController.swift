@@ -41,6 +41,10 @@ final class UserListViewController: UIViewController, Instantiable {
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
     
+    func inject(_ input: Input) {
+        viewModel.inject(input)
+    }
+    
     private func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
@@ -114,11 +118,11 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let fan = self.fans[indexPath.section]
-        
         let user = self.viewModel.state.users[indexPath.section]
+        print(user)
         let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
-        self.navigationController?.pushViewController(vc, animated: true)
+        let nav = self.navigationController ?? presentingViewController?.navigationController
+        nav?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

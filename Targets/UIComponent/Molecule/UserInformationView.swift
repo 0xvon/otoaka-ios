@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-import Endpoint
+import DomainEntity
 
 class UserInformationView: UIView {
     public typealias Input = UserDetailHeaderView.Input
@@ -58,10 +58,10 @@ class UserInformationView: UIView {
     }
     
     func update(input: Input) {
-        displayNameLabel.text = input.userDetail.name
-        followerCountSumamryView.update(input: (title: "フォロワー", count: input.userDetail.followersCount))
-        followingUserCountSummaryView.update(input: (title: "フォロー", count: input.userDetail.followingUsersCount))
-        input.imagePipeline.loadImage(URL(string: input.userDetail.thumbnailURL!)!, into: profileImageView)
+        displayNameLabel.text = input.user.name
+        followerCountSumamryView.update(input: (title: "フォロワー", count: input.followersCount))
+        followingUserCountSummaryView.update(input: (title: "フォロー", count: input.followingUsersCount))
+        input.imagePipeline.loadImage(URL(string: input.user.thumbnailURL!)!, into: profileImageView)
     }
     
     private func setup() {
