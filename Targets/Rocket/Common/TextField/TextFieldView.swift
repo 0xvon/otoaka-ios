@@ -64,6 +64,7 @@ final class TextFieldView: UIView {
             attributes: [NSAttributedString.Key.foregroundColor: Brand.color(for: .background(.secondary))])
         textField.text = input.text
         textField.borderStyle = .none
+        textField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
         contentView.addSubview(textField)
 
         underLine = UIView()
@@ -107,6 +108,11 @@ final class TextFieldView: UIView {
             underLine.backgroundColor = Brand.color(for: .text(.toggle))
         }
     }
+    
+    @objc func textFieldEditingChanged() {
+        underLineColor()
+        self.listener()
+    }
 
     func getText() -> String? {
         return ((textField.text != nil) && !textField.text!.isEmpty) ? textField.text : nil
@@ -145,7 +151,7 @@ extension TextFieldView: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         underLine.backgroundColor = Brand.color(for: .text(.primary))
     }
-
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         underLineColor()
@@ -153,7 +159,6 @@ extension TextFieldView: UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.text = textField.text?.prefix(input.maxLength).description
         self.listener()
         underLineColor()
     }

@@ -70,7 +70,7 @@ final class FeedListViewController: UIViewController, Instantiable {
         feedTableView.backgroundColor = Brand.color(for: .background(.primary))
         feedTableView.delegate = self
         feedTableView.dataSource = self
-        feedTableView.registerCellClass(ArtistFeedCell.self)
+        feedTableView.registerCellClass(UserFeedCell.self)
         self.view.addSubview(feedTableView)
         
         feedTableView.refreshControl = BrandRefreshControl()
@@ -118,7 +118,7 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let content = self.viewModel.state.feeds[indexPath.section]
         let cell = tableView.dequeueReusableCell(
-            ArtistFeedCell.self,
+            UserFeedCell.self,
             input: (user: dependencyProvider.user, feed: content, imagePipeline: dependencyProvider.imagePipeline),
             for: indexPath
         )

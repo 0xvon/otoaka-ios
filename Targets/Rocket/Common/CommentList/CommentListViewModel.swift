@@ -14,20 +14,20 @@ class CommentListViewModel {
     typealias Input = DataSource
     
     enum DataSource {
-        case feedComment(ArtistFeedSummary)
+        case feedComment(UserFeedSummary)
         case none
     }
     
     enum DataSourceStorage {
-        case feedComment(PaginationRequest<GetFeedComments>, ArtistFeedSummary)
+        case feedComment(PaginationRequest<GetUserFeedComments>, UserFeedSummary)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
             switch dataSource {
             case .feedComment(let feed):
-                var uri = GetFeedComments.URI()
+                var uri = GetUserFeedComments.URI()
                 uri.feedId = feed.id
-                let request = PaginationRequest<GetFeedComments>(apiClient: apiClient, uri: uri)
+                let request = PaginationRequest<GetUserFeedComments>(apiClient: apiClient, uri: uri)
                 self = .feedComment(request, feed)
             case .none:
                 self = .none
@@ -37,12 +37,12 @@ class CommentListViewModel {
     
     enum Output {
         case reloadTableView
-        case didPostComment(ArtistFeedComment)
+        case didPostComment(UserFeedComment)
         case reportError(Error)
     }
     
     struct State {
-        var comments: [ArtistFeedComment] = []
+        var comments: [UserFeedComment] = []
     }
 
     let dependencyProvider: LoggedInDependencyProvider
@@ -54,7 +54,7 @@ class CommentListViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     var cancellables: Set<AnyCancellable> = []
     
-    private lazy var postFeedCommentAction = Action(PostFeedComment.self, httpClient: self.apiClient)
+    private lazy var postFeedCommentAction = Action(PostUserFeedComment.self, httpClient: self.apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
@@ -93,7 +93,7 @@ class CommentListViewModel {
         }
     }
     
-    private func updateState(with result: PaginationEvent<Page<ArtistFeedComment>>) {
+    private func updateState(with result: PaginationEvent<Page<UserFeedComment>>) {
         switch result {
         case .initial(let res):
             state.comments = res.items
@@ -134,8 +134,8 @@ class CommentListViewModel {
         guard let comment = comment else { return }
         switch storage {
         case let .feedComment(_, feed):
-            let request = PostFeedComment.Request(feedId: feed.id, text: comment)
-            postFeedCommentAction.input((request: request, uri: PostFeedComment.URI()))
+            let request = PostUserFeedComment.Request(feedId: feed.id, text: comment)
+            postFeedCommentAction.input((request: request, uri: PostUserFeedComment.URI()))
         case .none:
             break
         }

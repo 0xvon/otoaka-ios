@@ -326,17 +326,6 @@ final class CreateUserViewController: UIViewController, Instantiable {
             userRoleSummaryView.centerYAnchor.constraint(equalTo: userRoleContentView.centerYAnchor),
         ])
         
-        mainView.addArrangedSubview(displayNameInputView)
-        NSLayoutConstraint.activate([
-            displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
-        
-        mainView.addArrangedSubview(partInputView)
-        partInputView.selectInputView(inputView: partPickerView)
-        NSLayoutConstraint.activate([
-            partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
-        
         mainView.addArrangedSubview(thumbnailInputView)
         NSLayoutConstraint.activate([
             thumbnailInputView.heightAnchor.constraint(equalToConstant: 150),
@@ -364,6 +353,17 @@ final class CreateUserViewController: UIViewController, Instantiable {
                 equalTo: thumbnailInputView.rightAnchor),
             changeProfileImageButton.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
             changeProfileImageButton.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
+        ])
+        
+        mainView.addArrangedSubview(displayNameInputView)
+        NSLayoutConstraint.activate([
+            displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
+        mainView.addArrangedSubview(partInputView)
+        partInputView.selectInputView(inputView: partPickerView)
+        NSLayoutConstraint.activate([
+            partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
         mainView.addArrangedSubview(registerButton)

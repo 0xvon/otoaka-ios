@@ -116,7 +116,7 @@ final class RootViewController: UITabBarController, Instantiable {
             image: UIImage(named: "guitarIcon"),
             selectedImage: UIImage(named: "selectedGuitarIcon")
         )
-        let accountVC = AccountViewController(dependencyProvider: loggedInProvider, input: ())
+        let accountVC = UserDetailViewController(dependencyProvider: loggedInProvider, input: loggedInProvider.user)
         let accountNav = BrandNavigationController(
             rootViewController: accountVC
         )
@@ -125,9 +125,9 @@ final class RootViewController: UITabBarController, Instantiable {
             image: UIImage(systemName: "person.crop.circle"),
             selectedImage: UIImage(systemName: "person.crop.circle.fill")
         )
-        accountVC.listen { [unowned self] in
-            checkSignupStatus()
-        }
+//        accountVC.listen { [unowned self] in
+//            checkSignupStatus()
+//        }
         return [homeVC, groupVC, liveVC, accountNav]
     }
     

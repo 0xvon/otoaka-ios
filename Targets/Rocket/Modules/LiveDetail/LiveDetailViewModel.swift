@@ -22,19 +22,19 @@ class LiveDetailViewModel {
     }
     struct State {
         var live: Live
-        var feeds: [ArtistFeedSummary] = []
+        var feeds: [UserFeedSummary] = []
         let role: RoleProperties
     }
     
     enum Output {
         case didGetLiveDetail(LiveDetail)
         case didGetDisplayType(DisplayType)
-        case updateFeedSummary(ArtistFeedSummary?)
+        case updateFeedSummary(UserFeedSummary?)
         case updatePerformers([Group])
         case didDeleteFeed
         
-        case didDeleteFeedButtonTapped(ArtistFeedSummary)
-        case didShareFeedButtonTapped(ArtistFeedSummary)
+        case didDeleteFeedButtonTapped(UserFeedSummary)
+        case didShareFeedButtonTapped(UserFeedSummary)
         case pushToGroupFeedList(FeedListViewController.Input)
         case pushToPerformerDetail(BandDetailViewController.Input)
         case presentCommentList(CommentListViewController.Input)
@@ -48,8 +48,8 @@ class LiveDetailViewModel {
     
     private lazy var getLive = Action(GetLive.self, httpClient: self.apiClient)
     private lazy var getGroup = Action(GetGroup.self, httpClient: self.apiClient)
-    private lazy var getGroupFeed = Action(GetGroupFeed.self, httpClient: self.apiClient)
-    private lazy var deleteFeed = Action(DeleteArtistFeed.self, httpClient: self.apiClient)
+    private lazy var getGroupFeed = Action(GetGroupsUserFeeds.self, httpClient: self.apiClient)
+    private lazy var deleteFeed = Action(DeleteUserFeed.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -131,7 +131,7 @@ class LiveDetailViewModel {
         getGroupFeedSummary()
     }
     
-    func feedCellEvent(event: ArtistFeedCellContent.Output) {
+    func feedCellEvent(event: UserFeedCellContent.Output) {
         switch event {
         case .commentButtonTapped:
             guard let feed = state.feeds.first else { return }
@@ -159,7 +159,7 @@ class LiveDetailViewModel {
     }
     
     func getGroupFeedSummary() {
-        var uri = GetGroupFeed.URI()
+        var uri = GetGroupsUserFeeds.URI()
         uri.groupId = state.live.hostGroup.id
         uri.per = 1
         uri.page = 1
@@ -167,9 +167,9 @@ class LiveDetailViewModel {
         getGroupFeed.input((request: request, uri: uri))
     }
     
-    func deleteFeed(feed: ArtistFeedSummary) {
-        let request = DeleteArtistFeed.Request(id: feed.id)
-        let uri = DeleteArtistFeed.URI()
+    func deleteFeed(feed: UserFeedSummary) {
+        let request = DeleteUserFeed.Request(id: feed.id)
+        let uri = DeleteUserFeed.URI()
         deleteFeed.input((request: request, uri: uri))
     }
     

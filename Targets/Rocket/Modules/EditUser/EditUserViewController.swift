@@ -224,22 +224,6 @@ final class EditUserViewController: UIViewController, Instantiable {
             topSpacer.heightAnchor.constraint(equalToConstant: 16),
         ])
         
-        mainView.addArrangedSubview(displayNameInputView)
-        NSLayoutConstraint.activate([
-            displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
-        
-        mainView.addArrangedSubview(biographyInputView)
-        NSLayoutConstraint.activate([
-            biographyInputView.heightAnchor.constraint(equalToConstant: 200),
-        ])
-        
-//        mainView.addArrangedSubview(partInputView)
-//        partInputView.selectInputView(inputView: partPickerView)
-//        NSLayoutConstraint.activate([
-//            partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-//        ])
-        
         mainView.addArrangedSubview(thumbnailInputView)
         NSLayoutConstraint.activate([
             thumbnailInputView.heightAnchor.constraint(equalToConstant: 150),
@@ -268,6 +252,22 @@ final class EditUserViewController: UIViewController, Instantiable {
             changeProfileImageButton.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
             changeProfileImageButton.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
         ])
+        
+        mainView.addArrangedSubview(displayNameInputView)
+        NSLayoutConstraint.activate([
+            displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
+        mainView.addArrangedSubview(biographyInputView)
+        NSLayoutConstraint.activate([
+            biographyInputView.heightAnchor.constraint(equalToConstant: 200),
+        ])
+        
+//        mainView.addArrangedSubview(partInputView)
+//        partInputView.selectInputView(inputView: partPickerView)
+//        NSLayoutConstraint.activate([
+//            partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        ])
         
         mainView.addArrangedSubview(registerButton)
         NSLayoutConstraint.activate([

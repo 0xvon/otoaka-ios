@@ -115,6 +115,10 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        let fan = self.fans[indexPath.section]
+        
+        let user = self.viewModel.state.users[indexPath.section]
+        let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+        self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

@@ -153,12 +153,16 @@ final class PostViewController: UIViewController, Instantiable {
                 }
             case .didGetThumbnail(let state):
                 switch state {
-                case .movie(let url):
+                case .movie(let url, _):
                     let image = generateThumbnailFromVideo(url)
                     movieThumbnailImageView.image = image
                     cancelMovieButton.isHidden = false
                 case .youtube(let url):
                     dependencyProvider.imagePipeline.loadImage(url, into: movieThumbnailImageView)
+                    cancelMovieButton.isHidden = false
+                case .spotify(let url):
+                    let image = generateThumbnailFromVideo(url)
+                    movieThumbnailImageView.image = image
                     cancelMovieButton.isHidden = false
                 case .none:
                     movieThumbnailImageView.image = nil
@@ -385,7 +389,7 @@ final class PostViewController: UIViewController, Instantiable {
     }
     
     @objc private func cancelMovie(_ sender: UIButton) {
-        self.viewModel.didUpdatePost(post: nil)
+        self.viewModel.didUpdatePost(post: .none)
     }
 }
 

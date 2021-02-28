@@ -184,6 +184,9 @@ extension CommentListViewController: UITableViewDelegate, UITableViewDataSource 
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let comment = viewModel.state.comments[indexPath.section]
+        let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: comment.author)
+        self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

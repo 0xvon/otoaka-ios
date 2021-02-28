@@ -19,17 +19,15 @@ class PostViewModel {
         case movie(URL, PHAsset?)
         case youtube(URL)
         case spotify(URL)
-    }
-    
-    enum ThumbnailType {
-        case movie(URL)
-        case youtube(URL)
         case none
     }
     
     struct State {
         var post: PostType?
         var text: String?
+        var title: String?
+        var group: Group?
+        var ogpUrl: String?
         let maxLength: Int = 140
     }
     
@@ -40,9 +38,9 @@ class PostViewModel {
     }
     
     enum Output {
-        case didPostArtistFeed(ArtistFeed)
+        case didPostArtistFeed(UserFeed)
         case updateSubmittableState(PageState)
-        case didGetThumbnail(ThumbnailType)
+        case didGetThumbnail(PostType)
         case reportError(Error)
     }
     
@@ -51,7 +49,7 @@ class PostViewModel {
     private(set) var state: State
     var cancellables: Set<AnyCancellable> = []
     
-    private lazy var createArtistFeedAction = Action(CreateArtistFeed.self, httpClient: self.apiClient)
+    private lazy var createUserFeedAction = Action(CreateUserFeed.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -62,13 +60,13 @@ class PostViewModel {
         self.dependencyProvider = dependencyProvider
         self.state = State()
         
-        createArtistFeedAction.elements
+        createUserFeedAction.elements
             .map(Output.didPostArtistFeed).eraseToAnyPublisher()
-            .merge(with: createArtistFeedAction.errors.map(Output.reportError))
+            .merge(with: createUserFeedAction.errors.map(Output.reportError))
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
         
-        createArtistFeedAction.elements
+        createUserFeedAction.elements
             .sink(receiveValue: { [unowned self] _ in
                 outputSubject.send(.updateSubmittableState(.editting(true)))
             })
@@ -82,7 +80,7 @@ class PostViewModel {
         outputSubject.send(.updateSubmittableState(.editting(submittable)))
     }
     
-    func didUpdatePost(post: PostType?) {
+    func didUpdatePost(post: PostType) {
         switch post {
         case .movie(_, _):
             break
@@ -110,7 +108,7 @@ class PostViewModel {
                 outputSubject.send(.updateSubmittableState(.invalidUrl))
                 outputSubject.send(.didGetThumbnail(.none))
             }
-        case nil:
+        case .none:
             self.state.post = nil
         }
     }
@@ -125,6 +123,8 @@ class PostViewModel {
         outputSubject.send(.updateSubmittableState(.loading))
         guard let text = state.text else { return }
         guard let post = state.post else { return }
+        guard let title = state.title else { return }
+        guard let group = state.group else { return }
         switch post {
         case .movie(_, _):
             break
@@ -142,8 +142,10 @@ class PostViewModel {
         case .spotify(_):
             break
         case .youtube(let url):
-            let request = CreateArtistFeed.Request(text: text, feedType: .youtube(url))
-            createArtistFeedAction.input((request: request, uri: CreateArtistFeed.URI()))
+            // TODO: fix logic
+            let request = CreateUserFeed.Request(text: text, feedType: .youtube(url), ogpUrl: state.ogpUrl, groupId: group.id, title: title)
+            createUserFeedAction.input((request: request, uri: CreateUserFeed.URI()))
+        case .none: break
         }
     }
 }

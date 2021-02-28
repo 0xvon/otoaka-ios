@@ -23,7 +23,7 @@ class BandDetailViewModel {
     struct State {
         var group: Group
         var lives: [Live] = []
-        var feeds: [ArtistFeedSummary] = []
+        var feeds: [UserFeedSummary] = []
         var groupDetail: GetGroup.Response?
         var channelItem: ChannelDetail.ChannelItem?
         let role: RoleProperties
@@ -45,7 +45,7 @@ class BandDetailViewModel {
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
         case updateLiveSummary(Live?)
-        case updateFeedSummary(ArtistFeedSummary?)
+        case updateFeedSummary(UserFeedSummary?)
         case didGetChart(Group, ChannelDetail.ChannelItem?)
         case didCreatedInvitation(InviteGroup.Invitation)
         case pushToLiveDetail(LiveDetailViewController.Input)
@@ -55,8 +55,8 @@ class BandDetailViewModel {
         case pushToGroupFeedList(FeedListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
-        case didDeleteFeedButtonTapped(ArtistFeedSummary)
-        case didShareFeedButtonTapped(ArtistFeedSummary)
+        case didDeleteFeedButtonTapped(UserFeedSummary)
+        case didShareFeedButtonTapped(UserFeedSummary)
         case reportError(Error)
     }
     
@@ -68,9 +68,9 @@ class BandDetailViewModel {
     private lazy var inviteGroup = Action(InviteGroup.self, httpClient: self.apiClient)
     private lazy var getGroup = Action(GetGroup.self, httpClient: self.apiClient)
     private lazy var getGroupLives = Action(GetGroupLives.self, httpClient: self.apiClient)
-    private lazy var getGroupFeed = Action(GetGroupFeed.self, httpClient: self.apiClient)
+    private lazy var getGroupFeed = Action(GetGroupsUserFeeds.self, httpClient: self.apiClient)
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
-    private lazy var deleteFeed = Action(DeleteArtistFeed.self, httpClient: self.apiClient)
+    private lazy var deleteFeed = Action(DeleteUserFeed.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -188,7 +188,7 @@ class BandDetailViewModel {
         }
     }
     
-    func feedCellEvent(event: ArtistFeedCellContent.Output) {
+    func feedCellEvent(event: UserFeedCellContent.Output) {
         switch event {
         case .commentButtonTapped:
             guard let feed = state.feeds.first else { return }
@@ -223,7 +223,7 @@ class BandDetailViewModel {
     }
     
     private func getGroupFeedSummary() {
-        var uri = GetGroupFeed.URI()
+        var uri = GetGroupsUserFeeds.URI()
         uri.groupId = state.group.id
         uri.per = 1
         uri.page = 1
@@ -244,9 +244,9 @@ class BandDetailViewModel {
         listChannel.input((request: request, uri: uri))
     }
     
-    func deleteFeed(feed: ArtistFeedSummary) {
-        let request = DeleteArtistFeed.Request(id: feed.id)
-        let uri = DeleteArtistFeed.URI()
+    func deleteFeed(feed: UserFeedSummary) {
+        let request = DeleteUserFeed.Request(id: feed.id)
+        let uri = DeleteUserFeed.URI()
         deleteFeed.input((request: request, uri: uri))
     }
 }

@@ -65,9 +65,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
 
     private let feedSectionHeader = SummarySectionHeader(title: "FEED")
-    private lazy var feedCellContent: ArtistFeedCellContent = {
-        let content = UINib(nibName: "ArtistFeedCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! ArtistFeedCellContent
+    private lazy var feedCellContent: UserFeedCellContent = {
+        let content = UINib(nibName: "UserFeedCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! UserFeedCellContent
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             content.heightAnchor.constraint(equalToConstant: 300),

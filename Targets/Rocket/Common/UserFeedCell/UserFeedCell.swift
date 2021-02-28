@@ -9,15 +9,15 @@ import UIKit
 import Endpoint
 import ImagePipeline
 
-class ArtistFeedCell: UITableViewCell, ReusableCell {
-    typealias Input = ArtistFeedCellContent.Input
-    typealias Output = ArtistFeedCellContent.Output
-    static var reusableIdentifier: String { "ArtistFeedCell" }
+class UserFeedCell: UITableViewCell, ReusableCell {
+    typealias Input = UserFeedCellContent.Input
+    typealias Output = UserFeedCellContent.Output
+    static var reusableIdentifier: String { "UserFeedCell" }
 
-    private let _contentView: ArtistFeedCellContent
+    private let _contentView: UserFeedCellContent
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        _contentView = UINib(nibName: "ArtistFeedCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! ArtistFeedCellContent
+        _contentView = UINib(nibName: "UserFeedCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! UserFeedCellContent
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -53,10 +53,10 @@ class ArtistFeedCell: UITableViewCell, ReusableCell {
 }
 
 
-class ArtistFeedCellContent: UIView {
+class UserFeedCellContent: UIView {
     typealias Input = (
         user: User,
-        feed: ArtistFeedSummary,
+        feed: UserFeedSummary,
         imagePipeline: ImagePipeline
     )
     enum Output {

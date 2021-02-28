@@ -54,9 +54,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     private let feedSectionHeader = SummarySectionHeader(title: "FEED")
     // FIXME: Use a safe way to instantiate views from xib
-    private lazy var feedCellContent: ArtistFeedCellContent = {
-        let content = UINib(nibName: "ArtistFeedCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! ArtistFeedCellContent
+    private lazy var feedCellContent: UserFeedCellContent = {
+        let content = UINib(nibName: "UserFeedCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! UserFeedCellContent
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             content.heightAnchor.constraint(equalToConstant: 300),

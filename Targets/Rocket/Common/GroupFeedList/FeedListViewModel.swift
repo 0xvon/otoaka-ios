@@ -17,15 +17,15 @@ class FeedListViewModel {
     }
     
     enum DataSourceStorage {
-        case groupFeed(PaginationRequest<GetGroupFeed>)
+        case groupFeed(PaginationRequest<GetGroupsUserFeeds>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
             switch dataSource {
             case .groupFeed(let group):
-                var uri = GetGroupFeed.URI()
+                var uri = GetGroupsUserFeeds.URI()
                 uri.groupId = group.id
-                let request = PaginationRequest<GetGroupFeed>(apiClient: apiClient, uri: uri)
+                let request = PaginationRequest<GetGroupsUserFeeds>(apiClient: apiClient, uri: uri)
                 self = .groupFeed(request)
             case .none: self = .none
             }
@@ -33,7 +33,7 @@ class FeedListViewModel {
     }
     
     struct State {
-        var feeds: [ArtistFeedSummary] = []
+        var feeds: [UserFeedSummary] = []
     }
     
     enum Output {
@@ -51,7 +51,7 @@ class FeedListViewModel {
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
-    private lazy var deleteFeedAction = Action(DeleteArtistFeed.self, httpClient: self.apiClient)
+    private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: self.apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
@@ -83,7 +83,7 @@ class FeedListViewModel {
         }
     }
     
-    private func updateState(with result: PaginationEvent<Page<ArtistFeedSummary>>) {
+    private func updateState(with result: PaginationEvent<Page<UserFeedSummary>>) {
         switch result {
         case .initial(let res):
             self.state.feeds = res.items
@@ -122,8 +122,8 @@ class FeedListViewModel {
     
     func deleteFeed(cellIndex: Int) {
         let feed = state.feeds[cellIndex]
-        let request = DeleteArtistFeed.Request(id: feed.id)
-        let uri = DeleteArtistFeed.URI()
+        let request = DeleteUserFeed.Request(id: feed.id)
+        let uri = DeleteUserFeed.URI()
         deleteFeedAction.input((request: request, uri: uri))
     }
 }

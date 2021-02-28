@@ -35,7 +35,7 @@ final class FeedViewController: UITableViewController {
         tableView.showsVerticalScrollIndicator = false
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.separatorStyle = .none
-        tableView.registerCellClass(ArtistFeedCell.self)
+        tableView.registerCellClass(UserFeedCell.self)
         refreshControl = BrandRefreshControl()
         
         bind()
@@ -100,14 +100,9 @@ final class FeedViewController: UITableViewController {
     
     private func setupFloatingItems(userRole: RoleProperties) {
         let items: [FloatingButtonItem]
-        switch userRole {
-        case .artist(_):
-            let createFeedView = FloatingButtonItem(icon: UIImage(named: "post")!)
-            createFeedView.addTarget(self, action: #selector(createFeed), for: .touchUpInside)
-            items = [createFeedView]
-        case .fan(_):
-            items = []
-        }
+        let createFeedView = FloatingButtonItem(icon: UIImage(named: "post")!)
+        createFeedView.addTarget(self, action: #selector(createFeed), for: .touchUpInside)
+        items = [createFeedView]
         let floatingController = dependencyProvider.viewHierarchy.floatingViewController
         floatingController.setFloatingButtonItems(items)
     }
@@ -122,7 +117,7 @@ extension FeedViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let feed = viewModel.feeds[indexPath.row]
         let cell = tableView.dequeueReusableCell(
-            ArtistFeedCell.self,
+            UserFeedCell.self,
             input: (user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline),
             for: indexPath
         )
@@ -163,26 +158,14 @@ extension FeedViewController {
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
-            switch dependencyProvider.user.role {
-            case .artist(_):
-                let emptyCollectionView = EmptyCollectionView(emptyType: .feedBand, actionButtonTitle: "フィードを投稿してみる")
-                emptyCollectionView.listen { [unowned self] in
-                    let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
-                    let nav = BrandNavigationController(rootViewController: vc)
-                    present(nav, animated: true, completion: nil)
-                }
-                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-                return emptyCollectionView
-            case .fan(_):
-                let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す")
-                emptyCollectionView.listen { [unowned self] in
-                    let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
-                    vc.inject(.group(""))
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-                return emptyCollectionView
+            let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "フィードを投稿してみる")
+            emptyCollectionView.listen { [unowned self] in
+                let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
+                let nav = BrandNavigationController(rootViewController: vc)
+                present(nav, animated: true, completion: nil)
             }
+            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+            return emptyCollectionView
             
         }()
         tableView.backgroundView = isDisplay ? emptyCollectionView : nil
