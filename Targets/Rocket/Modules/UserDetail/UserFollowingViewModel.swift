@@ -83,7 +83,7 @@ class UserFollowingViewModel {
     func didGetUserDetail(isFollowing: Bool, followersCount: Int) {
         state.isFollowing = isFollowing
         state.followersCount = followersCount
-        outputSubject.send(.updateIsButtonEnabled(isFollowing))
+        outputSubject.send(.updateFollowing(isFollowing))
         outputSubject.send(.updateFollowersCount(followersCount))
         outputSubject.send(.updateIsButtonEnabled(true))
     }
