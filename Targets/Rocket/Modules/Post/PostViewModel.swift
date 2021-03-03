@@ -27,20 +27,20 @@ class PostViewModel {
         var text: String?
         var title: String?
         var group: Group?
+        var thumbnailUrl: URL?
         var ogpUrl: String?
-        let maxLength: Int = 140
+        let maxLength: Int = 40
     }
     
     enum PageState {
         case loading
         case editting(Bool)
-        case invalidUrl
     }
     
     enum Output {
-        case didPostArtistFeed(UserFeed)
+        case didPostUserFeed(UserFeed)
         case updateSubmittableState(PageState)
-        case didGetThumbnail(PostType)
+        case didSelectPost
         case reportError(Error)
     }
     
@@ -61,7 +61,7 @@ class PostViewModel {
         self.state = State()
         
         createUserFeedAction.elements
-            .map(Output.didPostArtistFeed).eraseToAnyPublisher()
+            .map(Output.didPostUserFeed).eraseToAnyPublisher()
             .merge(with: createUserFeedAction.errors.map(Output.reportError))
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
@@ -75,48 +75,35 @@ class PostViewModel {
     
     func didUpdateInputText(text: String?) {
         self.state.text = text
-        
-        let submittable = (state.text != nil && state.post != nil)
-        outputSubject.send(.updateSubmittableState(.editting(submittable)))
+        validatePost()
     }
     
-    func didUpdatePost(post: PostType) {
-        switch post {
-        case .movie(_, _):
-            break
-//            if let url = url, let asset = asset {
-//                print("yo")
-//                self.s3Client.uploadMovie(url: url, asset: asset) { (videoUrl, error) in
-//                    if let error = error {
-//                        self.outputHandler(.error(ViewModelError.notFoundError(error)))
-//                    }
-//                    guard let videoUrl = videoUrl else { return }
-//                    print(videoUrl)
-//                    self.outputHandler(.post)
-//                }
-//            }
-        case .spotify(_):
-            break
-        case .youtube(let url):
-            if let thumbnail = getYouTubeThumbnail(url: url.absoluteString) {
-                self.state.post = post
-                let submittable = (state.text != nil && state.post != nil)
-                outputSubject.send(.updateSubmittableState(.editting(submittable)))
-                outputSubject.send(.didGetThumbnail(.youtube(thumbnail)))
-            } else {
-                state.post = nil
-                outputSubject.send(.updateSubmittableState(.invalidUrl))
-                outputSubject.send(.didGetThumbnail(.none))
-            }
-        case .none:
-            self.state.post = nil
+    func didSelectTrack(group: Group, track: InternalDomain.ChannelDetail.ChannelItem) {
+        state.title = track.snippet?.title
+        state.group = group
+        if let videoId = track.id.videoId, let url = URL(string: "https://youtube.com/watch?v=\(videoId)") {
+            state.post = .youtube(url)
         }
+        
+        if let snippet = track.snippet, let thumbnails = snippet.thumbnails, let high = thumbnails.high, let url = URL(string: high.url ?? "") {
+            state.thumbnailUrl = url
+        }
+        
+        outputSubject.send(.didSelectPost)
+        validatePost()
     }
     
-    func getYouTubeThumbnail(url: String) -> URL?  {
-        let youTubeClient = YouTubeClient(url: url)
-        let thumbnail = youTubeClient.getThumbnailUrl()
-        return thumbnail
+    func validatePost() {
+        let submittable = (
+            state.text != nil
+                && state.text?.count ?? 0 <= state.maxLength
+                && state.post != nil
+                && state.thumbnailUrl != nil
+                && state.title != nil
+                && state.group != nil
+        )
+        
+        outputSubject.send(.updateSubmittableState(.editting(submittable)))
     }
 
     func post() {

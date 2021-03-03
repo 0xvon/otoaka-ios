@@ -23,23 +23,37 @@ final class PostViewController: UIViewController, Instantiable {
         postView.backgroundColor = Brand.color(for: .background(.primary))
         return postView
     }()
+    private lazy var feedPreview: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = Brand.color(for: .background(.cellSelected))
+        view.layer.cornerRadius = 16
+        view.layer.borderWidth = 1
+        view.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+        view.clipsToBounds = true
+        return view
+    }()
     private lazy var textView: UITextView = {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.text = ""
-        textView.isScrollEnabled = true
+        textView.isScrollEnabled = false
         textView.backgroundColor = .clear
         textView.delegate = self
-        textView.placeholder = "MV・好きな音楽・オススメのバンドを共有しよう"
+        textView.placeholder = "歌詞やMCでの言葉を添えよう！"
+        textView.placeholderTextView.textAlignment = .center
         textView.placeholderColor = Brand.color(for: .background(.secondary))
-        textView.font = Brand.font(for: .largeStrong)
+        textView.font = Brand.font(for: .xlargeStrong)
         textView.textColor = Brand.color(for: .text(.primary))
+        textView.textAlignment = .center
+        
+        textView.returnKeyType = .done
         return textView
     }()
     private lazy var numOfTextLabel: UILabel = {
         let numOfTextLabel = UILabel()
         numOfTextLabel.translatesAutoresizingMaskIntoConstraints = false
-        numOfTextLabel.text = "140"
+        numOfTextLabel.text = "\(viewModel.state.maxLength)"
         numOfTextLabel.font = Brand.font(for: .medium)
         return numOfTextLabel
     }()
@@ -58,10 +72,24 @@ final class PostViewController: UIViewController, Instantiable {
     private lazy var avatarImageView: UIImageView = {
         let avatarImageView = UIImageView()
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
-        avatarImageView.layer.cornerRadius = 30
+        avatarImageView.layer.cornerRadius = 20
         avatarImageView.clipsToBounds = true
         avatarImageView.contentMode = .scaleAspectFill
         return avatarImageView
+    }()
+    private lazy var userNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .medium)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var trackInfoLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .small)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
     }()
     private lazy var postButton: UIButton = {
         let postButton = UIButton()
@@ -78,6 +106,7 @@ final class PostViewController: UIViewController, Instantiable {
         movieThumbnailImageView.layer.cornerRadius = 16
         movieThumbnailImageView.contentMode = .scaleAspectFill
         movieThumbnailImageView.clipsToBounds = true
+        movieThumbnailImageView.layer.opacity = 0.6
         return movieThumbnailImageView
     }()
     private lazy var cancelMovieButton: UIButton = {
@@ -137,7 +166,7 @@ final class PostViewController: UIViewController, Instantiable {
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didPostArtistFeed(_):
+            case .didPostUserFeed(_):
                 navigationController?.popViewController(animated: true)
             case .updateSubmittableState(let pageState):
                 switch pageState {
@@ -148,28 +177,14 @@ final class PostViewController: UIViewController, Instantiable {
                 case .loading:
                     navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
                     activityIndicator.startAnimating()
-                case .invalidUrl:
-                    showAlert(title: "エラー", message: "有効なURLを入力してください")
-                }
-            case .didGetThumbnail(let state):
-                switch state {
-                case .movie(let url, _):
-                    let image = generateThumbnailFromVideo(url)
-                    movieThumbnailImageView.image = image
-                    cancelMovieButton.isHidden = false
-                case .youtube(let url):
-                    dependencyProvider.imagePipeline.loadImage(url, into: movieThumbnailImageView)
-                    cancelMovieButton.isHidden = false
-                case .spotify(let url):
-                    let image = generateThumbnailFromVideo(url)
-                    movieThumbnailImageView.image = image
-                    cancelMovieButton.isHidden = false
-                case .none:
-                    movieThumbnailImageView.image = nil
-                    cancelMovieButton.isHidden = true
                 }
             case .reportError(let error):
                 showAlert(title: "エラー", message: String(describing: error))
+            case .didSelectPost:
+                trackInfoLabel.text = viewModel.state.title
+                if let thumbnail = viewModel.state.thumbnailUrl {
+                    dependencyProvider.imagePipeline.loadImage(thumbnail, into: movieThumbnailImageView)
+                }
             }
         }.store(in: &cancellables)
     }
@@ -185,6 +200,14 @@ final class PostViewController: UIViewController, Instantiable {
             postView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             postView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             postView.bottomAnchor.constraint(equalTo: self.view.keyboardSafeArea.layoutGuide.bottomAnchor),
+        ])
+        
+        postView.addSubview(feedPreview)
+        NSLayoutConstraint.activate([
+            feedPreview.topAnchor.constraint(equalTo: postView.topAnchor, constant: 24),
+            feedPreview.leftAnchor.constraint(equalTo: postView.leftAnchor, constant: 16),
+            feedPreview.rightAnchor.constraint(equalTo: postView.rightAnchor, constant: -16),
+            feedPreview.heightAnchor.constraint(equalTo: feedPreview.widthAnchor, multiplier: 1 / 1.91),
         ])
         
         postView.addSubview(sectionView)
@@ -210,38 +233,55 @@ final class PostViewController: UIViewController, Instantiable {
             numOfTextLabel.bottomAnchor.constraint(equalTo: sectionView.topAnchor, constant: -16),
         ])
         
-        postView.addSubview(avatarImageView)
+        feedPreview.addSubview(movieThumbnailImageView)
         NSLayoutConstraint.activate([
-            avatarImageView.topAnchor.constraint(equalTo: postView.topAnchor, constant: 16),
-            avatarImageView.leftAnchor.constraint(equalTo: postView.leftAnchor, constant: 16),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 60),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 60),
+            movieThumbnailImageView.rightAnchor.constraint(equalTo: feedPreview.rightAnchor),
+            movieThumbnailImageView.leftAnchor.constraint(equalTo: feedPreview.leftAnchor),
+            movieThumbnailImageView.topAnchor.constraint(equalTo: feedPreview.topAnchor),
+            movieThumbnailImageView.bottomAnchor.constraint(equalTo: feedPreview.bottomAnchor),
         ])
         
-        postView.addSubview(textView)
+        feedPreview.addSubview(avatarImageView)
         NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: postView.topAnchor, constant: 16),
-            textView.rightAnchor.constraint(equalTo: postView.rightAnchor, constant: -16),
-            textView.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
+            avatarImageView.topAnchor.constraint(equalTo: feedPreview.topAnchor, constant: 16),
+            avatarImageView.leftAnchor.constraint(equalTo: feedPreview.leftAnchor, constant: 16),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 40),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 40),
         ])
         
-        postView.addSubview(movieThumbnailImageView)
+        feedPreview.addSubview(userNameLabel)
         NSLayoutConstraint.activate([
-            movieThumbnailImageView.heightAnchor.constraint(equalToConstant: 100),
-            movieThumbnailImageView.widthAnchor.constraint(equalToConstant: 200),
-            movieThumbnailImageView.rightAnchor.constraint(equalTo: postView.rightAnchor, constant: -16),
-            movieThumbnailImageView.bottomAnchor.constraint(equalTo: numOfTextLabel.topAnchor, constant: -16),
-            movieThumbnailImageView.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 16),
+            userNameLabel.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
+            userNameLabel.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
+            userNameLabel.rightAnchor.constraint(equalTo: feedPreview.rightAnchor, constant: 8),
         ])
         
-        postView.addSubview(cancelMovieButton)
+        feedPreview.addSubview(trackInfoLabel)
         NSLayoutConstraint.activate([
-            cancelMovieButton.topAnchor.constraint(equalTo: movieThumbnailImageView.topAnchor, constant: -12),
-            cancelMovieButton.rightAnchor.constraint(equalTo: movieThumbnailImageView.rightAnchor, constant: 12),
-            cancelMovieButton.widthAnchor.constraint(equalToConstant: 24),
-            cancelMovieButton.heightAnchor.constraint(equalToConstant: 24),
+            trackInfoLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
+            trackInfoLabel.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
+            trackInfoLabel.rightAnchor.constraint(equalTo: feedPreview.rightAnchor, constant: 8),
         ])
         
+        feedPreview.addSubview(textView)
+        NSLayoutConstraint.activate([
+            textView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 8),
+            textView.rightAnchor.constraint(equalTo: feedPreview.rightAnchor, constant: -8),
+            textView.leftAnchor.constraint(equalTo: feedPreview.leftAnchor, constant: 8),
+            textView.bottomAnchor.constraint(equalTo: feedPreview.bottomAnchor, constant: -8),
+        ])
+        
+        
+//        postView.addSubview(cancelMovieButton)
+//        NSLayoutConstraint.activate([
+//            cancelMovieButton.topAnchor.constraint(equalTo: movieThumbnailImageView.topAnchor, constant: -12),
+//            cancelMovieButton.rightAnchor.constraint(equalTo: movieThumbnailImageView.rightAnchor, constant: 12),
+//            cancelMovieButton.widthAnchor.constraint(equalToConstant: 24),
+//            cancelMovieButton.heightAnchor.constraint(equalToConstant: 24),
+//        ])
+        
+        userNameLabel.text = dependencyProvider.user.name
+        trackInfoLabel.text = nil
         if let thumbnailURL = dependencyProvider.user.thumbnailURL.flatMap(URL.init(string: )) {
             dependencyProvider.imagePipeline.loadImage(thumbnailURL, into: avatarImageView)
         }
@@ -284,6 +324,14 @@ final class PostViewController: UIViewController, Instantiable {
         youtubeButtonImage.translatesAutoresizingMaskIntoConstraints = false
         youtubeButtonView.addSubview(youtubeButtonImage)
         
+        let searchTitleLabel = UILabel()
+        searchTitleLabel.text = "動画を選択"
+        searchTitleLabel.textAlignment = .center
+        searchTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        searchTitleLabel.font = Brand.font(for: .largeStrong)
+        searchTitleLabel.textColor = Brand.color(for: .text(.primary))
+        youtubeButtonView.addSubview(searchTitleLabel)
+        
         let youtubeButton = UIButton()
         youtubeButton.backgroundColor = .clear
         youtubeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -309,7 +357,8 @@ final class PostViewController: UIViewController, Instantiable {
         let constraints: [NSLayoutConstraint] = [
             stackView.heightAnchor.constraint(equalToConstant: 60),
             stackView.centerYAnchor.constraint(equalTo: sectionView.centerYAnchor),
-            stackView.leftAnchor.constraint(equalTo: sectionView.leftAnchor, constant: 16),
+//            stackView.leftAnchor.constraint(equalTo: sectionView.leftAnchor, constant: 16),
+            stackView.centerXAnchor.constraint(equalTo: sectionView.centerXAnchor),
             
             movieButtonView.widthAnchor.constraint(equalToConstant: 60),
             
@@ -323,12 +372,16 @@ final class PostViewController: UIViewController, Instantiable {
             movieButton.rightAnchor.constraint(equalTo: movieButtonView.rightAnchor),
             movieButton.leftAnchor.constraint(equalTo: movieButtonView.leftAnchor),
             
-            youtubeButtonView.widthAnchor.constraint(equalToConstant: 60),
+            youtubeButtonView.widthAnchor.constraint(equalToConstant: 140),
             
             youtubeButtonImage.widthAnchor.constraint(equalToConstant: 40),
             youtubeButtonImage.heightAnchor.constraint(equalToConstant: 40),
+            youtubeButtonImage.leftAnchor.constraint(equalTo: youtubeButtonView.leftAnchor),
             youtubeButtonImage.centerYAnchor.constraint(equalTo: youtubeButtonView.centerYAnchor),
-            youtubeButtonImage.centerXAnchor.constraint(equalTo: youtubeButtonView.centerXAnchor),
+            
+            searchTitleLabel.leftAnchor.constraint(equalTo: youtubeButtonImage.rightAnchor, constant: 8),
+            searchTitleLabel.rightAnchor.constraint(equalTo: youtubeButtonView.rightAnchor),
+            searchTitleLabel.centerYAnchor.constraint(equalTo: youtubeButtonView.centerYAnchor),
             
             youtubeButton.topAnchor.constraint(equalTo: youtubeButtonView.topAnchor),
             youtubeButton.bottomAnchor.constraint(equalTo: youtubeButtonView.bottomAnchor),
@@ -351,37 +404,23 @@ final class PostViewController: UIViewController, Instantiable {
     }
     
     @objc private func searchMovie(_ sender: Any) {
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary
-            picker.delegate = self
-            picker.mediaTypes = ["public.movie"]
-            self.present(picker, animated: true, completion: nil)
-        }
+//        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+//            let picker = UIImagePickerController()
+//            picker.sourceType = .photoLibrary
+//            picker.delegate = self
+//            picker.mediaTypes = ["public.movie"]
+//            self.present(picker, animated: true, completion: nil)
+//        }
     }
     
     @objc private func searchYoutube(_ sender: Any) {
-        let alertController = UIAlertController(
-            title: "YouTubeの動画URLを入力", message: nil, preferredStyle: UIAlertController.Style.alert)
-
-        let cancelAction = UIAlertAction(
-            title: "cancel", style: UIAlertAction.Style.cancel,
-            handler: { action in })
-        let doneAction = UIAlertAction(title: "ok", style: .default, handler: { [unowned self] action in
-            if let textFields = alertController.textFields, let text = textFields.first!.text, let url = URL(string: text) {
-                viewModel.didUpdatePost(post: .youtube(url))
-            }
-        })
-        alertController.addTextField(configurationHandler: {(text: UITextField!) -> Void in
-            text.text = ""
-            text.placeholder = "URLを入力"
-            text.keyboardType = .URL
-            text.tag = 1
-        })
-        alertController.addAction(cancelAction)
-        alertController.addAction(doneAction)
-
-        self.present(alertController, animated: true, completion: nil)
+        print("search")
+        let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
+        vc.listen { [unowned self] group, track in
+            viewModel.didSelectTrack(group: group, track: track)
+        }
+        let nav = BrandNavigationController(rootViewController: vc)
+        self.present(nav, animated: true, completion: nil)
     }
     
     @objc private func searchSpotify(_ sender: Any) {
@@ -389,7 +428,7 @@ final class PostViewController: UIViewController, Instantiable {
     }
     
     @objc private func cancelMovie(_ sender: UIButton) {
-        self.viewModel.didUpdatePost(post: .none)
+//        self.viewModel.didUpdatePost(post: .none)
     }
 }
 
@@ -401,32 +440,40 @@ extension PostViewController: UITextViewDelegate {
         let text: String? = textView.text.isEmpty ? nil : textView.text
         viewModel.didUpdateInputText(text: text)
     }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
 }
 
-extension PostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(
-        _ picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
-    ) {
-        let key = UIImagePickerController.InfoKey(rawValue: "UIImagePickerControllerMediaURL")
-        let videoUrl = info[key] as? NSURL
-        if let asset = info[.phAsset] as? PHAsset {
-            viewModel.didUpdatePost(post: .movie(videoUrl! as URL, asset))
-            self.dismiss(animated: true, completion: nil)
-        }
-    }
-    
-    private func generateThumbnailFromVideo(_ url: URL) -> UIImage? {
-        let asset = AVAsset(url: url)
-        let imageGenerator = AVAssetImageGenerator(asset: asset)
-        imageGenerator.appliesPreferredTrackTransform = true
-        var time = asset.duration
-        time.value = min(time.value, 2)
-        do {
-            let imageRef = try imageGenerator.copyCGImage(at: time, actualTime: nil)
-            return UIImage(cgImage: imageRef)
-        } catch {
-            return nil
-        }
-    }
-}
+//extension PostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+//    func imagePickerController(
+//        _ picker: UIImagePickerController,
+//        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+//    ) {
+//        let key = UIImagePickerController.InfoKey(rawValue: "UIImagePickerControllerMediaURL")
+//        let videoUrl = info[key] as? NSURL
+//        if let asset = info[.phAsset] as? PHAsset {
+//            viewModel.didUpdatePost(post: .movie(videoUrl! as URL, asset))
+//            self.dismiss(animated: true, completion: nil)
+//        }
+//    }
+//
+//    private func generateThumbnailFromVideo(_ url: URL) -> UIImage? {
+//        let asset = AVAsset(url: url)
+//        let imageGenerator = AVAssetImageGenerator(asset: asset)
+//        imageGenerator.appliesPreferredTrackTransform = true
+//        var time = asset.duration
+//        time.value = min(time.value, 2)
+//        do {
+//            let imageRef = try imageGenerator.copyCGImage(at: time, actualTime: nil)
+//            return UIImage(cgImage: imageRef)
+//        } catch {
+//            return nil
+//        }
+//    }
+//}

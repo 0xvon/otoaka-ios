@@ -16,7 +16,7 @@ public final class EmptyCollectionView: UIStackView {
         case followingGroup = "フォローしているバンドがまだいません。試しにバンドをフォローしてみましょう。"
         case groupList = "バンドがいません。"
         case userList = "ユーザーがいません。"
-        case chart = "Chartがまだありません。"
+        case chart = "動画がまだありません。"
         case request = "リクエストがまだありません。ここには他のバンドからの対バンリクエストが表示されます。試しに他のバンドにコンタクトを取ってみましょう。"
         case ticket = "チケットがまだありません。ここには取り置き予約したライブチケットが表示されます。いきたいライブを探して予約しましょう。"
         case search = "検索結果はありません。"

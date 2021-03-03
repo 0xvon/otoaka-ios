@@ -44,6 +44,9 @@ public class RocketAPIAdapter: HTTPClientAdapter {
             }
 
             var urlRequest = urlRequest
+            print("-------------")
+            print(idToken)
+            print("-------------")
             urlRequest.addValue("Bearer \(idToken)", forHTTPHeaderField: "Authorization")
             webAPIAdapter.beforeRequest(
                 urlRequest: urlRequest, requestBody: requestBody, completion: completion

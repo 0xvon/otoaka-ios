@@ -9,7 +9,6 @@ import Combine
 import Endpoint
 import SafariServices
 import UIComponent
-import UIKit
 
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group
@@ -115,7 +114,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         viewModel.viewDidLoad()
     }
 
@@ -271,10 +270,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 let vc = LiveDetailViewController(
                     dependencyProvider: self.dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToChartList(let input):
-                let vc = ChartListViewController(
-                    dependencyProvider: self.dependencyProvider, input: input)
-                self.navigationController?.pushViewController(vc, animated: true)
+//            case .pushToChartList(let input):
+//                let vc = ChartListViewController(
+//                    dependencyProvider: self.dependencyProvider, input: input)
+//                self.navigationController?.pushViewController(vc, animated: true)
             case .pushToCommentList(let input):
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: input)

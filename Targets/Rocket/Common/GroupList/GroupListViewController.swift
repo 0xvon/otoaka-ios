@@ -92,6 +92,11 @@ final class GroupListViewController: UIViewController, Instantiable {
         viewModel.refresh()
         sender.endRefreshing()
     }
+    
+    private var listener: (Group) -> Void = { _ in }
+    func listen(_ listener: @escaping (Group) -> Void) {
+        self.listener = listener
+    }
 }
 
 extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -126,10 +131,17 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let band = self.viewModel.state.groups[indexPath.section]
-        let vc = BandDetailViewController(
-            dependencyProvider: self.dependencyProvider, input: band)
-        let nav = self.navigationController ?? presentingViewController?.navigationController
-        nav?.pushViewController(vc, animated: true)
+        
+        switch viewModel.dataSource {
+        case .searchResultsToSelect(_):
+            self.listener(band)
+        case .followingGroups(_), .memberships(_), .searchResults(_):
+            let vc = BandDetailViewController(
+                dependencyProvider: self.dependencyProvider, input: band)
+            let nav = self.navigationController ?? presentingViewController?.navigationController
+            nav?.pushViewController(vc, animated: true)
+        case .none: break
+        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

@@ -49,7 +49,7 @@ class BandDetailViewModel {
         case didGetChart(Group, ChannelDetail.ChannelItem?)
         case didCreatedInvitation(InviteGroup.Invitation)
         case pushToLiveDetail(LiveDetailViewController.Input)
-        case pushToChartList(ChartListViewController.Input)
+//        case pushToChartList(ChartListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
         case pushToLiveList(LiveListViewController.Input)
         case pushToGroupFeedList(FeedListViewController.Input)
@@ -160,7 +160,8 @@ class BandDetailViewModel {
     func headerEvent(event: BandDetailHeaderView.Output) {
         switch event {
         case .track(.seeMoreChartsTapped):
-            outputSubject.send(.pushToChartList(state.group))
+            break
+//            outputSubject.send(.pushToChartList(state.group))
         case .track(.playButtonTapped):
             guard let item = state.channelItem,
                   let url = URL(string: "https://youtube.com/watch?v=\(item.id.videoId)")

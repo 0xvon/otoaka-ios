@@ -14,10 +14,12 @@ public struct ListChannel: EndpointProtocol {
     public typealias Response = ChannelDetail
     public struct URI: CodableURL {
         @StaticPath("youtube", "v3", "search") public var prefix: Void
-        @Query public var channelId: String
+        @Query public var channelId: String?
+        @Query public var q: String?
         @Query public var part: String
         @Query public var maxResults: Int?
         @Query public var order: String?
+        @Query public var type: String?
         public init() {}
     }
     public static let method: HTTPMethod = .get

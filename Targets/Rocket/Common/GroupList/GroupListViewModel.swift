@@ -21,12 +21,14 @@ class GroupListViewModel {
         case memberships(User.ID)
         case followingGroups(User.ID)
         case searchResults(String)
+        case searchResultsToSelect(String)
         case none
     }
 
     enum DataSourceStorage {
         case followingGroups(User.ID, PaginationRequest<FollowingGroups>)
         case searchResults(String, PaginationRequest<SearchGroup>)
+        case searchResultsToSelect(String, PaginationRequest<SearchGroup>)
         case memberships(User.ID)
         case none
 
@@ -38,6 +40,11 @@ class GroupListViewModel {
                 let request = PaginationRequest<FollowingGroups>(apiClient: apiClient, uri: followingGroupsUri)
                 self = .followingGroups(userId, request)
             case .searchResults(let query):
+                var searchGroupUri = SearchGroup.URI()
+                searchGroupUri.term = query
+                let request = PaginationRequest<SearchGroup>(apiClient: apiClient, uri: searchGroupUri)
+                self = .searchResults(query, request)
+            case .searchResultsToSelect(let query):
                 var searchGroupUri = SearchGroup.URI()
                 searchGroupUri.term = query
                 let request = PaginationRequest<SearchGroup>(apiClient: apiClient, uri: searchGroupUri)
@@ -56,6 +63,7 @@ class GroupListViewModel {
 
     private var storage: DataSourceStorage
     private(set) var state: State
+    private(set) var dataSource: DataSource
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     var cancellables: Set<AnyCancellable> = []
@@ -69,6 +77,7 @@ class GroupListViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
+        self.dataSource = input
         self.state = State()
 
         subscribe(storage: storage)
@@ -96,6 +105,10 @@ class GroupListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .searchResultsToSelect(_, pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case .memberships, .none: break
         }
     }
@@ -115,6 +128,7 @@ class GroupListViewModel {
 
     func inject(_ input: Input) {
         self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        self.dataSource = input
         subscribe(storage: storage)
         refresh()
     }
@@ -124,6 +138,8 @@ class GroupListViewModel {
         case let .followingGroups(_, pagination):
             pagination.refresh()
         case let .searchResults(_, pagination):
+            pagination.refresh()
+        case let .searchResultsToSelect(_, pagination):
             pagination.refresh()
         case .memberships(let userId):
             let request = Empty()
@@ -140,6 +156,8 @@ class GroupListViewModel {
         case let .followingGroups(_, pagination):
             pagination.next()
         case let .searchResults(_, pagination):
+            pagination.next()
+        case let .searchResultsToSelect(_, pagination):
             pagination.next()
         case .memberships: break
         case .none: break

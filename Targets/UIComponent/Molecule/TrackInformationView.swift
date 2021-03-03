@@ -126,10 +126,14 @@ public final class TrackInformationView: UIView {
 
     func update(input: Input) {
         if let groupItem = input.track {
-            guard let url = URL(string: groupItem.snippet.thumbnails.high.url) else { return }
-            input.imagePipeline.loadImage(url, into: artworkImageView)
-            releasedDataLabel.text = self.dateFormatter.string(from: groupItem.snippet.publishedAt)
-            trackNameLabel.text = groupItem.snippet.title
+            if let snippet = groupItem.snippet, let thumbnails = snippet.thumbnails, let high = thumbnails.high, let url = URL(string: high.url ?? "") {
+                input.imagePipeline.loadImage(url, into: artworkImageView)
+            }
+            if let snippet = groupItem.snippet, let publishedAt = snippet.publishedAt {
+                releasedDataLabel.text = self.dateFormatter.string(from: publishedAt)
+            }
+            
+            trackNameLabel.text = groupItem.snippet?.title
             playButton.isHidden = false
         } else {
             artworkImageView.image = nil

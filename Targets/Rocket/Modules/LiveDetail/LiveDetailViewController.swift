@@ -121,7 +121,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         viewModel.viewDidLoad()
     }
     

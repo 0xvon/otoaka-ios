@@ -100,8 +100,9 @@ class UserFeedCellContent: UIView {
         switch input.feed.feedType {
         case .youtube(let url):
             let youTubeClient = YouTubeClient(url: url.absoluteString)
-            let thumbnail = youTubeClient.getThumbnailUrl()
-            input.imagePipeline.loadImage(thumbnail!, into: thumbnailImageView)
+            if let thumbnail = youTubeClient.getThumbnailUrl() {
+                input.imagePipeline.loadImage(thumbnail, into: thumbnailImageView)
+            }
         }
         feedTitleLabel.text = input.feed.text
         dateLabel.text = dateFormatter.string(from: input.feed.createdAt)

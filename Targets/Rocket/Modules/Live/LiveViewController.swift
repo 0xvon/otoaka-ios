@@ -56,7 +56,7 @@ final class LiveViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         searchController.searchBar.showsScopeBar = true
-        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         setupFloatingItems(userRole: dependencyProvider.user.role)
     }
     
