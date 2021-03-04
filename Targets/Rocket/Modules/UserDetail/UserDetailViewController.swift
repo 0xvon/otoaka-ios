@@ -92,6 +92,18 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
     
+    private let groupSectionHeader = SummarySectionHeader(title: "GROUP")
+    private lazy var groupCellContent: GroupCellContent = {
+        let content = UINib(nibName: "GroupCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 300),
+        ])
+        return content
+    }()
+    private lazy var groupCellWrapper: UIView = Self.addPadding(to: self.groupCellContent)
+    
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
         paddingView.addSubview(view)
@@ -176,6 +188,13 @@ final class UserDetailViewController: UIViewController, Instantiable {
         feedCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(feedCellWrapper)
         
+        scrollStackView.addArrangedSubview(groupSectionHeader)
+        NSLayoutConstraint.activate([
+            groupSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+        ])
+        groupCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(groupCellWrapper)
+        
         let bottomSpacer = UIView()
         scrollStackView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
@@ -234,6 +253,12 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 userFollowingViewModel.didGetUserDetail(isFollowing: userDetail.isFollowing, followersCount: userDetail.followersCount)
                 headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount,  imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
+            case .pushToGroupDetail(let group):
+                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPlayTrack(let input):
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .didRefreshFeedSummary(let feed):
                 let isHidden = feed == nil
                 self.feedSectionHeader.isHidden = isHidden
@@ -241,6 +266,16 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 if let feed = feed {
                     self.feedCellContent.inject(input: (
                         user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline
+                    ))
+                }
+            case .didRefreshFollowingGroup(let group):
+                let isHidden = group == nil
+                self.groupSectionHeader.isHidden = isHidden
+                self.groupCellWrapper.isHidden = isHidden
+                if let group = group {
+                    self.groupCellContent.inject(input: (
+                        group: group,
+                        imagePipeline: dependencyProvider.imagePipeline
                     ))
                 }
             case .didDeleteFeedButtonTapped(let feed):
@@ -263,15 +298,15 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 viewModel.refresh()
             case .didToggleLikeFeed:
                 viewModel.refresh()
-            case .didRefreshFollowingGroupSummary:
-                break // TODO
-            case .pushToFeedList(_):
-                break
+            case .pushToFeedList(let input):
+                let vc = FeedListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .pushToUserList(let input):
                 let vc = UserListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToGroupList(_):
-                break
+            case .pushToGroupList(let input):
+                let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .pushToCommentList(let feed):
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: feed)
@@ -317,11 +352,21 @@ final class UserDetailViewController: UIViewController, Instantiable {
             self.viewModel.feedCellEvent(event: output)
         }
         
+        groupSectionHeader.listen { [unowned self] in
+            viewModel.didTapSeeMore(at: .group)
+        }
+        
+        groupCellContent.listen { [unowned self] output in
+            viewModel.groupCellEvent(event: output)
+        }
+        
         feedSectionHeader.listen { [unowned self] in
             self.viewModel.didTapSeeMore(at: .feed)
         }
         
         feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
+        
+        groupCellContent.addTarget(self, action: #selector(groupCellTaped), for: .touchUpInside)
         
     }
     
@@ -335,4 +380,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
+    
+    @objc private func groupCellTaped() { viewModel.didSelectRow(at: .group) }
 }

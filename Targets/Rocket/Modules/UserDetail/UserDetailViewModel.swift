@@ -18,11 +18,13 @@ class UserDetailViewModel {
     }
     enum SummaryRow {
         case feed
+        case group
     }
     struct State {
         var user: User
         var selfUser: User
         var feed: UserFeedSummary? = nil
+        var group: Group? = nil
         var userDetail: UserDetail?
         
         var displayType: DisplayType {
@@ -36,8 +38,10 @@ class UserDetailViewModel {
     
     enum Output {
         case didRefreshUserDetail(UserDetail)
+        case pushToGroupDetail(Group)
+        case pushToPlayTrack(PlayTrackViewController.Input)
         case didRefreshFeedSummary(UserFeedSummary?)
-        case didRefreshFollowingGroupSummary
+        case didRefreshFollowingGroup(Group?)
         case pushToFeedList(FeedListViewController.Input)
         case pushToGroupList(GroupListViewController.Input)
         case pushToUserList(UserListViewController.Input)
@@ -61,6 +65,7 @@ class UserDetailViewModel {
     
     private lazy var getUserDetailAction = Action(GetUserDetail.self, httpClient: apiClient)
     private lazy var getUsersFeedAction = Action(GetUserFeeds.self, httpClient: apiClient)
+    private lazy var followingGroupsAction = Action(FollowingGroups.self, httpClient: apiClient)
     private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: apiClient)
     private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
     private lazy var unLikeFeedAction = Action(UnlikeUserFeed.self, httpClient: apiClient)
@@ -74,6 +79,7 @@ class UserDetailViewModel {
         let errors = Publishers.MergeMany(
             getUserDetailAction.errors,
             getUsersFeedAction.errors,
+            followingGroupsAction.errors,
             deleteFeedAction.errors,
             likeFeedAction.errors,
             unLikeFeedAction.errors
@@ -82,6 +88,7 @@ class UserDetailViewModel {
         Publishers.MergeMany(
             getUserDetailAction.elements.map(Output.didRefreshUserDetail).eraseToAnyPublisher(),
             getUsersFeedAction.elements.map { .didRefreshFeedSummary($0.items.first) }.eraseToAnyPublisher(),
+            followingGroupsAction.elements.map { .didRefreshFollowingGroup($0.items.first) }.eraseToAnyPublisher(),
             deleteFeedAction.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
             likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
             unLikeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
@@ -91,10 +98,11 @@ class UserDetailViewModel {
         .store(in: &cancellables)
         
         getUserDetailAction.elements
-            .combineLatest(getUsersFeedAction.elements)
-            .sink(receiveValue: { [unowned self] userDetail, feeds in
+            .combineLatest(getUsersFeedAction.elements, followingGroupsAction.elements)
+            .sink(receiveValue: { [unowned self] userDetail, feeds, groups in
                 state.userDetail = userDetail
                 state.feed = feeds.items.first
+                state.group = groups.items.first
             })
             .store(in: &cancellables)
     }
@@ -103,10 +111,10 @@ class UserDetailViewModel {
         switch row {
         case .feed:
             guard let feed = state.feed else { return }
-            switch feed.feedType {
-            case .youtube(let url):
-                outputSubject.send(.openURLInBrowser(url))
-            }
+            outputSubject.send(.pushToPlayTrack(.userFeed(feed)))
+        case .group:
+            guard let group = state.group else { return }
+            outputSubject.send(.pushToGroupDetail(group))
         }
     }
     
@@ -117,6 +125,7 @@ class UserDetailViewModel {
     func refresh() {
         getUserDetail()
         getUsersFeedSummary()
+        getFollowingGroup()
     }
     
     func headerEvent(output: UserDetailHeaderView.Output) {
@@ -125,6 +134,12 @@ class UserDetailViewModel {
             outputSubject.send(.pushToUserList(.userFollowers(state.user.id)))
         case .followingUsersButtonTapped:
             outputSubject.send(.pushToUserList(.followingUsers(state.user.id)))
+        }
+    }
+    
+    func groupCellEvent(event: GroupCellContent.Output) {
+        switch event {
+        case .listenButtonTapped: break
         }
     }
     
@@ -162,6 +177,14 @@ class UserDetailViewModel {
         getUsersFeedAction.input((request: Empty(), uri: uri))
     }
     
+    private func getFollowingGroup() {
+        var uri = FollowingGroups.URI()
+        uri.id = state.user.id
+        uri.page = 1
+        uri.per = 1
+        followingGroupsAction.input((request: Empty(), uri: uri))
+    }
+    
     private func likeFeed(feed: UserFeedSummary) {
         let request = LikeUserFeed.Request(feedId: feed.id)
         let uri = LikeUserFeed.URI()
@@ -182,8 +205,10 @@ class UserDetailViewModel {
     
     func didTapSeeMore(at row: SummaryRow) {
         switch row {
-        case .feed: break
-//            outputSubject.send(.pushToFeedList(.groupFeed(state.group)))
+        case .feed:
+            outputSubject.send(.pushToFeedList(.userFeed(state.user)))
+        case .group:
+            outputSubject.send(.pushToGroupList(.followingGroups(state.user.id)))
         }
     }
 }
