@@ -64,3 +64,16 @@ extension UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
 }
+
+extension UIView {
+    func getSnapShot() -> UIImage? {
+        let rect = self.bounds
+        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+        guard let context: CGContext = UIGraphicsGetCurrentContext() else { return nil }
+        self.layer.render(in: context)
+        let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return image
+    }
+}

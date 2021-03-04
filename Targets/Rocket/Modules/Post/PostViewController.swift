@@ -80,14 +80,14 @@ final class PostViewController: UIViewController, Instantiable {
     private lazy var userNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .medium)
+        label.font = Brand.font(for: .mediumStrong)
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
     private lazy var trackInfoLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .small)
+        label.font = Brand.font(for: .smallStrong)
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
@@ -161,7 +161,7 @@ final class PostViewController: UIViewController, Instantiable {
     
     func bind() {
         postButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: viewModel.post)
+            .sink(receiveValue: postButtonTapped)
             .store(in: &cancellables)
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
@@ -260,7 +260,7 @@ final class PostViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             trackInfoLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 4),
             trackInfoLabel.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
-            trackInfoLabel.rightAnchor.constraint(equalTo: feedPreview.rightAnchor, constant: 8),
+            trackInfoLabel.rightAnchor.constraint(equalTo: feedPreview.rightAnchor, constant: -8),
         ])
         
         feedPreview.addSubview(textView)
@@ -429,6 +429,28 @@ final class PostViewController: UIViewController, Instantiable {
     
     @objc private func cancelMovie(_ sender: UIButton) {
 //        self.viewModel.didUpdatePost(post: .none)
+    }
+    
+    @objc func postButtonTapped() {
+        guard let ogpImage: UIImage = feedPreview.getSnapShot() else { return }
+        UIImageWriteToSavedPhotosAlbum(ogpImage, self, #selector(didFinishSavingImage(_:didFinishSavingWithError:contextInfo:)), nil)
+        print("hello")
+    }
+    
+    @objc func didFinishSavingImage(_ image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutableRawPointer) {
+        
+        // 結果によって出すアラートを変更する
+        var title = "保存完了"
+        var message = "カメラロールに保存しました"
+        
+        if error != nil {
+            title = "エラー"
+            message = "保存に失敗しました"
+        }
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 
