@@ -30,7 +30,7 @@ final class FeedViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "ホーム"
+        title = "フィード"
         view.backgroundColor = Brand.color(for: .background(.primary))
         tableView.showsVerticalScrollIndicator = false
         tableView.tableFooterView = UIView(frame: .zero)
@@ -62,7 +62,7 @@ final class FeedViewController: UITableViewController {
                 }
             case .didDeleteFeed:
                 viewModel.refresh.send(())
-            case .didLikeFeed:
+            case .didToggleLikeFeed:
                 viewModel.refresh.send(())
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
@@ -131,6 +131,8 @@ extension FeedViewController {
                 self?.deleteFeedButtonTapped(cellIndex: indexPath.row)
             case .likeFeedButtonTapped:
                 self?.viewModel.likeFeed(cellIndex: indexPath.row)
+            case .unlikeFeedButtonTapped:
+                self?.viewModel.unlikeFeed(cellIndex: indexPath.row)
             case .shareButtonTapped:
                 self?.createShare(cellIndex: indexPath.row)
             }
@@ -151,12 +153,14 @@ extension FeedViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let feed = viewModel.feeds[indexPath.row]
-        switch feed.feedType {
-        case .youtube(let url):
-            let safari = SFSafariViewController(url: url)
-            safari.dismissButtonStyle = .close
-            present(safari, animated: true, completion: nil)
-        }
+        let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .userFeed(feed))
+        self.navigationController?.pushViewController(vc, animated: true)
+//        switch feed.feedType {
+//        case .youtube(let url):
+//            let safari = SFSafariViewController(url: url)
+//            safari.dismissButtonStyle = .close
+//            present(safari, animated: true, completion: nil)
+//        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

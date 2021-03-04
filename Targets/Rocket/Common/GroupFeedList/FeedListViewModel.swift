@@ -13,6 +13,7 @@ class FeedListViewModel {
     typealias Input = DataSource
     enum DataSource {
         case groupFeed(Group)
+//        case uesrsFeed(User)
         case none
     }
     
@@ -39,7 +40,7 @@ class FeedListViewModel {
     enum Output {
         case reloadData
         case didDeleteFeed
-        case didLikeFeed
+        case didToggleLikeFeed
         case error(Error)
     }
     
@@ -54,6 +55,8 @@ class FeedListViewModel {
     
     private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: self.apiClient)
     private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
+    private lazy var unlikeFeedAction = Action(UnlikeUserFeed.self, httpClient: apiClient)
+
 
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
@@ -65,12 +68,14 @@ class FeedListViewModel {
         
         let errors = Publishers.MergeMany(
             deleteFeedAction.errors,
-            likeFeedAction.errors
+            likeFeedAction.errors,
+            unlikeFeedAction.errors
         )
         
         Publishers.MergeMany(
             deleteFeedAction.elements.map {_ in .didDeleteFeed }.eraseToAnyPublisher(),
-            likeFeedAction.elements.map { _ in .didLikeFeed }.eraseToAnyPublisher(),
+            likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
+            unlikeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
             errors.map(Output.error).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -136,6 +141,13 @@ class FeedListViewModel {
         let request = LikeUserFeed.Request(feedId: feed.id)
         let uri = LikeUserFeed.URI()
         likeFeedAction.input((request: request, uri: uri))
+    }
+    
+    func unlikeFeed(cellIndex: Int) {
+        let feed = state.feeds[cellIndex]
+        let request = UnlikeUserFeed.Request(feedId: feed.id)
+        let uri = UnlikeUserFeed.URI()
+        unlikeFeedAction.input((request: request, uri: uri))
     }
 }
 

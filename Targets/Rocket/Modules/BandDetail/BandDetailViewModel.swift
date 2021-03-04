@@ -55,7 +55,7 @@ class BandDetailViewModel {
         case pushToGroupFeedList(FeedListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
-        case didLikeFeed
+        case didToggleLikeFeed
         case didDeleteFeedButtonTapped(UserFeedSummary)
         case didShareFeedButtonTapped(UserFeedSummary)
         case reportError(Error)
@@ -73,7 +73,8 @@ class BandDetailViewModel {
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
     private lazy var deleteFeed = Action(DeleteUserFeed.self, httpClient: self.apiClient)
     private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
-    
+    private lazy var unlikeFeedAction = Action(UnlikeUserFeed.self, httpClient: apiClient)
+
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     var cancellables: Set<AnyCancellable> = []
@@ -91,7 +92,8 @@ class BandDetailViewModel {
             getGroupFeed.errors,
             listChannel.errors,
             deleteFeed.errors,
-            likeFeedAction.errors
+            likeFeedAction.errors,
+            unlikeFeedAction.errors
         )
 
         Publishers.MergeMany(
@@ -105,16 +107,15 @@ class BandDetailViewModel {
                 .didGetChart(self.state.group, $0.items.first)
             }.eraseToAnyPublisher(),
             deleteFeed.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
-            likeFeedAction.elements.map { _ in .didLikeFeed }.eraseToAnyPublisher(),
+            likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
+            unlikeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
-        getGroupLives.elements
-            .combineLatest(getGroupFeed.elements)
-            .sink(receiveValue: { [unowned self] lives, feeds in
-                state.lives = lives.items
+        getGroupFeed.elements
+            .sink(receiveValue: { [unowned self] feeds in
                 state.feeds = feeds.items
             })
             .store(in: &cancellables)
@@ -167,8 +168,8 @@ class BandDetailViewModel {
             break
 //            outputSubject.send(.pushToChartList(state.group))
         case .track(.playButtonTapped):
-            guard let item = state.channelItem,
-                  let url = URL(string: "https://youtube.com/watch?v=\(item.id.videoId)")
+            guard let item = state.channelItem, let videoId = item.id.videoId,
+                  let url = URL(string: "https://youtube.com/watch?v=\(videoId)")
             else {
                 return
             }
@@ -204,6 +205,9 @@ class BandDetailViewModel {
         case .likeFeedButtonTapped:
             guard let feed = state.feeds.first else { return }
             likeFeed(feed: feed)
+        case .unlikeFeedButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            unlikeFeed(feed: feed)
         case .shareButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didShareFeedButtonTapped(feed))
@@ -262,5 +266,11 @@ class BandDetailViewModel {
         let request = LikeUserFeed.Request(feedId: feed.id)
         let uri = LikeUserFeed.URI()
         likeFeedAction.input((request: request, uri: uri))
+    }
+    
+    private func unlikeFeed(feed: UserFeedSummary) {
+        let request = UnlikeUserFeed.Request(feedId: feed.id)
+        let uri = UnlikeUserFeed.URI()
+        unlikeFeedAction.input((request: request, uri: uri))
     }
 }

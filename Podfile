@@ -18,6 +18,7 @@ target 'Rocket' do
   pod 'KeyboardGuide', :podspec => './KeyboardGuide.podspec'
   pod 'Nuke', '~> 9.0'
   pod 'UITextView+Placeholder'
+  pod "YoutubePlayer-in-WKWebView", "~> 0.3.0" 
 
   target 'RocketTests' do
     inherit! :search_paths

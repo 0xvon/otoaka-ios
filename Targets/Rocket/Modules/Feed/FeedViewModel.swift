@@ -14,7 +14,7 @@ final class FeedViewModel {
         case reloadData
         case isRefreshing(Bool)
         case didDeleteFeed
-        case didLikeFeed
+        case didToggleLikeFeed
         case reportError(Error)
     }
     
@@ -35,6 +35,7 @@ final class FeedViewModel {
     
     private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: self.apiClient)
     private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
+    private lazy var unlikeFeedAction = Action(UnlikeUserFeed.self, httpClient: apiClient)
     
     private var cancellables: [AnyCancellable] = []
     
@@ -75,7 +76,9 @@ final class FeedViewModel {
         self.output = reloadData
             .merge(with: isRefreshing).eraseToAnyPublisher()
         
-        self.output.merge(with: deleteFeedAction.elements.map { _ in .didDeleteFeed }).eraseToAnyPublisher().merge(with: likeFeedAction.elements.map { _ in .didLikeFeed }.eraseToAnyPublisher())
+        self.output.merge(with: deleteFeedAction.elements.map { _ in .didDeleteFeed }).eraseToAnyPublisher()
+            .merge(with: likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher())
+            .merge(with: unlikeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher())
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
     }
@@ -91,5 +94,12 @@ final class FeedViewModel {
         let request = LikeUserFeed.Request(feedId: feed.id)
         let uri = LikeUserFeed.URI()
         likeFeedAction.input((request: request, uri: uri))
+    }
+    
+    func unlikeFeed(cellIndex: Int) {
+        let feed = feeds[cellIndex]
+        let request = UnlikeUserFeed.Request(feedId: feed.id)
+        let uri = UnlikeUserFeed.URI()
+        unlikeFeedAction.input((request: request, uri: uri))
     }
 }

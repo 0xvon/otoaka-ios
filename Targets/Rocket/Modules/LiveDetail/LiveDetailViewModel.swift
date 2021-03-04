@@ -140,6 +140,7 @@ class LiveDetailViewModel {
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didDeleteFeedButtonTapped(feed))
         case .likeFeedButtonTapped: break
+        case .unlikeFeedButtonTapped: break
         case .shareButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didShareFeedButtonTapped(feed))

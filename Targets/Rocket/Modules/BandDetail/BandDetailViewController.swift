@@ -74,8 +74,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return content
     }()
     private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
-
-
+    
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
         paddingView.addSubview(view)
@@ -231,7 +230,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
                 viewModel.refresh()
-            case .didLikeFeed:
+            case .didToggleLikeFeed:
                 viewModel.refresh()
             case .didShareFeedButtonTapped(let feed):
                 switch feed.feedType {
@@ -263,7 +262,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.feedCellContent.inject(
                     input: (user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline)
                 )
-
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
             case .reportError(let error):
@@ -288,9 +286,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 let vc = FeedListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
-                let safari = SFSafariViewController(url: url)
-                safari.dismissButtonStyle = .close
-                present(safari, animated: true, completion: nil)
+                guard let videoId = YouTubeClient(url: url.absoluteString).getId() else { return }
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
+                self.navigationController?.pushViewController(vc, animated: true)
             }
         }
         .store(in: &cancellables)
@@ -311,9 +309,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
 //        liveSectionHeader.listen { [unowned self] in
 //            self.viewModel.didTapSeeMore(at: .live)
 //        }
-//        feedSectionHeader.listen { [unowned self] in
-//            self.viewModel.didTapSeeMore(at: .feed)
-//        }
+        feedSectionHeader.listen { [unowned self] in
+            self.viewModel.didTapSeeMore(at: .feed)
+        }
 //        liveCellContent.addTarget(self, action: #selector(liveCellTaped), for: .touchUpInside)
         feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
 

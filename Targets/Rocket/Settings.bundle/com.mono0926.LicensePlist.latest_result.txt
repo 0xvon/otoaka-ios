@@ -81,12 +81,12 @@ version: 7.3.0
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.6.0
+version: 7.7.0
 
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.6.0
+version: 7.7.0
 
 name: GoogleAppMeasurement, nameSpecified: 
 body: Copyright 2020 Googl…
@@ -126,11 +126,11 @@ version: 0.2.0
 
 name: KeychainAccess, nameSpecified: 
 body: The MIT License (MIT…
-version: 4.2.1
+version: 4.2.2
 
 name: KeychainAccess, nameSpecified: 
 body: The MIT License (MIT…
-version: 4.2.1
+version: 4.2.2
 
 name: LicensePlist, nameSpecified: 
 body: MIT License
@@ -154,11 +154,11 @@ version: 2.30906.0
 
 name: Nuke, nameSpecified: 
 body: The MIT License (MIT…
-version: 9.2.4
+version: 9.3.0
 
 name: Nuke, nameSpecified: 
 body: The MIT License (MIT…
-version: 9.2.4
+version: 9.3.0
 
 name: PromisesObjC, nameSpecified: 
 body: 
@@ -189,6 +189,14 @@ version:
 name: UITextView+Placeholder, nameSpecified: 
 body: The MIT License (MIT…
 version: 
+
+name: YoutubePlayer-in-WKWebView, nameSpecified: 
+body: Copyright 2014 Googl…
+version: 0.3.5
+
+name: YoutubePlayer-in-WKWebView, nameSpecified: 
+body: Copyright 2014 Googl…
+version: 0.3.5
 
 name: CodableURL, nameSpecified: CodableURL, owner: kateinoigakukun, version: 0.3.1
 

@@ -63,6 +63,7 @@ class UserFeedCellContent: UIView {
         case commentButtonTapped
         case deleteFeedButtonTapped
         case likeFeedButtonTapped
+        case unlikeFeedButtonTapped
         case shareButtonTapped
     }
     
@@ -154,6 +155,8 @@ class UserFeedCellContent: UIView {
         textView.textColor = Brand.color(for: .text(.primary))
         textView.textAlignment = .center
         textView.isScrollEnabled = false
+        textView.isSelectable = false
+        textView.isUserInteractionEnabled = false
         textView.backgroundColor = .clear
         
         profileImageView.layer.cornerRadius = 30
@@ -193,8 +196,8 @@ class UserFeedCellContent: UIView {
     }
     
     @objc private func likeButtonTapped() {
+        likeButton.isSelected ? listener(.unlikeFeedButtonTapped) : listener(.likeFeedButtonTapped)
         likeButton.isSelected.toggle()
-        listener(.likeFeedButtonTapped)
     }
     
     @objc private func shareButtonTapped() {

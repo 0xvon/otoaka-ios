@@ -142,6 +142,15 @@ extension SelectTrackViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let track = viewModel.state.tracks[indexPath.row]
         let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, group: viewModel.state.group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        cell.listen { [unowned self] output in
+            switch output {
+            case .playButtonTapped:
+                guard let videoId = track.id.videoId else { return }
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .groupTapped: break
+            }
+        }
         return cell
     }
     

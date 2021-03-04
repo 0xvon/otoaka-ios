@@ -44,7 +44,7 @@ class UserDetailViewModel {
         case pushToCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
-        case didLikeFeed
+        case didToggleLikeFeed
         case didDeleteFeedButtonTapped(UserFeedSummary)
         case didShareFeedButtonTapped(UserFeedSummary)
         case reportError(Error)
@@ -63,6 +63,7 @@ class UserDetailViewModel {
     private lazy var getUsersFeedAction = Action(GetUserFeeds.self, httpClient: apiClient)
     private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: apiClient)
     private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
+    private lazy var unLikeFeedAction = Action(UnlikeUserFeed.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, user: User
@@ -74,14 +75,16 @@ class UserDetailViewModel {
             getUserDetailAction.errors,
             getUsersFeedAction.errors,
             deleteFeedAction.errors,
-            likeFeedAction.errors
+            likeFeedAction.errors,
+            unLikeFeedAction.errors
         )
         
         Publishers.MergeMany(
             getUserDetailAction.elements.map(Output.didRefreshUserDetail).eraseToAnyPublisher(),
             getUsersFeedAction.elements.map { .didRefreshFeedSummary($0.items.first) }.eraseToAnyPublisher(),
             deleteFeedAction.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
-            likeFeedAction.elements.map { _ in .didLikeFeed }.eraseToAnyPublisher(),
+            likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
+            unLikeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -136,6 +139,9 @@ class UserDetailViewModel {
         case .likeFeedButtonTapped:
             guard let feed = state.feed else { return }
             likeFeed(feed: feed)
+        case .unlikeFeedButtonTapped:
+            guard let feed = state.feed else { return }
+            unlikeFeed(feed: feed)
         case .shareButtonTapped:
             guard let feed = state.feed else { return }
             outputSubject.send(.didShareFeedButtonTapped(feed))
@@ -160,6 +166,12 @@ class UserDetailViewModel {
         let request = LikeUserFeed.Request(feedId: feed.id)
         let uri = LikeUserFeed.URI()
         likeFeedAction.input((request: request, uri: uri))
+    }
+    
+    private func unlikeFeed(feed: UserFeedSummary) {
+        let request = UnlikeUserFeed.Request(feedId: feed.id)
+        let uri = UnlikeUserFeed.URI()
+        unLikeFeedAction.input((request: request, uri: uri))
     }
     
     func deleteFeed(feed: UserFeedSummary) {

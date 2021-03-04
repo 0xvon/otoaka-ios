@@ -71,7 +71,12 @@ final class UserDetailViewController: UIViewController, Instantiable {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isScrollEnabled = false
+        textView.isUserInteractionEnabled = false
         textView.isEditable = false
+        textView.textContainerInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        textView.font = Brand.font(for: .mediumStrong)
+        textView.textColor = Brand.color(for: .text(.primary))
+        return textView
     }()
     
     private let feedSectionHeader = SummarySectionHeader(title: "FEED")
@@ -135,6 +140,17 @@ final class UserDetailViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             headerView.heightAnchor.constraint(equalToConstant: 120),
             headerView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        
+        scrollStackView.addArrangedSubview(biographyTextView)
+        NSLayoutConstraint.activate([
+            biographyTextView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        
+        let mediumSpacer = UIView()
+        scrollStackView.addArrangedSubview(mediumSpacer)
+        NSLayoutConstraint.activate([
+            mediumSpacer.heightAnchor.constraint(equalToConstant: 16),
         ])
         
         userActionStackView.addArrangedSubview(editProfileButton)
@@ -206,6 +222,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 case .account:
                     dependencyProvider.user = userDetail.user
                     self.title = "マイページ"
+                    biographyTextView.text = userDetail.biography
                     editProfileButton.isHidden = false
                     followButton.isHidden = true
                 case .user:
@@ -243,7 +260,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
                 viewModel.refresh()
-            case .didLikeFeed:
+            case .didToggleLikeFeed:
                 viewModel.refresh()
             case .didRefreshFollowingGroupSummary:
                 break // TODO

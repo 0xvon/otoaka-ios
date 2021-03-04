@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SafariServices
 import Endpoint
 import Combine
 
@@ -48,7 +47,7 @@ final class FeedListViewController: UIViewController, Instantiable {
                 feedTableView.reloadData()
             case .didDeleteFeed:
                 viewModel.refresh()
-            case .didLikeFeed:
+            case .didToggleLikeFeed:
                 viewModel.refresh()
             case .error(let err):
                 showAlert(title: "エラー", message: String(describing: err))
@@ -132,6 +131,8 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
                 self?.deleteFeedButtonTapped(cellIndex: indexPath.row)
             case .likeFeedButtonTapped:
                 self?.viewModel.likeFeed(cellIndex: indexPath.row)
+            case .unlikeFeedButtonTapped:
+                self?.viewModel.unlikeFeed(cellIndex: indexPath.row)
             case .shareButtonTapped:
                 self?.createShare(cellIndex: indexPath.row)
             }
@@ -141,12 +142,8 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let content = self.viewModel.state.feeds[indexPath.section]
-        switch content.feedType {
-        case .youtube(let url):
-            let safari = SFSafariViewController(url: url)
-            safari.dismissButtonStyle = .close
-            present(safari, animated: true, completion: nil)
-        }
+        let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .userFeed(content))
+        self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
