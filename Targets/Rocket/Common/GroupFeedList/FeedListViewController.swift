@@ -164,7 +164,8 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
         switch feed.feedType {
         case .youtube(let url):
             let shareLiveText: String = "\(feed.text.prefix(20))\n\n by \(feed.author.name)\n\n\(url.absoluteString) via @wooruobudesu #ロック好きならロケバン"
-            let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
+            let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
+            guard let shareUrl = url else { return }
 
             let activityItems: [Any] = [shareLiveText, shareUrl]
             let activityViewController = UIActivityViewController(

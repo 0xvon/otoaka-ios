@@ -384,8 +384,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     @objc func createShare(_ sender: UIBarButtonItem) {
-        let shareLiveText: String = "【ロケバンでバンドを応援しよう】\n\n\(viewModel.state.group.name)がオススメだよ！！みんなもオススメのバンドを教えてね\n\n via @wooruobudesu #ロック好きならロケバン"
-        let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
+        let group = viewModel.state.group
+        let shareLiveText: String = "【ロケバンでバンドを応援しよう】\n\n\(group.name)がオススメだよ！！みんなもオススメのバンドを教えてね\n\n via @wooruobudesu #ロック好きならロケバン"
+        let url = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name)
+        guard let shareUrl = url else { return }
         let shareImage: UIImage = UIImage(url: viewModel.state.group.artworkURL!.absoluteString)
 
         let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]

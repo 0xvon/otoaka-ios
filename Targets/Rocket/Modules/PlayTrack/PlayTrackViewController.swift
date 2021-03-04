@@ -21,6 +21,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     private lazy var playerView: WKYTPlayerView = {
         let playerView = WKYTPlayerView()
         playerView.delegate = self
+        playerView.backgroundColor = .clear
         playerView.translatesAutoresizingMaskIntoConstraints = false
         return playerView
     }()

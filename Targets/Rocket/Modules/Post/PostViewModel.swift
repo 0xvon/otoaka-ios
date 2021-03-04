@@ -106,8 +106,20 @@ class PostViewModel {
         outputSubject.send(.updateSubmittableState(.editting(submittable)))
     }
 
-    func post() {
+    func postButtonTapped(ogpImage: UIImage) {
         outputSubject.send(.updateSubmittableState(.loading))
+        dependencyProvider.s3Client.uploadImage(image: ogpImage) { [unowned self] res in
+            switch res {
+            case .success(let url):
+                state.ogpUrl = url
+                post()
+            case .failure(let err):
+                outputSubject.send(.reportError(err))
+            }
+        }
+    }
+    
+    func post() {
         guard let text = state.text else { return }
         guard let post = state.post else { return }
         guard let title = state.title else { return }
@@ -129,7 +141,6 @@ class PostViewModel {
         case .spotify(_):
             break
         case .youtube(let url):
-            // TODO: fix logic
             let request = CreateUserFeed.Request(text: text, feedType: .youtube(url), ogpUrl: state.ogpUrl, groupId: group.id, title: title)
             createUserFeedAction.input((request: request, uri: CreateUserFeed.URI()))
         case .none: break

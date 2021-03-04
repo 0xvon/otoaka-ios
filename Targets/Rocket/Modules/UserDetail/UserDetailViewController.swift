@@ -76,6 +76,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         textView.textContainerInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         textView.font = Brand.font(for: .mediumStrong)
         textView.textColor = Brand.color(for: .text(.primary))
+        textView.backgroundColor = .clear
         return textView
     }()
     

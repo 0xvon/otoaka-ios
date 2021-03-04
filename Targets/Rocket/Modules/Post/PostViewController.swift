@@ -43,7 +43,7 @@ final class PostViewController: UIViewController, Instantiable {
         textView.placeholder = "歌詞やMCでの言葉を添えよう！"
         textView.placeholderTextView.textAlignment = .center
         textView.placeholderColor = Brand.color(for: .background(.secondary))
-        textView.font = Brand.font(for: .xlargeStrong)
+        textView.font = Brand.font(for: .xxlargeStrong)
         textView.textColor = Brand.color(for: .text(.primary))
         textView.textAlignment = .center
         
@@ -55,6 +55,7 @@ final class PostViewController: UIViewController, Instantiable {
         numOfTextLabel.translatesAutoresizingMaskIntoConstraints = false
         numOfTextLabel.text = "\(viewModel.state.maxLength)"
         numOfTextLabel.font = Brand.font(for: .medium)
+        numOfTextLabel.textColor = Brand.color(for: .text(.primary))
         return numOfTextLabel
     }()
     private lazy var sectionView: UIView = {
@@ -75,20 +76,23 @@ final class PostViewController: UIViewController, Instantiable {
         avatarImageView.layer.cornerRadius = 20
         avatarImageView.clipsToBounds = true
         avatarImageView.contentMode = .scaleAspectFill
+        avatarImageView.layer.opacity = 0.8
         return avatarImageView
     }()
     private lazy var userNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .mediumStrong)
+        label.font = Brand.font(for: .smallStrong)
         label.textColor = Brand.color(for: .text(.primary))
+        label.layer.opacity = 0.8
         return label
     }()
     private lazy var trackInfoLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .smallStrong)
+        label.font = Brand.font(for: .small)
         label.textColor = Brand.color(for: .text(.primary))
+        label.layer.opacity = 0.8
         return label
     }()
     private lazy var postButton: UIButton = {
@@ -215,7 +219,8 @@ final class PostViewController: UIViewController, Instantiable {
             sectionView.heightAnchor.constraint(equalToConstant: 92),
             sectionView.leftAnchor.constraint(equalTo: postView.leftAnchor),
             sectionView.rightAnchor.constraint(equalTo: postView.rightAnchor),
-            sectionView.bottomAnchor.constraint(equalTo: postView.bottomAnchor),
+            sectionView.bottomAnchor.constraint(lessThanOrEqualTo: postView.bottomAnchor),
+            sectionView.bottomAnchor.constraint(lessThanOrEqualTo: self.view.layoutMarginsGuide.bottomAnchor),
         ])
         
         sectionView.addSubview(sectionBorderView)
@@ -414,7 +419,6 @@ final class PostViewController: UIViewController, Instantiable {
     }
     
     @objc private func searchYoutube(_ sender: Any) {
-        print("search")
         let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
         vc.listen { [unowned self] group, track in
             viewModel.didSelectTrack(group: group, track: track)
@@ -432,26 +436,26 @@ final class PostViewController: UIViewController, Instantiable {
     }
     
     @objc func postButtonTapped() {
+        textView.resignFirstResponder()
         guard let ogpImage: UIImage = feedPreview.getSnapShot() else { return }
-        UIImageWriteToSavedPhotosAlbum(ogpImage, self, #selector(didFinishSavingImage(_:didFinishSavingWithError:contextInfo:)), nil)
-        print("hello")
+        viewModel.postButtonTapped(ogpImage: ogpImage)
     }
     
-    @objc func didFinishSavingImage(_ image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutableRawPointer) {
-        
-        // 結果によって出すアラートを変更する
-        var title = "保存完了"
-        var message = "カメラロールに保存しました"
-        
-        if error != nil {
-            title = "エラー"
-            message = "保存に失敗しました"
-        }
-        
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alertController, animated: true, completion: nil)
-    }
+//    @objc func didFinishSavingImage(_ image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutableRawPointer) {
+//
+//        // 結果によって出すアラートを変更する
+//        var title = "保存完了"
+//        var message = "カメラロールに保存しました"
+//
+//        if error != nil {
+//            title = "エラー"
+//            message = "保存に失敗しました"
+//        }
+//
+//        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+//        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+//        self.present(alertController, animated: true, completion: nil)
+//    }
 }
 
 extension PostViewController: UITextViewDelegate {
