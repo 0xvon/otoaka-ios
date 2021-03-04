@@ -69,7 +69,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             .instantiate(withOwner: nil, options: nil).first as! UserFeedCellContent
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300),
+            content.heightAnchor.constraint(equalToConstant: 300 - 32),
         ])
         return content
     }()
@@ -230,6 +230,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
                 self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
+                viewModel.refresh()
+            case .didLikeFeed:
                 viewModel.refresh()
             case .didShareFeedButtonTapped(let feed):
                 switch feed.feedType {

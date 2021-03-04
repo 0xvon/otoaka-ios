@@ -55,6 +55,7 @@ class BandDetailViewModel {
         case pushToGroupFeedList(FeedListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
+        case didLikeFeed
         case didDeleteFeedButtonTapped(UserFeedSummary)
         case didShareFeedButtonTapped(UserFeedSummary)
         case reportError(Error)
@@ -71,6 +72,7 @@ class BandDetailViewModel {
     private lazy var getGroupFeed = Action(GetGroupsUserFeeds.self, httpClient: self.apiClient)
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
     private lazy var deleteFeed = Action(DeleteUserFeed.self, httpClient: self.apiClient)
+    private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -88,7 +90,8 @@ class BandDetailViewModel {
 //            getGroupLives.errors,
             getGroupFeed.errors,
             listChannel.errors,
-            deleteFeed.errors
+            deleteFeed.errors,
+            likeFeedAction.errors
         )
 
         Publishers.MergeMany(
@@ -102,6 +105,7 @@ class BandDetailViewModel {
                 .didGetChart(self.state.group, $0.items.first)
             }.eraseToAnyPublisher(),
             deleteFeed.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
+            likeFeedAction.elements.map { _ in .didLikeFeed }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -197,6 +201,9 @@ class BandDetailViewModel {
         case .deleteFeedButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didDeleteFeedButtonTapped(feed))
+        case .likeFeedButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            likeFeed(feed: feed)
         case .shareButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didShareFeedButtonTapped(feed))
@@ -249,5 +256,11 @@ class BandDetailViewModel {
         let request = DeleteUserFeed.Request(id: feed.id)
         let uri = DeleteUserFeed.URI()
         deleteFeed.input((request: request, uri: uri))
+    }
+    
+    private func likeFeed(feed: UserFeedSummary) {
+        let request = LikeUserFeed.Request(feedId: feed.id)
+        let uri = LikeUserFeed.URI()
+        likeFeedAction.input((request: request, uri: uri))
     }
 }

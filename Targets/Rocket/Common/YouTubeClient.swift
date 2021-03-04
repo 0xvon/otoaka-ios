@@ -36,7 +36,7 @@ class YouTubeClient {
     func getThumbnailUrl() -> URL? {
         guard let id = self.getId() else { return nil }
         
-        let thumbnail = "https://i.ytimg.com/vi/\(id)/maxresdefault.jpg"
+        let thumbnail = "https://i.ytimg.com/vi/\(id)/hqdefault.jpg"
         return URL(string: thumbnail)
     }
     

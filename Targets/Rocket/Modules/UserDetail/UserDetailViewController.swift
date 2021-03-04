@@ -213,7 +213,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     editProfileButton.isHidden = true
                     followButton.isHidden = false
                 }
-                
                 userFollowingViewModel.didGetUserDetail(isFollowing: userDetail.isFollowing, followersCount: userDetail.followersCount)
                 headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount,  imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
@@ -243,6 +242,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
 
                 self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
+                viewModel.refresh()
+            case .didLikeFeed:
                 viewModel.refresh()
             case .didRefreshFollowingGroupSummary:
                 break // TODO

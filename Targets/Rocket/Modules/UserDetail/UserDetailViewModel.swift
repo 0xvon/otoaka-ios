@@ -44,6 +44,7 @@ class UserDetailViewModel {
         case pushToCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
+        case didLikeFeed
         case didDeleteFeedButtonTapped(UserFeedSummary)
         case didShareFeedButtonTapped(UserFeedSummary)
         case reportError(Error)
@@ -61,6 +62,7 @@ class UserDetailViewModel {
     private lazy var getUserDetailAction = Action(GetUserDetail.self, httpClient: apiClient)
     private lazy var getUsersFeedAction = Action(GetUserFeeds.self, httpClient: apiClient)
     private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: apiClient)
+    private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, user: User
@@ -71,13 +73,15 @@ class UserDetailViewModel {
         let errors = Publishers.MergeMany(
             getUserDetailAction.errors,
             getUsersFeedAction.errors,
-            deleteFeedAction.errors
+            deleteFeedAction.errors,
+            likeFeedAction.errors
         )
         
         Publishers.MergeMany(
             getUserDetailAction.elements.map(Output.didRefreshUserDetail).eraseToAnyPublisher(),
             getUsersFeedAction.elements.map { .didRefreshFeedSummary($0.items.first) }.eraseToAnyPublisher(),
             deleteFeedAction.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
+            likeFeedAction.elements.map { _ in .didLikeFeed }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -129,6 +133,9 @@ class UserDetailViewModel {
         case .deleteFeedButtonTapped:
             guard let feed = state.feed else { return }
             outputSubject.send(.didDeleteFeedButtonTapped(feed))
+        case .likeFeedButtonTapped:
+            guard let feed = state.feed else { return }
+            likeFeed(feed: feed)
         case .shareButtonTapped:
             guard let feed = state.feed else { return }
             outputSubject.send(.didShareFeedButtonTapped(feed))
@@ -147,6 +154,12 @@ class UserDetailViewModel {
         uri.page = 1
         uri.per = 1
         getUsersFeedAction.input((request: Empty(), uri: uri))
+    }
+    
+    private func likeFeed(feed: UserFeedSummary) {
+        let request = LikeUserFeed.Request(feedId: feed.id)
+        let uri = LikeUserFeed.URI()
+        likeFeedAction.input((request: request, uri: uri))
     }
     
     func deleteFeed(feed: UserFeedSummary) {

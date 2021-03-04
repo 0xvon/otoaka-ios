@@ -62,6 +62,7 @@ class UserFeedCellContent: UIView {
     enum Output {
         case commentButtonTapped
         case deleteFeedButtonTapped
+        case likeFeedButtonTapped
         case shareButtonTapped
     }
     
@@ -74,9 +75,22 @@ class UserFeedCellContent: UIView {
     @IBOutlet weak var feedTitleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var artistNameLabel: UILabel!
+    @IBOutlet weak var profileImageView: UIImageView!
+    @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var thumbnailImageView: UIImageView!
-    @IBOutlet weak var playImageView: UIImageView!
     @IBOutlet weak var shareButton: UIButton!
+    @IBOutlet weak var likeButton: ReactionIndicatorButton! {
+        didSet {
+            likeButton.setImage(
+                UIImage(systemName: "heart")!
+                    .withTintColor(.white, renderingMode: .alwaysOriginal),
+                for: .normal)
+            likeButton.setImage(
+                UIImage(systemName: "heart.fill")!
+                    .withTintColor(.white, renderingMode: .alwaysOriginal),
+                for: .selected)
+        }
+    }
     @IBOutlet weak var commentButton: ReactionIndicatorButton! {
         didSet {
             commentButton.setImage(
@@ -104,10 +118,16 @@ class UserFeedCellContent: UIView {
                 input.imagePipeline.loadImage(thumbnail, into: thumbnailImageView)
             }
         }
-        feedTitleLabel.text = input.feed.text
+        if let profileImage = input.feed.author.thumbnailURL, let url = URL(string: profileImage) {
+            input.imagePipeline.loadImage(url, into: profileImageView)
+        }
+        feedTitleLabel.text = input.feed.title
+        textView.text = input.feed.text
         dateLabel.text = dateFormatter.string(from: input.feed.createdAt)
         artistNameLabel.text = input.feed.author.name
         commentButton.setTitle("\(input.feed.commentCount)", for: .normal)
+        likeButton.isSelected = input.feed.isLiked
+        likeButton.setTitle("\(input.feed.likeCount)", for: .normal)
         
         deleteFeedButton.isHidden = input.feed.author.id != input.user.id
     }
@@ -120,12 +140,6 @@ class UserFeedCellContent: UIView {
         thumbnailImageView.layer.borderWidth = 1
         thumbnailImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
 
-        feedTitleLabel.font = Brand.font(for: .largeStrong)
-        feedTitleLabel.textColor = Brand.color(for: .text(.primary))
-        feedTitleLabel.lineBreakMode = .byWordWrapping
-        feedTitleLabel.numberOfLines = 0
-        feedTitleLabel.adjustsFontSizeToFitWidth = false
-        feedTitleLabel.sizeToFit()
 
         dateLabel.font = Brand.font(for: .small)
         dateLabel.textColor = Brand.color(for: .text(.primary))
@@ -133,12 +147,28 @@ class UserFeedCellContent: UIView {
         artistNameLabel.font = Brand.font(for: .medium)
         artistNameLabel.textColor = Brand.color(for: .text(.primary))
         
+        feedTitleLabel.font = Brand.font(for: .small)
+        feedTitleLabel.textColor = Brand.color(for: .text(.link))
+        
+        textView.font = Brand.font(for: .xlargeStrong)
+        textView.textColor = Brand.color(for: .text(.primary))
+        textView.textAlignment = .center
+        textView.isScrollEnabled = false
+        textView.backgroundColor = .clear
+        
+        profileImageView.layer.cornerRadius = 30
+        profileImageView.clipsToBounds = true
+        profileImageView.contentMode = .scaleAspectFill
+        
         deleteFeedButton.setImage(
             UIImage(systemName: "trash")!
                 .withTintColor(.white, renderingMode: .alwaysOriginal),
             for: .normal
         )
         deleteFeedButton.addTarget(self, action: #selector(deleteFeedButtonTapped), for: .touchUpInside)
+        
+        
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
 
         commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
         
@@ -149,8 +179,6 @@ class UserFeedCellContent: UIView {
         )
         shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
 
-        playImageView.image = UIImage(named: "play")
-        playImageView.layer.opacity = 0.6
         highlightObservation = cellButton.observe(\.isHighlighted) { [unowned self] (button, change) in
             alpha = button.isHighlighted ? 0.6 : 1.0
         }
@@ -162,6 +190,11 @@ class UserFeedCellContent: UIView {
 
     @objc private func commentButtonTapped() {
         listener(.commentButtonTapped)
+    }
+    
+    @objc private func likeButtonTapped() {
+        likeButton.isSelected.toggle()
+        listener(.likeFeedButtonTapped)
     }
     
     @objc private func shareButtonTapped() {

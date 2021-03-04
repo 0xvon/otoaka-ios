@@ -39,6 +39,7 @@ class FeedListViewModel {
     enum Output {
         case reloadData
         case didDeleteFeed
+        case didLikeFeed
         case error(Error)
     }
     
@@ -52,6 +53,7 @@ class FeedListViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
     private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: self.apiClient)
+    private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
@@ -62,11 +64,13 @@ class FeedListViewModel {
         subscribe(storage: storage)
         
         let errors = Publishers.MergeMany(
-            deleteFeedAction.errors
+            deleteFeedAction.errors,
+            likeFeedAction.errors
         )
         
         Publishers.MergeMany(
             deleteFeedAction.elements.map {_ in .didDeleteFeed }.eraseToAnyPublisher(),
+            likeFeedAction.elements.map { _ in .didLikeFeed }.eraseToAnyPublisher(),
             errors.map(Output.error).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -125,6 +129,13 @@ class FeedListViewModel {
         let request = DeleteUserFeed.Request(id: feed.id)
         let uri = DeleteUserFeed.URI()
         deleteFeedAction.input((request: request, uri: uri))
+    }
+    
+    func likeFeed(cellIndex: Int) {
+        let feed = state.feeds[cellIndex]
+        let request = LikeUserFeed.Request(feedId: feed.id)
+        let uri = LikeUserFeed.URI()
+        likeFeedAction.input((request: request, uri: uri))
     }
 }
 

@@ -48,6 +48,8 @@ final class FeedListViewController: UIViewController, Instantiable {
                 feedTableView.reloadData()
             case .didDeleteFeed:
                 viewModel.refresh()
+            case .didLikeFeed:
+                viewModel.refresh()
             case .error(let err):
                 showAlert(title: "エラー", message: String(describing: err))
             }
@@ -112,7 +114,7 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 332
+        return 300
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -128,6 +130,8 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
                 self?.feedCommentButtonTapped(cellIndex: indexPath.row)
             case .deleteFeedButtonTapped:
                 self?.deleteFeedButtonTapped(cellIndex: indexPath.row)
+            case .likeFeedButtonTapped:
+                self?.viewModel.likeFeed(cellIndex: indexPath.row)
             case .shareButtonTapped:
                 self?.createShare(cellIndex: indexPath.row)
             }

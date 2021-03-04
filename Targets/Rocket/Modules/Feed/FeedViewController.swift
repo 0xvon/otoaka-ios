@@ -62,6 +62,8 @@ final class FeedViewController: UITableViewController {
                 }
             case .didDeleteFeed:
                 viewModel.refresh.send(())
+            case .didLikeFeed:
+                viewModel.refresh.send(())
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: error.localizedDescription)
             }
@@ -127,6 +129,8 @@ extension FeedViewController {
                 self?.feedCommentButtonTapped(cellIndex: indexPath.row)
             case .deleteFeedButtonTapped:
                 self?.deleteFeedButtonTapped(cellIndex: indexPath.row)
+            case .likeFeedButtonTapped:
+                self?.viewModel.likeFeed(cellIndex: indexPath.row)
             case .shareButtonTapped:
                 self?.createShare(cellIndex: indexPath.row)
             }
@@ -142,7 +146,7 @@ extension FeedViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 332
+        return 300
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
