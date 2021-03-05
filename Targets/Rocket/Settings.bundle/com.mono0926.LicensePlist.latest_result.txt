@@ -182,6 +182,14 @@ body: MIT Licence
 Copyrig…
 version: 6.4.0
 
+name: TagListView, nameSpecified: 
+body: The MIT License (MIT…
+version: 1.4.1
+
+name: TagListView, nameSpecified: 
+body: The MIT License (MIT…
+version: 1.4.1
+
 name: UITextView+Placeholder, nameSpecified: 
 body: The MIT License (MIT…
 version: 

@@ -10,6 +10,7 @@ import Endpoint
 import SafariServices
 import UIComponent
 import Foundation
+import TagListView
 
 final class UserDetailViewController: UIViewController, Instantiable {
     typealias Input = User
@@ -79,6 +80,20 @@ final class UserDetailViewController: UIViewController, Instantiable {
         textView.backgroundColor = .clear
         return textView
     }()
+    private lazy var tagListView: TagListView = {
+        let tagListView = TagListView()
+        tagListView.translatesAutoresizingMaskIntoConstraints = false
+        tagListView.textColor = Brand.color(for: .text(.primary))
+        tagListView.textFont = Brand.font(for: .smallStrong)
+        tagListView.tagBackgroundColor = Brand.color(for: .background(.link))
+        tagListView.alignment = .leading
+        tagListView.cornerRadius = 10
+        tagListView.paddingY = 4
+        tagListView.paddingX = 8
+        tagListView.marginY = 8
+        tagListView.marginX = 8
+        return tagListView
+    }()
     
     private let feedSectionHeader = SummarySectionHeader(title: "FEED")
     private lazy var feedCellContent: UserFeedCellContent = {
@@ -92,7 +107,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
     
-    private let groupSectionHeader = SummarySectionHeader(title: "GROUP")
+    private let groupSectionHeader = SummarySectionHeader(title: "BAND")
     private lazy var groupCellContent: GroupCellContent = {
         let content = UINib(nibName: "GroupCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
@@ -160,10 +175,25 @@ final class UserDetailViewController: UIViewController, Instantiable {
             biographyTextView.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
         
+        let containerView = UIView()
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(tagListView)
+        NSLayoutConstraint.activate([
+            tagListView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -16),
+            tagListView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 16),
+            tagListView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            tagListView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+        ])
+        
+        scrollStackView.addArrangedSubview(containerView)
+        NSLayoutConstraint.activate([
+            containerView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        
         let mediumSpacer = UIView()
         scrollStackView.addArrangedSubview(mediumSpacer)
         NSLayoutConstraint.activate([
-            mediumSpacer.heightAnchor.constraint(equalToConstant: 16),
+            mediumSpacer.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         userActionStackView.addArrangedSubview(editProfileButton)
@@ -278,6 +308,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
                         imagePipeline: dependencyProvider.imagePipeline
                     ))
                 }
+                
+                tagListView.removeAllTags()
+                tagListView.addTags(viewModel.state.groupNameSummary)
             case .didDeleteFeedButtonTapped(let feed):
                 let alertController = UIAlertController(
                     title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)

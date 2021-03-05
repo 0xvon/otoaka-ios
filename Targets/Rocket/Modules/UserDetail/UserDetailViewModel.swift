@@ -25,6 +25,7 @@ class UserDetailViewModel {
         var selfUser: User
         var feed: UserFeedSummary? = nil
         var group: Group? = nil
+        var groupNameSummary: [String] = []
         var userDetail: UserDetail?
         
         var displayType: DisplayType {
@@ -103,6 +104,7 @@ class UserDetailViewModel {
                 state.userDetail = userDetail
                 state.feed = feeds.items.first
                 state.group = groups.items.first
+                state.groupNameSummary = groups.items.map { $0.name }
             })
             .store(in: &cancellables)
     }
@@ -181,7 +183,7 @@ class UserDetailViewModel {
         var uri = FollowingGroups.URI()
         uri.id = state.user.id
         uri.page = 1
-        uri.per = 1
+        uri.per = 10
         followingGroupsAction.input((request: Empty(), uri: uri))
     }
     
