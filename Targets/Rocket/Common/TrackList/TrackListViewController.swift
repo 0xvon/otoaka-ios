@@ -127,7 +127,8 @@ extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
             case .playButtonTapped:
                 guard let videoId = track.id.videoId else { return }
                 let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
-                self.navigationController?.pushViewController(vc, animated: true)
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
             case .groupTapped: break
             }
         }
@@ -148,7 +149,7 @@ extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func setTableViewBackgroundView(isDisplay: Bool) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = EmptyCollectionView(emptyType: .groupList, actionButtonTitle: nil)
+            let emptyCollectionView = EmptyCollectionView(emptyType: .chartList, actionButtonTitle: nil)
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
         }()

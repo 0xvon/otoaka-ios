@@ -21,7 +21,7 @@ final class SelectTrackViewController: UITableViewController {
     }()
     lazy var searchController: UISearchController = {
         let controller = BrandSearchController(searchResultsController: self.searchResultController)
-        controller.searchResultsUpdater = self
+        controller.searchBar.returnKeyType = .search
         controller.delegate = self
         controller.searchBar.delegate = self
         return controller
@@ -109,15 +109,12 @@ final class SelectTrackViewController: UITableViewController {
 }
 
 extension SelectTrackViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        viewModel.updateSearchQuery(query: searchController.searchBar.text)
+    }
 }
 
 extension SelectTrackViewController: UISearchControllerDelegate {
-}
-
-extension SelectTrackViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        viewModel.updateSearchQuery(query: searchController.searchBar.text)
-    }
 }
 
 extension SelectTrackViewController {
