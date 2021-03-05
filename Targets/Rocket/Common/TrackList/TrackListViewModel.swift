@@ -71,8 +71,8 @@ class TrackListViewModel {
     
     func inject(_ input: Input, isToSelect: Bool = false) {
         self.state.group = input.group
+        self.dataSource = input.dataSource
         self.state.isToSelect = isToSelect
-        subscribe(dataSource: input.dataSource)
         refresh()
     }
     
@@ -97,10 +97,10 @@ class TrackListViewModel {
     }
     
     func refresh() {
-        switch self.dataSource {
-        case let .searchResults(query):
-            searchYouTubeTracks(query: query)
-        case .none: break
+        if state.group?.youtubeChannelId != nil {
+            subscribe(dataSource: self.dataSource)
+        } else {
+            outputSubject.send(.reloadTableView)
         }
     }
     

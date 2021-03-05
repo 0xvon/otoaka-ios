@@ -78,8 +78,13 @@ final class SelectTrackViewModel {
     }
     
     func refresh() {
-        outputSubject.send(.isRefreshing(true))
-        searchYouTubeTracks()
+        if state.group.youtubeChannelId != nil {
+            outputSubject.send(.isRefreshing(true))
+            searchYouTubeTracks()
+        } else {
+            outputSubject.send(.reloadData)
+            outputSubject.send(.isRefreshing(false))
+        }
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
