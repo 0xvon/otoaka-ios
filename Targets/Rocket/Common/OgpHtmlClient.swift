@@ -10,7 +10,7 @@ import UIKit
 import CodableURL
 
 public class OgpHtmlClient {
-    let baseUrl: String = "https://serverless-dev.rocketfor.band/custom_ogp_html"
+    let baseUrl: String = "https://serverless-prd.rocketfor.band/custom_ogp_html"
     
     func getOgpUrl(imageUrl: String, title: String) -> URL? {
         guard let urlString = "\(baseUrl)?ogp_url=\(imageUrl)&title=\(title)".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return nil }

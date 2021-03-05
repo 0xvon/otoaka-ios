@@ -349,22 +349,20 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
             case .didShareFeedButtonTapped(let feed):
-                switch feed.feedType {
-                case .youtube(let url):
-                    let shareLiveText: String = "\(feed.text.prefix(20))\n\n by \(feed.author.name)\n\n\(url.absoluteString) via @wooruobudesu #ロック好きならロケバン #ロケバンで好きな曲をシェアしよう"
-                    let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
+                let shareText: String = "\(feed.text)\n\n\(feed.title)\n\n by \(feed.author.name)\n via @wooruobudesu #ロック好きならロケバン"
+                let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
+                guard let shareUrl = url else { return }
+                
+                let activityItems: [Any] = [shareText, shareUrl]
+                let activityViewController = UIActivityViewController(
+                    activityItems: activityItems, applicationActivities: [])
 
-                    let activityItems: [Any] = [shareLiveText, shareUrl]
-                    let activityViewController = UIActivityViewController(
-                        activityItems: activityItems, applicationActivities: [])
-
-                    activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
-                        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-                    }
-                    activityViewController.popoverPresentationController?.permittedArrowDirections = .up
-                    dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-                    self.present(activityViewController, animated: true, completion: nil)
+                activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
+                    dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
                 }
+                activityViewController.popoverPresentationController?.permittedArrowDirections = .up
+                dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+                self.present(activityViewController, animated: true, completion: nil)
             case .reportError(let error):
                 self.showAlert(title: "エラー", message: String(describing: error))
             }

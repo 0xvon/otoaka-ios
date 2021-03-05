@@ -195,23 +195,20 @@ extension FeedViewController {
     
     private func createShare(cellIndex: Int) {
         let feed = self.viewModel.feeds[cellIndex]
-        switch feed.feedType {
-        case .youtube(let url):
-            let shareLiveText: String = "\(feed.text.prefix(20))\n\n by \(feed.author.name)\n\n\(url.absoluteString) via @wooruobudesu #ロック好きならロケバン"
-            let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
-            guard let shareUrl = url else { return }
-            
-            let activityItems: [Any] = [shareLiveText, shareUrl]
-            let activityViewController = UIActivityViewController(
-                activityItems: activityItems, applicationActivities: [])
+        let shareText: String = "\(feed.text)\n\n\(feed.title)\n\n by \(feed.author.name)\n via @wooruobudesu #ロック好きならロケバン"
+        let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
+        guard let shareUrl = url else { return }
+        
+        let activityItems: [Any] = [shareText, shareUrl]
+        let activityViewController = UIActivityViewController(
+            activityItems: activityItems, applicationActivities: [])
 
-            activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
-                dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-            }
-            activityViewController.popoverPresentationController?.permittedArrowDirections = .up
-            dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-            self.present(activityViewController, animated: true, completion: nil)
+        activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
+            dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
         }
+        activityViewController.popoverPresentationController?.permittedArrowDirections = .up
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+        self.present(activityViewController, animated: true, completion: nil)
     }
     
     private func deleteFeedButtonTapped(cellIndex: Int) {

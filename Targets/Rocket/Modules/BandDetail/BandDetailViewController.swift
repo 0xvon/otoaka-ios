@@ -233,22 +233,19 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .didToggleLikeFeed:
                 viewModel.refresh()
             case .didShareFeedButtonTapped(let feed):
-                switch feed.feedType {
-                case .youtube(let url):
-                    let shareLiveText: String = "\(feed.text.prefix(20))\n\n by \(feed.author.name)\n\n\(url.absoluteString) via @wooruobudesu #ロック好きならロケバン #ロケバンで好きな曲をシェアしよう"
-                    let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
+                let shareText: String = "\(feed.text)\n\n\(feed.title)\n\n by \(feed.author.name)\n via @wooruobudesu #ロック好きならロケバン"
+                let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
 
-                    let activityItems: [Any] = [shareLiveText, shareUrl]
-                    let activityViewController = UIActivityViewController(
-                        activityItems: activityItems, applicationActivities: [])
+                let activityItems: [Any] = [shareText, shareUrl]
+                let activityViewController = UIActivityViewController(
+                    activityItems: activityItems, applicationActivities: [])
 
-                    activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
-                        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-                    }
-                    activityViewController.popoverPresentationController?.permittedArrowDirections = .up
-                    dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-                    self.present(activityViewController, animated: true, completion: nil)
+                activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
+                    dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
                 }
+                activityViewController.popoverPresentationController?.permittedArrowDirections = .up
+                dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+                self.present(activityViewController, animated: true, completion: nil)
 //            case .updateLiveSummary(.some(let live)):
 //                self.liveSectionHeader.isHidden = false
 //                self.liveCellWrapper.isHidden = false
@@ -385,12 +382,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     @objc func createShare(_ sender: UIBarButtonItem) {
         let group = viewModel.state.group
-        let shareLiveText: String = "【ロケバンでバンドを応援しよう】\n\n\(group.name)がオススメだよ！！みんなもオススメのバンドを教えてね\n\n via @wooruobudesu #ロック好きならロケバン"
+        let shareText: String = "【ロケバンでバンドを応援しよう】\n\n\(group.name)\n\n via @wooruobudesu #ロック好きならロケバン"
         let url = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name)
         guard let shareUrl = url else { return }
         let shareImage: UIImage = UIImage(url: viewModel.state.group.artworkURL!.absoluteString)
 
-        let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
+        let activityItems: [Any] = [shareText, shareUrl, shareImage]
         let activityViewController = UIActivityViewController(
             activityItems: activityItems, applicationActivities: [])
 
