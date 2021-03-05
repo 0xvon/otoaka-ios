@@ -19,7 +19,7 @@ final class FeedViewModel {
     }
     
     enum Scope: Int, CaseIterable {
-        case following
+        case all
     }
     
     let dependencyProvider: LoggedInDependencyProvider
@@ -42,7 +42,7 @@ final class FeedViewModel {
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         
-        let getAllPagination = PaginationRequest<Endpoint.GetFollowingUserFeeds>(apiClient: dependencyProvider.apiClient)
+        let getAllPagination = PaginationRequest<Endpoint.GetAllUserFeeds>(apiClient: dependencyProvider.apiClient)
         
         let feeds = getAllPagination.items()
             .multicast(subject: self._feeds)
@@ -50,13 +50,13 @@ final class FeedViewModel {
         let isRefreshing = getAllPagination.isRefreshing
             .map(Output.isRefreshing)
         
-        let scope = updateScope.map { Scope.allCases[$0] }.prepend(.following)
+        let scope = updateScope.map { Scope.allCases[$0] }.prepend(.all)
         
         let reloadData = feeds.map { _ in Output.reloadData }
         
         refresh.prepend(()).combineLatest(scope) { $1 }.sink { scope in
             switch scope {
-            case .following:
+            case .all:
                 getAllPagination.refresh()
             }
         }.store(in: &cancellables)
@@ -66,7 +66,7 @@ final class FeedViewModel {
             .combineLatest(scope, { $1 })
             .sink { scope in
                 switch scope {
-                case .following:
+                case .all:
                     getAllPagination.next()
                 }
             }.store(in: &cancellables)
