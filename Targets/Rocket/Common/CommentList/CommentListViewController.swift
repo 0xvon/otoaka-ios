@@ -62,7 +62,8 @@ final class CommentListViewController: UIViewController, Instantiable {
                 commentTableView.reloadData()
                 setTableViewBackgroundView(tableView: self.commentTableView)
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }.store(in: &cancellables)
     }

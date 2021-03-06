@@ -65,7 +65,8 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
                 setTableViewBackgroundView(tableView: self.requestTableView)
                 requestTableView.reloadData()
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }.store(in: &cancellables)
     }

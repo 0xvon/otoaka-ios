@@ -78,7 +78,8 @@ final class SelectPerformersViewController: UIViewController, Instantiable {
             case .didSelectPerformer(let group):
                 listener(group)
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)

@@ -51,9 +51,8 @@ final class GroupListViewController: UIViewController, Instantiable {
                 self.setTableViewBackgroundView(tableView: self.groupTableView)
                 self.groupTableView.reloadData()
             case .error(let error):
-                DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
-                }
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)

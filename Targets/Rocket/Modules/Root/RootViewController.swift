@@ -46,7 +46,8 @@ final class RootViewController: UITabBarController, Instantiable {
             case .didGetUserInfo(let user):
                 setViewControllers(instantiateTabs(with: user), animated: false)
             case .reportError(let error):
-                showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                showAlert()
             }
         }.store(in: &cancellables)
     }

@@ -83,7 +83,8 @@ final class RegistrationViewController: UIViewController, Instantiable {
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             case .error(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }.store(in: &cancellables)
     }

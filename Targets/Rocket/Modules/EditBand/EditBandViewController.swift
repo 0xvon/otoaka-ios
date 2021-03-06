@@ -174,7 +174,7 @@ final class EditBandViewController: UIViewController, Instantiable {
                 self.navigationController?.popViewController(animated: true)
             case .didValidateYoutubeChannelId(let isValid):
                 if !isValid {
-                    self.showAlert(title: "YouTube Channel IDエラー", message: "入力された値が正しくありません")
+                    self.showAlert(message: "入力された値が正しくありません。確認してください。")
                 }
             case .updateSubmittableState(let state):
                 switch state {
@@ -189,7 +189,8 @@ final class EditBandViewController: UIViewController, Instantiable {
                 guard let vcCount = navigationController?.viewControllers.count else { return }
                 navigationController?.popToViewController((navigationController?.viewControllers[vcCount - 3])!, animated: true)
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)

@@ -246,13 +246,14 @@ final class UserDetailViewController: UIViewController, Instantiable {
             switch output {
             case .updateFollowersCount(let count):
                 guard let userDetail = viewModel.state.userDetail else { return }
-                headerView.update(input: (user: viewModel.state.user, followersCount: count, followingUsersCount: userDetail.followingUsersCount,  imagePipeline: dependencyProvider.imagePipeline))
+                headerView.update(input: (user: viewModel.state.user, followersCount: count, followingUsersCount: userDetail.followingUsersCount, likeFeedCount: userDetail.likeFeedCount, imagePipeline: dependencyProvider.imagePipeline))
             case .updateIsButtonEnabled(let enabled):
                 followButton.isEnabled = enabled
             case .updateFollowing(let isFollowing):
                 followButton.isSelected = isFollowing
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)
@@ -281,7 +282,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     followButton.isHidden = false
                 }
                 userFollowingViewModel.didGetUserDetail(isFollowing: userDetail.isFollowing, followersCount: userDetail.followersCount)
-                headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount,  imagePipeline: dependencyProvider.imagePipeline))
+                headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount, likeFeedCount: userDetail.likeFeedCount, imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
             case .pushToGroupDetail(let group):
                 let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
@@ -349,22 +350,11 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
             case .didShareFeedButtonTapped(let feed):
-                let shareText: String = "\(feed.text)\n\n\(feed.title)\n\n by \(feed.author.name)\n via @wooruobudesu #ロック好きならロケバン"
-                let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
-                guard let shareUrl = url else { return }
-                
-                let activityItems: [Any] = [shareText, shareUrl]
-                let activityViewController = UIActivityViewController(
-                    activityItems: activityItems, applicationActivities: [])
-
-                activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
-                    dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-                }
-                activityViewController.popoverPresentationController?.permittedArrowDirections = .up
-                dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-                self.present(activityViewController, animated: true, completion: nil)
+                guard let activityController = getSNSShareContent(feed: feed) else { return }
+                self.present(activityController, animated: true, completion: nil)
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)
@@ -402,7 +392,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }
     
     func setupViews() {
-        headerView.update(input: (user: viewModel.state.user, followersCount: 0, followingUsersCount: 0, imagePipeline: dependencyProvider.imagePipeline))
+        headerView.update(input: (user: viewModel.state.user, followersCount: 0, followingUsersCount: 0, likeFeedCount: 0, imagePipeline: dependencyProvider.imagePipeline))
     }
     
     func didEditProfileButtonTapped() {

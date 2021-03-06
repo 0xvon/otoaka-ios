@@ -196,7 +196,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .updateParticipantsCount(let count):
                 participantsSummaryView.update(input: (title: "予約者", count: count))
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)
@@ -244,24 +245,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .didDeleteFeed:
                 viewModel.refresh()
             case .didShareFeedButtonTapped(let feed):
-                switch feed.feedType {
-                case .youtube(let url):
-                    let shareLiveText: String = "\(feed.text.prefix(20))\n\n by \(feed.author.name)\n\n\(url.absoluteString) via @wooruobudesu #ロック好きならロケバン"
-                    let shareUrl = URL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
-
-                    let activityItems: [Any] = [shareLiveText, shareUrl]
-                    let activityViewController = UIActivityViewController(
-                        activityItems: activityItems, applicationActivities: [])
-
-                    activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
-                        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-                    }
-                    activityViewController.popoverPresentationController?.permittedArrowDirections = .up
-                    dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-                    self.present(activityViewController, animated: true, completion: nil)
-                }
+                guard let activityController = getSNSShareContent(feed: feed) else { return }
+                self.present(activityController, animated: true, completion: nil)
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             case .pushToGroupFeedList(let input):
                 let vc = FeedListViewController(
                     dependencyProvider: dependencyProvider, input: input)
@@ -355,16 +343,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     @objc func createShare(_ sender: UIBarButtonItem) {
-        let shareLiveText: String = "【ロケバンでチケットを取り置きしよう】\n\n主催バンド: \(viewModel.state.live.hostGroup.name)\nライブ: \(viewModel.state.live.title)\n\n via @wooruobudesu #ロック好きならロケバン"
-        let shareUrl: NSURL = NSURL(string: "https://apps.apple.com/jp/app/rocket-for-bands-ii/id1550896325")!
-        let shareImage: UIImage = UIImage(url: viewModel.state.live.artworkURL!.absoluteString)
-        
-        let activityItems: [Any] = [shareLiveText, shareUrl, shareImage]
-        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
-        activityViewController.popoverPresentationController?.barButtonItem = sender
-        activityViewController.popoverPresentationController?.permittedArrowDirections = .up
-        
-        self.present(activityViewController, animated: true, completion: nil)
+        let live = viewModel.state.live
+        guard let activityController = getSNSShareContent(live: live) else { return }
+        self.present(activityController, animated: true, completion: nil)
     }
     
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }

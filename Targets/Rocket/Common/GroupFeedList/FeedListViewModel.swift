@@ -14,12 +14,14 @@ class FeedListViewModel {
     enum DataSource {
         case groupFeed(Group)
         case userFeed(User)
+        case likedFeed(User)
         case none
     }
     
     enum DataSourceStorage {
         case groupFeed(PaginationRequest<GetGroupsUserFeeds>)
         case userFeed(PaginationRequest<GetUserFeeds>)
+        case likedFeed(PaginationRequest<GetLikedUserFeeds>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -34,6 +36,11 @@ class FeedListViewModel {
                 uri.userId = user.id
                 let request = PaginationRequest<GetUserFeeds>(apiClient: apiClient, uri: uri)
                 self = .userFeed(request)
+            case .likedFeed(let user):
+                var uri = GetLikedUserFeeds.URI()
+                uri.userId = user.id
+                let request = PaginationRequest<GetLikedUserFeeds>(apiClient: apiClient, uri: uri)
+                self = .likedFeed(request)
             case .none: self = .none
             }
         }
@@ -98,6 +105,10 @@ class FeedListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .likedFeed(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case .none: break
         }
     }
@@ -127,6 +138,8 @@ class FeedListViewModel {
             pagination.refresh()
         case let .userFeed(pagination):
             pagination.refresh()
+        case let .likedFeed(pagination):
+            pagination.refresh()
         case .none:
             break
         }
@@ -138,6 +151,8 @@ class FeedListViewModel {
         case let .groupFeed(pagination):
             pagination.next()
         case let .userFeed(pagination):
+            pagination.next()
+        case let .likedFeed(pagination):
             pagination.next()
         case .none: break
         }

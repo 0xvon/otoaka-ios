@@ -52,7 +52,8 @@ final class UserListViewController: UIViewController, Instantiable {
                 self.fanTableView.reloadData()
                 self.setTableViewBackgroundView(tableView: self.fanTableView)
             case .error(let err):
-                self.showAlert(title: "エラー", message: String(describing: err))
+                print(err)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)

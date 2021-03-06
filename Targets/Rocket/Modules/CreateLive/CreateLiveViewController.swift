@@ -255,7 +255,8 @@ final class CreateLiveViewController: UIViewController, Instantiable {
                     self.activityIndicator.startAnimating()
                 }
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)

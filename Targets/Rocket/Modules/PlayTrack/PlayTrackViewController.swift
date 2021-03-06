@@ -148,7 +148,8 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                 likeButtonView.setTitle("\(viewModel.state.likeCount)", for: .normal)
                 likeButtonView.isSelected.toggle()
             case .error(let error):
-                showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -289,20 +290,8 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     @objc private func shareButtonTapped() {
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
-            let shareText: String = "\(feed.text)\n\n\(feed.title)\n\n by \(feed.author.name)\n via @wooruobudesu #ロック好きならロケバン"
-            let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
-            guard let shareUrl = url else { return }
-
-            let activityItems: [Any] = [shareText, shareUrl]
-            let activityViewController = UIActivityViewController(
-                activityItems: activityItems, applicationActivities: [])
-
-            activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
-                dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-            }
-            activityViewController.popoverPresentationController?.permittedArrowDirections = .up
-            dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-            self.present(activityViewController, animated: true, completion: nil)
+            guard let activityController = getSNSShareContent(feed: feed) else { return }
+            self.present(activityController, animated: true, completion: nil)
         case .youtubeVideo(_): break
         }
     }

@@ -48,7 +48,7 @@ final class TicketViewController: UIViewController, Instantiable {
                 }
             case .error(let error):
                 DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                    self.showAlert()
                 }
             }
         }

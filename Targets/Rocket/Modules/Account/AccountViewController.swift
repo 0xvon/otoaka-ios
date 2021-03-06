@@ -89,7 +89,8 @@ final class AccountViewController: UIViewController, Instantiable {
                 self.seeRequestsItem.hasNotification = count > 0
                 self.tableView.reloadData()
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }.store(in: &cancellables)
     }
@@ -171,7 +172,8 @@ final class AccountViewController: UIViewController, Instantiable {
         
         dependencyProvider.auth.signOut(self) { [unowned self] error in
             if let error = error {
-                showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                showAlert()
             } else {
                 self.listener()
             }

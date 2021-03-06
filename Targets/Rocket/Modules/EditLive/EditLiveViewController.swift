@@ -174,7 +174,8 @@ final class EditLiveViewController: UIViewController, Instantiable {
                     self.activityIndicator.startAnimating()
                 }
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)

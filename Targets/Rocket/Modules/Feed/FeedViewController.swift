@@ -65,7 +65,8 @@ final class FeedViewController: UITableViewController {
             case .didToggleLikeFeed:
                 viewModel.refresh.send(())
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                print(error)
+                self.showAlert()
             }
         }.store(in: &cancellables)
         
@@ -87,7 +88,7 @@ final class FeedViewController: UITableViewController {
             granted, error in
             if let error = error {
                 DispatchQueue.main.async {
-                    self.showAlert(title: "エラー", message: error.localizedDescription)
+                    self.showAlert()
                 }
                 return
             }
@@ -124,6 +125,7 @@ extension FeedViewController {
             for: indexPath
         )
         cell.listen { [weak self] output in
+            print(indexPath.row)
             switch output {
             case .commentButtonTapped:
                 self?.feedCommentButtonTapped(cellIndex: indexPath.row)
@@ -195,20 +197,12 @@ extension FeedViewController {
     
     private func createShare(cellIndex: Int) {
         let feed = self.viewModel.feeds[cellIndex]
-        let shareText: String = "\(feed.text)\n\n\(feed.title)\n\n by \(feed.author.name)\n via @wooruobudesu #ロック好きならロケバン"
-        let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
-        guard let shareUrl = url else { return }
-        
-        let activityItems: [Any] = [shareText, shareUrl]
-        let activityViewController = UIActivityViewController(
-            activityItems: activityItems, applicationActivities: [])
-
-        activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
+        guard let activityController = getSNSShareContent(feed: feed) else { return }
+        activityController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
             dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
         }
-        activityViewController.popoverPresentationController?.permittedArrowDirections = .up
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-        self.present(activityViewController, animated: true, completion: nil)
+        self.present(activityController, animated: true, completion: nil)
     }
     
     private func deleteFeedButtonTapped(cellIndex: Int) {

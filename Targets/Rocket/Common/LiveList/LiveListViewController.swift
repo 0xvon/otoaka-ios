@@ -51,7 +51,8 @@ final class LiveListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.liveTableView.reloadData()
             case .error(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)

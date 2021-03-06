@@ -59,7 +59,8 @@ final class InvitationViewController: UIViewController, Instantiable {
                 self.dismiss(animated: true, completion: nil)
                 self.navigationController?.popViewController(animated: true)
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                self.showAlert()
             }
         }.store(in: &cancellables)
     }

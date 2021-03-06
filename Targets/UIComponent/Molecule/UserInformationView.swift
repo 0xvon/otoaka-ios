@@ -47,6 +47,15 @@ class UserInformationView: UIView {
         return summaryView
     }()
     
+    private lazy var likeFeedCountSummaryView: CountSummaryView = {
+        let summaryView = CountSummaryView()
+        summaryView.translatesAutoresizingMaskIntoConstraints = false
+        summaryView.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(likeFeedSummaryViewTapped))
+        )
+        return summaryView
+    }()
+    
     init() {
         super.init(frame: .zero)
         setup()
@@ -61,6 +70,7 @@ class UserInformationView: UIView {
         displayNameLabel.text = input.user.name
         followerCountSumamryView.update(input: (title: "フォロワー", count: input.followersCount))
         followingUserCountSummaryView.update(input: (title: "フォロー", count: input.followingUsersCount))
+        likeFeedCountSummaryView.update(input: (title: "いいね", count: input.likeFeedCount))
         input.imagePipeline.loadImage(URL(string: input.user.thumbnailURL!)!, into: profileImageView)
     }
     
@@ -85,7 +95,7 @@ class UserInformationView: UIView {
         addSubview(followerCountSumamryView)
         NSLayoutConstraint.activate([
             followerCountSumamryView.heightAnchor.constraint(equalToConstant: 60),
-            followerCountSumamryView.widthAnchor.constraint(equalToConstant: 120),
+            followerCountSumamryView.widthAnchor.constraint(equalToConstant: 80),
             followerCountSumamryView.topAnchor.constraint(equalTo: displayNameLabel.bottomAnchor, constant: 12),
             followerCountSumamryView.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
         ])
@@ -93,9 +103,17 @@ class UserInformationView: UIView {
         addSubview(followingUserCountSummaryView)
         NSLayoutConstraint.activate([
             followingUserCountSummaryView.heightAnchor.constraint(equalToConstant: 60),
-            followingUserCountSummaryView.widthAnchor.constraint(equalToConstant: 120),
+            followingUserCountSummaryView.widthAnchor.constraint(equalToConstant: 80),
             followingUserCountSummaryView.topAnchor.constraint(equalTo: followerCountSumamryView.topAnchor),
-            followingUserCountSummaryView.leftAnchor.constraint(equalTo: followerCountSumamryView.rightAnchor, constant: 8),
+            followingUserCountSummaryView.leftAnchor.constraint(equalTo: followerCountSumamryView.rightAnchor, constant: 4),
+        ])
+        
+        addSubview(likeFeedCountSummaryView)
+        NSLayoutConstraint.activate([
+            likeFeedCountSummaryView.heightAnchor.constraint(equalToConstant: 60),
+            likeFeedCountSummaryView.widthAnchor.constraint(equalToConstant: 80),
+            likeFeedCountSummaryView.topAnchor.constraint(equalTo: followerCountSumamryView.topAnchor),
+            likeFeedCountSummaryView.leftAnchor.constraint(equalTo: followingUserCountSummaryView.rightAnchor, constant: 4),
         ])
     }
     
@@ -107,6 +125,7 @@ class UserInformationView: UIView {
     public enum Output {
         case followerCountButtonTapped
         case followingUserCountButtonTapped
+        case likeFeedCountButtonTapped
         case arrowButtonTapped
     }
     
@@ -115,11 +134,14 @@ class UserInformationView: UIView {
     }
     
     @objc private func followersSummaryViewTapped() {
-        print("tapped")
         listener(.followerCountButtonTapped)
     }
     
     @objc private func followingUserSummaryViewTapped() {
         listener(.followingUserCountButtonTapped)
+    }
+    
+    @objc private func likeFeedSummaryViewTapped() {
+        listener(.likeFeedCountButtonTapped)
     }
 }

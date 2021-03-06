@@ -136,6 +136,8 @@ class UserDetailViewModel {
             outputSubject.send(.pushToUserList(.userFollowers(state.user.id)))
         case .followingUsersButtonTapped:
             outputSubject.send(.pushToUserList(.followingUsers(state.user.id)))
+        case .likeFeedButtonTapped:
+            outputSubject.send(.pushToFeedList(.likedFeed(state.user)))
         }
     }
     

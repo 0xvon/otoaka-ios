@@ -149,7 +149,7 @@ class UserFeedCellContent: UIView {
         artistNameLabel.textColor = Brand.color(for: .text(.primary))
         
         feedTitleLabel.font = Brand.font(for: .small)
-        feedTitleLabel.textColor = Brand.color(for: .text(.link))
+        feedTitleLabel.textColor = Brand.color(for: .text(.primary))
         
         textView.font = Brand.font(for: .xlargeStrong)
         textView.textColor = Brand.color(for: .text(.primary))

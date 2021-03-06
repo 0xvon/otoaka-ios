@@ -75,7 +75,8 @@ final class LiveViewController: UITableViewController {
                     self.refreshControl?.endRefreshing()
                 }
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                print(error)
+                self.showAlert()
             }
         }.store(in: &cancellables)
         

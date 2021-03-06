@@ -161,7 +161,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
                 self.navigationController?.popViewController(animated: true)
             case .didValidateYoutubeChannelId(let isValid):
                 if !isValid {
-                    self.showAlert(title: "YouTube Channel IDエラー", message: "入力された値が正しくありません")
+                    self.showAlert(message: "入力された値が正しくありません。確認してください。")
                     self.youTubeIdInputView.setText(text: "")
                 }
             case .updateSubmittableState(let state):
@@ -174,7 +174,8 @@ final class CreateBandViewController: UIViewController, Instantiable {
                     self.activityIndicator.startAnimating()
                 }
             case .reportError(let error):
-                self.showAlert(title: "エラー", message: error.localizedDescription)
+                print(error)
+                self.showAlert()
             }
         }
         .store(in: &cancellables)

@@ -53,7 +53,7 @@ extension UIImage {
 }
 
 extension UIViewController {
-    func showAlert(title: String, message: String?) {
+    func showAlert(title: String = "（’・_・｀）", message: String = "ネットワークエラーが発生しました。時間をおいて再度お試しください。") {
         let alertController = UIAlertController(
             title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         

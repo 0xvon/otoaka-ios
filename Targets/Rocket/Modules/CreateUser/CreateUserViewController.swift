@@ -263,7 +263,8 @@ final class CreateUserViewController: UIViewController, Instantiable {
                     self.activityIndicator.startAnimating()
                 }
             case .reportError(let error):
-                showAlert(title: "エラー", message: error.localizedDescription)
+                print(error)
+                showAlert()
             }
         }
         .store(in: &cancellables)

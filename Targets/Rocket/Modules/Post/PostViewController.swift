@@ -183,7 +183,8 @@ final class PostViewController: UIViewController, Instantiable {
                     activityIndicator.startAnimating()
                 }
             case .reportError(let error):
-                showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                showAlert()
             case .didSelectPost:
                 trackInfoLabel.text = viewModel.state.title
                 if let thumbnail = viewModel.state.thumbnailUrl {

@@ -50,7 +50,8 @@ final class FeedListViewController: UIViewController, Instantiable {
             case .didToggleLikeFeed:
                 viewModel.refresh()
             case .error(let err):
-                showAlert(title: "エラー", message: String(describing: err))
+                print(err)
+                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -126,15 +127,15 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
         cell.listen { [weak self] output in
             switch output {
             case .commentButtonTapped:
-                self?.feedCommentButtonTapped(cellIndex: indexPath.row)
+                self?.feedCommentButtonTapped(cellIndex: indexPath.section)
             case .deleteFeedButtonTapped:
-                self?.deleteFeedButtonTapped(cellIndex: indexPath.row)
+                self?.deleteFeedButtonTapped(cellIndex: indexPath.section)
             case .likeFeedButtonTapped:
-                self?.viewModel.likeFeed(cellIndex: indexPath.row)
+                self?.viewModel.likeFeed(cellIndex: indexPath.section)
             case .unlikeFeedButtonTapped:
-                self?.viewModel.unlikeFeed(cellIndex: indexPath.row)
+                self?.viewModel.unlikeFeed(cellIndex: indexPath.section)
             case .shareButtonTapped:
-                self?.createShare(cellIndex: indexPath.row)
+                self?.createShare(cellIndex: indexPath.section)
             }
         }
         return cell
@@ -160,21 +161,8 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func createShare(cellIndex: Int) {
         let feed = self.viewModel.state.feeds[cellIndex]
-        
-        let shareText: String = "\(feed.text.prefix(20))\n\(feed.title)\n by \(feed.author.name)\n via @wooruobudesu #ロック好きならロケバン"
-        let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
-        guard let shareUrl = url else { return }
-
-        let activityItems: [Any] = [shareText, shareUrl]
-        let activityViewController = UIActivityViewController(
-            activityItems: activityItems, applicationActivities: [])
-
-        activityViewController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
-            dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-        }
-        activityViewController.popoverPresentationController?.permittedArrowDirections = .up
-        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-        self.present(activityViewController, animated: true, completion: nil)
+        guard let activityController = getSNSShareContent(feed: feed) else { return }
+        self.present(activityController, animated: true, completion: nil)
     }
     
     private func deleteFeedButtonTapped(cellIndex: Int) {

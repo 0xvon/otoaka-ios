@@ -81,7 +81,7 @@ final class SelectTrackViewController: UITableViewController {
                 listener(viewModel.state.group, track)
             case .reportError(let error):
                 print(error)
-                showAlert(title: "エラー", message: String(describing: error))
+                showAlert()
             }
         }.store(in: &cancellables)
         

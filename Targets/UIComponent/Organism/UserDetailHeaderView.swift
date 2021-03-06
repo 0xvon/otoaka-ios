@@ -15,6 +15,7 @@ public final class UserDetailHeaderView: UIView {
         user: User,
         followersCount: Int,
         followingUsersCount: Int,
+        likeFeedCount: Int,
         imagePipeline: ImagePipeline
     )
     
@@ -64,6 +65,8 @@ public final class UserDetailHeaderView: UIView {
                 self.listener(.followersButtonTapped)
             case .followingUserCountButtonTapped:
                 self.listener(.followingUsersButtonTapped)
+            case .likeFeedCountButtonTapped:
+                self.listener(.likeFeedButtonTapped)
             }
         }
     }
@@ -116,5 +119,6 @@ public final class UserDetailHeaderView: UIView {
     public enum Output {
         case followersButtonTapped
         case followingUsersButtonTapped
+        case likeFeedButtonTapped
     }
 }

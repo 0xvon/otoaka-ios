@@ -83,7 +83,8 @@ final class SelectGroupViewController: UITableViewController {
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let error):
-                showAlert(title: "エラー", message: String(describing: error))
+                print(error)
+                showAlert()
             }
         }.store(in: &cancellables)
         
