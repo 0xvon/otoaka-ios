@@ -290,7 +290,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     @objc private func shareButtonTapped() {
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
-            guard let activityController = getSNSShareContent(feed: feed) else { return }
+            let activityController = getSNSShareContent(type: .feed(feed))
             self.present(activityController, animated: true, completion: nil)
         case .youtubeVideo(_): break
         }

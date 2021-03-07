@@ -65,6 +65,8 @@ class UserFeedCellContent: UIView {
         case likeFeedButtonTapped
         case unlikeFeedButtonTapped
         case shareButtonTapped
+        case downloadButtonTapped
+        case instagramButtonTapped
     }
     
     let dateFormatter: DateFormatter = {
@@ -80,6 +82,8 @@ class UserFeedCellContent: UIView {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var thumbnailImageView: UIImageView!
     @IBOutlet weak var shareButton: UIButton!
+    @IBOutlet weak var instagramButton: UIButton!
+    @IBOutlet weak var downloadButton: UIButton!
     @IBOutlet weak var likeButton: ReactionIndicatorButton! {
         didSet {
             likeButton.setImage(
@@ -142,10 +146,10 @@ class UserFeedCellContent: UIView {
         thumbnailImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
 
 
-        dateLabel.font = Brand.font(for: .small)
-        dateLabel.textColor = Brand.color(for: .text(.primary))
+        dateLabel.font = Brand.font(for: .xsmall)
+        dateLabel.textColor = Brand.color(for: .background(.secondary))
 
-        artistNameLabel.font = Brand.font(for: .medium)
+        artistNameLabel.font = Brand.font(for: .smallStrong)
         artistNameLabel.textColor = Brand.color(for: .text(.primary))
         
         feedTitleLabel.font = Brand.font(for: .small)
@@ -162,6 +166,15 @@ class UserFeedCellContent: UIView {
         profileImageView.layer.cornerRadius = 30
         profileImageView.clipsToBounds = true
         profileImageView.contentMode = .scaleAspectFill
+        
+        downloadButton.setImage(
+            UIImage(systemName: "arrow.down.to.line")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        downloadButton.addTarget(self, action: #selector(downloadButtonTapped), for: .touchUpInside)
+        
+        instagramButton.addTarget(self, action: #selector(instagramButtonTapped), for: .touchUpInside)
         
         deleteFeedButton.setImage(
             UIImage(systemName: "trash")!
@@ -202,6 +215,14 @@ class UserFeedCellContent: UIView {
     
     @objc private func shareButtonTapped() {
         listener(.shareButtonTapped)
+    }
+    
+    @objc private func downloadButtonTapped() {
+        listener(.downloadButtonTapped)
+    }
+    
+    @objc private func instagramButtonTapped() {
+        listener(.instagramButtonTapped)
     }
 
     private var listener: (Output) -> Void = { _ in }

@@ -39,17 +39,21 @@ class UserDetailViewModel {
     
     enum Output {
         case didRefreshUserDetail(UserDetail)
-        case pushToGroupDetail(Group)
-        case pushToPlayTrack(PlayTrackViewController.Input)
         case didRefreshFeedSummary(UserFeedSummary?)
         case didRefreshFollowingGroup(Group?)
+        
+        case pushToPlayTrack(PlayTrackViewController.Input)
+        case pushToGroupDetail(Group)
         case pushToFeedList(FeedListViewController.Input)
         case pushToGroupList(GroupListViewController.Input)
         case pushToUserList(UserListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
+        
         case didDeleteFeed
         case didToggleLikeFeed
+        case didDownloadButtonTapped(UserFeedSummary)
+        case didInstagramButtonTapped(UserFeedSummary)
         case didDeleteFeedButtonTapped(UserFeedSummary)
         case didShareFeedButtonTapped(UserFeedSummary)
         case reportError(Error)
@@ -164,6 +168,12 @@ class UserDetailViewModel {
         case .shareButtonTapped:
             guard let feed = state.feed else { return }
             outputSubject.send(.didShareFeedButtonTapped(feed))
+        case .downloadButtonTapped:
+            guard let feed = state.feed else { return }
+            outputSubject.send(.didDownloadButtonTapped(feed))
+        case .instagramButtonTapped:
+            guard let feed = state.feed else { return }
+            outputSubject.send(.didInstagramButtonTapped(feed))
         }
     }
     

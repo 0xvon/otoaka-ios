@@ -88,6 +88,7 @@ final class FeedViewController: UITableViewController {
             granted, error in
             if let error = error {
                 DispatchQueue.main.async {
+                    print(error)
                     self.showAlert()
                 }
                 return
@@ -125,7 +126,6 @@ extension FeedViewController {
             for: indexPath
         )
         cell.listen { [weak self] output in
-            print(indexPath.row)
             switch output {
             case .commentButtonTapped:
                 self?.feedCommentButtonTapped(cellIndex: indexPath.row)
@@ -137,6 +137,10 @@ extension FeedViewController {
                 self?.viewModel.unlikeFeed(cellIndex: indexPath.row)
             case .shareButtonTapped:
                 self?.createShare(cellIndex: indexPath.row)
+            case .downloadButtonTapped:
+                self?.downloadButtonTapped(cellIndex: indexPath.row)
+            case .instagramButtonTapped:
+                self?.instagramButtonTapped(cellIndex: indexPath.row)
             }
             
         }
@@ -197,12 +201,25 @@ extension FeedViewController {
     
     private func createShare(cellIndex: Int) {
         let feed = self.viewModel.feeds[cellIndex]
-        guard let activityController = getSNSShareContent(feed: feed) else { return }
+        let activityController = getSNSShareContent(type: .feed(feed))
         activityController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
             dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
         }
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         self.present(activityController, animated: true, completion: nil)
+    }
+    
+    private func downloadButtonTapped(cellIndex: Int) {
+        let feed = self.viewModel.feeds[cellIndex]
+        if let thumbnail = feed.ogpUrl {
+            let image = UIImage(url: thumbnail)
+            downloadImage(image: image)
+        }
+    }
+    
+    private func instagramButtonTapped(cellIndex: Int) {
+        let feed = self.viewModel.feeds[cellIndex]
+        shareFeedWithInstagram(feed: feed)
     }
     
     private func deleteFeedButtonTapped(cellIndex: Int) {

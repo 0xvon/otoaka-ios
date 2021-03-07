@@ -245,8 +245,12 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .didDeleteFeed:
                 viewModel.refresh()
             case .didShareFeedButtonTapped(let feed):
-                guard let activityController = getSNSShareContent(feed: feed) else { return }
+                let activityController = getSNSShareContent(type: .feed(feed))
                 self.present(activityController, animated: true, completion: nil)
+            case .didDownloadButtonTapped(let feed):
+                self.downloadButtonTapped(feed: feed)
+            case .didInstagramButtonTapped(let feed):
+                self.instagramButtonTapped(feed: feed)
             case .reportError(let error):
                 print(error)
                 self.showAlert()
@@ -344,8 +348,19 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     @objc func createShare(_ sender: UIBarButtonItem) {
         let live = viewModel.state.live
-        guard let activityController = getSNSShareContent(live: live) else { return }
+        let activityController = getSNSShareContent(type: .live(live))
         self.present(activityController, animated: true, completion: nil)
+    }
+    
+    private func downloadButtonTapped(feed: UserFeedSummary) {
+        if let thumbnail = feed.ogpUrl {
+            let image = UIImage(url: thumbnail)
+            downloadImage(image: image)
+        }
+    }
+    
+    private func instagramButtonTapped(feed: UserFeedSummary) {
+        shareFeedWithInstagram(feed: feed)
     }
     
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }

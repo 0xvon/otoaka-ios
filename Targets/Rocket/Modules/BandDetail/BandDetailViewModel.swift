@@ -58,6 +58,8 @@ class BandDetailViewModel {
         case didToggleLikeFeed
         case didDeleteFeedButtonTapped(UserFeedSummary)
         case didShareFeedButtonTapped(UserFeedSummary)
+        case didDownloadButtonTapped(UserFeedSummary)
+        case didInstagramButtonTapped(UserFeedSummary)
         case reportError(Error)
     }
     
@@ -211,6 +213,12 @@ class BandDetailViewModel {
         case .shareButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didShareFeedButtonTapped(feed))
+        case .downloadButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.didDownloadButtonTapped(feed))
+        case .instagramButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.didInstagramButtonTapped(feed))
         }
     }
     

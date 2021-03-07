@@ -21,14 +21,8 @@
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="pcy-if-26W">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
                 </imageView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jse-Ek-ShY">
-                    <rect key="frame" x="356.5" y="263.5" width="41.5" height="20.5"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="c3P-Ga-ufb">
-                    <rect key="frame" x="16" y="240" width="220" height="44"/>
+                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="c3P-Ga-ufb">
+                    <rect key="frame" x="16" y="240" width="296" height="44"/>
                     <subviews>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VCF-xH-vYa" customClass="ReactionIndicatorButton" customModule="UIComponent">
                             <rect key="frame" x="0.0" y="0.0" width="60" height="44"/>
@@ -38,22 +32,34 @@
                             </constraints>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aBG-mS-A3Z" customClass="ReactionIndicatorButton" customModule="UIComponent">
-                            <rect key="frame" x="64" y="0.0" width="60" height="44"/>
+                            <rect key="frame" x="60" y="0.0" width="60" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="60" id="MZv-8g-P71"/>
                                 <constraint firstAttribute="height" constant="44" id="eIz-Gx-Eay"/>
                             </constraints>
                         </view>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Cs1-c7-iW0">
-                            <rect key="frame" x="128" y="0.0" width="44" height="44"/>
+                            <rect key="frame" x="120" y="0.0" width="44" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="44" id="hX9-Oo-Ebz"/>
                                 <constraint firstAttribute="height" constant="44" id="zW9-PR-qBM"/>
                             </constraints>
                             <state key="normal" image="square.and.arrow.up" catalog="system"/>
                         </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bdt-wp-3av">
+                            <rect key="frame" x="164" y="0.0" width="44" height="44"/>
+                            <state key="normal" image="insta"/>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cSs-rr-A5p">
+                            <rect key="frame" x="208" y="0.0" width="44" height="44"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="44" id="pyS-De-DBA"/>
+                                <constraint firstAttribute="height" constant="44" id="rNl-2G-7jU"/>
+                            </constraints>
+                            <state key="normal" image="arrow.down.to.line" catalog="system"/>
+                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Js6-bK-hAq">
-                            <rect key="frame" x="176" y="0.0" width="44" height="44"/>
+                            <rect key="frame" x="252" y="0.0" width="44" height="44"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="44" id="0ne-8c-FpL"/>
                                 <constraint firstAttribute="width" constant="44" id="VR9-Ec-HFf"/>
@@ -88,6 +94,12 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jse-Ek-ShY">
+                    <rect key="frame" x="84" y="65" width="314" height="20.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -100,19 +112,22 @@
                 <constraint firstItem="pcy-if-26W" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Ifa-lo-inD"/>
                 <constraint firstItem="BPe-SR-Xun" firstAttribute="top" secondItem="cbI-5t-LkR" secondAttribute="bottom" constant="8" id="JtJ-3r-4ef"/>
                 <constraint firstItem="uXk-VN-0Vv" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="K85-lx-qgU"/>
+                <constraint firstItem="jse-Ek-ShY" firstAttribute="trailing" secondItem="3zl-1b-0ad" secondAttribute="trailing" id="Kr8-2G-TZE"/>
+                <constraint firstItem="jse-Ek-ShY" firstAttribute="top" secondItem="Kri-ms-dBW" secondAttribute="bottom" constant="4" id="Ktp-6U-EcW"/>
                 <constraint firstItem="Kri-ms-dBW" firstAttribute="top" secondItem="3zl-1b-0ad" secondAttribute="bottom" constant="4" id="O7d-os-KJ6"/>
                 <constraint firstItem="cbI-5t-LkR" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="Pp0-LC-DAi"/>
                 <constraint firstItem="cbI-5t-LkR" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="SwR-St-guz"/>
+                <constraint firstItem="jse-Ek-ShY" firstAttribute="leading" secondItem="3zl-1b-0ad" secondAttribute="leading" id="VEY-HB-9gX"/>
+                <constraint firstItem="Kri-ms-dBW" firstAttribute="leading" secondItem="3zl-1b-0ad" secondAttribute="leading" id="YdK-0M-mGo"/>
                 <constraint firstItem="Kri-ms-dBW" firstAttribute="leading" secondItem="3zl-1b-0ad" secondAttribute="leading" id="ZEV-Ba-5KC"/>
                 <constraint firstItem="BPe-SR-Xun" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="16" id="byq-9k-ux7"/>
                 <constraint firstItem="c3P-Ga-ufb" firstAttribute="top" secondItem="BPe-SR-Xun" secondAttribute="bottom" constant="8" id="eyz-sU-vwn"/>
                 <constraint firstItem="3zl-1b-0ad" firstAttribute="top" secondItem="cbI-5t-LkR" secondAttribute="top" id="jWH-7c-4XT"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="BPe-SR-Xun" secondAttribute="trailing" constant="16" id="m8u-R1-eoc"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="jse-Ek-ShY" secondAttribute="trailing" constant="16" id="mW9-g5-Qub"/>
                 <constraint firstItem="3zl-1b-0ad" firstAttribute="leading" secondItem="cbI-5t-LkR" secondAttribute="trailing" constant="8" id="njc-ac-NAE"/>
                 <constraint firstItem="uXk-VN-0Vv" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="oDe-S2-Ofb"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="c3P-Ga-ufb" secondAttribute="bottom" constant="16" id="oaZ-zw-nQ5"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="jse-Ek-ShY" secondAttribute="bottom" constant="16" id="wWW-UT-Xtz"/>
+                <constraint firstItem="Kri-ms-dBW" firstAttribute="trailing" secondItem="3zl-1b-0ad" secondAttribute="trailing" id="rhF-b8-brh"/>
                 <constraint firstItem="uXk-VN-0Vv" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="xFO-aP-zlR"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Kri-ms-dBW" secondAttribute="trailing" constant="16" id="xSa-b3-Ogd"/>
                 <constraint firstItem="uXk-VN-0Vv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="xi8-pR-Mwn"/>
@@ -124,7 +139,9 @@
                 <outlet property="commentButton" destination="VCF-xH-vYa" id="tDW-1I-C1z"/>
                 <outlet property="dateLabel" destination="jse-Ek-ShY" id="ESb-ZR-it0"/>
                 <outlet property="deleteFeedButton" destination="Js6-bK-hAq" id="FD1-FM-hVI"/>
+                <outlet property="downloadButton" destination="cSs-rr-A5p" id="Nca-dS-eAl"/>
                 <outlet property="feedTitleLabel" destination="Kri-ms-dBW" id="8EH-Q9-C4E"/>
+                <outlet property="instagramButton" destination="bdt-wp-3av" id="Ntl-74-EhV"/>
                 <outlet property="likeButton" destination="aBG-mS-A3Z" id="gWm-XQ-8B7"/>
                 <outlet property="profileImageView" destination="cbI-5t-LkR" id="jwn-p1-IYY"/>
                 <outlet property="shareButton" destination="Cs1-c7-iW0" id="vit-FS-g0P"/>
@@ -135,6 +152,8 @@
         </view>
     </objects>
     <resources>
+        <image name="arrow.down.to.line" catalog="system" width="128" height="128"/>
+        <image name="insta" width="44" height="44"/>
         <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <image name="trash" catalog="system" width="121" height="128"/>
         <systemColor name="labelColor">

@@ -36,8 +36,11 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
-	<key>LSApplicationQueriesSchemas</key>
-	<string>spotify</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+        <string>instagram-stories</string>
+        <string>spotify</string>
+    </array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

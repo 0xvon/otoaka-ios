@@ -39,6 +39,8 @@ class LiveDetailViewModel {
         case pushToPerformerDetail(BandDetailViewController.Input)
         case presentCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
+        case didDownloadButtonTapped(UserFeedSummary)
+        case didInstagramButtonTapped(UserFeedSummary)
         case reportError(Error)
     }
     
@@ -144,6 +146,12 @@ class LiveDetailViewModel {
         case .shareButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didShareFeedButtonTapped(feed))
+        case .downloadButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.didDownloadButtonTapped(feed))
+        case .instagramButtonTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.didInstagramButtonTapped(feed))
         }
     }
     

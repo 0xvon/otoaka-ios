@@ -234,12 +234,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .didToggleLikeFeed:
                 viewModel.refresh()
             case .didShareFeedButtonTapped(let feed):
-                guard let activityController = getSNSShareContent(feed: feed) else { return }
+                let activityController = getSNSShareContent(type: .feed(feed))
                 self.present(activityController, animated: true, completion: nil)
 //            case .updateLiveSummary(.some(let live)):
 //                self.liveSectionHeader.isHidden = false
 //                self.liveCellWrapper.isHidden = false
 //                self.liveCellContent.inject(input: (live: live, imagePipeline: dependencyProvider.imagePipeline))
+            case .didDownloadButtonTapped(let feed):
+                self.downloadButtonTapped(feed: feed)
+            case .didInstagramButtonTapped(let feed):
+                self.instagramButtonTapped(feed: feed)
             case .updateFeedSummary(.none):
                 self.feedSectionHeader.isHidden = true
                 self.feedCellWrapper.isHidden = true
@@ -373,8 +377,19 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     @objc func createShare(_ sender: UIBarButtonItem) {
         let group = viewModel.state.group
-        guard let activityController = getSNSShareContent(group: group) else { return }
+        let activityController = getSNSShareContent(type: .group(group))
         self.present(activityController, animated: true, completion: nil)
+    }
+    
+    private func downloadButtonTapped(feed: UserFeedSummary) {
+        if let thumbnail = feed.ogpUrl {
+            let image = UIImage(url: thumbnail)
+            downloadImage(image: image)
+        }
+    }
+    
+    private func instagramButtonTapped(feed: UserFeedSummary) {
+        shareFeedWithInstagram(feed: feed)
     }
 
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }

@@ -136,6 +136,10 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
                 self?.viewModel.unlikeFeed(cellIndex: indexPath.section)
             case .shareButtonTapped:
                 self?.createShare(cellIndex: indexPath.section)
+            case .downloadButtonTapped:
+                self?.downloadButtonTapped(cellIndex: indexPath.section)
+            case .instagramButtonTapped:
+                self?.instagramButtonTapped(cellIndex: indexPath.section)
             }
         }
         return cell
@@ -161,8 +165,21 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func createShare(cellIndex: Int) {
         let feed = self.viewModel.state.feeds[cellIndex]
-        guard let activityController = getSNSShareContent(feed: feed) else { return }
+        let activityController = getSNSShareContent(type: .feed(feed))
         self.present(activityController, animated: true, completion: nil)
+    }
+    
+    private func downloadButtonTapped(cellIndex: Int) {
+        let feed = self.viewModel.state.feeds[cellIndex]
+        if let thumbnail = feed.ogpUrl {
+            let image = UIImage(url: thumbnail)
+            downloadImage(image: image)
+        }
+    }
+    
+    private func instagramButtonTapped(cellIndex: Int) {
+        let feed = self.viewModel.state.feeds[cellIndex]
+        shareFeedWithInstagram(feed: feed)
     }
     
     private func deleteFeedButtonTapped(cellIndex: Int) {

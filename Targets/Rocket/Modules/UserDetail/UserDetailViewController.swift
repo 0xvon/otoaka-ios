@@ -350,8 +350,12 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
             case .didShareFeedButtonTapped(let feed):
-                guard let activityController = getSNSShareContent(feed: feed) else { return }
+                let activityController = getSNSShareContent(type: .feed(feed))
                 self.present(activityController, animated: true, completion: nil)
+            case .didDownloadButtonTapped(let feed):
+                self.downloadButtonTapped(feed: feed)
+            case .didInstagramButtonTapped(let feed):
+                self.instagramButtonTapped(feed: feed)
             case .reportError(let error):
                 print(error)
                 self.showAlert()
@@ -398,6 +402,17 @@ final class UserDetailViewController: UIViewController, Instantiable {
     func didEditProfileButtonTapped() {
         let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func downloadButtonTapped(feed: UserFeedSummary) {
+        if let thumbnail = feed.ogpUrl {
+            let image = UIImage(url: thumbnail)
+            downloadImage(image: image)
+        }
+    }
+    
+    private func instagramButtonTapped(feed: UserFeedSummary) {
+        shareFeedWithInstagram(feed: feed)
     }
     
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }

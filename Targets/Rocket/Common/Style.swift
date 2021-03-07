@@ -7,6 +7,7 @@
 
 import UIKit
 import InternalDomain
+import Endpoint
 
 let per = 20
 let textFieldHeight: CGFloat = 60
@@ -63,13 +64,53 @@ extension UIViewController {
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true, completion: nil)
     }
+    
+    func downloadImage(image: UIImage) {
+        UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.showResultOfSaveImage(_:didFinishSavingWithError:contextInfo:)), nil)
+    }
+    
+    func shareFeedWithInstagram(feed: UserFeedSummary) {
+        switch feed.feedType {
+        case .youtube(let url):
+            let youTubeClient = YouTubeClient(url: url.absoluteString)
+            let thumbnail = youTubeClient.getThumbnailUrl()
+            let cardView = UINib(nibName: "FeedCardView", bundle: nil)
+                .instantiate(withOwner: nil, options: nil).first as! FeedCardView
+            cardView.inject(input: (feed: feed, artwork: thumbnail))
+            guard let image = cardView.getSnapShot() else { return }
+            let url = URL(string: "instagram-stories://share")
+            guard let pngImageData = image.pngData() else { return }
+            let items: NSArray = [["com.instagram.sharedSticker.stickerImage": pngImageData,
+                                   "com.instagram.sharedSticker.backgroundTopColor": "#49A1F8",
+                                   "com.instagram.sharedSticker.backgroundBottomColor": "#EA6E57"]]
+            UIPasteboard.general.setItems(items as! [[String : Any]], options: [:])
+            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+        }
+    }
+    
+    @objc func showResultOfSaveImage(_ image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutableRawPointer) {
+
+        var title = "保存完了"
+        var message = "カメラロールに保存しました"
+
+        if error != nil {
+            title = "エラー"
+            message = "保存に失敗しました"
+        }
+
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 
 extension UIView {
     func getSnapShot() -> UIImage? {
-        let rect = self.bounds
+        let rect = self.frame
         UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
-        guard let context: CGContext = UIGraphicsGetCurrentContext() else { return nil }
+        guard let context: CGContext = UIGraphicsGetCurrentContext() else { print("hey"); return nil }
         self.layer.render(in: context)
         let image: UIImage? = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
