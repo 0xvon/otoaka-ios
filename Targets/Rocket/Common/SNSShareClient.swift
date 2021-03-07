@@ -9,18 +9,7 @@ import Foundation
 import Endpoint
 import UIKit
 
-let hashTags = [
-    "#ロック好きならロケバン",
-    "#音楽記録",
-    "#日曜日だし邦ロック好きな人と繋がりたい",
-]
-
-enum ShareType {
-    case feed(UserFeedSummary)
-    case group(Group)
-    case live(Live)
-}
-
+@available(*, deprecated)
 func getSNSShareContent(type: ShareType) -> UIActivityViewController {
     let activityItems: [Any] = {
         switch type {

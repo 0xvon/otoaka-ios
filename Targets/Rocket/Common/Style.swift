@@ -13,6 +13,18 @@ let per = 20
 let textFieldHeight: CGFloat = 60
 let dummySocialInputs: SocialInputs = try! JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: Bundle.main.url(forResource: "SocialInputs", withExtension: "json")!))
 
+let hashTags = [
+    "#ロック好きならロケバン",
+    "#音楽記録",
+    "#日曜日だし邦ロック好きな人と繋がりたい",
+]
+
+enum ShareType {
+    case feed(UserFeedSummary)
+    case group(Group)
+    case live(Live)
+}
+
 extension UIColor {
     var image: UIImage? {
         let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
@@ -67,6 +79,26 @@ extension UIViewController {
     
     func downloadImage(image: UIImage) {
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.showResultOfSaveImage(_:didFinishSavingWithError:contextInfo:)), nil)
+    }
+    
+    func shareWithTwitter(type: ShareType) {
+        switch type {
+        case .feed(let feed):
+            let shareText: String = "\(feed.text)"
+            guard let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title) else { return }
+            let scheme = URL(string: "twitter://post?message=\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(url)\n".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+            UIApplication.shared.open(scheme!, options: [:], completionHandler: nil)
+        case .group(let group):
+            let shareText: String = "\(group.name)"
+            guard let url = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name) else { return }
+            let scheme = URL(string: "twitter://post?message=\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(url)\n".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+            UIApplication.shared.open(scheme!, options: [:], completionHandler: nil)
+        case .live(let live):
+            let shareText: String = "\(live.title)"
+            guard let url = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title) else { return }
+            let scheme = URL(string: "twitter://post?message=\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(url)\n".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+            UIApplication.shared.open(scheme!, options: [:], completionHandler: nil)
+        }
     }
     
     func shareFeedWithInstagram(feed: UserFeedSummary) {

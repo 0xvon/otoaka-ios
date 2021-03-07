@@ -201,12 +201,7 @@ extension FeedViewController {
     
     private func createShare(cellIndex: Int) {
         let feed = self.viewModel.feeds[cellIndex]
-        let activityController = getSNSShareContent(type: .feed(feed))
-        activityController.completionWithItemsHandler = { [dependencyProvider] _, _, _, _ in
-            dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-        }
-        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-        self.present(activityController, animated: true, completion: nil)
+        shareWithTwitter(type: .feed(feed))
     }
     
     private func downloadButtonTapped(cellIndex: Int) {

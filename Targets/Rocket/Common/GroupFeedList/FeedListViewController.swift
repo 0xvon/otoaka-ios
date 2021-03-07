@@ -165,8 +165,7 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     
     private func createShare(cellIndex: Int) {
         let feed = self.viewModel.state.feeds[cellIndex]
-        let activityController = getSNSShareContent(type: .feed(feed))
-        self.present(activityController, animated: true, completion: nil)
+        shareWithTwitter(type: .feed(feed))
     }
     
     private func downloadButtonTapped(cellIndex: Int) {

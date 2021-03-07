@@ -245,8 +245,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .didDeleteFeed:
                 viewModel.refresh()
             case .didShareFeedButtonTapped(let feed):
-                let activityController = getSNSShareContent(type: .feed(feed))
-                self.present(activityController, animated: true, completion: nil)
+                shareWithTwitter(type: .feed(feed))
             case .didDownloadButtonTapped(let feed):
                 self.downloadButtonTapped(feed: feed)
             case .didInstagramButtonTapped(let feed):
@@ -348,8 +347,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     @objc func createShare(_ sender: UIBarButtonItem) {
         let live = viewModel.state.live
-        let activityController = getSNSShareContent(type: .live(live))
-        self.present(activityController, animated: true, completion: nil)
+        shareWithTwitter(type: .live(live))
     }
     
     private func downloadButtonTapped(feed: UserFeedSummary) {

@@ -350,8 +350,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
             case .didShareFeedButtonTapped(let feed):
-                let activityController = getSNSShareContent(type: .feed(feed))
-                self.present(activityController, animated: true, completion: nil)
+                shareWithTwitter(type: .feed(feed))
             case .didDownloadButtonTapped(let feed):
                 self.downloadButtonTapped(feed: feed)
             case .didInstagramButtonTapped(let feed):

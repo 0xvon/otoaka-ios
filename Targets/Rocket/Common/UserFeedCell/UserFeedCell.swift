@@ -189,8 +189,7 @@ class UserFeedCellContent: UIView {
         commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
         
         shareButton.setImage(
-            UIImage(systemName: "square.and.arrow.up")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            UIImage(named: "twitterMargin"),
             for: .normal
         )
         shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)

@@ -234,8 +234,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .didToggleLikeFeed:
                 viewModel.refresh()
             case .didShareFeedButtonTapped(let feed):
-                let activityController = getSNSShareContent(type: .feed(feed))
-                self.present(activityController, animated: true, completion: nil)
+                shareWithTwitter(type: .feed(feed))
 //            case .updateLiveSummary(.some(let live)):
 //                self.liveSectionHeader.isHidden = false
 //                self.liveCellWrapper.isHidden = false
@@ -377,8 +376,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     @objc func createShare(_ sender: UIBarButtonItem) {
         let group = viewModel.state.group
-        let activityController = getSNSShareContent(type: .group(group))
-        self.present(activityController, animated: true, completion: nil)
+        shareWithTwitter(type: .group(group))
     }
     
     private func downloadButtonTapped(feed: UserFeedSummary) {

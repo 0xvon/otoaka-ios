@@ -52,6 +52,10 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         imageView.layer.cornerRadius = 30
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(profileTapped))
+        )
         return imageView
     }()
     
@@ -95,13 +99,31 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         let shareButton = UIButton()
         shareButton.translatesAutoresizingMaskIntoConstraints = false
         shareButton.setImage(
-            UIImage(systemName: "square.and.arrow.up")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            UIImage(named: "twitterMargin"),
             for: .normal)
         shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
         return shareButton
     }()
-    
+    private lazy var instagramButton: UIButton = {
+        let shareButton = UIButton()
+        shareButton.translatesAutoresizingMaskIntoConstraints = false
+        shareButton.setImage(
+            UIImage(named: "insta"),
+            for: .normal)
+        shareButton.addTarget(self, action: #selector(shareInstagramButtonTapped), for: .touchUpInside)
+        return shareButton
+    }()
+    private lazy var downloadButton: UIButton = {
+        let shareButton = UIButton()
+        shareButton.translatesAutoresizingMaskIntoConstraints = false
+        shareButton.setImage(
+            UIImage(systemName: "arrow.down.to.line")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        shareButton.addTarget(self, action: #selector(downloadButtonTapped), for: .touchUpInside)
+        return shareButton
+    }()
     private lazy var deleteButton: UIButton = {
         let deleteButton = UIButton()
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
@@ -249,6 +271,18 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             shareButton.heightAnchor.constraint(equalToConstant: 44),
         ])
         
+        stackView.addArrangedSubview(instagramButton)
+        NSLayoutConstraint.activate([
+            instagramButton.widthAnchor.constraint(equalToConstant: 44),
+            instagramButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        stackView.addArrangedSubview(downloadButton)
+        NSLayoutConstraint.activate([
+            downloadButton.widthAnchor.constraint(equalToConstant: 44),
+            downloadButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
         stackView.addArrangedSubview(deleteButton)
         NSLayoutConstraint.activate([
             deleteButton.widthAnchor.constraint(equalToConstant: 44),
@@ -273,6 +307,16 @@ final class PlayTrackViewController: UIViewController, Instantiable {
 
         self.present(alertController, animated: true, completion: nil)
     }
+    
+    @objc private func profileTapped() {
+        switch viewModel.state.dataSource {
+        case .userFeed(let feed):
+            let user = feed.author
+            let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+            self.navigationController?.pushViewController(vc, animated: true)
+        case .youtubeVideo(_): break
+        }
+    }
 
     @objc private func commentButtonTapped() {
         switch viewModel.state.dataSource {
@@ -290,15 +334,33 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     @objc private func shareButtonTapped() {
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
-            let activityController = getSNSShareContent(type: .feed(feed))
-            self.present(activityController, animated: true, completion: nil)
+            shareWithTwitter(type: .feed(feed))
+        case .youtubeVideo(_): break
+        }
+    }
+    
+    @objc private func shareInstagramButtonTapped() {
+        switch viewModel.state.dataSource {
+        case .userFeed(let feed):
+            shareFeedWithInstagram(feed: feed)
+        case .youtubeVideo(_): break
+        }
+    }
+    
+    @objc private func downloadButtonTapped() {
+        switch viewModel.state.dataSource {
+        case .userFeed(let feed):
+            if let thumbnail = feed.ogpUrl {
+                let image = UIImage(url: thumbnail)
+                downloadImage(image: image)
+            }
         case .youtubeVideo(_): break
         }
     }
 }
 
 extension PlayTrackViewController: WKYTPlayerViewDelegate {
-    func playerViewDidBecomeReady(_ playerView: WKYTPlayerView) {
-        playerView.playVideo()
-    }
+//    func playerViewDidBecomeReady(_ playerView: WKYTPlayerView) {
+//        playerView.playVideo()
+//    }
 }

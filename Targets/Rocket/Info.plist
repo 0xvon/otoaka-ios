@@ -38,9 +38,10 @@
 	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-        <string>instagram-stories</string>
-        <string>spotify</string>
-    </array>
+		<string>twitter</string>
+		<string>instagram-stories</string>
+		<string>spotify</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
