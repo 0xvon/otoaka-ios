@@ -84,20 +84,20 @@ extension UIViewController {
     func shareWithTwitter(type: ShareType) {
         switch type {
         case .feed(let feed):
-            let shareText: String = "\(feed.text)"
-            guard let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title) else { return }
-            let scheme = URL(string: "twitter://post?message=\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(url)\n".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
-            UIApplication.shared.open(scheme!, options: [:], completionHandler: nil)
+            let shareText: String = feed.text
+            let ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
+            guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
+            UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
         case .group(let group):
             let shareText: String = "\(group.name)"
-            guard let url = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name) else { return }
-            let scheme = URL(string: "twitter://post?message=\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(url)\n".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
-            UIApplication.shared.open(scheme!, options: [:], completionHandler: nil)
+            let ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name)
+            guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
+            UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
         case .live(let live):
             let shareText: String = "\(live.title)"
-            guard let url = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title) else { return }
-            let scheme = URL(string: "twitter://post?message=\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(url)\n".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
-            UIApplication.shared.open(scheme!, options: [:], completionHandler: nil)
+            let ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title)
+            guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
+            UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
         }
     }
     
