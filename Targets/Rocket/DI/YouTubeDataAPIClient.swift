@@ -20,6 +20,7 @@ public struct ListChannel: EndpointProtocol {
         @Query public var maxResults: Int?
         @Query public var order: String?
         @Query public var type: String?
+        @Query public var pageToken: String?
         public init() {}
     }
     public static let method: HTTPMethod = .get

@@ -25,6 +25,8 @@ final class SelectTrackViewModel {
     
     struct State {
         var group: Group
+        var isLoading = false
+        var nextPageToken: String? = nil
         var tracks: [InternalDomain.ChannelDetail.ChannelItem] = []
     }
     
@@ -48,7 +50,9 @@ final class SelectTrackViewModel {
         )
         
         Publishers.MergeMany(
-            listChannelAction.elements.map { _ in .reloadData }.eraseToAnyPublisher(),
+            listChannelAction.elements.map { _ in
+                .reloadData
+            }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -56,7 +60,14 @@ final class SelectTrackViewModel {
         
         listChannelAction.elements
             .sink(receiveValue: { [unowned self] channel in
-                state.tracks = channel.items
+                state.isLoading = false
+                state.nextPageToken = channel.nextPageToken
+                if channel.prevPageToken != nil {
+                    state.tracks += channel.items
+                } else {
+                    state.tracks = channel.items
+                }
+                
             })
             .store(in: &cancellables)
     }
@@ -66,19 +77,22 @@ final class SelectTrackViewModel {
     }
     
     private func searchYouTubeTracks() {
+        if state.isLoading { return }
         let request = Empty()
         var uri = ListChannel.URI()
         uri.channelId = state.group.youtubeChannelId
         uri.part = "snippet"
         uri.type = "video"
         uri.order = "viewCount"
-        uri.maxResults = 10
-        
+        uri.maxResults = per
+        uri.pageToken = state.nextPageToken
+        state.isLoading = true
         listChannelAction.input((request: request, uri: uri))
     }
     
     func refresh() {
         if state.group.youtubeChannelId != nil {
+            state.nextPageToken = nil
             outputSubject.send(.isRefreshing(true))
             searchYouTubeTracks()
         } else {
@@ -89,6 +103,7 @@ final class SelectTrackViewModel {
     
     func willDisplay(rowAt indexPath: IndexPath) {
         guard indexPath.section + 25 > state.tracks.count else { return }
+        searchYouTubeTracks()
     }
     
     func updateSearchQuery(query: String?) {

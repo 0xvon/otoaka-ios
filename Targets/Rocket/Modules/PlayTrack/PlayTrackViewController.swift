@@ -322,7 +322,8 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
             let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
-            self.present(vc, animated: true, completion: nil)
+            let nav = BrandNavigationController(rootViewController: vc)
+            present(nav, animated: true, completion: nil)
         case .youtubeVideo(_): break
         }
     }

@@ -49,8 +49,9 @@ final class SelectTrackViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.registerCellClass(TrackCell.self)
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
+//        navigationItem.searchController = searchController
+//        navigationItem.hidesSearchBarWhenScrolling = false
+        searchController.searchBar.isHidden = true
         refreshControl = BrandRefreshControl()
         
         bind()
@@ -59,7 +60,6 @@ final class SelectTrackViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        searchController.searchBar.showsScopeBar = true
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
     

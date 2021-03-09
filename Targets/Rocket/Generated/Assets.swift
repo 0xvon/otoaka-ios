@@ -63,6 +63,7 @@ internal enum Asset {
   internal static let ticketIcon = ImageAsset(name: "ticketIcon")
   internal static let track = ImageAsset(name: "track")
   internal static let twitter = ImageAsset(name: "twitter")
+  internal static let twitterMargin = ImageAsset(name: "twitterMargin")
   internal static let youtube = ImageAsset(name: "youtube")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

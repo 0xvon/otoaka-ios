@@ -90,7 +90,7 @@ class TrackListViewModel {
         uri.channelId = state.group?.youtubeChannelId
         uri.q = query
         uri.part = "snippet"
-        uri.maxResults = 5
+        uri.maxResults = 10
         uri.order = "viewCount"
         
         listChannelAction.input((request: request, uri: uri))
