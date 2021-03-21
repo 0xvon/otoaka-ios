@@ -270,6 +270,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     dependencyProvider: dependencyProvider, input: input)
                 let nav = BrandNavigationController(rootViewController: vc)
                 self.present(nav, animated: true, completion: nil)
+            case .pushToFeedAuthor(let user):
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .pushToLiveList(let input):
                 let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)

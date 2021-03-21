@@ -82,7 +82,7 @@ final class SelectTrackViewModel {
         var uri = ListChannel.URI()
         uri.channelId = state.group.youtubeChannelId
         uri.part = "snippet"
-        uri.type = "video"
+//        uri.type = "video"
         uri.order = "viewCount"
         uri.maxResults = per
         uri.pageToken = state.nextPageToken

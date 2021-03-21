@@ -67,6 +67,7 @@ class UserFeedCellContent: UIView {
         case shareButtonTapped
         case downloadButtonTapped
         case instagramButtonTapped
+        case userTapped
     }
     
     let dateFormatter: DateFormatter = {
@@ -145,7 +146,6 @@ class UserFeedCellContent: UIView {
         thumbnailImageView.layer.borderWidth = 1
         thumbnailImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
 
-
         dateLabel.font = Brand.font(for: .xsmall)
         dateLabel.textColor = Brand.color(for: .background(.secondary))
 
@@ -166,6 +166,8 @@ class UserFeedCellContent: UIView {
         profileImageView.layer.cornerRadius = 30
         profileImageView.clipsToBounds = true
         profileImageView.contentMode = .scaleAspectFill
+        profileImageView.isUserInteractionEnabled = true
+        profileImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(userTapped)))
         
         downloadButton.setImage(
             UIImage(systemName: "arrow.down.to.line")!
@@ -222,6 +224,10 @@ class UserFeedCellContent: UIView {
     
     @objc private func instagramButtonTapped() {
         listener(.instagramButtonTapped)
+    }
+    
+    @objc private func userTapped() {
+        listener(.userTapped)
     }
 
     private var listener: (Output) -> Void = { _ in }

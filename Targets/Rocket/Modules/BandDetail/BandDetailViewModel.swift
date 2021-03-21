@@ -52,6 +52,7 @@ class BandDetailViewModel {
 //        case pushToChartList(ChartListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
         case pushToLiveList(LiveListViewController.Input)
+        case pushToFeedAuthor(User)
         case pushToGroupFeedList(FeedListViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
@@ -219,6 +220,9 @@ class BandDetailViewModel {
         case .instagramButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didInstagramButtonTapped(feed))
+        case .userTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.pushToFeedAuthor(feed.author))
         }
     }
     

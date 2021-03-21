@@ -140,6 +140,8 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
                 self?.downloadButtonTapped(cellIndex: indexPath.section)
             case .instagramButtonTapped:
                 self?.instagramButtonTapped(cellIndex: indexPath.section)
+            case .userTapped:
+                self?.userTapped(cellIndex: indexPath.row)
             }
         }
         return cell
@@ -179,6 +181,12 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     private func instagramButtonTapped(cellIndex: Int) {
         let feed = self.viewModel.state.feeds[cellIndex]
         shareFeedWithInstagram(feed: feed)
+    }
+    
+    private func userTapped(cellIndex: Int) {
+        let feed = self.viewModel.state.feeds[cellIndex]
+        let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: feed.author)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func deleteFeedButtonTapped(cellIndex: Int) {

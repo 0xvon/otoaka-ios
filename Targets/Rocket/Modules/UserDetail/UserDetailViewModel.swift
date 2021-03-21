@@ -49,6 +49,7 @@ class UserDetailViewModel {
         case pushToUserList(UserListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
+        case pushToFeedAuthor(User)
         
         case didDeleteFeed
         case didToggleLikeFeed
@@ -174,6 +175,10 @@ class UserDetailViewModel {
         case .instagramButtonTapped:
             guard let feed = state.feed else { return }
             outputSubject.send(.didInstagramButtonTapped(feed))
+        case .userTapped:
+            guard let feed = state.feed else { return }
+            outputSubject.send(.pushToFeedAuthor(feed.author))
+            
         }
     }
     

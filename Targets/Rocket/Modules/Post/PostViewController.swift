@@ -467,14 +467,6 @@ extension PostViewController: UITextViewDelegate {
         let text: String? = textView.text.isEmpty ? nil : textView.text
         viewModel.didUpdateInputText(text: text)
     }
-    
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if text == "\n" {
-            textView.resignFirstResponder()
-            return false
-        }
-        return true
-    }
 }
 
 //extension PostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {

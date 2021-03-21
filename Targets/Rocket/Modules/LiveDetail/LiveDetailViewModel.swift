@@ -36,6 +36,7 @@ class LiveDetailViewModel {
         case didDeleteFeedButtonTapped(UserFeedSummary)
         case didShareFeedButtonTapped(UserFeedSummary)
         case pushToGroupFeedList(FeedListViewController.Input)
+        case pushToFeedAuthor(User)
         case pushToPerformerDetail(BandDetailViewController.Input)
         case presentCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
@@ -152,6 +153,9 @@ class LiveDetailViewModel {
         case .instagramButtonTapped:
             guard let feed = state.feeds.first else { return }
             outputSubject.send(.didInstagramButtonTapped(feed))
+        case .userTapped:
+            guard let feed = state.feeds.first else { return }
+            outputSubject.send(.pushToFeedAuthor(feed.author))
         }
     }
     

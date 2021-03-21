@@ -276,6 +276,11 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     biographyTextView.text = userDetail.biography
                     editProfileButton.isHidden = false
                     followButton.isHidden = true
+                    let item = UIBarButtonItem(title: "ログアウト", style: .plain, target: self, action: #selector(logoutButtonTapped))
+                    navigationItem.setRightBarButton(
+                        item,
+                        animated: false
+                    )
                 case .user:
                     self.title = userDetail.name
                     editProfileButton.isHidden = true
@@ -289,6 +294,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToPlayTrack(let input):
                 let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToFeedAuthor(let user):
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .didRefreshFeedSummary(let feed):
                 let isHidden = feed == nil
@@ -417,4 +425,38 @@ final class UserDetailViewController: UIViewController, Instantiable {
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
     
     @objc private func groupCellTaped() { viewModel.didSelectRow(at: .group) }
+    
+    @objc private func logoutButtonTapped() {
+        let alertController = UIAlertController(
+            title: "ログアウトしますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+
+        let acceptAction = UIAlertAction(
+            title: "OK", style: UIAlertAction.Style.default,
+            handler: { [unowned self] action in
+                logout()
+            })
+        let cancelAction = UIAlertAction(
+            title: "キャンセル", style: UIAlertAction.Style.cancel,
+            handler: { action in })
+        alertController.addAction(acceptAction)
+        alertController.addAction(cancelAction)
+
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    private func logout() {
+        dependencyProvider.auth.signOut(self) { [unowned self] error in
+            if let error = error {
+                print(error)
+                showAlert()
+            } else {
+                self.listener()
+            }
+        }
+    }
+    
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
+        self.listener = listener
+    }
 }

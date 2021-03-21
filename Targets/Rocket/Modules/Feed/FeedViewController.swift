@@ -141,6 +141,8 @@ extension FeedViewController {
                 self?.downloadButtonTapped(cellIndex: indexPath.row)
             case .instagramButtonTapped:
                 self?.instagramButtonTapped(cellIndex: indexPath.row)
+            case .userTapped:
+                self?.userTapped(cellIndex: indexPath.row)
             }
             
         }
@@ -215,6 +217,12 @@ extension FeedViewController {
     private func instagramButtonTapped(cellIndex: Int) {
         let feed = self.viewModel.feeds[cellIndex]
         shareFeedWithInstagram(feed: feed)
+    }
+    
+    private func userTapped(cellIndex: Int) {
+        let feed = self.viewModel.feeds[cellIndex]
+        let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: feed.author)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func deleteFeedButtonTapped(cellIndex: Int) {
