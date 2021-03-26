@@ -60,7 +60,9 @@
 		</dict>
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Rocketにカメラロールへのアクセスを許可します</string>
+	<string>ロケバンにカメラロールへのアクセスを許可します</string>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>ロケバンにミュージックへのアクセスを許可します</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

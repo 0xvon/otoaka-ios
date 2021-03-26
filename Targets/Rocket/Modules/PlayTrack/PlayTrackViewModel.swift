@@ -9,10 +9,12 @@ import Foundation
 import Combine
 import DomainEntity
 import Endpoint
+import InternalDomain
 
 final class PlayTrackViewModel {
     enum Input {
         case youtubeVideo(String)
+        case track(Track)
         case userFeed(UserFeedSummary)
     }
     
@@ -44,7 +46,7 @@ final class PlayTrackViewModel {
         switch input {
         case .userFeed(let feed):
             self.state = State(dataSource: input, likeCount: feed.likeCount)
-        case .youtubeVideo(_):
+        case .youtubeVideo(_), .track(_):
             self.state = State(dataSource: input)
         }
         
@@ -70,7 +72,7 @@ final class PlayTrackViewModel {
             let request = DeleteUserFeed.Request(id: feed.id)
             let uri = DeleteUserFeed.URI()
             deleteFeedAction.input((request: request, uri: uri))
-        case .youtubeVideo(_): break
+        case .youtubeVideo(_), .track(_): break
         }
     }
     
@@ -80,7 +82,7 @@ final class PlayTrackViewModel {
             let request = LikeUserFeed.Request(feedId: feed.id)
             let uri = LikeUserFeed.URI()
             likeFeedAction.input((request: request, uri: uri))
-        case .youtubeVideo(_): break
+        case .youtubeVideo(_), .track(_): break
         }
         state.likeCount += 1
     }
@@ -91,7 +93,7 @@ final class PlayTrackViewModel {
             let request = UnlikeUserFeed.Request(feedId: feed.id)
             let uri = UnlikeUserFeed.URI()
             unlikeFeedAction.input((request: request, uri: uri))
-        case .youtubeVideo(_): break
+        case .youtubeVideo(_), .track(_): break
         }
         state.likeCount -= 1
     }

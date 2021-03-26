@@ -125,10 +125,9 @@ extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
         cell.listen { [unowned self] output in
             switch output {
             case .playButtonTapped:
-//                guard let videoId = track.id.videoId else { return }
-//                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
-//                let nav = self.navigationController ?? presentingViewController?.navigationController
-//                nav?.pushViewController(vc, animated: true)
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .track(track))
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
             print("TODO")
             case .groupTapped: break
             }

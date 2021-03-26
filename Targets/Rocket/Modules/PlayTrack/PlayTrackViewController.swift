@@ -10,6 +10,8 @@ import UIKit
 import Combine
 import YoutubePlayer_in_WKWebView
 import UIComponent
+import StoreKit
+import MediaPlayer
 
 final class PlayTrackViewController: UIViewController, Instantiable {
     typealias Input = PlayTrackViewModel.Input
@@ -17,6 +19,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider
     let viewModel: PlayTrackViewModel
     var cancellables: Set<AnyCancellable> = []
+    let musicPlayer = MPMusicPlayerController.systemMusicPlayer
     
     private lazy var playerView: WKYTPlayerView = {
         let playerView = WKYTPlayerView()
@@ -223,6 +226,48 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             playerView.load(
                 withVideoId: videoId,
                 playerVars: ["playsinline": 1, "playlist": []])
+        case .track(let track):
+            switch track.trackType {
+            case .appleMusic(let id):
+                playAppleMusicTrack(trackIds: [id])
+            case .youtube(_): break // TODO
+            }
+            
+        }
+    }
+    
+    func playAppleMusicTrack(trackIds: [String]) {
+        let cloudServiceController = SKCloudServiceController()
+        SKCloudServiceController.requestAuthorization { status in
+            guard status == .authorized else {
+                self.dismiss(animated: true, completion: nil)
+                return
+            }
+            cloudServiceController.requestCapabilities { capabilities, error in
+                if let error = error {
+                    print(error)
+                    self.showAlert()
+                }
+                if !capabilities.contains(.musicCatalogPlayback) {
+                    let cloudServiceSetupViewController = SKCloudServiceSetupViewController()
+                    cloudServiceSetupViewController.load(options: [.action: SKCloudServiceSetupAction.subscribe], completionHandler: { result, error in
+                        if let error = error {
+                            print(error)
+                            self.showAlert()
+                        }
+                        guard result else {
+                            self.dismiss(animated: true, completion: nil)
+                            return
+                        }
+                    })
+                    self.present(cloudServiceSetupViewController, animated: true, completion: nil)
+                }
+                
+                let descriptor = MPMusicPlayerStoreQueueDescriptor(storeIDs: trackIds)
+                self.musicPlayer.setQueue(with: descriptor)
+                self.musicPlayer.play()
+            }
+            
         }
     }
     
@@ -314,7 +359,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             let user = feed.author
             let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
             self.navigationController?.pushViewController(vc, animated: true)
-        case .youtubeVideo(_): break
+        default: break
         }
     }
 
@@ -324,7 +369,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .feedComment(feed))
             let nav = BrandNavigationController(rootViewController: vc)
             present(nav, animated: true, completion: nil)
-        case .youtubeVideo(_): break
+        default: break
         }
     }
     
@@ -336,7 +381,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
             shareWithTwitter(type: .feed(feed))
-        case .youtubeVideo(_): break
+        default: break
         }
     }
     
@@ -344,7 +389,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
             shareFeedWithInstagram(feed: feed)
-        case .youtubeVideo(_): break
+        default: break
         }
     }
     
@@ -355,7 +400,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                 let image = UIImage(url: thumbnail)
                 downloadImage(image: image)
             }
-        case .youtubeVideo(_): break
+        default: break
         }
     }
 }
