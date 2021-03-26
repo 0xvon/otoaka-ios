@@ -11,20 +11,49 @@ import Combine
 import InternalDomain
 
 class TrackListViewModel {
-    typealias Input = (
-        dataSource: DataSource,
-        group: Group?
-    )
+    typealias Input = DataSource
     
     enum DataSource {
-        case searchResults(String)
+        case searchYouTubeResults(String)
+        case searchAppleMusicResults(String)
         case none
+    }
+    
+    enum DataSourceStorage {
+        case searchYouTubeResults(YouTubePaginationRequest<ListChannel>)
+        case searchAppleMusicResults(AppleMusicPaginationRequest<SearchSongs>)
+        case none
+        
+        init(dataSource: DataSource, dependencyProvider: LoggedInDependencyProvider) {
+            switch dataSource {
+            case .searchYouTubeResults(let query):
+                var uri = ListChannel.URI()
+                uri.q = query
+                uri.part = "snippet"
+                uri.order = "viewCount"
+                let request = YouTubePaginationRequest<ListChannel>(apiClient: dependencyProvider.youTubeDataApiClient, uri: uri)
+                self = .searchYouTubeResults(request)
+            case .searchAppleMusicResults(let query):
+                var uri = SearchSongs.URI()
+                uri.term = query
+                uri.types = "songs"
+                let request = AppleMusicPaginationRequest<SearchSongs>(apiClient: dependencyProvider.appleMusicApiClient, uri: uri)
+                self = .searchAppleMusicResults(request)
+            case .none:
+                self = .none
+            }
+        }
+        
     }
     
     struct State {
         var isToSelect: Bool = false
-        var group: Group? = nil
-        var tracks: [InternalDomain.ChannelDetail.ChannelItem] = []
+        var tracks: [InternalDomain.Track] = []
+    }
+    
+    enum TrackType {
+        case youtube
+        case appleMusic
     }
     
     enum Output {
@@ -32,83 +61,108 @@ class TrackListViewModel {
         case error(Error)
     }
     
-    var dataSource: DataSource
     let dependencyProvider: LoggedInDependencyProvider
-    var apiClient: APIClient { dependencyProvider.apiClient }
+    
+    var storage: DataSourceStorage
     private(set) var state: State
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
-    private var cancellables: [AnyCancellable] = []
-    lazy var listChannelAction = Action(ListChannel.self, httpClient: dependencyProvider.youTubeDataApiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, input: Input
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(group: input.group)
-        self.dataSource = input.dataSource
-        
-        let errors = Publishers.MergeMany(
-            listChannelAction.errors
-        )
-        
-        Publishers.MergeMany(
-            listChannelAction.elements.map { _ in .reloadTableView }.eraseToAnyPublisher(),
-            errors.map(Output.error).eraseToAnyPublisher()
-        )
-        .sink(receiveValue: outputSubject.send)
-        .store(in: &cancellables)
-        
-        listChannelAction.elements
-            .sink(receiveValue: { [unowned self] channel in
-                state.tracks = channel.items
-            })
-            .store(in: &cancellables)
+        self.state = State()
+        self.storage = DataSourceStorage(dataSource: input, dependencyProvider: dependencyProvider)
                 
-        subscribe(dataSource: input.dataSource)
+        subscribe(storage: storage)
+    }
+    
+    func subscribe(storage: DataSourceStorage) {
+        switch storage {
+        case let .searchYouTubeResults(pagination):
+            pagination.subscribe { [weak self] result in
+                switch result {
+                case .initial(let res):
+                    self?.state.tracks = res.items.map {
+                        Track(
+                            name: $0.snippet?.title ?? "no title",
+                            artistName: $0.snippet?.channelTitle ?? "no artist",
+                            artwork: $0.snippet?.thumbnails?.high?.url ?? "",
+                            trackType: .youtube($0.id.videoId ?? "")
+                        )
+                    }
+                    self?.outputSubject.send(.reloadTableView)
+                case .next(let res):
+                    self?.state.tracks += res.items.map {
+                        Track(
+                            name: $0.snippet?.title ?? "no title",
+                            artistName: $0.snippet?.channelTitle ?? "no artist",
+                            artwork: $0.snippet?.thumbnails?.high?.url ?? "",
+                            trackType: .youtube($0.id.videoId ?? "")
+                        )
+                    }
+                    self?.outputSubject.send(.reloadTableView)
+                case .error(let err):
+                    self?.outputSubject.send(.error(err))
+                }
+            }
+        case .searchAppleMusicResults(let pagination):
+            pagination.subscribe { [weak self] result in
+                switch result {
+                case .initial(let res):
+                    self?.state.tracks = res.results.songs.data.map {
+                        Track(
+                            name: $0.attributes.name,
+                            artistName: $0.attributes.artistName,
+                            artwork: $0.attributes.artwork.url?.replacingOccurrences(of: "{w}", with: String($0.attributes.artwork.width)).replacingOccurrences(of: "{h}", with: String($0.attributes.artwork.height)) ?? "",
+                            trackType: .appleMusic($0.id)
+                        )
+                    }
+                    self?.outputSubject.send(.reloadTableView)
+                case .next(let res):
+                    self?.state.tracks += res.results.songs.data.map {
+                        Track(
+                            name: $0.attributes.name,
+                            artistName: $0.attributes.artistName,
+                            artwork: $0.attributes.artwork.url?.replacingOccurrences(of: "{w}", with: String($0.attributes.artwork.width)).replacingOccurrences(of: "{h}", with: String($0.attributes.artwork.height)) ?? "",
+                            trackType: .appleMusic($0.id)
+                        )
+                    }
+                    self?.outputSubject.send(.reloadTableView)
+                case .error(let err):
+                    self?.outputSubject.send(.error(err))
+                }
+            }
+        case .none: break
+        }
     }
     
     func inject(_ input: Input, isToSelect: Bool = false) {
-        self.state.group = input.group
-        self.dataSource = input.dataSource
+        self.storage = DataSourceStorage(dataSource: input, dependencyProvider: dependencyProvider)
         self.state.isToSelect = isToSelect
+        subscribe(storage: storage)
         refresh()
     }
     
-    func subscribe(dataSource: DataSource) {
-        switch dataSource {
-        case .searchResults(let query):
-            searchYouTubeTracks(query: query)
-        default: break
-        }
-    }
-    
-    private func searchYouTubeTracks(query: String?) {
-        let request = Empty()
-        var uri = ListChannel.URI()
-        uri.channelId = state.group?.youtubeChannelId
-        uri.q = query
-        uri.part = "snippet"
-        uri.maxResults = 10
-        uri.order = "viewCount"
-        
-        listChannelAction.input((request: request, uri: uri))
-    }
-    
     func refresh() {
-        if state.group?.youtubeChannelId != nil {
-            subscribe(dataSource: self.dataSource)
-        } else {
-            outputSubject.send(.reloadTableView)
+        switch storage {
+        case let .searchYouTubeResults(pagination):
+            pagination.refresh()
+        case let .searchAppleMusicResults(pagination):
+            pagination.refresh()
+        case .none: break
         }
     }
-    
+     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.section + 25 > state.tracks.count else { return }
-        switch self.dataSource {
-        case let .searchResults(query):
-            searchYouTubeTracks(query: query)
+        guard indexPath.row + 25 > state.tracks.count else { return }
+        switch storage {
+        case let .searchYouTubeResults(pagination):
+            pagination.next()
+        case let .searchAppleMusicResults(pagination):
+            pagination.next()
         case .none: break
         }
     }

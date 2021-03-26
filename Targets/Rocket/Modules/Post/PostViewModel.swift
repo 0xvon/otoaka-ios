@@ -15,17 +15,16 @@ import Combine
 import InternalDomain
 
 class PostViewModel {
-    enum PostType {
-        case movie(URL, PHAsset?)
-        case youtube(URL)
-        case spotify(URL)
-        case none
-    }
+//    enum PostType {
+//        case movie(URL, PHAsset?)
+//        case youtube(URL)
+//        case spotify(URL)
+//        case none
+//    }
     
     struct State {
-        var post: PostType?
         var text: String?
-        var title: String?
+        var track: Track?
         var group: Group?
         var thumbnailUrl: URL?
         var ogpUrl: String?
@@ -40,7 +39,8 @@ class PostViewModel {
     enum Output {
         case didPostUserFeed(UserFeed)
         case updateSubmittableState(PageState)
-        case didSelectPost
+        case didSelectTrack
+        case didSelectGroup
         case reportError(Error)
     }
     
@@ -78,18 +78,15 @@ class PostViewModel {
         validatePost()
     }
     
-    func didSelectTrack(group: Group, track: InternalDomain.ChannelDetail.ChannelItem) {
-        state.title = track.snippet?.title
+    func didSelectTrack(track: Track) {
+        state.track = track
+        outputSubject.send(.didSelectTrack)
+        validatePost()
+    }
+    
+    func didSelectGroup(group: Group) {
         state.group = group
-        if let videoId = track.id.videoId, let url = URL(string: "https://youtube.com/watch?v=\(videoId)") {
-            state.post = .youtube(url)
-        }
-        
-        if let snippet = track.snippet, let thumbnails = snippet.thumbnails, let high = thumbnails.high, let url = URL(string: high.url ?? "") {
-            state.thumbnailUrl = url
-        }
-        
-        outputSubject.send(.didSelectPost)
+        outputSubject.send(.didSelectGroup)
         validatePost()
     }
     
@@ -97,9 +94,7 @@ class PostViewModel {
         let submittable = (
             state.text != nil
                 && state.text?.count ?? 0 <= state.maxLength
-                && state.post != nil
-                && state.thumbnailUrl != nil
-                && state.title != nil
+                && state.track != nil
                 && state.group != nil
         )
         
@@ -121,29 +116,14 @@ class PostViewModel {
     
     func post() {
         guard let text = state.text else { return }
-        guard let post = state.post else { return }
-        guard let title = state.title else { return }
+        guard let track = state.track else { return }
         guard let group = state.group else { return }
-        switch post {
-        case .movie(_, _):
-            break
-//            if let url = url, let asset = asset {
-//                print("yo")
-//                self.s3Client.uploadMovie(url: url, asset: asset) { (videoUrl, error) in
-//                    if let error = error {
-//                        self.outputHandler(.error(ViewModelError.notFoundError(error)))
-//                    }
-//                    guard let videoUrl = videoUrl else { return }
-//                    print(videoUrl)
-//                    self.outputHandler(.post)
-//                }
-//            }
-        case .spotify(_):
-            break
-        case .youtube(let url):
-            let request = CreateUserFeed.Request(text: text, feedType: .youtube(url), ogpUrl: state.ogpUrl, groupId: group.id, title: title)
+        switch track.trackType {
+        case .appleMusic(let musicId): break
+        case .youtube(let videoId):
+            guard let videoUrl = URL(string: "https://youtube.com/watch?v=\(videoId)") else { return }
+            let request = CreateUserFeed.Request(text: text, feedType: .youtube(videoUrl), ogpUrl: state.ogpUrl, groupId: group.id, title: track.name)
             createUserFeedAction.input((request: request, uri: CreateUserFeed.URI()))
-        case .none: break
         }
     }
 }

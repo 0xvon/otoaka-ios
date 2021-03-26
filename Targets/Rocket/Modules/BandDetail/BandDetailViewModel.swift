@@ -25,7 +25,7 @@ class BandDetailViewModel {
         var lives: [Live] = []
         var feeds: [UserFeedSummary] = []
         var groupDetail: GetGroup.Response?
-        var channelItem: ChannelDetail.ChannelItem?
+        var channelItem: YouTubeVideo?
         let role: RoleProperties
         
         var displayType: DisplayType? {
@@ -46,7 +46,7 @@ class BandDetailViewModel {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
 //        case updateLiveSummary(Live?)
         case updateFeedSummary(UserFeedSummary?)
-        case didGetChart(Group, ChannelDetail.ChannelItem?)
+        case didGetChart(Group, YouTubeVideo?)
         case didCreatedInvitation(InviteGroup.Invitation)
         case pushToLiveDetail(LiveDetailViewController.Input)
 //        case pushToChartList(ChartListViewController.Input)

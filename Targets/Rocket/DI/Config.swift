@@ -19,4 +19,5 @@ protocol Config {
     static var apiEndpoint: String { get }
     static var s3Bucket: String { get }
     static var youTubeApiKey: String { get }
+    static var appleMusicDeveloperToken: String { get }
 }

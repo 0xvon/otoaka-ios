@@ -14,7 +14,7 @@ import InternalDomain
 
 final class SelectTrackViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
-    typealias Input = Group
+    typealias Input = Void
     
     lazy var searchResultController: SearchResultViewController = {
         SearchResultViewController(dependencyProvider: self.dependencyProvider)
@@ -22,6 +22,7 @@ final class SelectTrackViewController: UITableViewController {
     lazy var searchController: UISearchController = {
         let controller = BrandSearchController(searchResultsController: self.searchResultController)
         controller.searchBar.returnKeyType = .search
+        controller.searchResultsUpdater = self
         controller.delegate = self
         controller.searchBar.delegate = self
         return controller
@@ -49,9 +50,8 @@ final class SelectTrackViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.registerCellClass(TrackCell.self)
-//        navigationItem.searchController = searchController
-//        navigationItem.hidesSearchBarWhenScrolling = false
-        searchController.searchBar.isHidden = true
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
         
         bind()
@@ -78,7 +78,8 @@ final class SelectTrackViewController: UITableViewController {
                     self.refreshControl?.endRefreshing()
                 }
             case .selectTrack(let track):
-                listener(viewModel.state.group, track)
+                listener(track)
+                self.dismiss(animated: true, completion: nil)
             case .reportError(let error):
                 print(error)
                 showAlert()
@@ -102,14 +103,17 @@ final class SelectTrackViewController: UITableViewController {
         viewModel.refresh()
     }
     
-    private var listener: (Group, InternalDomain.ChannelDetail.ChannelItem) -> Void = { _, _  in }
-    func listen(_ listener: @escaping (Group, InternalDomain.ChannelDetail.ChannelItem) -> Void) {
+    private var listener: (Track) -> Void = { _  in }
+    func listen(_ listener: @escaping (Track) -> Void) {
         self.listener = listener
     }
 }
 
 extension SelectTrackViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+}
+
+extension SelectTrackViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
         viewModel.updateSearchQuery(query: searchController.searchBar.text)
     }
 }
@@ -138,13 +142,14 @@ extension SelectTrackViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let track = viewModel.state.tracks[indexPath.row]
-        let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, group: viewModel.state.group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
             case .playButtonTapped:
-                guard let videoId = track.id.videoId else { return }
-                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
-                self.navigationController?.pushViewController(vc, animated: true)
+//                guard let videoId = track.id.videoId else { return }
+//                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
+//                self.navigationController?.pushViewController(vc, animated: true)
+                print("TODO")
             case .groupTapped: break
             }
         }

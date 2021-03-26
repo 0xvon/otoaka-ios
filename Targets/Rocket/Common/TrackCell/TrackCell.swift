@@ -55,10 +55,10 @@ final class TrackCell: UITableViewCell, ReusableCell {
 
 class TrackCellContent: UIView {
     typealias Input = (
-        track: ChannelDetail.ChannelItem,
-        group: Group,
+        track: InternalDomain.Track,
         imagePipeline: ImagePipeline
     )
+    
     enum Output {
         case playButtonTapped
         case groupTapped
@@ -75,11 +75,11 @@ class TrackCellContent: UIView {
     
     func inject(input: Input) {
         setup()
-        if let snippet = input.track.snippet, let thumbnails = snippet.thumbnails, let high = thumbnails.high, let url = URL(string: high.url ?? "") {
+        trackTitleLabel.text = input.track.name
+        bandNameLabel.text = input.track.artistName
+        if let url = URL(string: input.track.artwork) {
             input.imagePipeline.loadImage(url, into: artworkImageView)
         }
-        trackTitleLabel.text = input.track.snippet?.title
-        bandNameLabel.text = input.group.name
     }
     
     func setup() {

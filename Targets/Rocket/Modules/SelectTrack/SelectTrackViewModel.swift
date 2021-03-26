@@ -17,17 +17,16 @@ final class SelectTrackViewModel {
     
     enum Output {
         case updateSearchResult(SearchResultViewController.Input)
-        case selectTrack(InternalDomain.ChannelDetail.ChannelItem)
+        case selectTrack(Track)
         case reloadData
         case isRefreshing(Bool)
         case reportError(Error)
     }
     
     struct State {
-        var group: Group
         var isLoading = false
         var nextPageToken: String? = nil
-        var tracks: [InternalDomain.ChannelDetail.ChannelItem] = []
+        var tracks: [Track] = []
     }
     
     let dependencyProvider: LoggedInDependencyProvider
@@ -36,78 +35,50 @@ final class SelectTrackViewModel {
     private(set) var state: State
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
-    
-    private lazy var listChannelAction = Action(ListChannel.self, httpClient: youTubeDataApiClient)
 
     private var cancellables: [AnyCancellable] = []
     
-    init(dependencyProvider: LoggedInDependencyProvider, input: Group) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: Void) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(group: input)
-        
-        let errors = Publishers.MergeMany(
-            listChannelAction.errors
-        )
-        
-        Publishers.MergeMany(
-            listChannelAction.elements.map { _ in
-                .reloadData
-            }.eraseToAnyPublisher(),
-            errors.map(Output.reportError).eraseToAnyPublisher()
-        )
-        .sink(receiveValue: outputSubject.send)
-        .store(in: &cancellables)
-        
-        listChannelAction.elements
-            .sink(receiveValue: { [unowned self] channel in
-                state.isLoading = false
-                state.nextPageToken = channel.nextPageToken
-                if channel.prevPageToken != nil {
-                    state.tracks += channel.items
-                } else {
-                    state.tracks = channel.items
-                }
-                
-            })
-            .store(in: &cancellables)
+        self.state = State()
     }
     
-    func didSelectTrack(at section: InternalDomain.ChannelDetail.ChannelItem) {
+    func didSelectTrack(at section: Track) {
         outputSubject.send(.selectTrack(section))
     }
     
-    private func searchYouTubeTracks() {
-        if state.isLoading { return }
-        let request = Empty()
-        var uri = ListChannel.URI()
-        uri.channelId = state.group.youtubeChannelId
-        uri.part = "snippet"
+//    private func searchYouTubeTracks() {
+//        if state.isLoading { return }
+//        let request = Empty()
+//        var uri = ListChannel.URI()
+//        uri.channelId = state.group.youtubeChannelId
+//        uri.part = "snippet"
 //        uri.type = "video"
-        uri.order = "viewCount"
-        uri.maxResults = per
-        uri.pageToken = state.nextPageToken
-        state.isLoading = true
-        listChannelAction.input((request: request, uri: uri))
-    }
+//        uri.order = "viewCount"
+//        uri.maxResults = per
+//        uri.pageToken = state.nextPageToken
+//        state.isLoading = true
+//        listChannelAction.input((request: request, uri: uri))
+//    }
     
     func refresh() {
-        if state.group.youtubeChannelId != nil {
-            state.nextPageToken = nil
-            outputSubject.send(.isRefreshing(true))
-            searchYouTubeTracks()
-        } else {
-            outputSubject.send(.reloadData)
-            outputSubject.send(.isRefreshing(false))
-        }
+//        if state.group.youtubeChannelId != nil {
+//            state.nextPageToken = nil
+//            outputSubject.send(.isRefreshing(true))
+//            searchYouTubeTracks()
+//        } else {
+//            outputSubject.send(.reloadData)
+//            outputSubject.send(.isRefreshing(false))
+//        }
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
         guard indexPath.section + 25 > state.tracks.count else { return }
-        searchYouTubeTracks()
+//        searchYouTubeTracks()
     }
     
     func updateSearchQuery(query: String?) {
-        guard let query = query else { return }
-        outputSubject.send(.updateSearchResult(.trackToSelect(state.group, query)))
+        guard let query = query, query != "", query != " " else { return }
+        outputSubject.send(.updateSearchResult(.trackToSelect(query)))
     }
 }

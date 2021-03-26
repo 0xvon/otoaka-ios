@@ -22,8 +22,7 @@ protocol PageResponse {
 
 extension Page: PageResponse {}
 
-class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Request == Endpoint.Empty,
-                                                   E.Response: PageResponse {
+class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Request == Endpoint.Empty, E.Response: PageResponse {
     private var uri: E.URI
     private var apiClient: APIClient
     private lazy var requestAction = Action(E.self, httpClient: self.apiClient)

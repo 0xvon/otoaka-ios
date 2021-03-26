@@ -185,11 +185,21 @@ final class PostViewController: UIViewController, Instantiable {
             case .reportError(let error):
                 print(error)
                 showAlert()
-            case .didSelectPost:
-                trackInfoLabel.text = viewModel.state.title
-                if let thumbnail = viewModel.state.thumbnailUrl {
-                    dependencyProvider.imagePipeline.loadImage(thumbnail, into: movieThumbnailImageView)
+            case .didSelectTrack:
+                trackInfoLabel.text = "\(viewModel.state.track?.name ?? "") - no artist"
+                if let thumbnail = viewModel.state.track?.artwork, let url = URL(string: thumbnail) {
+                    dependencyProvider.imagePipeline.loadImage(url, into: movieThumbnailImageView)
                 }
+                
+                let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
+                let nav = BrandNavigationController(rootViewController: vc)
+                vc.listen { [unowned self] group in
+                    self.dismiss(animated: true, completion: nil)
+                    viewModel.didSelectGroup(group: group)
+                }
+                self.present(nav, animated: true, completion: nil)
+            case .didSelectGroup:
+                trackInfoLabel.text = "\(viewModel.state.track?.name ?? "") - \(viewModel.state.group?.name ?? "")"
             }
         }.store(in: &cancellables)
     }
@@ -341,7 +351,7 @@ final class PostViewController: UIViewController, Instantiable {
         let youtubeButton = UIButton()
         youtubeButton.backgroundColor = .clear
         youtubeButton.translatesAutoresizingMaskIntoConstraints = false
-        youtubeButton.addTarget(self, action: #selector(searchYoutube(_:)), for: .touchUpInside)
+        youtubeButton.addTarget(self, action: #selector(searchTrack(_:)), for: .touchUpInside)
         youtubeButtonView.addSubview(youtubeButton)
         
 //        let spotifyButtonView = UIView()
@@ -419,10 +429,11 @@ final class PostViewController: UIViewController, Instantiable {
 //        }
     }
     
-    @objc private func searchYoutube(_ sender: Any) {
-        let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
-        vc.listen { [unowned self] group, track in
-            viewModel.didSelectTrack(group: group, track: track)
+    @objc private func searchTrack(_ sender: Any) {
+        let vc = SelectTrackViewController(dependencyProvider: dependencyProvider, input: ())
+        vc.listen { [unowned self] track in
+            self.dismiss(animated: true, completion: nil)
+            viewModel.didSelectTrack(track: track)
         }
         let nav = BrandNavigationController(rootViewController: vc)
         self.present(nav, animated: true, completion: nil)

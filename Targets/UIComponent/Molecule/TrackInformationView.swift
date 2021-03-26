@@ -12,7 +12,7 @@ import ImagePipeline
 
 public final class TrackInformationView: UIView {
     typealias Input = (
-        track: ChannelDetail.ChannelItem?,
+        track: YouTubeVideo?,
         imagePipeline: ImagePipeline
     )
     // FIXME

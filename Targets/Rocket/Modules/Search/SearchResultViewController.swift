@@ -15,14 +15,14 @@ final class SearchResultViewController: UIViewController {
         case live(String)
         case group(String)
         case groupToSelect(String)
-        case track(Group, String)
-        case trackToSelect(Group, String)
+        case track(String)
+        case trackToSelect(String)
         case user(String)
     }
     
     enum Output {
         case group(Group)
-        case track(InternalDomain.ChannelDetail.ChannelItem)
+        case track(InternalDomain.Track)
     }
     
     typealias State = Input
@@ -43,7 +43,7 @@ final class SearchResultViewController: UIViewController {
         return controller
     }()
     private lazy var trackListViewController: TrackListViewController = {
-        let controller = TrackListViewController(dependencyProvider: dependencyProvider, input: (dataSource: .none, group: nil))
+        let controller = TrackListViewController(dependencyProvider: dependencyProvider, input: .none)
         controller.view.isHidden = true
         return controller
     }()
@@ -78,18 +78,18 @@ final class SearchResultViewController: UIViewController {
                 userListViewController.view.isHidden = false
                 trackListViewController.view.isHidden = true
                 userListViewController.inject(.searchResults(query))
-            case .track(let group, let query):
+            case .track(let query):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = true
                 userListViewController.view.isHidden = true
                 trackListViewController.view.isHidden = false
-                trackListViewController.inject((dataSource: .searchResults(query), group: group))
-            case .trackToSelect(let group, let query):
+                trackListViewController.inject(.searchAppleMusicResults(query))
+            case .trackToSelect(let query):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = true
                 userListViewController.view.isHidden = true
                 trackListViewController.view.isHidden = false
-                trackListViewController.inject((dataSource: .searchResults(query), group: group), isToSelect: true)
+                trackListViewController.inject(.searchAppleMusicResults(query), isToSelect: true)
                 trackListViewController.listen { [unowned self] track in
                     self.listener(.track(track))
                 }

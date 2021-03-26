@@ -76,12 +76,8 @@ final class SelectGroupViewController: UITableViewController {
                     self.refreshControl?.endRefreshing()
                 }
             case .selectGroup(let group):
-                let vc = SelectTrackViewController(dependencyProvider: dependencyProvider, input: group)
-                vc.listen { [unowned self] group, track in
-                    self.listener(group, track)
-                    self.dismiss(animated: true, completion: nil)
-                }
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.listener(group)
+                self.dismiss(animated: true, completion: nil)
             case .reportError(let error):
                 print(error)
                 showAlert()
@@ -105,8 +101,8 @@ final class SelectGroupViewController: UITableViewController {
         viewModel.refresh()
     }
     
-    private var listener: (Group, InternalDomain.ChannelDetail.ChannelItem) -> Void = { _, _  in }
-    func listen(_ listener: @escaping (Group, InternalDomain.ChannelDetail.ChannelItem) -> Void) {
+    private var listener: (Group) -> Void = { _ in }
+    func listen(_ listener: @escaping (Group) -> Void) {
         self.listener = listener
     }
 }

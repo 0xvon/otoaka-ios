@@ -27,6 +27,7 @@ struct DependencyProvider {
     var auth: AWSCognitoAuth
     var apiClient: APIClient
     var youTubeDataApiClient: YouTubeDataAPIClient
+    var appleMusicApiClient: AppleMusicAPIClient
     var s3Client: S3Client
     var viewHierarchy: ViewHierarchy
     var masterService: MasterSerivice
@@ -86,6 +87,11 @@ extension DependencyProvider {
             adapter: YoutubeDataAPIAdapter(apiKey: config.youTubeApiKey),
             interceptor: httpInterceptor
         )
+        let appleMusicApiClient = HTTPClient<AppleMusicAPIAdapter>(
+            baseUrl: URL(string: "https://api.music.apple.com")!,
+            adapter: AppleMusicAPIAdapter(developerToken: config.appleMusicDeveloperToken),
+            interceptor: httpInterceptor
+        )
         
         let s3Client = S3Client(s3Bucket: config.s3Bucket, cognitoIdentityPoolCredentialProvider: credentialProvider)
         let masterServiceClient = HTTPClient<WebAPIAdapter>(
@@ -97,6 +103,7 @@ extension DependencyProvider {
         return DependencyProvider(
             auth: auth, apiClient: apiClient,
             youTubeDataApiClient: youTubeDataApiClient,
+            appleMusicApiClient: appleMusicApiClient,
             s3Client: s3Client,
             viewHierarchy: ViewHierarchy(windowScene: windowScene),
             masterService: MasterSerivice(httpClient: masterServiceClient),

@@ -93,8 +93,8 @@ final class TrackListViewController: UIViewController, Instantiable {
         sender.endRefreshing()
     }
     
-    private var listener: (InternalDomain.ChannelDetail.ChannelItem) -> Void = { _ in }
-    func listen(_ listener: @escaping (InternalDomain.ChannelDetail.ChannelItem) -> Void) {
+    private var listener: (Track) -> Void = { _ in }
+    func listen(_ listener: @escaping (Track) -> Void) {
         self.listener = listener
     }
 }
@@ -120,16 +120,16 @@ extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let group = viewModel.state.group else { return UITableViewCell() }
         let track = viewModel.state.tracks[indexPath.row]
-        let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
             case .playButtonTapped:
-                guard let videoId = track.id.videoId else { return }
-                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
-                let nav = self.navigationController ?? presentingViewController?.navigationController
-                nav?.pushViewController(vc, animated: true)
+//                guard let videoId = track.id.videoId else { return }
+//                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
+//                let nav = self.navigationController ?? presentingViewController?.navigationController
+//                nav?.pushViewController(vc, animated: true)
+            print("TODO")
             case .groupTapped: break
             }
         }
