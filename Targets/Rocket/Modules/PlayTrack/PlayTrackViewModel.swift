@@ -21,12 +21,20 @@ final class PlayTrackViewModel {
     enum Output {
         case didToggleLikeFeed
         case didDeleteFeed
+        case playingStateChanged
+        case playingDurationChanged(Int)
         case error(Error)
     }
     
     struct State {
         let dataSource: Input
+        var playingState: PlayingState = .pausing
         var likeCount: Int = 0
+    }
+    
+    enum PlayingState {
+        case playing
+        case pausing
     }
     
     var dependencyProvider: LoggedInDependencyProvider
@@ -64,6 +72,15 @@ final class PlayTrackViewModel {
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
+    }
+    
+    func changePlayingState(_ playingState: PlayingState) {
+        state.playingState = playingState
+        self.outputSubject.send(.playingStateChanged)
+    }
+    
+    func changePlayingDuration(_ duration: Int) {
+        self.outputSubject.send(.playingDurationChanged(duration))
     }
     
     func deleteFeed() {

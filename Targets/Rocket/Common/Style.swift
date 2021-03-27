@@ -63,6 +63,25 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return coloredImage
     }
+    
+    func rotatedBy(degree: CGFloat, isCropped: Bool = true) -> UIImage {
+            let radian = -degree * CGFloat.pi / 180
+            var rotatedRect = CGRect(origin: .zero, size: self.size)
+            if !isCropped {
+                rotatedRect = rotatedRect.applying(CGAffineTransform(rotationAngle: radian))
+            }
+            UIGraphicsBeginImageContext(rotatedRect.size)
+            let context = UIGraphicsGetCurrentContext()!
+            context.translateBy(x: rotatedRect.size.width / 2, y: rotatedRect.size.height / 2)
+            context.scaleBy(x: 1.0, y: -1.0)
+
+            context.rotate(by: radian)
+            context.draw(self.cgImage!, in: CGRect(x: -(self.size.width / 2), y: -(self.size.height / 2), width: self.size.width, height: self.size.height))
+
+            let rotatedImage = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+            return rotatedImage
+        }
 }
 
 extension UIViewController {
@@ -149,4 +168,40 @@ extension UIView {
         
         return image
     }
+    
+    func addBorders(width: CGFloat, color: UIColor, positions: [BorderPosition]) {
+        positions.forEach { addBorder(width: width, color: color, position: $0) }
+    }
+    
+    func addBorder(width: CGFloat, color: UIColor, position: BorderPosition) {
+            let border = CALayer()
+
+            switch position {
+            case .top:
+                border.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: width)
+                border.backgroundColor = color.cgColor
+                self.layer.addSublayer(border)
+            case .left:
+                border.frame = CGRect(x: 0, y: 0, width: width, height: self.frame.height)
+                border.backgroundColor = color.cgColor
+                self.layer.addSublayer(border)
+            case .right:
+                print(self.frame.width)
+
+                border.frame = CGRect(x: self.frame.width - width, y: 0, width: width, height: self.frame.height)
+                border.backgroundColor = color.cgColor
+                self.layer.addSublayer(border)
+            case .bottom:
+                border.frame = CGRect(x: 0, y: self.frame.height - width, width: self.frame.width, height: width)
+                border.backgroundColor = color.cgColor
+                self.layer.addSublayer(border)
+            }
+        }
+}
+
+enum BorderPosition {
+    case top
+    case left
+    case right
+    case bottom
 }

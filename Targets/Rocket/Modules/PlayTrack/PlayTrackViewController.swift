@@ -21,6 +21,24 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     var cancellables: Set<AnyCancellable> = []
     let musicPlayer = MPMusicPlayerController.systemMusicPlayer
     
+    private let refreshControl = BrandRefreshControl()
+    
+    private lazy var verticalScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.isScrollEnabled = true
+        scrollView.refreshControl = refreshControl
+        return scrollView
+    }()
+    
+    private lazy var scrollStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 16
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        return stackView
+    }()
+    
     private lazy var playerView: WKYTPlayerView = {
         let playerView = WKYTPlayerView()
         playerView.delegate = self
@@ -29,12 +47,340 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         return playerView
     }()
     
-    private lazy var stackView: UIStackView = {
+    private lazy var cassetteTapeView: UIView = {
+        let cassetteTapeView = UIView()
+        cassetteTapeView.layer.cornerRadius = 20
+        cassetteTapeView.backgroundColor = .gray
+        cassetteTapeView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let leftTopEdgePinView = UIView()
+        leftTopEdgePinView.translatesAutoresizingMaskIntoConstraints = false
+        leftTopEdgePinView.backgroundColor = .white
+        leftTopEdgePinView.layer.cornerRadius = 7
+        cassetteTapeView.addSubview(leftTopEdgePinView)
+        NSLayoutConstraint.activate([
+            leftTopEdgePinView.widthAnchor.constraint(equalToConstant: 14),
+            leftTopEdgePinView.heightAnchor.constraint(equalTo: leftTopEdgePinView.widthAnchor, multiplier: 1),
+            leftTopEdgePinView.topAnchor.constraint(equalTo: cassetteTapeView.topAnchor, constant: 8),
+            leftTopEdgePinView.leftAnchor.constraint(equalTo: cassetteTapeView.leftAnchor, constant: 8),
+        ])
+        
+        let rightTopEdgePinView = UIView()
+        rightTopEdgePinView.translatesAutoresizingMaskIntoConstraints = false
+        rightTopEdgePinView.backgroundColor = .white
+        rightTopEdgePinView.layer.cornerRadius = 7
+        cassetteTapeView.addSubview(rightTopEdgePinView)
+        NSLayoutConstraint.activate([
+            rightTopEdgePinView.widthAnchor.constraint(equalToConstant: 14),
+            rightTopEdgePinView.heightAnchor.constraint(equalTo: rightTopEdgePinView.widthAnchor, multiplier: 1),
+            rightTopEdgePinView.topAnchor.constraint(equalTo: cassetteTapeView.topAnchor, constant: 8),
+            rightTopEdgePinView.rightAnchor.constraint(equalTo: cassetteTapeView.rightAnchor, constant: -8),
+        ])
+        
+        let leftBottomEdgePinView = UIView()
+        leftBottomEdgePinView.translatesAutoresizingMaskIntoConstraints = false
+        leftBottomEdgePinView.backgroundColor = .white
+        leftBottomEdgePinView.layer.cornerRadius = 7
+        cassetteTapeView.addSubview(leftBottomEdgePinView)
+        NSLayoutConstraint.activate([
+            leftBottomEdgePinView.widthAnchor.constraint(equalToConstant: 14),
+            leftBottomEdgePinView.heightAnchor.constraint(equalTo: leftBottomEdgePinView.widthAnchor, multiplier: 1),
+            leftBottomEdgePinView.bottomAnchor.constraint(equalTo: cassetteTapeView.bottomAnchor, constant: -8),
+            leftBottomEdgePinView.leftAnchor.constraint(equalTo: cassetteTapeView.leftAnchor, constant: 8),
+        ])
+        
+        let rightBottomEdgePinView = UIView()
+        rightBottomEdgePinView.translatesAutoresizingMaskIntoConstraints = false
+        rightBottomEdgePinView.backgroundColor = .white
+        rightBottomEdgePinView.layer.cornerRadius = 7
+        cassetteTapeView.addSubview(rightBottomEdgePinView)
+        NSLayoutConstraint.activate([
+            rightBottomEdgePinView.widthAnchor.constraint(equalToConstant: 14),
+            rightBottomEdgePinView.heightAnchor.constraint(equalTo: rightBottomEdgePinView.widthAnchor, multiplier: 1),
+            rightBottomEdgePinView.bottomAnchor.constraint(equalTo: cassetteTapeView.bottomAnchor, constant: -8),
+            rightBottomEdgePinView.rightAnchor.constraint(equalTo: cassetteTapeView.rightAnchor, constant: -8),
+        ])
+        
+        cassetteTapeView.addSubview(bottomShellView)
+        NSLayoutConstraint.activate([
+            bottomShellView.bottomAnchor.constraint(equalTo: cassetteTapeView.bottomAnchor),
+            bottomShellView.centerXAnchor.constraint(equalTo: cassetteTapeView.centerXAnchor),
+            bottomShellView.widthAnchor.constraint(equalTo: cassetteTapeView.widthAnchor, multiplier: 0.6),
+            bottomShellView.heightAnchor.constraint(equalTo: bottomShellView.widthAnchor, multiplier: 0.25),
+        ])
+        
+        cassetteTapeView.addSubview(cassetteCenterView)
+        NSLayoutConstraint.activate([
+            cassetteCenterView.widthAnchor.constraint(equalTo: cassetteTapeView.widthAnchor, multiplier: 0.8),
+            cassetteCenterView.centerXAnchor.constraint(equalTo: cassetteTapeView.centerXAnchor),
+            cassetteCenterView.topAnchor.constraint(equalTo: cassetteTapeView.topAnchor, constant: 28),
+            cassetteCenterView.bottomAnchor.constraint(equalTo: bottomShellView.topAnchor, constant: -8),
+        ])
+        
+        return cassetteTapeView
+    }()
+    private lazy var cassetteCenterView: UIView = {
+        let cassetteCenterView = UIView()
+        cassetteCenterView.backgroundColor = .black
+        cassetteCenterView.layer.cornerRadius = 32
+        cassetteCenterView.translatesAutoresizingMaskIntoConstraints = false
+        cassetteCenterView.addSubview(cassetteEyeView)
+        NSLayoutConstraint.activate([
+            cassetteEyeView.heightAnchor.constraint(equalToConstant: 50),
+            cassetteEyeView.widthAnchor.constraint(equalTo: cassetteCenterView.widthAnchor, multiplier: 0.7),
+            cassetteEyeView.centerXAnchor.constraint(equalTo: cassetteCenterView.centerXAnchor),
+            cassetteEyeView.bottomAnchor.constraint(equalTo: cassetteCenterView.bottomAnchor, constant: -16),
+        ])
+        
+        cassetteCenterView.addSubview(cassetteTitleLabel)
+        NSLayoutConstraint.activate([
+            cassetteTitleLabel.leftAnchor.constraint(equalTo: cassetteCenterView.leftAnchor, constant: 16),
+            cassetteTitleLabel.rightAnchor.constraint(equalTo: cassetteCenterView.rightAnchor, constant: -16),
+            cassetteTitleLabel.bottomAnchor.constraint(equalTo: cassetteEyeView.topAnchor, constant: -8),
+            cassetteTitleLabel.topAnchor.constraint(equalTo: cassetteCenterView.topAnchor, constant: 16),
+        ])
+        return cassetteCenterView
+    }()
+    private lazy var cassetteEyeView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = UIColor(red: 196 / 255, green: 196 / 255, blue: 196 / 255, alpha: 1)
+        view.layer.cornerRadius = 25
+        
+        view.addSubview(leftCassetteRole)
+        NSLayoutConstraint.activate([
+            leftCassetteRole.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            leftCassetteRole.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            leftCassetteRole.widthAnchor.constraint(equalToConstant: 40),
+            leftCassetteRole.heightAnchor.constraint(equalTo: leftCassetteRole.widthAnchor),
+        ])
+        
+        view.addSubview(rightCassetteRole)
+        NSLayoutConstraint.activate([
+            rightCassetteRole.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            rightCassetteRole.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            rightCassetteRole.widthAnchor.constraint(equalToConstant: 40),
+            rightCassetteRole.heightAnchor.constraint(equalTo: leftCassetteRole.widthAnchor),
+        ])
+        return view
+    }()
+    private lazy var cassetteTitleLabel: UILabel = {
+        let cassetteTitleLabel = UILabel()
+        cassetteTitleLabel.text = "Home - MY FIRST STORY"
+        cassetteTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        cassetteTitleLabel.textColor = Brand.color(for: .text(.primary))
+        cassetteTitleLabel.adjustsFontSizeToFitWidth = true
+        cassetteTitleLabel.textAlignment = .center
+//        cassetteTitleLabel.minimumScaleFactor = 8
+        return cassetteTitleLabel
+    }()
+    private lazy var leftCassetteRole: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "cassetteRole")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    private lazy var rightCassetteRole: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "cassetteRole")
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    private lazy var bottomShellView: UIView = {
+        let bottomShellView = UIView()
+        bottomShellView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "W.O.D. Inc."
+        label.font = Brand.font(for: .xsmallStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        bottomShellView.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.bottomAnchor.constraint(equalTo: bottomShellView.bottomAnchor, constant: -4),
+            label.leftAnchor.constraint(equalTo: bottomShellView.leftAnchor, constant: 8),
+            label.rightAnchor.constraint(equalTo: bottomShellView.rightAnchor, constant: -8),
+        ])
+        return bottomShellView
+    }()
+    private lazy var musicPlayerActionStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 16
+        stackView.distribution = .fill
+        stackView.axis = .horizontal
+        
+        stackView.addArrangedSubview(backButton)
+        NSLayoutConstraint.activate([
+            backButton.heightAnchor.constraint(equalToConstant: 44),
+            backButton.widthAnchor.constraint(equalToConstant: 88),
+        ])
+        stackView.addArrangedSubview(playButton)
+        NSLayoutConstraint.activate([
+            playButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        stackView.addArrangedSubview(forButton)
+        NSLayoutConstraint.activate([
+            forButton.heightAnchor.constraint(equalToConstant: 44),
+            forButton.widthAnchor.constraint(equalToConstant: 88),
+        ])
+        
+        return stackView
+    }()
+    private lazy var backButton: UIButton = {
+        let button = UIButton()
+        button.layer.cornerRadius = 10
+        button.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+        button.layer.borderWidth = 2
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(backward), for: .touchUpInside)
+        button.setImage(
+            UIImage(systemName: "backward.fill")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        return button
+    }()
+    
+    private lazy var forButton: UIButton = {
+        let button = UIButton()
+        button.layer.cornerRadius = 10
+        button.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+        button.layer.borderWidth = 2
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(forward), for: .touchUpInside)
+        button.setImage(
+            UIImage(systemName: "forward.fill")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        return button
+    }()
+    
+    private lazy var playButton: UIButton = {
+        let button = UIButton()
+        button.layer.cornerRadius = 10
+        button.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+        button.layer.borderWidth = 2
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(playButtonTapped), for: .touchUpInside)
+        button.setImage(
+            UIImage(systemName: "play.fill")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        button.setImage(
+            UIImage(systemName: "pause.fill")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .selected
+        )
+        return button
+    }()
+    
+    private lazy var actionStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fill
         stackView.axis = .horizontal
+        
+        stackView.addArrangedSubview(commentButtonView)
+        NSLayoutConstraint.activate([
+            commentButtonView.widthAnchor.constraint(equalToConstant: 60),
+            commentButtonView.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        stackView.addArrangedSubview(likeButtonView)
+        NSLayoutConstraint.activate([
+            likeButtonView.widthAnchor.constraint(equalToConstant: 60),
+            likeButtonView.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        stackView.addArrangedSubview(shareButton)
+        NSLayoutConstraint.activate([
+            shareButton.widthAnchor.constraint(equalToConstant: 44),
+            shareButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        stackView.addArrangedSubview(instagramButton)
+        NSLayoutConstraint.activate([
+            instagramButton.widthAnchor.constraint(equalToConstant: 44),
+            instagramButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        stackView.addArrangedSubview(downloadButton)
+        NSLayoutConstraint.activate([
+            downloadButton.widthAnchor.constraint(equalToConstant: 44),
+            downloadButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        stackView.addArrangedSubview(deleteButton)
+        NSLayoutConstraint.activate([
+            deleteButton.widthAnchor.constraint(equalToConstant: 44),
+            deleteButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
+        
+        let spacer = UIView()
+        stackView.addArrangedSubview(spacer)
+        
         return stackView
+    }()
+    
+    private lazy var userSectionView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(profileImageView)
+        NSLayoutConstraint.activate([
+            profileImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            profileImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            profileImageView.widthAnchor.constraint(equalToConstant: 60),
+            profileImageView.heightAnchor.constraint(equalTo: profileImageView.widthAnchor, multiplier: 1),
+            profileImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
+        ])
+        
+        view.addSubview(userNameLabel)
+        NSLayoutConstraint.activate([
+            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
+            userNameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8),
+            userNameLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+        return view
+    }()
+    private lazy var profileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 30
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(profileTapped))
+        )
+        return imageView
+    }()
+    private lazy var userNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .medium)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    
+    private lazy var feedTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.font = Brand.font(for: .mediumStrong)
+        textView.textColor = Brand.color(for: .text(.primary))
+        textView.textAlignment = .left
+        textView.isScrollEnabled = false
+        textView.isSelectable = false
+        textView.isUserInteractionEnabled = false
+        textView.backgroundColor = .clear
+        return textView
     }()
     
     private lazy var commentButtonView: ReactionIndicatorButton = {
@@ -48,41 +394,6 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
         return commentButton
     }()
-    
-    private lazy var profileImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 30
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFill
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(
-            UITapGestureRecognizer(target: self, action: #selector(profileTapped))
-        )
-        return imageView
-    }()
-    
-    private lazy var userNameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .medium)
-        label.textColor = Brand.color(for: .text(.primary))
-        return label
-    }()
-    
-    private lazy var feedTextView: UITextView = {
-        let textView = UITextView()
-        textView.translatesAutoresizingMaskIntoConstraints = false
-        textView.font = Brand.font(for: .xlargeStrong)
-        textView.textColor = Brand.color(for: .text(.primary))
-        textView.textAlignment = .center
-        textView.isScrollEnabled = false
-        textView.isSelectable = false
-        textView.isUserInteractionEnabled = false
-        textView.backgroundColor = .clear
-        return textView
-    }()
-    
     private lazy var likeButtonView: ReactionIndicatorButton = {
         let likeButton = ReactionIndicatorButton()
         likeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -97,7 +408,6 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         return likeButton
     }()
-    
     private lazy var shareButton: UIButton = {
         let shareButton = UIButton()
         shareButton.translatesAutoresizingMaskIntoConstraints = false
@@ -167,6 +477,24 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
+            case .playingStateChanged:
+                switch viewModel.state.playingState {
+                case .playing:
+                    playButton.isSelected = true
+                    let rollingAnimation = CABasicAnimation(keyPath: "transform.rotation")
+                    rollingAnimation.fromValue = 0
+                    rollingAnimation.toValue = CGFloat.pi * 2.0
+                    rollingAnimation.duration = 2.0
+                    rollingAnimation.repeatDuration = .infinity
+                    leftCassetteRole.layer.add(rollingAnimation, forKey: "rollingImage")
+                    rightCassetteRole.layer.add(rollingAnimation, forKey: "rollingImage")
+                case .pausing:
+                    playButton.isSelected = false
+                    leftCassetteRole.layer.removeAllAnimations()
+                    rightCassetteRole.layer.removeAllAnimations()
+                }
+            case .playingDurationChanged(_):
+                break
             case .didDeleteFeed:
                 self.navigationController?.popViewController(animated: true)
             case .didToggleLikeFeed:
@@ -178,62 +506,127 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             }
         }
         .store(in: &cancellables)
+        
+        refreshControl.controlEventPublisher(for: .valueChanged)
+            .sink { [unowned self] _ in
+                refreshControl.endRefreshing()
+            }
+            .store(in: &cancellables)
     }
     
     override func loadView() {
         super.loadView()
         
+        view = verticalScrollView
         view.backgroundColor = Brand.color(for: .background(.primary))
         
-        view.addSubview(stackView)
+        view.addSubview(scrollStackView)
         NSLayoutConstraint.activate([
-            stackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-            stackView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -16),
+            view.topAnchor.constraint(equalTo: scrollStackView.topAnchor),
+            view.bottomAnchor.constraint(equalTo: scrollStackView.bottomAnchor),
+            scrollStackView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 32),
+            scrollStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
         
-        view.addSubview(playerView)
+        let topSpacer = UIView()
+        scrollStackView.addArrangedSubview(topSpacer)
         NSLayoutConstraint.activate([
-            playerView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            playerView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 1/1.91),
+            topSpacer.heightAnchor.constraint(equalToConstant: 48),
+            topSpacer.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+        ])
+        
+        scrollStackView.addArrangedSubview(cassetteTapeView)
+        NSLayoutConstraint.activate([
+            cassetteTapeView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+            cassetteTapeView.heightAnchor.constraint(equalTo: cassetteTapeView.widthAnchor, multiplier: 0.6),
+        ])
+        
+        scrollStackView.addArrangedSubview(musicPlayerActionStackView)
+        NSLayoutConstraint.activate([
+            musicPlayerActionStackView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor)
+        ])
+        
+        scrollStackView.addArrangedSubview(playerView)
+        NSLayoutConstraint.activate([
+            playerView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+            playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 1 / 1.91),
+        ])
+        
+        let mediumSpacer = UIView()
+        scrollStackView.addArrangedSubview(mediumSpacer)
+        NSLayoutConstraint.activate([
+            mediumSpacer.heightAnchor.constraint(equalToConstant: 24),
+            mediumSpacer.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+        ])
+        
+        scrollStackView.addArrangedSubview(userSectionView)
+        NSLayoutConstraint.activate([
+            userSectionView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+        ])
+        scrollStackView.addArrangedSubview(feedTextView)
+        NSLayoutConstraint.activate([
+            feedTextView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+        ])
+        scrollStackView.addArrangedSubview(actionStackView)
+        NSLayoutConstraint.activate([
+            actionStackView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
         ])
         
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
-            setupFeedView()
+            setupAsFeed()
             if let profile = feed.author.thumbnailURL, let url = URL(string: profile) {
                 dependencyProvider.imagePipeline.loadImage(url, into: profileImageView)
             }
+            cassetteTitleLabel.text = feed.title
             userNameLabel.text = feed.author.name
             feedTextView.text = feed.text
-            stackView.isHidden = false
             deleteButton.isHidden = (feed.author.id != dependencyProvider.user.id)
             likeButtonView.isSelected = feed.isLiked
             commentButtonView.setTitle("\(feed.commentCount)", for: .normal)
             likeButtonView.setTitle("\(feed.likeCount)", for: .normal)
             switch feed.feedType {
             case .youtube(let url):
+                musicPlayerActionStackView.isHidden = true
                 guard let videoId = YouTubeClient(url: url.absoluteString).getId() else { return }
                 playerView.load(
                     withVideoId: videoId,
                     playerVars: ["playsinline": 1, "playlist": []])
             }
         case .youtubeVideo(let videoId):
-            NSLayoutConstraint.activate([
-                playerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            ])
-            stackView.isHidden = true
+            setupAsFeed(false)
+            cassetteTitleLabel.text = ""
+            musicPlayerActionStackView.isHidden = true
             playerView.load(
                 withVideoId: videoId,
                 playerVars: ["playsinline": 1, "playlist": []])
         case .track(let track):
+            setupAsFeed(false)
             switch track.trackType {
             case .appleMusic(let id):
+                cassetteTitleLabel.text = "\(track.name) - \(track.artistName)"
                 playAppleMusicTrack(trackIds: [id])
-            case .youtube(_): break // TODO
+                playerView.isHidden = true
+            case .youtube(let videoId):
+                cassetteTitleLabel.text = "\(track.name)"
+                musicPlayerActionStackView.isHidden = true
+                playerView.load(
+                    withVideoId: videoId,
+                    playerVars: ["playsinline": 1, "playlist": []])
             }
-            
         }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        bottomShellView.addBorders(width: 2, color: .white, positions: [.left, .top, .right])
+    }
+    
+    func setupAsFeed(_ isFeed: Bool = true) {
+        userSectionView.isHidden = !isFeed
+        feedTextView.isHidden = !isFeed
+        actionStackView.isHidden = !isFeed
     }
     
     func playAppleMusicTrack(trackIds: [String]) {
@@ -266,73 +659,10 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                 let descriptor = MPMusicPlayerStoreQueueDescriptor(storeIDs: trackIds)
                 self.musicPlayer.setQueue(with: descriptor)
                 self.musicPlayer.play()
+                self.viewModel.changePlayingState(.playing)
             }
             
         }
-    }
-    
-    func setupFeedView() {
-        view.addSubview(profileImageView)
-        NSLayoutConstraint.activate([
-            profileImageView.widthAnchor.constraint(equalToConstant: 60),
-            profileImageView.heightAnchor.constraint(equalTo: profileImageView.widthAnchor, multiplier: 1),
-            profileImageView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 16),
-            profileImageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-        ])
-        
-        view.addSubview(userNameLabel)
-        NSLayoutConstraint.activate([
-            userNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
-            userNameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8),
-            userNameLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-        ])
-        
-        view.addSubview(feedTextView)
-        NSLayoutConstraint.activate([
-            feedTextView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 16),
-            feedTextView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
-            feedTextView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
-        ])
-        
-        NSLayoutConstraint.activate([
-            playerView.topAnchor.constraint(equalTo: feedTextView.bottomAnchor, constant: 16),
-        ])
-        
-        stackView.addArrangedSubview(commentButtonView)
-        NSLayoutConstraint.activate([
-            commentButtonView.widthAnchor.constraint(equalToConstant: 60),
-            commentButtonView.heightAnchor.constraint(equalToConstant: 44),
-        ])
-        
-        stackView.addArrangedSubview(likeButtonView)
-        NSLayoutConstraint.activate([
-            likeButtonView.widthAnchor.constraint(equalToConstant: 60),
-            likeButtonView.heightAnchor.constraint(equalToConstant: 44),
-        ])
-        
-        stackView.addArrangedSubview(shareButton)
-        NSLayoutConstraint.activate([
-            shareButton.widthAnchor.constraint(equalToConstant: 44),
-            shareButton.heightAnchor.constraint(equalToConstant: 44),
-        ])
-        
-        stackView.addArrangedSubview(instagramButton)
-        NSLayoutConstraint.activate([
-            instagramButton.widthAnchor.constraint(equalToConstant: 44),
-            instagramButton.heightAnchor.constraint(equalToConstant: 44),
-        ])
-        
-        stackView.addArrangedSubview(downloadButton)
-        NSLayoutConstraint.activate([
-            downloadButton.widthAnchor.constraint(equalToConstant: 44),
-            downloadButton.heightAnchor.constraint(equalToConstant: 44),
-        ])
-        
-        stackView.addArrangedSubview(deleteButton)
-        NSLayoutConstraint.activate([
-            deleteButton.widthAnchor.constraint(equalToConstant: 44),
-            deleteButton.heightAnchor.constraint(equalToConstant: 44),
-        ])
     }
     
     @objc private func deleteFeedButtonTapped() {
@@ -351,6 +681,24 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         alertController.addAction(cancelAction)
 
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    @objc private func backward() {
+        musicPlayer.currentPlaybackTime -= 15.0
+    }
+    
+    @objc private func playButtonTapped() {
+        if playButton.isSelected {
+            musicPlayer.pause()
+            viewModel.changePlayingState(.pausing)
+        } else {
+            musicPlayer.play()
+            viewModel.changePlayingState(.playing)
+        }
+    }
+    
+    @objc private func forward() {
+        musicPlayer.currentPlaybackTime += 15.0
     }
     
     @objc private func profileTapped() {
@@ -406,7 +754,17 @@ final class PlayTrackViewController: UIViewController, Instantiable {
 }
 
 extension PlayTrackViewController: WKYTPlayerViewDelegate {
-//    func playerViewDidBecomeReady(_ playerView: WKYTPlayerView) {
-//        playerView.playVideo()
-//    }
+    func playerViewDidBecomeReady(_ playerView: WKYTPlayerView) {
+        playerView.playVideo()
+    }
+    
+    func playerView(_ playerView: WKYTPlayerView, didChangeTo state: WKYTPlayerState) {
+        switch state {
+        case .playing:
+            viewModel.changePlayingState(.playing)
+        case .paused, .ended, .unstarted:
+            viewModel.changePlayingState(.pausing)
+        default: break
+        }
+    }
 }
