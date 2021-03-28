@@ -22,6 +22,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     let musicPlayer = MPMusicPlayerController.systemMusicPlayer
     
     private let refreshControl = BrandRefreshControl()
+    private var timer = Timer()
     
     private lazy var verticalScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -206,6 +207,87 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             label.rightAnchor.constraint(equalTo: bottomShellView.rightAnchor, constant: -8),
         ])
         return bottomShellView
+    }()
+    private lazy var musicPlayerIndicatorView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        
+        let musicThermalIndicatorStackView = UIStackView()
+        musicThermalIndicatorStackView.translatesAutoresizingMaskIntoConstraints = false
+        musicThermalIndicatorStackView.axis = .vertical
+        musicThermalIndicatorStackView.distribution = .fillEqually
+        musicThermalIndicatorStackView.spacing = 4
+        
+        view.addSubview(musicThermalIndicatorStackView)
+        NSLayoutConstraint.activate([
+            musicThermalIndicatorStackView.topAnchor.constraint(equalTo: view.topAnchor),
+            musicThermalIndicatorStackView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            musicThermalIndicatorStackView.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+        
+        musicThermalIndicatorStackView.addArrangedSubview(musicPlayerFirstThermalIndicaterView)
+        NSLayoutConstraint.activate([
+            musicPlayerFirstThermalIndicaterView.leftAnchor.constraint(equalTo: musicThermalIndicatorStackView.leftAnchor),
+            musicPlayerFirstThermalIndicaterView.rightAnchor.constraint(equalTo: musicThermalIndicatorStackView.rightAnchor),
+            musicPlayerFirstThermalIndicaterView.heightAnchor.constraint(equalToConstant: 8),
+        ])
+        
+        musicThermalIndicatorStackView.addArrangedSubview(musicPlayerSecondThermalIndicaterView)
+        NSLayoutConstraint.activate([
+            musicPlayerSecondThermalIndicaterView.leftAnchor.constraint(equalTo: musicThermalIndicatorStackView.leftAnchor),
+            musicPlayerSecondThermalIndicaterView.rightAnchor.constraint(equalTo: musicThermalIndicatorStackView.rightAnchor),
+            musicPlayerSecondThermalIndicaterView.heightAnchor.constraint(equalToConstant: 8),
+        ])
+        
+        musicThermalIndicatorStackView.addArrangedSubview(musicPlayerThirdThermalIndicaterView)
+        NSLayoutConstraint.activate([
+            musicPlayerThirdThermalIndicaterView.leftAnchor.constraint(equalTo: musicThermalIndicatorStackView.leftAnchor),
+            musicPlayerThirdThermalIndicaterView.rightAnchor.constraint(equalTo: musicThermalIndicatorStackView.rightAnchor),
+            musicPlayerThirdThermalIndicaterView.heightAnchor.constraint(equalToConstant: 8),
+        ])
+        
+        view.addSubview(durationLabel)
+        NSLayoutConstraint.activate([
+            durationLabel.leftAnchor.constraint(equalTo: view.leftAnchor),
+            durationLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
+            durationLabel.topAnchor.constraint(equalTo: musicThermalIndicatorStackView.bottomAnchor, constant: 8),
+            durationLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            durationLabel.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        return view
+    }()
+    private lazy var musicPlayerFirstThermalIndicaterView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing = 2
+        return stackView
+    }()
+    private lazy var musicPlayerSecondThermalIndicaterView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing = 2
+        return stackView
+    }()
+    private lazy var musicPlayerThirdThermalIndicaterView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing = 2
+        return stackView
+    }()
+    private lazy var durationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "00:00"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Brand.color(for: .text(.toggle))
+        label.font = Brand.font(for: .small)
+        return label
     }()
     private lazy var musicPlayerActionStackView: UIStackView = {
         let stackView = UIStackView()
@@ -461,6 +543,12 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.removeObserver(self, name: NSNotification.Name.MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
+        musicPlayer.endGeneratingPlaybackNotifications()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
@@ -493,8 +581,13 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                     leftCassetteRole.layer.removeAllAnimations()
                     rightCassetteRole.layer.removeAllAnimations()
                 }
-            case .playingDurationChanged(_):
-                break
+            case .playingDurationChanged:
+                let durationFormatter = DateFormatter()
+                durationFormatter.dateFormat = "mm:ss"
+                let durationDate = Date(timeIntervalSinceReferenceDate: musicPlayer.currentPlaybackTime)
+                durationLabel.text = durationFormatter.string(from: durationDate)
+                
+                injectMusicPlayerIndicator()
             case .didDeleteFeed:
                 self.navigationController?.popViewController(animated: true)
             case .didToggleLikeFeed:
@@ -541,6 +634,11 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             cassetteTapeView.heightAnchor.constraint(equalTo: cassetteTapeView.widthAnchor, multiplier: 0.6),
         ])
         
+        scrollStackView.addArrangedSubview(musicPlayerIndicatorView)
+        NSLayoutConstraint.activate([
+            musicPlayerIndicatorView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+        ])
+        
         scrollStackView.addArrangedSubview(musicPlayerActionStackView)
         NSLayoutConstraint.activate([
             musicPlayerActionStackView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor)
@@ -572,6 +670,10 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             actionStackView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
         ])
         
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(backgroundOperation(notification:)), name: NSNotification.Name.MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
+        musicPlayer.beginGeneratingPlaybackNotifications()
+        
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
             setupAsFeed()
@@ -588,6 +690,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             switch feed.feedType {
             case .youtube(let url):
                 musicPlayerActionStackView.isHidden = true
+                musicPlayerIndicatorView.isHidden = true
                 guard let videoId = YouTubeClient(url: url.absoluteString).getId() else { return }
                 playerView.load(
                     withVideoId: videoId,
@@ -597,6 +700,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             setupAsFeed(false)
             cassetteTitleLabel.text = ""
             musicPlayerActionStackView.isHidden = true
+            musicPlayerIndicatorView.isHidden = true
             playerView.load(
                 withVideoId: videoId,
                 playerVars: ["playsinline": 1, "playlist": []])
@@ -610,17 +714,53 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             case .youtube(let videoId):
                 cassetteTitleLabel.text = "\(track.name)"
                 musicPlayerActionStackView.isHidden = true
+                musicPlayerIndicatorView.isHidden = true
                 playerView.load(
                     withVideoId: videoId,
                     playerVars: ["playsinline": 1, "playlist": []])
             }
         }
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
+            self.viewModel.changePlayingDuration()
+        })
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
         bottomShellView.addBorders(width: 2, color: .white, positions: [.left, .top, .right])
+    }
+    
+    func injectMusicPlayerIndicator() {
+        let thermalSubViews = [
+            musicPlayerFirstThermalIndicaterView,
+            musicPlayerSecondThermalIndicaterView,
+            musicPlayerThirdThermalIndicaterView,
+        ]
+        for (i, thermalSubView) in zip(thermalSubViews.indices, thermalSubViews) {
+            thermalSubView.subviews.forEach {
+                thermalSubView.removeArrangedSubview($0)
+                $0.removeFromSuperview()
+            }
+            if viewModel.state.playingThermalIndicators[i] != 0 {
+                for _ in 0..<viewModel.state.playingThermalIndicators[i] {
+                    let dot = UIView()
+                    dot.backgroundColor = Brand.color(for: .background(.toggleSelected))
+                    dot.translatesAutoresizingMaskIntoConstraints = false
+                    dot.layer.cornerRadius = 4
+                    
+                    thermalSubView.addArrangedSubview(dot)
+                    NSLayoutConstraint.activate([
+                        dot.widthAnchor.constraint(equalToConstant: 28),
+                        dot.heightAnchor.constraint(equalToConstant: 8),
+                    ])
+                }
+                let spacer = UIView()
+                spacer.translatesAutoresizingMaskIntoConstraints = false
+                thermalSubView.addArrangedSubview(spacer)
+            }
+        }
     }
     
     func setupAsFeed(_ isFeed: Bool = true) {
@@ -659,7 +799,6 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                 let descriptor = MPMusicPlayerStoreQueueDescriptor(storeIDs: trackIds)
                 self.musicPlayer.setQueue(with: descriptor)
                 self.musicPlayer.play()
-                self.viewModel.changePlayingState(.playing)
             }
             
         }
@@ -687,14 +826,18 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         musicPlayer.currentPlaybackTime -= 15.0
     }
     
-    @objc private func playButtonTapped() {
-        if playButton.isSelected {
-            musicPlayer.pause()
-            viewModel.changePlayingState(.pausing)
-        } else {
-            musicPlayer.play()
+    @objc private func backgroundOperation(notification: NSNotification) {
+        switch musicPlayer.playbackState {
+        case .playing:
             viewModel.changePlayingState(.playing)
+        case .paused, .interrupted, .stopped:
+            viewModel.changePlayingState(.pausing)
+        default: break
         }
+    }
+    
+    @objc private func playButtonTapped() {
+        playButton.isSelected ? musicPlayer.pause() : musicPlayer.play()
     }
     
     @objc private func forward() {

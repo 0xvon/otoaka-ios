@@ -22,13 +22,14 @@ final class PlayTrackViewModel {
         case didToggleLikeFeed
         case didDeleteFeed
         case playingStateChanged
-        case playingDurationChanged(Int)
+        case playingDurationChanged
         case error(Error)
     }
     
     struct State {
         let dataSource: Input
         var playingState: PlayingState = .pausing
+        var playingThermalIndicators: [Int] = [0, 0, 0]
         var likeCount: Int = 0
     }
     
@@ -79,8 +80,14 @@ final class PlayTrackViewModel {
         self.outputSubject.send(.playingStateChanged)
     }
     
-    func changePlayingDuration(_ duration: Int) {
-        self.outputSubject.send(.playingDurationChanged(duration))
+    func changePlayingDuration() {
+        switch state.playingState {
+        case .pausing:
+            state.playingThermalIndicators = [0, 0, 0]
+        case .playing:
+            state.playingThermalIndicators = [Int.random(in: 1...10), Int.random(in: 1...10), Int.random(in: 1...10)]
+        }
+        self.outputSubject.send(.playingDurationChanged)
     }
     
     func deleteFeed() {
