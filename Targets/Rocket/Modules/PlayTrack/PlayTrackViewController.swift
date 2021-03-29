@@ -789,7 +789,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             }
         }
         
-        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true, block: { _ in
             self.viewModel.changePlayingDuration()
         })
     }
