@@ -16,7 +16,8 @@ final class SearchResultViewController: UIViewController {
         case group(String)
         case groupToSelect(String)
         case track(String)
-        case trackToSelect(String)
+        case appleMusicToSelect(String)
+        case youtubeToSelect(String)
         case user(String)
     }
     
@@ -84,12 +85,21 @@ final class SearchResultViewController: UIViewController {
                 userListViewController.view.isHidden = true
                 trackListViewController.view.isHidden = false
                 trackListViewController.inject(.searchAppleMusicResults(query))
-            case .trackToSelect(let query):
+            case .appleMusicToSelect(let query):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = true
                 userListViewController.view.isHidden = true
                 trackListViewController.view.isHidden = false
                 trackListViewController.inject(.searchAppleMusicResults(query), isToSelect: true)
+                trackListViewController.listen { [unowned self] track in
+                    self.listener(.track(track))
+                }
+            case .youtubeToSelect(let query):
+                groupListViewController.view.isHidden = true
+                liveListViewController.view.isHidden = true
+                userListViewController.view.isHidden = true
+                trackListViewController.view.isHidden = false
+                trackListViewController.inject(.searchYouTubeResults(query), isToSelect: true)
                 trackListViewController.listen { [unowned self] track in
                     self.listener(.track(track))
                 }

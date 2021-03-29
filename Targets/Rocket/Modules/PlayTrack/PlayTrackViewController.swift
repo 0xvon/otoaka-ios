@@ -730,7 +730,6 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
-            playerView.isHidden = true
             setupAsFeed()
             if let profile = feed.author.thumbnailURL, let url = URL(string: profile) {
                 dependencyProvider.imagePipeline.loadImage(url, into: profileImageView)
@@ -751,6 +750,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                     withVideoId: videoId,
                     playerVars: ["playsinline": 1, "playlist": []])
             case .appleMusic(let songId):
+                playerView.isHidden = true
                 cassetteTitleLabel.text = "\(feed.title) - \(feed.group.name)"
                 playAppleMusicTrack(trackIds: [songId])
                 playerView.isHidden = true

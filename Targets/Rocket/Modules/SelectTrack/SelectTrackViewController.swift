@@ -25,6 +25,7 @@ final class SelectTrackViewController: UITableViewController {
         controller.searchResultsUpdater = self
         controller.delegate = self
         controller.searchBar.delegate = self
+        controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
         return controller
     }()
     
@@ -55,11 +56,12 @@ final class SelectTrackViewController: UITableViewController {
         refreshControl = BrandRefreshControl()
         
         bind()
-        viewModel.refresh()
+//        viewModel.refresh()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        searchController.searchBar.showsScopeBar = true
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
     
@@ -100,7 +102,8 @@ final class SelectTrackViewController: UITableViewController {
     @objc private func refresh() {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
         self.refreshControl?.beginRefreshing()
-        viewModel.refresh()
+        self.refreshControl?.endRefreshing()
+//        viewModel.refresh()
     }
     
     private var listener: (Track) -> Void = { _  in }
@@ -110,6 +113,10 @@ final class SelectTrackViewController: UITableViewController {
 }
 
 extension SelectTrackViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        viewModel.updateScope(selectedScope)
+        viewModel.updateSearchQuery(query: searchController.searchBar.text)
+    }
 }
 
 extension SelectTrackViewController: UISearchResultsUpdating {
@@ -119,6 +126,12 @@ extension SelectTrackViewController: UISearchResultsUpdating {
 }
 
 extension SelectTrackViewController: UISearchControllerDelegate {
+    func willPresentSearchController(_ searchController: UISearchController) {
+        searchController.searchBar.showsScopeBar = false
+    }
+    func willDismissSearchController(_ searchController: UISearchController) {
+        searchController.searchBar.showsScopeBar = true
+    }
 }
 
 extension SelectTrackViewController {

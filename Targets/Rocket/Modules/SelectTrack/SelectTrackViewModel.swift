@@ -23,10 +23,21 @@ final class SelectTrackViewModel {
         case reportError(Error)
     }
     
+    enum Scope: Int, CaseIterable {
+        case appleMusic, youtube
+        var description: String {
+            switch self {
+            case .appleMusic: return "Apple Music"
+            case .youtube: return "YouTube"
+            }
+        }
+    }
+    
     struct State {
         var isLoading = false
         var nextPageToken: String? = nil
         var tracks: [Track] = []
+        var scope: Scope = .appleMusic
     }
     
     let dependencyProvider: LoggedInDependencyProvider
@@ -35,6 +46,7 @@ final class SelectTrackViewModel {
     private(set) var state: State
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    var scopes: [Scope] { Scope.allCases }
 
     private var cancellables: [AnyCancellable] = []
     
@@ -47,31 +59,6 @@ final class SelectTrackViewModel {
         outputSubject.send(.selectTrack(section))
     }
     
-//    private func searchYouTubeTracks() {
-//        if state.isLoading { return }
-//        let request = Empty()
-//        var uri = ListChannel.URI()
-//        uri.channelId = state.group.youtubeChannelId
-//        uri.part = "snippet"
-//        uri.type = "video"
-//        uri.order = "viewCount"
-//        uri.maxResults = per
-//        uri.pageToken = state.nextPageToken
-//        state.isLoading = true
-//        listChannelAction.input((request: request, uri: uri))
-//    }
-    
-    func refresh() {
-//        if state.group.youtubeChannelId != nil {
-//            state.nextPageToken = nil
-//            outputSubject.send(.isRefreshing(true))
-//            searchYouTubeTracks()
-//        } else {
-//            outputSubject.send(.reloadData)
-//            outputSubject.send(.isRefreshing(false))
-//        }
-    }
-    
     func willDisplay(rowAt indexPath: IndexPath) {
         guard indexPath.section + 25 > state.tracks.count else { return }
 //        searchYouTubeTracks()
@@ -79,6 +66,15 @@ final class SelectTrackViewModel {
     
     func updateSearchQuery(query: String?) {
         guard let query = query, query != "", query != " " else { return }
-        outputSubject.send(.updateSearchResult(.trackToSelect(query)))
+        switch state.scope {
+        case .appleMusic:
+            outputSubject.send(.updateSearchResult(.appleMusicToSelect(query)))
+        case .youtube:
+            outputSubject.send(.updateSearchResult(.youtubeToSelect(query)))
+        }
+    }
+    
+    func updateScope(_ scope: Int) {
+        state.scope = Scope.allCases[scope]
     }
 }
