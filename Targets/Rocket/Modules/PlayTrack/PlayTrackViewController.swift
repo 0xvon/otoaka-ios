@@ -625,9 +625,26 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             case .playingDurationChanged:
                 let durationFormatter = DateFormatter()
                 durationFormatter.dateFormat = "mm:ss"
-                let durationDate = Date(timeIntervalSinceReferenceDate: musicPlayer.currentPlaybackTime)
-                durationLabel.text = durationFormatter.string(from: durationDate)
-                
+                switch viewModel.state.dataSource {
+                case .track(let track):
+                    switch track.trackType {
+                    case .appleMusic(_):
+                        let durationDate = Date(timeIntervalSinceReferenceDate: musicPlayer.currentPlaybackTime)
+                        durationLabel.text = durationFormatter.string(from: durationDate)
+                    case .youtube(_):
+                        durationLabel.text = nil
+                    }
+                case .youtubeVideo(_):
+                    durationLabel.text = nil
+                case .userFeed(let feed):
+                    switch feed.feedType {
+                    case .appleMusic(_):
+                        let durationDate = Date(timeIntervalSinceReferenceDate: musicPlayer.currentPlaybackTime)
+                        durationLabel.text = durationFormatter.string(from: durationDate)
+                    case .youtube(_):
+                        durationLabel.text = nil
+                    }
+                }
                 injectMusicPlayerIndicator()
             case .didDeleteFeed:
                 self.navigationController?.popViewController(animated: true)
@@ -685,23 +702,16 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             musicPlayerActionStackView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor)
         ])
         
-        scrollStackView.addArrangedSubview(logoView)
-        NSLayoutConstraint.activate([
-            logoView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
-            logoView.heightAnchor.constraint(equalToConstant: 60),
-        ])
-        
         scrollStackView.addArrangedSubview(playerView)
         NSLayoutConstraint.activate([
             playerView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
             playerView.heightAnchor.constraint(equalTo: playerView.widthAnchor, multiplier: 1 / 1.91),
         ])
         
-        let mediumSpacer = UIView()
-        scrollStackView.addArrangedSubview(mediumSpacer)
+        scrollStackView.addArrangedSubview(logoView)
         NSLayoutConstraint.activate([
-            mediumSpacer.heightAnchor.constraint(equalToConstant: 24),
-            mediumSpacer.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+            logoView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+            logoView.heightAnchor.constraint(equalToConstant: 60),
         ])
         
         scrollStackView.addArrangedSubview(userSectionView)
@@ -744,7 +754,6 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             switch feed.feedType {
             case .youtube(let url):
                 musicPlayerActionStackView.isHidden = true
-                musicPlayerIndicatorView.isHidden = true
                 guard let videoId = YouTubeClient(url: url.absoluteString).getId() else { return }
                 playerView.load(
                     withVideoId: videoId,
@@ -759,7 +768,6 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             setupAsFeed(false)
             cassetteTitleLabel.text = ""
             musicPlayerActionStackView.isHidden = true
-            musicPlayerIndicatorView.isHidden = true
             playerView.load(
                 withVideoId: videoId,
                 playerVars: ["playsinline": 1, "playlist": []])

@@ -28,7 +28,7 @@ class PostViewModel {
         var group: Group?
         var thumbnailUrl: URL?
         var ogpUrl: String?
-        let maxLength: Int = 40
+        let maxLength: Int = 140
     }
     
     enum PageState {
