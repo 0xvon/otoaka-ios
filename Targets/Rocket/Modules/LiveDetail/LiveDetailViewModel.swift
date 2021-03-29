@@ -37,6 +37,7 @@ class LiveDetailViewModel {
         case didShareFeedButtonTapped(UserFeedSummary)
         case pushToGroupFeedList(FeedListViewController.Input)
         case pushToFeedAuthor(User)
+        case pushToPlayTrack(PlayTrackViewController.Input)
         case pushToPerformerDetail(BandDetailViewController.Input)
         case presentCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
@@ -115,10 +116,7 @@ class LiveDetailViewModel {
         switch row {
         case .feed:
             guard let feed = state.feeds.first else { return }
-            switch feed.feedType {
-            case .youtube(let url):
-                outputSubject.send(.openURLInBrowser(url))
-            }
+            outputSubject.send(.pushToPlayTrack(.userFeed(feed)))
         case .performers(let group):
             outputSubject.send(.pushToPerformerDetail(group))
         }

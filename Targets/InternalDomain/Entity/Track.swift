@@ -24,6 +24,6 @@ public struct Track {
 }
 
 public enum TrackType {
-    case youtube(String)
+    case youtube(URL)
     case appleMusic(String)
 }

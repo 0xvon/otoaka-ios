@@ -342,7 +342,6 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         )
         return button
     }()
-    
     private lazy var playButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 10
@@ -361,6 +360,48 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             for: .selected
         )
         return button
+    }()
+    
+    private lazy var logoView: UIView = {
+        let logoView = UIView()
+        logoView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let logoInnerView = UIView()
+        logoInnerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let logo = UIImageView()
+        logo.translatesAutoresizingMaskIntoConstraints = false
+        logo.image = UIImage(named: "icon")
+        logo.layer.cornerRadius = 4
+        logo.clipsToBounds = true
+        logoInnerView.addSubview(logo)
+        NSLayoutConstraint.activate([
+            logo.widthAnchor.constraint(equalToConstant: 30),
+            logo.heightAnchor.constraint(equalTo: logo.widthAnchor),
+            logo.topAnchor.constraint(equalTo: logoInnerView.topAnchor),
+            logo.leftAnchor.constraint(equalTo: logoInnerView.leftAnchor),
+            logo.bottomAnchor.constraint(equalTo: logoInnerView.bottomAnchor),
+        ])
+        
+        let logoTitle = UILabel()
+        logoTitle.translatesAutoresizingMaskIntoConstraints = false
+        logoTitle.text = "ロケバン"
+        logoTitle.font = Brand.font(for: .mediumStrong)
+        logoTitle.textColor = Brand.color(for: .text(.primary))
+        logoInnerView.addSubview(logoTitle)
+        NSLayoutConstraint.activate([
+            logoTitle.leftAnchor.constraint(equalTo: logo.rightAnchor, constant: 4),
+            logoTitle.rightAnchor.constraint(equalTo: logoInnerView.rightAnchor),
+            logoTitle.centerYAnchor.constraint(equalTo: logo.centerYAnchor),
+        ])
+        
+        logoView.addSubview(logoInnerView)
+        NSLayoutConstraint.activate([
+            logoInnerView.centerXAnchor.constraint(equalTo: logoView.centerXAnchor),
+            logoInnerView.centerYAnchor.constraint(equalTo: logoView.centerYAnchor),
+        ])
+        
+        return logoView
     }()
     
     private lazy var actionStackView: UIStackView = {
@@ -644,6 +685,12 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             musicPlayerActionStackView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor)
         ])
         
+        scrollStackView.addArrangedSubview(logoView)
+        NSLayoutConstraint.activate([
+            logoView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+            logoView.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
         scrollStackView.addArrangedSubview(playerView)
         NSLayoutConstraint.activate([
             playerView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
@@ -670,12 +717,20 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             actionStackView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
         ])
         
+        let bottomSpacer = UIView()
+        scrollStackView.addArrangedSubview(bottomSpacer)
+        NSLayoutConstraint.activate([
+            bottomSpacer.heightAnchor.constraint(equalToConstant: 48),
+            bottomSpacer.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
+        ])
+        
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(backgroundOperation(notification:)), name: NSNotification.Name.MPMusicPlayerControllerPlaybackStateDidChange, object: musicPlayer)
         musicPlayer.beginGeneratingPlaybackNotifications()
         
         switch viewModel.state.dataSource {
         case .userFeed(let feed):
+            playerView.isHidden = true
             setupAsFeed()
             if let profile = feed.author.thumbnailURL, let url = URL(string: profile) {
                 dependencyProvider.imagePipeline.loadImage(url, into: profileImageView)
@@ -695,6 +750,10 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                 playerView.load(
                     withVideoId: videoId,
                     playerVars: ["playsinline": 1, "playlist": []])
+            case .appleMusic(let songId):
+                cassetteTitleLabel.text = "\(feed.title) - \(feed.group.name)"
+                playAppleMusicTrack(trackIds: [songId])
+                playerView.isHidden = true
             }
         case .youtubeVideo(let videoId):
             setupAsFeed(false)
@@ -711,7 +770,8 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                 cassetteTitleLabel.text = "\(track.name) - \(track.artistName)"
                 playAppleMusicTrack(trackIds: [id])
                 playerView.isHidden = true
-            case .youtube(let videoId):
+            case .youtube(let url):
+                guard let videoId = YouTubeClient(url: url.absoluteString).getId() else { return }
                 cassetteTitleLabel.text = "\(track.name)"
                 musicPlayerActionStackView.isHidden = true
                 musicPlayerIndicatorView.isHidden = true

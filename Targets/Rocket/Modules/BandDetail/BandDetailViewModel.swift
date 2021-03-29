@@ -54,6 +54,7 @@ class BandDetailViewModel {
         case pushToLiveList(LiveListViewController.Input)
         case pushToFeedAuthor(User)
         case pushToGroupFeedList(FeedListViewController.Input)
+        case pushToPlayTrack(PlayTrackViewController.Input)
         case openURLInBrowser(URL)
         case didDeleteFeed
         case didToggleLikeFeed
@@ -146,10 +147,7 @@ class BandDetailViewModel {
             outputSubject.send(.pushToLiveDetail(live))
         case .feed:
             guard let feed = state.feeds.first else { return }
-            switch feed.feedType {
-            case .youtube(let url):
-                outputSubject.send(.openURLInBrowser(url))
-            }
+            outputSubject.send(.pushToPlayTrack(.userFeed(feed)))
         }
     }
     
@@ -171,12 +169,14 @@ class BandDetailViewModel {
             break
 //            outputSubject.send(.pushToChartList(state.group))
         case .track(.playButtonTapped):
-            guard let item = state.channelItem, let videoId = item.id.videoId,
-                  let url = URL(string: "https://youtube.com/watch?v=\(videoId)")
-            else {
-                return
-            }
-            outputSubject.send(.openURLInBrowser(url))
+            guard let item = state.channelItem, let videoId = item.id.videoId, let snippet = item.snippet, let videoUrl = URL(string: "https://youtube.com/watch?v=\(videoId)") else { return }
+            let track = Track(
+                name: snippet.title ?? "",
+                artistName: snippet.channelTitle ?? "",
+                artwork: snippet.thumbnails?.high?.url ?? "",
+                trackType: .youtube(videoUrl)
+            )
+            outputSubject.send(.pushToPlayTrack(.track(track)))
         case .track(.youtubeButtonTapped):
             guard let channelId = state.group.youtubeChannelId,
                   let url = URL(string: "https://www.youtube.com/channel/\(channelId)")

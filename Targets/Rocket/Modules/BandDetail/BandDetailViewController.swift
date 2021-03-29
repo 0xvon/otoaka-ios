@@ -279,10 +279,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .pushToGroupFeedList(let input):
                 let vc = FeedListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .openURLInBrowser(let url):
-                guard let videoId = YouTubeClient(url: url.absoluteString).getId() else { return }
-                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .youtubeVideo(videoId))
+            case .pushToPlayTrack(let input):
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .openURLInBrowser(let url):
+                let safari = SFSafariViewController(
+                    url: url)
+                safari.dismissButtonStyle = .close
+                present(safari, animated: true, completion: nil)
             }
         }
         .store(in: &cancellables)

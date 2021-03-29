@@ -119,10 +119,12 @@ class PostViewModel {
         guard let track = state.track else { return }
         guard let group = state.group else { return }
         switch track.trackType {
-        case .appleMusic(let musicId): break
+        case .appleMusic(let musicId):
+            let request = CreateUserFeed.Request(text: text, feedType: .appleMusic(musicId), ogpUrl: state.ogpUrl, thumbnailUrl: track.artwork, groupId: group.id, title: track.name)
+            createUserFeedAction.input((request: request, uri: CreateUserFeed.URI()))
         case .youtube(let videoId):
             guard let videoUrl = URL(string: "https://youtube.com/watch?v=\(videoId)") else { return }
-            let request = CreateUserFeed.Request(text: text, feedType: .youtube(videoUrl), ogpUrl: state.ogpUrl, groupId: group.id, title: track.name)
+            let request = CreateUserFeed.Request(text: text, feedType: .youtube(videoUrl), ogpUrl: state.ogpUrl, thumbnailUrl: track.artwork, groupId: group.id, title: track.name)
             createUserFeedAction.input((request: request, uri: CreateUserFeed.URI()))
         }
     }

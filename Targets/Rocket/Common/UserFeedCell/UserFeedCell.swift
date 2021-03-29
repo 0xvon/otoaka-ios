@@ -123,6 +123,10 @@ class UserFeedCellContent: UIView {
             if let thumbnail = youTubeClient.getThumbnailUrl() {
                 input.imagePipeline.loadImage(thumbnail, into: thumbnailImageView)
             }
+        case .appleMusic(_):
+            if let artwork = input.feed.thumbnailUrl, let thumbnail = URL(string: artwork) {
+                input.imagePipeline.loadImage(thumbnail, into: thumbnailImageView)
+            }
         }
         if let profileImage = input.feed.author.thumbnailURL, let url = URL(string: profileImage) {
             input.imagePipeline.loadImage(url, into: profileImageView)

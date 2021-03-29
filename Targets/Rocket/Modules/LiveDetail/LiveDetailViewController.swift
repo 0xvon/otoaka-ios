@@ -257,6 +257,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 let vc = FeedListViewController(
                     dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPlayTrack(let input):
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close

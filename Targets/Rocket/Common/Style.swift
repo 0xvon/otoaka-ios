@@ -136,6 +136,20 @@ extension UIViewController {
                                    "com.instagram.sharedSticker.backgroundBottomColor": "#EA6E57"]]
             UIPasteboard.general.setItems(items as! [[String : Any]], options: [:])
             UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+        case .appleMusic(_):
+            let cardView = UINib(nibName: "FeedCardView", bundle: nil)
+                .instantiate(withOwner: nil, options: nil).first as! FeedCardView
+            guard let thumbnail = URL(string: feed.thumbnailUrl ?? "") else { return }
+            cardView.inject(input: (feed: feed, artwork: thumbnail))
+            guard let image = cardView.getSnapShot() else { return }
+            let url = URL(string: "instagram-stories://share")
+            guard let pngImageData = image.pngData() else { return }
+            let items: NSArray = [["com.instagram.sharedSticker.stickerImage": pngImageData,
+                                   "com.instagram.sharedSticker.backgroundTopColor": "#49A1F8",
+                                   "com.instagram.sharedSticker.backgroundBottomColor": "#EA6E57"]]
+            UIPasteboard.general.setItems(items as! [[String : Any]], options: [:])
+            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
+            
         }
     }
     

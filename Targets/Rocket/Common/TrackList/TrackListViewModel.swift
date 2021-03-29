@@ -85,23 +85,27 @@ class TrackListViewModel {
             pagination.subscribe { [weak self] result in
                 switch result {
                 case .initial(let res):
-                    self?.state.tracks = res.items.map {
-                        Track(
-                            name: $0.snippet?.title ?? "no title",
-                            artistName: $0.snippet?.channelTitle ?? "no artist",
-                            artwork: $0.snippet?.thumbnails?.high?.url ?? "",
-                            trackType: .youtube($0.id.videoId ?? "")
-                        )
+                    self?.state.tracks = res.items.compactMap {
+                        if let youtubeUrl = URL(string: "https://youtube.com/watch?v=\($0.id.videoId ?? "")") {
+                            return Track(
+                                name: $0.snippet?.title ?? "no title",
+                                artistName: $0.snippet?.channelTitle ?? "no artist",
+                                artwork: $0.snippet?.thumbnails?.high?.url ?? "",
+                                trackType: .youtube(youtubeUrl)
+                            )
+                        } else {  return nil }
                     }
                     self?.outputSubject.send(.reloadTableView)
                 case .next(let res):
-                    self?.state.tracks += res.items.map {
-                        Track(
-                            name: $0.snippet?.title ?? "no title",
-                            artistName: $0.snippet?.channelTitle ?? "no artist",
-                            artwork: $0.snippet?.thumbnails?.high?.url ?? "",
-                            trackType: .youtube($0.id.videoId ?? "")
-                        )
+                    self?.state.tracks += res.items.compactMap {
+                        if let youtubeUrl = URL(string: "https://youtube.com/watch?v=\($0.id.videoId ?? "")") {
+                            return Track(
+                                name: $0.snippet?.title ?? "no title",
+                                artistName: $0.snippet?.channelTitle ?? "no artist",
+                                artwork: $0.snippet?.thumbnails?.high?.url ?? "",
+                                trackType: .youtube(youtubeUrl)
+                            )
+                        } else {  return nil }
                     }
                     self?.outputSubject.send(.reloadTableView)
                 case .error(let err):
