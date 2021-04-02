@@ -151,7 +151,7 @@ class UserFeedCellContent: UIView {
         thumbnailImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
 
         dateLabel.font = Brand.font(for: .xsmall)
-        dateLabel.textColor = Brand.color(for: .background(.secondary))
+        dateLabel.textColor = Brand.color(for: .text(.primary))
 
         artistNameLabel.font = Brand.font(for: .smallStrong)
         artistNameLabel.textColor = Brand.color(for: .text(.primary))
