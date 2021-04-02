@@ -20,6 +20,7 @@ target 'Rocket' do
   pod 'UITextView+Placeholder'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
   pod 'TagListView', '~> 1.0'
+  pod 'CropViewController'
 
   target 'RocketTests' do
     inherit! :search_paths

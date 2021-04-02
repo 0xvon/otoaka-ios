@@ -30,6 +30,14 @@ name: AWSS3, nameSpecified:
 body: The AWS Mobile SDK f…
 version: 2.21.1
 
+name: CropViewController, nameSpecified: 
+body: The MIT License (MIT…
+version: 2.6.0
+
+name: CropViewController, nameSpecified: 
+body: The MIT License (MIT…
+version: 2.6.0
+
 name: Firebase, nameSpecified: 
 body: 
                    …
@@ -81,12 +89,12 @@ version: 7.3.0
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.7.0
+version: 7.9.0
 
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.7.0
+version: 7.9.0
 
 name: GoogleAppMeasurement, nameSpecified: 
 body: Copyright 2020 Googl…
@@ -109,12 +117,12 @@ version: 8.1.0
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.2.2
+version: 7.3.1
 
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.2.2
+version: 7.3.1
 
 name: KeyboardGuide, nameSpecified: 
 body: Copyright (c) 2020 Y…
@@ -154,11 +162,11 @@ version: 2.30906.0
 
 name: Nuke, nameSpecified: 
 body: The MIT License (MIT…
-version: 9.3.0
+version: 9.4.1
 
 name: Nuke, nameSpecified: 
 body: The MIT License (MIT…
-version: 9.3.0
+version: 9.4.1
 
 name: PromisesObjC, nameSpecified: 
 body: 

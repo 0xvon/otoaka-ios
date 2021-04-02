@@ -59,10 +59,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>ロケバンにミュージックへのアクセスを許可します</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>ロケバンにカメラロールへのアクセスを許可します</string>
-    <key>NSAppleMusicUsageDescription</key>
-    <string>ロケバンにミュージックへのアクセスを許可します</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -11,6 +11,7 @@ import SafariServices
 import UIComponent
 import UIKit
 import KeyboardGuide
+import CropViewController
 
 final class CreateLiveViewController: UIViewController, Instantiable {
     typealias Input = Void
@@ -483,12 +484,26 @@ extension CreateLiveViewController: UIImagePickerControllerDelegate, UINavigatio
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
-            return
+        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
+        
+        let cropController = CropViewController(image: image)
+        cropController.delegate = self
+        cropController.customAspectRatio = profileImageView.frame.size
+        cropController.aspectRatioPickerButtonHidden = true
+        cropController.resetAspectRatioEnabled = false
+        cropController.rotateButtonsHidden = true
+        cropController.cropView.cropBoxResizeEnabled = false
+        picker.dismiss(animated: true) {
+            self.present(cropController, animated: true, completion: nil)
         }
+    }
+}
+
+extension CreateLiveViewController: CropViewControllerDelegate {
+    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
         profileImageView.image = image
         viewModel.didUpdateArtwork(thumbnail: image)
-        self.dismiss(animated: true, completion: nil)
+        cropViewController.dismiss(animated: true, completion: nil)
     }
 }
 
