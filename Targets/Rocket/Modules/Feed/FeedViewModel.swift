@@ -19,7 +19,13 @@ final class FeedViewModel {
     }
     
     enum Scope: Int, CaseIterable {
-        case all
+        case all, following
+        var description: String {
+            switch self {
+            case .all: return "すべて"
+            case .following: return "フォロー中"
+            }
+        }
     }
     
     let dependencyProvider: LoggedInDependencyProvider
@@ -28,6 +34,7 @@ final class FeedViewModel {
     var output: AnyPublisher<Output, Never>
     private var _feeds = CurrentValueSubject<[UserFeedSummary], Never>([])
     var feeds: [UserFeedSummary] { _feeds.value }
+    var scopes: [Scope] { Scope.allCases }
     
     let refresh = PassthroughSubject<Void, Never>()
     let updateScope = PassthroughSubject<Int, Never>()
@@ -43,21 +50,26 @@ final class FeedViewModel {
         self.dependencyProvider = dependencyProvider
         
         let getAllPagination = PaginationRequest<Endpoint.GetAllUserFeeds>(apiClient: dependencyProvider.apiClient)
+        let getFollowingPagination = PaginationRequest<Endpoint.GetFollowingUserFeeds>(apiClient: dependencyProvider.apiClient)
         
         let feeds = getAllPagination.items()
+            .merge(with: getFollowingPagination.items())
             .multicast(subject: self._feeds)
         
         let isRefreshing = getAllPagination.isRefreshing
+            .merge(with: getFollowingPagination.isRefreshing)
             .map(Output.isRefreshing)
         
-        let scope = updateScope.map { Scope.allCases[$0] }.prepend(.all)
-        
         let reloadData = feeds.map { _ in Output.reloadData }
+        
+        let scope = updateScope.map { Scope.allCases[$0] }.prepend(.all)
         
         refresh.prepend(()).combineLatest(scope) { $1 }.sink { scope in
             switch scope {
             case .all:
                 getAllPagination.refresh()
+            case .following:
+                getFollowingPagination.refresh()
             }
         }.store(in: &cancellables)
         
@@ -68,6 +80,8 @@ final class FeedViewModel {
                 switch scope {
                 case .all:
                     getAllPagination.next()
+                case .following:
+                    getFollowingPagination.next()
                 }
             }.store(in: &cancellables)
         

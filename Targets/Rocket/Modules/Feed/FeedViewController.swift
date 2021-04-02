@@ -14,6 +14,20 @@ import Combine
 
 final class FeedViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
+    
+    lazy var searchResultController: SearchResultViewController = {
+        SearchResultViewController(dependencyProvider: self.dependencyProvider)
+    }()
+    lazy var searchController: UISearchController = {
+        let controller = BrandSearchController(searchResultsController: self.searchResultController)
+        controller.searchResultsUpdater = self
+        controller.delegate = self
+        controller.searchBar.delegate = self
+        controller.searchBar.searchTextField.isHidden = true
+        controller.searchBar.searchTextField.isUserInteractionEnabled = false
+        controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
+        return controller
+    }()
 
     let viewModel: FeedViewModel
     private var cancellables: [AnyCancellable] = []
@@ -36,6 +50,8 @@ final class FeedViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.separatorStyle = .none
         tableView.registerCellClass(UserFeedCell.self)
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
         
         bind()
@@ -44,6 +60,7 @@ final class FeedViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        searchController.searchBar.showsScopeBar = true
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
         setupFloatingItems(userRole: dependencyProvider.user.role)
     }
@@ -114,6 +131,27 @@ final class FeedViewController: UITableViewController {
     @objc func createFeed() {
         let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
         navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension FeedViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        viewModel.updateScope.send(selectedScope)
+    }
+}
+
+extension FeedViewController: UISearchControllerDelegate {
+    func willPresentSearchController(_ searchController: UISearchController) {
+        searchController.searchBar.showsScopeBar = false
+    }
+    func FeedViewController(_ searchController: UISearchController) {
+        searchController.searchBar.showsScopeBar = true
+    }
+}
+
+extension FeedViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+//        viewModel.updateSearchQuery.send(searchController.searchBar.text)
     }
 }
 

@@ -31,12 +31,14 @@ final class UserDetailViewController: UIViewController, Instantiable {
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = true
         scrollView.refreshControl = self.refreshControl
+        scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
     private lazy var scrollStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
+        stackView.spacing = 16
         return stackView
     }()
     
@@ -190,12 +192,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
             containerView.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
         
-        let mediumSpacer = UIView()
-        scrollStackView.addArrangedSubview(mediumSpacer)
-        NSLayoutConstraint.activate([
-            mediumSpacer.heightAnchor.constraint(equalToConstant: 20),
-        ])
-        
         userActionStackView.addArrangedSubview(editProfileButton)
         userActionStackView.addArrangedSubview(followButton)
         NSLayoutConstraint.activate([
@@ -208,7 +204,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         let headerSpacer = UIView()
         scrollStackView.addArrangedSubview(headerSpacer) // Spacer
         NSLayoutConstraint.activate([
-            headerSpacer.heightAnchor.constraint(equalToConstant: 24),
+            headerSpacer.heightAnchor.constraint(equalToConstant: 8),
         ])
         
         scrollStackView.addArrangedSubview(feedSectionHeader)
