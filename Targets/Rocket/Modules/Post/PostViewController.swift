@@ -186,20 +186,32 @@ final class PostViewController: UIViewController, Instantiable {
                 print(error)
                 showAlert()
             case .didSelectTrack:
-                trackInfoLabel.text = "\(viewModel.state.track?.name ?? "") - no artist"
-                if let thumbnail = viewModel.state.track?.artwork, let url = URL(string: thumbnail) {
-                    dependencyProvider.imagePipeline.loadImage(url, into: movieThumbnailImageView)
+                if let track = viewModel.state.track {
+                    trackInfoLabel.text = "\(track.name) - no artist"
+                    if let url = URL(string: track.artwork) {
+                        dependencyProvider.imagePipeline.loadImage(url, into: movieThumbnailImageView)
+                    }
+                } else {
+                    trackInfoLabel.text = nil
+                    movieThumbnailImageView.image = nil
                 }
                 
-                let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
-                let nav = BrandNavigationController(rootViewController: vc)
-                vc.listen { [unowned self] group in
-                    self.dismiss(animated: true, completion: nil)
-                    viewModel.didSelectGroup(group: group)
-                }
-                self.present(nav, animated: true, completion: nil)
             case .didSelectGroup:
-                trackInfoLabel.text = "\(viewModel.state.track?.name ?? "") - \(viewModel.state.group?.name ?? "")"
+                if let group = viewModel.state.group {
+                    trackInfoLabel.text = "\(viewModel.state.track?.name ?? "") - \(group.name)"
+                } else {
+                    let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
+                    let nav = DismissionSubscribableNavigationController(rootViewController: vc)
+                    vc.listen { [unowned self] group in
+                        self.dismiss(animated: true, completion: nil)
+                        viewModel.didSelectGroup(group: group)
+                    }
+                    nav.subscribeDismission { [unowned self] in
+                        viewModel.cancelToSelectGroup()
+                    }
+                    self.present(nav, animated: true, completion: nil)
+                }
+                
             }
         }.store(in: &cancellables)
     }

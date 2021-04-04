@@ -272,7 +272,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     biographyTextView.text = userDetail.biography
                     editProfileButton.isHidden = false
                     followButton.isHidden = true
-                    let item = UIBarButtonItem(title: "ログアウト", style: .plain, target: self, action: #selector(logoutButtonTapped))
+                    let item = UIBarButtonItem(title: "ログアウト", style: .plain, target: self, action: #selector(logoutButtonTapped(_:)))
                     navigationItem.setRightBarButton(
                         item,
                         animated: false
@@ -330,7 +330,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     handler: { action in })
                 alertController.addAction(acceptAction)
                 alertController.addAction(cancelAction)
-
+                alertController.popoverPresentationController?.sourceView = self.view
+                alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
                 self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
                 viewModel.refresh()
@@ -404,6 +405,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
     
     func didEditProfileButtonTapped() {
         let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
+        vc.listen { [unowned self] in
+            self.listener()
+        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -422,7 +426,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     
     @objc private func groupCellTaped() { viewModel.didSelectRow(at: .group) }
     
-    @objc private func logoutButtonTapped() {
+    @objc private func logoutButtonTapped(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(
             title: "ログアウトしますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
@@ -436,7 +440,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
             handler: { action in })
         alertController.addAction(acceptAction)
         alertController.addAction(cancelAction)
-
+        alertController.popoverPresentationController?.sourceView = self.view
+        alertController.popoverPresentationController?.barButtonItem = sender
         self.present(alertController, animated: true, completion: nil)
     }
     
@@ -445,9 +450,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
             if let error = error {
                 print(error)
                 showAlert()
-            } else {
-                self.listener()
+                return
             }
+            self.listener()
         }
     }
     

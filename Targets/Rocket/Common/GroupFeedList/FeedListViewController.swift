@@ -96,21 +96,7 @@ final class FeedListViewController: UIViewController, Instantiable {
 
 extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
         return self.viewModel.state.feeds.count
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 16
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UIView()
-        view.backgroundColor = .clear
-        return view
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -118,7 +104,7 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let content = self.viewModel.state.feeds[indexPath.section]
+        let content = self.viewModel.state.feeds[indexPath.row]
         let cell = tableView.dequeueReusableCell(
             UserFeedCell.self,
             input: (user: dependencyProvider.user, feed: content, imagePipeline: dependencyProvider.imagePipeline),
@@ -127,19 +113,19 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
         cell.listen { [weak self] output in
             switch output {
             case .commentButtonTapped:
-                self?.feedCommentButtonTapped(cellIndex: indexPath.section)
+                self?.feedCommentButtonTapped(cellIndex: indexPath.row)
             case .deleteFeedButtonTapped:
-                self?.deleteFeedButtonTapped(cellIndex: indexPath.section)
+                self?.deleteFeedButtonTapped(cellIndex: indexPath.row)
             case .likeFeedButtonTapped:
-                self?.viewModel.likeFeed(cellIndex: indexPath.section)
+                self?.viewModel.likeFeed(cellIndex: indexPath.row)
             case .unlikeFeedButtonTapped:
-                self?.viewModel.unlikeFeed(cellIndex: indexPath.section)
+                self?.viewModel.unlikeFeed(cellIndex: indexPath.row)
             case .shareButtonTapped:
-                self?.createShare(cellIndex: indexPath.section)
+                self?.createShare(cellIndex: indexPath.row)
             case .downloadButtonTapped:
-                self?.downloadButtonTapped(cellIndex: indexPath.section)
+                self?.downloadButtonTapped(cellIndex: indexPath.row)
             case .instagramButtonTapped:
-                self?.instagramButtonTapped(cellIndex: indexPath.section)
+                self?.instagramButtonTapped(cellIndex: indexPath.row)
             case .userTapped:
                 self?.userTapped(cellIndex: indexPath.row)
             }
@@ -148,7 +134,7 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let content = self.viewModel.state.feeds[indexPath.section]
+        let content = self.viewModel.state.feeds[indexPath.row]
         let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .userFeed(content))
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
@@ -203,7 +189,8 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
             handler: { action in })
         alertController.addAction(acceptAction)
         alertController.addAction(cancelAction)
-
+        alertController.popoverPresentationController?.sourceView = self.view
+        alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
         self.present(alertController, animated: true, completion: nil)
     }
 }

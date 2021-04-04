@@ -146,7 +146,7 @@ class FeedListViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.section + 25 > state.feeds.count else { return }
+        guard indexPath.row + 25 > state.feeds.count else { return }
         switch storage {
         case let .groupFeed(pagination):
             pagination.next()

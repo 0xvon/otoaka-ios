@@ -50,6 +50,7 @@ class PostViewModel {
     var cancellables: Set<AnyCancellable> = []
     
     private lazy var createUserFeedAction = Action(CreateUserFeed.self, httpClient: self.apiClient)
+    private lazy var searchGroupAction = Action(SearchGroup.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -63,12 +64,19 @@ class PostViewModel {
         createUserFeedAction.elements
             .map(Output.didPostUserFeed).eraseToAnyPublisher()
             .merge(with: createUserFeedAction.errors.map(Output.reportError))
+            .merge(with: searchGroupAction.errors.map(Output.reportError))
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
         
         createUserFeedAction.elements
             .sink(receiveValue: { [unowned self] _ in
                 outputSubject.send(.updateSubmittableState(.editting(true)))
+            })
+            .store(in: &cancellables)
+        
+        searchGroupAction.elements
+            .sink(receiveValue: { [unowned self] results in
+                didSelectGroup(group: results.items.first)
             })
             .store(in: &cancellables)
     }
@@ -81,10 +89,25 @@ class PostViewModel {
     func didSelectTrack(track: Track) {
         state.track = track
         outputSubject.send(.didSelectTrack)
+        searchGroup(artistName: track.artistName)
         validatePost()
     }
     
-    func didSelectGroup(group: Group) {
+    func searchGroup(artistName: String) {
+        let request = Empty()
+        var uri = SearchGroup.URI()
+        uri.term = artistName
+        uri.page = 1
+        uri.per = 1
+        searchGroupAction.input((request: request, uri: uri))
+    }
+    
+    func cancelToSelectGroup() {
+        state.track = nil
+        outputSubject.send(.didSelectTrack)
+    }
+    
+    func didSelectGroup(group: Group?) {
         state.group = group
         outputSubject.send(.didSelectGroup)
         validatePost()

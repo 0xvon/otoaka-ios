@@ -55,7 +55,7 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
             .sink(receiveValue: { [unowned self] response in
                 state.value.isLoading = false
                 let metadata = response.metadata
-                guard (metadata.page + 1) * metadata.per < metadata.total else {
+                guard metadata.per == response.items.count else {
                     self.state.value.isFinished = true
                     return
                 }

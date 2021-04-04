@@ -151,7 +151,7 @@ class GroupListViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.section + 25 > state.groups.count else { return }
+        guard indexPath.row + 25 > state.groups.count else { return }
         switch storage {
         case let .followingGroups(_, pagination):
             pagination.next()

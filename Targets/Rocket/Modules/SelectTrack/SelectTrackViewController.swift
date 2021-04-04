@@ -25,6 +25,7 @@ final class SelectTrackViewController: UITableViewController {
         controller.searchResultsUpdater = self
         controller.delegate = self
         controller.searchBar.delegate = self
+        controller.searchBar.placeholder = "ロケバンにいるバンドから検索"
         controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
         return controller
     }()
@@ -43,7 +44,7 @@ final class SelectTrackViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "動画選択"
+        title = "楽曲選択"
         navigationItem.largeTitleDisplayMode = .never
         
         view.backgroundColor = Brand.color(for: .background(.primary))

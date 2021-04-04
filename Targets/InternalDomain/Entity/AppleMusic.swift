@@ -50,7 +50,7 @@ public struct AppleMusicSong: Codable {
         public var discNumber: Int
         public var genreNames: [String]
         public var durationInMillis: Int
-        public var releaseDate: String
+        public var releaseDate: String?
         public var name: String
         public var isrc: String
         public var hasLyrics: Bool
