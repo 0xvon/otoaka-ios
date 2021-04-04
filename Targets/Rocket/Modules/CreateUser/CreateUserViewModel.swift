@@ -109,7 +109,7 @@ class CreateUserViewModel {
     private func signup(imageUrl: String) {
         guard let displayName = state.displayName else { return }
         let req = Signup.Request(
-            name: displayName, biography: nil, thumbnailURL: imageUrl, role: state.role)
+            name: displayName, biography: nil, thumbnailURL: imageUrl, role: state.role, twitterUrl: nil, instagramUrl: nil)
         createUserAction.input((request: req, uri: Signup.URI()))
     }
 }

@@ -23,8 +23,7 @@ final class FeedViewController: UITableViewController {
         controller.searchResultsUpdater = self
         controller.delegate = self
         controller.searchBar.delegate = self
-        controller.searchBar.searchTextField.isHidden = true
-        controller.searchBar.searchTextField.isUserInteractionEnabled = false
+        controller.searchBar.searchTextField.placeholder = "ユーザー検索"
         controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
         return controller
     }()
@@ -77,6 +76,8 @@ final class FeedViewController: UITableViewController {
                 } else {
                     self.refreshControl?.endRefreshing()
                 }
+            case .updateSearchResult(let input):
+                self.searchResultController.inject(input)
             case .didDeleteFeed:
                 viewModel.refresh.send(())
             case .didToggleLikeFeed:
@@ -144,14 +145,14 @@ extension FeedViewController: UISearchControllerDelegate {
     func willPresentSearchController(_ searchController: UISearchController) {
         searchController.searchBar.showsScopeBar = false
     }
-    func FeedViewController(_ searchController: UISearchController) {
+    func willDismissSearchController(_ searchController: UISearchController) {
         searchController.searchBar.showsScopeBar = true
     }
 }
 
 extension FeedViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-//        viewModel.updateSearchQuery.send(searchController.searchBar.text)
+        viewModel.updateSearchQuery.send(searchController.searchBar.text)
     }
 }
 

@@ -128,7 +128,6 @@ extension SelectTrackViewController: UISearchResultsUpdating {
 
 extension SelectTrackViewController: UISearchControllerDelegate {
     func willPresentSearchController(_ searchController: UISearchController) {
-        searchController.searchBar.showsScopeBar = false
     }
     func willDismissSearchController(_ searchController: UISearchController) {
         searchController.searchBar.showsScopeBar = true

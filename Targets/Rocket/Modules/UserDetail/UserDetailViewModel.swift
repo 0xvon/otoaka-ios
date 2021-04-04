@@ -40,7 +40,7 @@ class UserDetailViewModel {
     enum Output {
         case didRefreshUserDetail(UserDetail)
         case didRefreshFeedSummary(UserFeedSummary?)
-        case didRefreshFollowingGroup(Group?)
+        case didRefreshFollowingGroup(Group?, [String])
         
         case pushToPlayTrack(PlayTrackViewController.Input)
         case pushToGroupDetail(Group)
@@ -94,7 +94,7 @@ class UserDetailViewModel {
         Publishers.MergeMany(
             getUserDetailAction.elements.map(Output.didRefreshUserDetail).eraseToAnyPublisher(),
             getUsersFeedAction.elements.map { .didRefreshFeedSummary($0.items.first) }.eraseToAnyPublisher(),
-            followingGroupsAction.elements.map { .didRefreshFollowingGroup($0.items.first) }.eraseToAnyPublisher(),
+            followingGroupsAction.elements.map { .didRefreshFollowingGroup($0.items.first, $0.items.map { $0.name }) }.eraseToAnyPublisher(),
             deleteFeedAction.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
             likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
             unLikeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),

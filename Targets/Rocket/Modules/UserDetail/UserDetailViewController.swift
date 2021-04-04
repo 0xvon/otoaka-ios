@@ -96,6 +96,111 @@ final class UserDetailViewController: UIViewController, Instantiable {
         tagListView.marginX = 8
         return tagListView
     }()
+    private lazy var snsStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 0
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        
+        stackView.addArrangedSubview(twitterStackView)
+        NSLayoutConstraint.activate([
+            twitterStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            twitterStackView.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
+        stackView.addArrangedSubview(instagramStackView)
+        NSLayoutConstraint.activate([
+            instagramStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            instagramStackView.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        return stackView
+    }()
+    
+    private lazy var twitterStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.spacing = 0
+        stackView.distribution = .fill
+        stackView.isUserInteractionEnabled = true
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(twitterIdTapped)))
+        
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "twitterMargin")
+        
+        stackView.addArrangedSubview(imageView)
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(equalToConstant: 60),
+            imageView.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
+        stackView.addArrangedSubview(twitterIdLabel)
+        NSLayoutConstraint.activate([
+            twitterIdLabel.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(spacer)
+        NSLayoutConstraint.activate([
+            spacer.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
+        return stackView
+    }()
+    private lazy var twitterIdLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Brand.color(for: .text(.primary))
+        label.adjustsFontSizeToFitWidth = true
+        label.textAlignment = .left
+        return label
+    }()
+    
+    private lazy var instagramStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.spacing = 0
+        stackView.distribution = .fill
+        stackView.isUserInteractionEnabled = true
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(instagramIdTapped)))
+        
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "insta")
+        imageView.clipsToBounds = true
+        
+        stackView.addArrangedSubview(imageView)
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(equalToConstant: 60),
+            imageView.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
+        stackView.addArrangedSubview(instagramIdLabel)
+        NSLayoutConstraint.activate([
+            instagramIdLabel.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(spacer)
+        NSLayoutConstraint.activate([
+            spacer.heightAnchor.constraint(equalToConstant: 60),
+        ])
+        
+        return stackView
+    }()
+    private lazy var instagramIdLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Brand.color(for: .text(.primary))
+        label.adjustsFontSizeToFitWidth = true
+        label.textAlignment = .left
+        return label
+    }()
     
     private let feedSectionHeader = SummarySectionHeader(title: "FEED")
     private lazy var feedCellContent: UserFeedCellContent = {
@@ -175,6 +280,11 @@ final class UserDetailViewController: UIViewController, Instantiable {
         scrollStackView.addArrangedSubview(biographyTextView)
         NSLayoutConstraint.activate([
             biographyTextView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        
+        scrollStackView.addArrangedSubview(snsStackView)
+        NSLayoutConstraint.activate([
+            snsStackView.widthAnchor.constraint(equalTo: scrollStackView.widthAnchor),
         ])
         
         let containerView = UIView()
@@ -269,7 +379,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 case .account:
                     dependencyProvider.user = userDetail.user
                     self.title = "マイページ"
-                    biographyTextView.text = userDetail.biography
                     editProfileButton.isHidden = false
                     followButton.isHidden = true
                     let item = UIBarButtonItem(title: "ログアウト", style: .plain, target: self, action: #selector(logoutButtonTapped(_:)))
@@ -279,10 +388,24 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     )
                 case .user:
                     self.title = userDetail.name
+                    biographyTextView.text = userDetail.biography
                     editProfileButton.isHidden = true
                     followButton.isHidden = false
                 }
                 userFollowingViewModel.didGetUserDetail(isFollowing: userDetail.isFollowing, followersCount: userDetail.followersCount)
+                if let twitterUrl = userDetail.twitterUrl, let twitterId = twitterUrl.absoluteString.split(separator: "/").last {
+                    twitterStackView.isHidden = false
+                    twitterIdLabel.text = "@" + twitterId
+                } else {
+                    twitterStackView.isHidden = true
+                }
+                if let instagramUrl = userDetail.instagramUrl, let instagramId = instagramUrl.absoluteString.split(separator: "/").last {
+                    instagramStackView.isHidden = false
+                    instagramIdLabel.text = "@" + instagramId
+                } else {
+                    instagramStackView.isHidden = true
+                }
+                biographyTextView.text = userDetail.biography
                 headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount, likeFeedCount: userDetail.likeFeedCount, imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
             case .pushToGroupDetail(let group):
@@ -303,7 +426,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                         user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline
                     ))
                 }
-            case .didRefreshFollowingGroup(let group):
+            case .didRefreshFollowingGroup(let group, let groupNameSummary):
                 let isHidden = group == nil
                 self.groupSectionHeader.isHidden = isHidden
                 self.groupCellWrapper.isHidden = isHidden
@@ -315,7 +438,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 }
                 
                 tagListView.removeAllTags()
-                tagListView.addTags(viewModel.state.groupNameSummary)
+                tagListView.addTags(groupNameSummary)
             case .didDeleteFeedButtonTapped(let feed):
                 let alertController = UIAlertController(
                     title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -420,6 +543,22 @@ final class UserDetailViewController: UIViewController, Instantiable {
     
     private func instagramButtonTapped(feed: UserFeedSummary) {
         shareFeedWithInstagram(feed: feed)
+    }
+    
+    @objc private func twitterIdTapped() {
+        guard let url = viewModel.state.userDetail?.twitterUrl else { return }
+        let safari = SFSafariViewController(
+            url: url)
+        safari.dismissButtonStyle = .close
+        present(safari, animated: true, completion: nil)
+    }
+    
+    @objc private func instagramIdTapped() {
+        guard let url = viewModel.state.userDetail?.instagramUrl else { return }
+        let safari = SFSafariViewController(
+            url: url)
+        safari.dismissButtonStyle = .close
+        present(safari, animated: true, completion: nil)
     }
     
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }

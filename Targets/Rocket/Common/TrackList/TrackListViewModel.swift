@@ -116,24 +116,24 @@ class TrackListViewModel {
             pagination.subscribe { [weak self] result in
                 switch result {
                 case .initial(let res):
-                    self?.state.tracks = res.results.songs.data.map {
+                    self?.state.tracks = res.results.songs?.data.map {
                         Track(
                             name: $0.attributes.name,
                             artistName: $0.attributes.artistName,
                             artwork: $0.attributes.artwork.url?.replacingOccurrences(of: "{w}", with: String($0.attributes.artwork.width)).replacingOccurrences(of: "{h}", with: String($0.attributes.artwork.height)) ?? "",
                             trackType: .appleMusic($0.id)
                         )
-                    }
+                    } ?? []
                     self?.outputSubject.send(.reloadTableView)
                 case .next(let res):
-                    self?.state.tracks += res.results.songs.data.map {
+                    self?.state.tracks += res.results.songs?.data.map {
                         Track(
                             name: $0.attributes.name,
                             artistName: $0.attributes.artistName,
                             artwork: $0.attributes.artwork.url?.replacingOccurrences(of: "{w}", with: String($0.attributes.artwork.width)).replacingOccurrences(of: "{h}", with: String($0.attributes.artwork.height)) ?? "",
                             trackType: .appleMusic($0.id)
                         )
-                    }
+                    } ?? []
                     self?.outputSubject.send(.reloadTableView)
                 case .error(let err):
                     self?.outputSubject.send(.error(err))

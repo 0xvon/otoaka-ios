@@ -12,6 +12,7 @@ import Endpoint
 final class FeedViewModel {
     enum Output {
         case reloadData
+        case updateSearchResult(SearchResultViewController.Input)
         case isRefreshing(Bool)
         case didDeleteFeed
         case didToggleLikeFeed
@@ -40,6 +41,7 @@ final class FeedViewModel {
     let updateScope = PassthroughSubject<Int, Never>()
     let willDisplayCell = PassthroughSubject<IndexPath, Never>()
     
+    let updateSearchQuery = PassthroughSubject<String?, Never>()
     private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: self.apiClient)
     private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
     private lazy var unlikeFeedAction = Action(UnlikeUserFeed.self, httpClient: apiClient)
@@ -51,6 +53,12 @@ final class FeedViewModel {
         
         let getAllPagination = PaginationRequest<Endpoint.GetAllUserFeeds>(apiClient: dependencyProvider.apiClient)
         let getFollowingPagination = PaginationRequest<Endpoint.GetFollowingUserFeeds>(apiClient: dependencyProvider.apiClient)
+        
+        let updateSearchResult = updateSearchQuery.map { queryText -> Output in
+            guard let query  = queryText, !query.isEmpty else { return .updateSearchResult(.none) }
+            return .updateSearchResult(.user(query))
+        }
+        .eraseToAnyPublisher()
         
         let feeds = getAllPagination.items()
             .merge(with: getFollowingPagination.items())
@@ -88,7 +96,7 @@ final class FeedViewModel {
         feeds.connect().store(in: &cancellables)
         
         self.output = reloadData
-            .merge(with: isRefreshing).eraseToAnyPublisher()
+            .merge(with: isRefreshing, updateSearchResult).eraseToAnyPublisher()
         
         self.output.merge(with: deleteFeedAction.elements.map { _ in .didDeleteFeed }).eraseToAnyPublisher()
             .merge(with: likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher())

@@ -41,6 +41,18 @@ final class EditUserViewController: UIViewController, Instantiable {
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         return biographyInputView
     }()
+    private lazy var twitterUrlTextFieldView: TextFieldView = {
+        let twitterUrlTextFieldView = TextFieldView(input: (section: "Twitterリンク", text: nil, maxLength: 40))
+        twitterUrlTextFieldView.translatesAutoresizingMaskIntoConstraints = false
+        twitterUrlTextFieldView.keyboardType(.alphabet)
+        return twitterUrlTextFieldView
+    }()
+    private lazy var instagramUrlTextFieldView: TextFieldView = {
+        let instagramIdTextFieldView = TextFieldView(input: (section: "Instagramリンク", text: nil, maxLength: 40))
+        instagramIdTextFieldView.translatesAutoresizingMaskIntoConstraints = false
+        instagramIdTextFieldView.keyboardType(.alphabet)
+        return instagramIdTextFieldView
+    }()
 //    private lazy var partInputView: TextFieldView = {
 //        let partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
 //        partInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -137,6 +149,8 @@ final class EditUserViewController: UIViewController, Instantiable {
     func update(user: User) {
         displayNameInputView.setText(text: user.name)
         biographyInputView.setText(text: user.biography ?? "")
+        twitterUrlTextFieldView.setText(text: user.twitterUrl?.absoluteString ?? "https://twitter.com/")
+        instagramUrlTextFieldView.setText(text: user.instagramUrl?.absoluteString ?? "https://instagram.com/")
         switch user.role {
         case .fan(_):
             break
@@ -144,7 +158,7 @@ final class EditUserViewController: UIViewController, Instantiable {
 //            partInputView.setText(text: artist.part)
         break
         }
-        if let thumbnailURL = user.thumbnailURL.flatMap(URL.init(string: )) {
+        if let thumbnailURL = user.thumbnailURL.flatMap(URL.init(string:)) {
             dependencyProvider.imagePipeline.loadImage(thumbnailURL, into: profileImageView)
         }
     }
@@ -185,11 +199,19 @@ final class EditUserViewController: UIViewController, Instantiable {
         }
         .store(in: &cancellables)
         
-        displayNameInputView.listen {
+        displayNameInputView.listen { [unowned self] in
             self.didInputValue()
         }
         
-        biographyInputView.listen {
+        biographyInputView.listen { [unowned self] in
+            self.didInputValue()
+        }
+        
+        twitterUrlTextFieldView.listen { [unowned self] in
+            self.didInputValue()
+        }
+        
+        instagramUrlTextFieldView.listen { [unowned self] in
             self.didInputValue()
         }
         
@@ -266,6 +288,16 @@ final class EditUserViewController: UIViewController, Instantiable {
             biographyInputView.heightAnchor.constraint(equalToConstant: 200),
         ])
         
+        mainView.addArrangedSubview(twitterUrlTextFieldView)
+        NSLayoutConstraint.activate([
+            twitterUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
+        mainView.addArrangedSubview(instagramUrlTextFieldView)
+        NSLayoutConstraint.activate([
+            instagramUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
 //        mainView.addArrangedSubview(partInputView)
 //        partInputView.selectInputView(inputView: partPickerView)
 //        NSLayoutConstraint.activate([
@@ -289,8 +321,10 @@ final class EditUserViewController: UIViewController, Instantiable {
     private func didInputValue() {
         let displayName: String? = displayNameInputView.getText()
         let biography = biographyInputView.getText()
+        let twitterUrl = twitterUrlTextFieldView.getText()
+        let instagramUrl = instagramUrlTextFieldView.getText()
         
-        viewModel.didUpdateInputItems(displayName: displayName, biography: biography)
+        viewModel.didUpdateInputItems(displayName: displayName, biography: biography, twitterUrl: twitterUrl, instagramUrl: instagramUrl)
     }
 
     @objc private func selectProfileImage(_ sender: Any) {

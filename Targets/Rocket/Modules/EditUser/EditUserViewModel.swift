@@ -18,6 +18,8 @@ class EditUserViewModel {
         var biography: String?
         var role: RoleProperties
         var profileImage: UIImage?
+        var instagramUrl: URL?
+        var twitterUrl: URL?
         let socialInputs: SocialInputs
     }
     
@@ -84,12 +86,19 @@ class EditUserViewModel {
         getUserInfoAction.input((request: Empty(), uri: GetUserInfo.URI()))
     }
     
-    func didUpdateInputItems(displayName: String?, biography: String?) {
+    func didUpdateInputItems(displayName: String?, biography: String?, twitterUrl: String?, instagramUrl: String?) {
         state.displayName = displayName
         state.biography = biography
+        state.twitterUrl = validateSnsUrl(baseUrl: "https://twitter.com/", text: twitterUrl)
+        state.instagramUrl = validateSnsUrl(baseUrl: "https://instagram.com/", text: instagramUrl)
         
         let isSubmittable = (displayName != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
+    }
+    
+    func validateSnsUrl(baseUrl: String, text: String?) -> URL? {
+        guard let text = text, text.contains(baseUrl), text != baseUrl else { return nil }
+        return URL(string: text)
     }
     
     func didUpdateArtwork(artwork: UIImage?) {
@@ -116,7 +125,7 @@ class EditUserViewModel {
     private func editUser(imageUrl: String?) {
         guard let displayName = state.displayName else { return }
         let req = EditUserInfo.Request(
-            name: displayName, biography: state.biography, thumbnailURL: imageUrl, role: state.role)
+            name: displayName, biography: state.biography, thumbnailURL: imageUrl, role: state.role, twitterUrl: state.twitterUrl, instagramUrl: state.instagramUrl)
         editUserAction.input((request: req, uri: EditUserInfo.URI()))
     }
 }

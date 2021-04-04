@@ -55,7 +55,7 @@ class AppleMusicPaginationRequest<E: EndpointProtocol> where E.URI: AppleMusicPa
         requestAction.elements
             .sink(receiveValue: { [unowned self] response in
                 state.value.isLoading = false
-                guard per == response.results.songs.data.count else {
+                guard per == response.results.songs?.data.count else {
                     self.state.value.isFinished = true
                     return
                 }
@@ -116,11 +116,11 @@ extension AppleMusicPaginationRequest {
                 guard self.currentDemand > 0 else { return }
                 switch event {
                 case .initial(let response):
-                    items = response.results.songs.data
+                    items = response.results.songs?.data ?? []
                     self.currentDemand += self.downstream?.receive(items) ?? .none
                     self.currentDemand -= 1
                 case .next(let response):
-                    items += response.results.songs.data
+                    items += response.results.songs?.data ?? []
                     self.currentDemand += self.downstream?.receive(items) ?? .none
                     self.currentDemand -= 1
                 case .error: break
