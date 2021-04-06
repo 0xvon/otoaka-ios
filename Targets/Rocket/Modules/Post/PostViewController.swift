@@ -207,7 +207,9 @@ final class PostViewController: UIViewController, Instantiable {
                         viewModel.didSelectGroup(group: group)
                     }
                     nav.subscribeDismission { [unowned self] in
-                        viewModel.cancelToSelectGroup()
+                        if viewModel.state.group == nil {
+                            self.present(nav, animated: true, completion: nil)
+                        }
                     }
                     self.present(nav, animated: true, completion: nil)
                 }
