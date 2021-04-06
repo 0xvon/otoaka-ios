@@ -83,7 +83,7 @@ class UserNotificationCellContent: UIView {
         createdAtLabel.text = dateFormatter.string(from: input.notification.createdAt)
         switch input.notification.notificationType {
         case .like(let like):
-            titleLabel.text = "\(like.likedBy.name)がいいね"
+            titleLabel.text = "\(like.likedBy.name)がフィードにいいね"
             if let url = like.feed.ogpUrl.flatMap(URL.init(string: )) {
                 input.imagePipeline.loadImage(url, into: thumbnailImageView)
             }
@@ -93,7 +93,10 @@ class UserNotificationCellContent: UIView {
                 input.imagePipeline.loadImage(url, into: thumbnailImageView)
             }
         case .comment(let comment):
-            titleLabel.text = "\(comment.text) from \(comment.author.name)"
+            titleLabel.text = "「\(comment.text)」from \(comment.author.name)"
+            if let url = comment.author.thumbnailURL.flatMap(URL.init(string: )) {
+                input.imagePipeline.loadImage(url, into: thumbnailImageView)
+            }
         case .officialAnnounce(let announce):
             titleLabel.text = announce.title
         }

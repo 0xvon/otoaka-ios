@@ -33,15 +33,16 @@ struct DependencyProvider {
     var masterService: MasterSerivice
     var versioningService: VersioningSerivice
     var imagePipeline: ImagePipeline
+    var urlScheme: URL?
 }
 
 extension DependencyProvider {
 
-    static func make(windowScene: UIWindowScene) -> DependencyProvider {
-        return .make(config: EnvironmentConfig.self, windowScene: windowScene)
+    static func make(windowScene: UIWindowScene, urlScheme: URL? = nil) -> DependencyProvider {
+        return .make(config: EnvironmentConfig.self, windowScene: windowScene, urlScheme: urlScheme)
     }
 
-    static func make(config: Config.Type, windowScene: UIWindowScene) -> DependencyProvider {
+    static func make(config: Config.Type, windowScene: UIWindowScene, urlScheme: URL?) -> DependencyProvider {
 
         let cognitoConfiguration = AWSCognitoAuthConfiguration(
             appClientId: config.cognitoAppClientId,
@@ -108,7 +109,8 @@ extension DependencyProvider {
             viewHierarchy: ViewHierarchy(windowScene: windowScene),
             masterService: MasterSerivice(httpClient: masterServiceClient),
             versioningService: VersioningSerivice(httpClient: versionServiceClient),
-            imagePipeline: NukeImagePipeline()
+            imagePipeline: NukeImagePipeline(),
+            urlScheme: urlScheme
         )
     }
 }
