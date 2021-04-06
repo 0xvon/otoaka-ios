@@ -46,7 +46,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("フォロー", selected: false)
-        button.setTitle("フォロー中", selected: true)
         button.layer.cornerRadius = 24
         return button
     }()
@@ -356,6 +355,16 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .updateIsButtonEnabled(let enabled):
                 followButton.isEnabled = enabled
             case .updateFollowing(let isFollowing):
+                guard let isFollowed = viewModel.state.userDetail?.isFollowed else { return }
+                if isFollowing {
+                    isFollowed
+                        ? followButton.setTitle("相互フォロー中", selected: true)
+                        : followButton.setTitle("フォロー中", selected: true)
+                } else {
+                    isFollowed
+                        ? followButton.setTitle("フォローバック", selected: false)
+                        : followButton.setTitle("フォロー", selected: false)
+                }
                 followButton.isSelected = isFollowing
             case .reportError(let error):
                 print(error)

@@ -117,11 +117,11 @@ final class RootViewController: UITabBarController, Instantiable {
 //            image: UIImage(named: "guitarIcon"),
 //            selectedImage: UIImage(named: "selectedGuitarIcon")
 //        )
-        let userVC = BrandNavigationController(rootViewController: UserViewController(dependencyProvider: loggedInProvider))
-        userVC.tabBarItem = UITabBarItem(
-            title: "ユーザー検索",
-            image: UIImage(named: "searchIcon"),
-            selectedImage: UIImage(named: "selectedSearchIcon")
+        let userNotificationVC = BrandNavigationController(rootViewController: UserNotificationViewControlelr(dependencyProvider: loggedInProvider))
+        userNotificationVC.tabBarItem = UITabBarItem(
+            title: "通知",
+            image: UIImage(named: "bellIcon"),
+            selectedImage: UIImage(named: "selectedBellIcon")
         )
         let accountVC = UserDetailViewController(dependencyProvider: loggedInProvider, input: loggedInProvider.user)
         let accountNav = BrandNavigationController(
@@ -135,7 +135,7 @@ final class RootViewController: UITabBarController, Instantiable {
         accountVC.listen { [unowned self] in
             checkSignupStatus()
         }
-        return [homeVC, groupVC, userVC, accountNav]
+        return [homeVC, groupVC, userNotificationVC, accountNav]
     }
     
     private func promptVersioningViewController(versionData: RequiredVersion) {
