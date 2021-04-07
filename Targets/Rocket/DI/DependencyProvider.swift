@@ -28,6 +28,7 @@ struct DependencyProvider {
     var apiClient: APIClient
     var youTubeDataApiClient: YouTubeDataAPIClient
     var appleMusicApiClient: AppleMusicAPIClient
+    var musixApiClient: MusixmatchAPIClient
     var s3Client: S3Client
     var viewHierarchy: ViewHierarchy
     var masterService: MasterSerivice
@@ -93,6 +94,11 @@ extension DependencyProvider {
             adapter: AppleMusicAPIAdapter(developerToken: config.appleMusicDeveloperToken),
             interceptor: httpInterceptor
         )
+        let musixApiClient = HTTPClient<MusixmatchAPIAdapter>(
+            baseUrl: URL(string: "https://api.musixmatch.com")!,
+            adapter: MusixmatchAPIAdapter(apiKey: config.musixmatchApiKey),
+            interceptor: httpInterceptor
+        )
         
         let s3Client = S3Client(s3Bucket: config.s3Bucket, cognitoIdentityPoolCredentialProvider: credentialProvider)
         let masterServiceClient = HTTPClient<WebAPIAdapter>(
@@ -105,6 +111,7 @@ extension DependencyProvider {
             auth: auth, apiClient: apiClient,
             youTubeDataApiClient: youTubeDataApiClient,
             appleMusicApiClient: appleMusicApiClient,
+            musixApiClient: musixApiClient,
             s3Client: s3Client,
             viewHierarchy: ViewHierarchy(windowScene: windowScene),
             masterService: MasterSerivice(httpClient: masterServiceClient),

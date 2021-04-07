@@ -570,6 +570,24 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         deleteButton.addTarget(self, action: #selector(deleteFeedButtonTapped), for: .touchUpInside)
         return deleteButton
     }()
+    private lazy var searchTrackButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
+        button.setTitle("歌詞検索", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .largeStrong)
+        return button
+    }()
+    private lazy var activityIndicator: LoadingCollectionView = {
+        let activityIndicator = LoadingCollectionView()
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicator.heightAnchor.constraint(equalToConstant: 40),
+            activityIndicator.widthAnchor.constraint(equalToConstant: 40),
+        ])
+        return activityIndicator
+    }()
     
     init(
         dependencyProvider: LoggedInDependencyProvider, input: Input
@@ -604,6 +622,10 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     }
     
     func bind() {
+        searchTrackButton.controlEventPublisher(for: .touchUpInside)
+            .sink(receiveValue: searchTrackButtonTapped)
+            .store(in: &cancellables)
+        
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .playingStateChanged:
@@ -651,7 +673,31 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             case .didToggleLikeFeed:
                 likeButtonView.setTitle("\(viewModel.state.likeCount)", for: .normal)
                 likeButtonView.isSelected.toggle()
+            case .didSearchLyrics(let lyrics):
+                activityIndicator.stopAnimating()
+                navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchTrackButton)
+                
+                if let lyrics = lyrics {
+                    let textView = UITextView()
+                    textView.font = Brand.font(for: .mediumStrong)
+                    textView.textAlignment = .center
+                    textView.textColor = Brand.color(for: .text(.primary))
+                    let vc = UIViewController(nibName: nil, bundle: nil)
+                    vc.view = textView
+                    vc.title = "歌詞"
+                    vc.navigationItem.largeTitleDisplayMode = .never
+                    textView.text = lyrics
+                    textView.isEditable = false
+                    textView.textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+                    let nav = BrandNavigationController(rootViewController: vc)
+                    self.present(nav, animated: true, completion: nil)
+                } else {
+                    showAlert(title: "(´・_・｀)", message: "歌詞が見つかりませんでした")
+                }
+                
             case .error(let error):
+                activityIndicator.stopAnimating()
+                navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchTrackButton)
                 print(error)
                 showAlert()
             }
@@ -670,6 +716,8 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         
         view = verticalScrollView
         view.backgroundColor = Brand.color(for: .background(.primary))
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchTrackButton)
         
         view.addSubview(scrollStackView)
         NSLayoutConstraint.activate([
@@ -870,6 +918,12 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             }
             
         }
+    }
+    
+    @objc private func searchTrackButtonTapped() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
+        activityIndicator.startAnimating()
+        viewModel.searchLyrics()
     }
     
     @objc private func deleteFeedButtonTapped() {

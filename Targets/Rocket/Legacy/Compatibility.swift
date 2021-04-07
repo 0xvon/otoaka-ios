@@ -5,3 +5,4 @@ typealias Button = UIComponent.PrimaryButton
 typealias APIClient = HTTPClientProtocol
 typealias YouTubeDataAPIClient = HTTPClientProtocol
 typealias AppleMusicAPIClient = HTTPClientProtocol
+typealias MusixmatchAPIClient = HTTPClientProtocol

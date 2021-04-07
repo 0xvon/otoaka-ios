@@ -113,6 +113,18 @@ final class PostViewController: UIViewController, Instantiable {
         movieThumbnailImageView.layer.opacity = 0.6
         return movieThumbnailImageView
     }()
+    private lazy var playTrackButton: UIButton = {
+        let button = UIButton()
+        button.isHidden = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(
+            UIImage(systemName: "play.fill")!
+                .withTintColor(.white, renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        button.addTarget(self, action: #selector(playTrackButtonTapped), for: .touchUpInside)
+        return button
+    }()
     private lazy var cancelMovieButton: UIButton = {
         let cancelMovieButton = UIButton()
         cancelMovieButton.translatesAutoresizingMaskIntoConstraints = false
@@ -191,9 +203,11 @@ final class PostViewController: UIViewController, Instantiable {
                     if let url = URL(string: track.artwork) {
                         dependencyProvider.imagePipeline.loadImage(url, into: movieThumbnailImageView)
                     }
+                    playTrackButton.isHidden = false
                 } else {
                     trackInfoLabel.text = nil
                     movieThumbnailImageView.image = nil
+                    playTrackButton.isHidden = true
                 }
                 
             case .didSelectGroup:
@@ -261,6 +275,14 @@ final class PostViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             numOfTextLabel.rightAnchor.constraint(equalTo: postView.rightAnchor, constant: -16),
             numOfTextLabel.bottomAnchor.constraint(equalTo: sectionView.topAnchor, constant: -16),
+        ])
+        
+        postView.addSubview(playTrackButton)
+        NSLayoutConstraint.activate([
+            playTrackButton.bottomAnchor.constraint(equalTo: numOfTextLabel.bottomAnchor, constant: -8),
+            playTrackButton.centerXAnchor.constraint(equalTo: numOfTextLabel.centerXAnchor),
+            playTrackButton.widthAnchor.constraint(equalToConstant: 50),
+            playTrackButton.heightAnchor.constraint(equalToConstant: 50),
         ])
         
         feedPreview.addSubview(movieThumbnailImageView)
@@ -355,7 +377,7 @@ final class PostViewController: UIViewController, Instantiable {
         youtubeButtonView.addSubview(youtubeButtonImage)
         
         let searchTitleLabel = UILabel()
-        searchTitleLabel.text = "動画を選択"
+        searchTitleLabel.text = "楽曲を選ぶ"
         searchTitleLabel.textAlignment = .center
         searchTitleLabel.translatesAutoresizingMaskIntoConstraints = false
         searchTitleLabel.font = Brand.font(for: .largeStrong)
@@ -465,6 +487,12 @@ final class PostViewController: UIViewController, Instantiable {
         textView.resignFirstResponder()
         guard let ogpImage: UIImage = feedPreview.getSnapShot() else { return }
         viewModel.postButtonTapped(ogpImage: ogpImage)
+    }
+    
+    @objc private func playTrackButtonTapped() {
+        guard let track = viewModel.state.track else { return }
+        let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .track(track))
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
 //    @objc func didFinishSavingImage(_ image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutableRawPointer) {

@@ -23,6 +23,7 @@ final class PlayTrackViewModel {
         case didDeleteFeed
         case playingStateChanged
         case playingDurationChanged
+        case didSearchLyrics(String?)
         case error(Error)
     }
     
@@ -41,6 +42,7 @@ final class PlayTrackViewModel {
     var dependencyProvider: LoggedInDependencyProvider
     private(set) var state: State
     var apiClient: APIClient { dependencyProvider.apiClient }
+    var musixmatchClient: MusixmatchAPIClient { dependencyProvider.musixApiClient }
     var cancellables: Set<AnyCancellable> = []
 
     private let outputSubject = PassthroughSubject<Output, Never>()
@@ -49,6 +51,7 @@ final class PlayTrackViewModel {
     private lazy var deleteFeedAction = Action(DeleteUserFeed.self, httpClient: self.apiClient)
     private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
     private lazy var unlikeFeedAction = Action(UnlikeUserFeed.self, httpClient: apiClient)
+    private lazy var searchLyricsAction = Action(MatcherLyrics.self, httpClient: musixmatchClient)
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -69,6 +72,8 @@ final class PlayTrackViewModel {
             deleteFeedAction.elements.map {_ in .didDeleteFeed }.eraseToAnyPublisher(),
             likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
             unlikeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
+            searchLyricsAction.elements.map { res in .didSearchLyrics(res.message.body?.lyrics.lyrics_body) }.eraseToAnyPublisher(),
+            searchLyricsAction.errors.map { _ in .didSearchLyrics(nil) }.eraseToAnyPublisher(),
             errors.map(Output.error).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -120,5 +125,23 @@ final class PlayTrackViewModel {
         case .youtubeVideo(_), .track(_): break
         }
         state.likeCount -= 1
+    }
+    
+    func searchLyrics() {
+        let request = Empty()
+        var uri = MatcherLyrics.URI()
+        uri.format = "json"
+        
+        switch state.dataSource {
+        case .userFeed(let feed):
+            uri.q_track = feed.title
+            uri.q_artist = feed.group.name
+        case .track(let track):
+            uri.q_artist = track.artistName
+            uri.q_track = track.name
+        default: break
+        }
+        
+        searchLyricsAction.input((request: request, uri: uri))
     }
 }

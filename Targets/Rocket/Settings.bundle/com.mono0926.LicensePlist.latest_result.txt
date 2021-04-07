@@ -89,12 +89,12 @@ version: 7.3.0
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.9.0
+version: 7.10.0
 
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.9.0
+version: 7.10.0
 
 name: GoogleAppMeasurement, nameSpecified: 
 body: Copyright 2020 Googl…
@@ -162,11 +162,11 @@ version: 2.30906.0
 
 name: Nuke, nameSpecified: 
 body: The MIT License (MIT…
-version: 9.4.1
+version: 9.5.0
 
 name: Nuke, nameSpecified: 
 body: The MIT License (MIT…
-version: 9.4.1
+version: 9.5.0
 
 name: PromisesObjC, nameSpecified: 
 body: 
