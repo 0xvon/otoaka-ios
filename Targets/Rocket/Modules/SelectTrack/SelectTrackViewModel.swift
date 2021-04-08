@@ -37,6 +37,7 @@ final class SelectTrackViewModel {
         var isLoading = false
         var nextPageToken: String? = nil
         var tracks: [Track] = []
+        var groups: [Group] = []
         var scope: Scope = .appleMusic
     }
     
@@ -47,12 +48,45 @@ final class SelectTrackViewModel {
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     var scopes: [Scope] { Scope.allCases }
+    private lazy var followingGroupPagination: PaginationRequest<FollowingGroups> = {
+        var uri = FollowingGroups.URI()
+        uri.id = dependencyProvider.user.id
+        let request = PaginationRequest<FollowingGroups>(apiClient: self.apiClient, uri: uri)
+        return request
+    }()
 
     private var cancellables: [AnyCancellable] = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Void) {
         self.dependencyProvider = dependencyProvider
         self.state = State()
+        
+        subscribe()
+    }
+    
+    func subscribe() {
+        followingGroupPagination.subscribe { [weak self] in
+            self?.updateState(with: $0)
+            self?.outputSubject.send(.isRefreshing(false))
+        }
+    }
+    
+    func updateState(with result: PaginationEvent<Page<Group>>) {
+        switch result {
+        case .initial(let res):
+            state.groups = res.items
+            outputSubject.send(.reloadData)
+        case .next(let res):
+            state.groups += res.items
+            outputSubject.send(.reloadData)
+        case .error(let err):
+            outputSubject.send(.reportError(err))
+        }
+    }
+    
+    func refresh() {
+        self.outputSubject.send(.isRefreshing(true))
+        followingGroupPagination.refresh()
     }
     
     func didSelectTrack(at section: Track) {
@@ -60,8 +94,9 @@ final class SelectTrackViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.section + 25 > state.tracks.count else { return }
-//        searchYouTubeTracks()
+        guard indexPath.row + 25 > state.groups.count else { return }
+        self.outputSubject.send(.isRefreshing(true))
+        followingGroupPagination.next()
     }
     
     func updateSearchQuery(query: String?) {

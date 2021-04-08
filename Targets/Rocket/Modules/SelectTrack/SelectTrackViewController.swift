@@ -51,13 +51,13 @@ final class SelectTrackViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
-        tableView.registerCellClass(TrackCell.self)
+        tableView.registerCellClass(GroupCell.self)
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
         
         bind()
-//        viewModel.refresh()
+        viewModel.refresh()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -72,7 +72,7 @@ final class SelectTrackViewController: UITableViewController {
             case .updateSearchResult(let input):
                 self.searchResultController.inject(input)
             case .reloadData:
-                self.setTableViewBackgroundView(isDisplay: viewModel.state.tracks.isEmpty)
+                self.setTableViewBackgroundView(isDisplay: viewModel.state.groups.isEmpty)
                 self.tableView.reloadData()
             case .isRefreshing(let value):
                 if value {
@@ -101,10 +101,8 @@ final class SelectTrackViewController: UITableViewController {
     }
     
     @objc private func refresh() {
-        guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
         self.refreshControl?.beginRefreshing()
-        self.refreshControl?.endRefreshing()
-//        viewModel.refresh()
+        viewModel.refresh()
     }
     
     private var listener: (Track) -> Void = { _  in }
@@ -136,41 +134,23 @@ extension SelectTrackViewController: UISearchControllerDelegate {
 
 extension SelectTrackViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.state.tracks.count
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 24
+        return viewModel.state.groups.count
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 92
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UIView()
-        view.backgroundColor = .clear
-        return view
+        return 282
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let track = viewModel.state.tracks[indexPath.row]
-        let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
-        cell.listen { [unowned self] output in
-            switch output {
-            case .playButtonTapped:
-                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .track(track))
-                let nav = self.navigationController ?? presentingViewController?.navigationController
-                nav?.pushViewController(vc, animated: true)
-            case .groupTapped: break
-            }
-        }
+        let group = self.viewModel.state.groups[indexPath.row]
+        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let track = viewModel.state.tracks[indexPath.row]
-        viewModel.didSelectTrack(at: track)
+        let band = self.viewModel.state.groups[indexPath.row]
+        searchController.searchBar.text = band.name
+        viewModel.updateSearchQuery(query: band.name)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -180,7 +160,7 @@ extension SelectTrackViewController {
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = EmptyCollectionView(emptyType: .chart, actionButtonTitle: nil)
+            let emptyCollectionView = EmptyCollectionView(emptyType: .followingGroup, actionButtonTitle: nil)
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
         }()
