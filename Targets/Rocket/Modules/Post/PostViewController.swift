@@ -122,6 +122,9 @@ final class PostViewController: UIViewController, Instantiable {
                 .withTintColor(.white, renderingMode: .alwaysOriginal),
             for: .normal
         )
+        button.setTitle("再生", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .largeStrong)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
         button.addTarget(self, action: #selector(playTrackButtonTapped), for: .touchUpInside)
         return button
     }()
@@ -255,7 +258,7 @@ final class PostViewController: UIViewController, Instantiable {
         
         postView.addSubview(sectionView)
         NSLayoutConstraint.activate([
-            sectionView.heightAnchor.constraint(equalToConstant: 92),
+            sectionView.heightAnchor.constraint(equalToConstant: 60),
             sectionView.leftAnchor.constraint(equalTo: postView.leftAnchor),
             sectionView.rightAnchor.constraint(equalTo: postView.rightAnchor),
             sectionView.bottomAnchor.constraint(lessThanOrEqualTo: postView.bottomAnchor),
@@ -275,14 +278,6 @@ final class PostViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             numOfTextLabel.rightAnchor.constraint(equalTo: postView.rightAnchor, constant: -16),
             numOfTextLabel.bottomAnchor.constraint(equalTo: sectionView.topAnchor, constant: -16),
-        ])
-        
-        postView.addSubview(playTrackButton)
-        NSLayoutConstraint.activate([
-            playTrackButton.bottomAnchor.constraint(equalTo: numOfTextLabel.bottomAnchor, constant: -8),
-            playTrackButton.centerXAnchor.constraint(equalTo: numOfTextLabel.centerXAnchor),
-            playTrackButton.widthAnchor.constraint(equalToConstant: 50),
-            playTrackButton.heightAnchor.constraint(equalToConstant: 50),
         ])
         
         feedPreview.addSubview(movieThumbnailImageView)
@@ -389,6 +384,8 @@ final class PostViewController: UIViewController, Instantiable {
         youtubeButton.translatesAutoresizingMaskIntoConstraints = false
         youtubeButton.addTarget(self, action: #selector(searchTrack(_:)), for: .touchUpInside)
         youtubeButtonView.addSubview(youtubeButton)
+        
+        stackView.addArrangedSubview(playTrackButton)
         
 //        let spotifyButtonView = UIView()
 //        spotifyButtonView.backgroundColor = .clear
