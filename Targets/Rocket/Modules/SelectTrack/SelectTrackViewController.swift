@@ -151,6 +151,7 @@ extension SelectTrackViewController {
         let band = self.viewModel.state.groups[indexPath.row]
         searchController.searchBar.text = band.name
         viewModel.updateSearchQuery(query: band.name)
+        searchController.searchBar.becomeFirstResponder()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
