@@ -18,6 +18,7 @@ class UserListViewModel {
         case followingUsers(User.ID)
         case liveParticipants(Live.ID)
         case searchResults(String)
+        case recommendedUsers(User.ID)
         case none
     }
     
@@ -27,6 +28,7 @@ class UserListViewModel {
         case followingUsers(PaginationRequest<FollowingUsers>)
         case liveParticipants(PaginationRequest<GetLiveParticipants>)
         case searchResults(PaginationRequest<SearchUser>)
+        case recommendedUsers(PaginationRequest<RecommendedUsers>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -56,6 +58,11 @@ class UserListViewModel {
                 uri.term = query
                 let request = PaginationRequest<SearchUser>(apiClient: apiClient, uri: uri)
                 self = .searchResults(request)
+            case .recommendedUsers(let userId):
+                var uri = RecommendedUsers.URI()
+                uri.id = userId
+                let request = PaginationRequest<RecommendedUsers>(apiClient: apiClient, uri: uri)
+                self = .recommendedUsers(request)
             case .none:
                 self = .none
             }
@@ -111,6 +118,10 @@ class UserListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .recommendedUsers(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case .none: break
         }
     }
@@ -146,6 +157,8 @@ class UserListViewModel {
             pagination.refresh()
         case let .searchResults(pagination):
             pagination.refresh()
+        case let .recommendedUsers(pagination):
+            pagination.refresh()
         case .none: break
         }
     }
@@ -162,6 +175,8 @@ class UserListViewModel {
         case let .liveParticipants(pagination):
             pagination.next()
         case let .searchResults(pagination):
+            pagination.next()
+        case let .recommendedUsers(pagination):
             pagination.next()
         case .none: break
         }

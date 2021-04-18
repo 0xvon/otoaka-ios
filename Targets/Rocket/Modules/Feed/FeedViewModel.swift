@@ -55,7 +55,7 @@ final class FeedViewModel {
         let getFollowingPagination = PaginationRequest<Endpoint.GetFollowingUserFeeds>(apiClient: dependencyProvider.apiClient)
         
         let updateSearchResult = updateSearchQuery.map { queryText -> Output in
-            guard let query  = queryText, !query.isEmpty else { return .updateSearchResult(.none) }
+            guard let query  = queryText, !query.isEmpty else { return .updateSearchResult(.user("")) }
             return .updateSearchResult(.user(query))
         }
         .eraseToAnyPublisher()

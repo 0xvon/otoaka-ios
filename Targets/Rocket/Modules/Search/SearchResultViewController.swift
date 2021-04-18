@@ -78,7 +78,11 @@ final class SearchResultViewController: UIViewController {
                 liveListViewController.view.isHidden = true
                 userListViewController.view.isHidden = false
                 trackListViewController.view.isHidden = true
-                userListViewController.inject(.searchResults(query))
+                if query == "" {
+                    userListViewController.inject(.recommendedUsers(dependencyProvider.user.id))
+                } else {
+                    userListViewController.inject(.searchResults(query))
+                }
             case .track(let query):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = true

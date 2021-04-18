@@ -682,6 +682,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                     textView.font = Brand.font(for: .mediumStrong)
                     textView.textAlignment = .center
                     textView.textColor = Brand.color(for: .text(.primary))
+                    textView.backgroundColor = Brand.color(for: .background(.primary))
                     let vc = UIViewController(nibName: nil, bundle: nil)
                     vc.view = textView
                     vc.title = "歌詞"
@@ -697,7 +698,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                 
             case .error(let error):
                 activityIndicator.stopAnimating()
-                navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchTrackButton)
+//                navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchTrackButton)
                 print(error)
                 showAlert()
             }
@@ -717,7 +718,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         view = verticalScrollView
         view.backgroundColor = Brand.color(for: .background(.primary))
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchTrackButton)
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchTrackButton)
         
         view.addSubview(scrollStackView)
         NSLayoutConstraint.activate([

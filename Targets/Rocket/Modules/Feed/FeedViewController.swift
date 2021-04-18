@@ -144,14 +144,23 @@ extension FeedViewController: UISearchBarDelegate {
 extension FeedViewController: UISearchControllerDelegate {
     func willPresentSearchController(_ searchController: UISearchController) {
         searchController.searchBar.showsScopeBar = false
+        searchController.searchResultsController?.view.isHidden = false
     }
     func willDismissSearchController(_ searchController: UISearchController) {
         searchController.searchBar.showsScopeBar = true
+    }
+    func didPresentSearchController(_ searchController: UISearchController) {
+        searchController.searchResultsController?.view.isHidden = false
     }
 }
 
 extension FeedViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
+        viewModel.updateSearchQuery.send(searchController.searchBar.text)
+        searchController.searchResultsController?.view.isHidden = false
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         viewModel.updateSearchQuery.send(searchController.searchBar.text)
     }
 }

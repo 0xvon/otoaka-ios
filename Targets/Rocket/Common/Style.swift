@@ -94,6 +94,7 @@ extension UIViewController {
             handler: { action in })
         alertController.addAction(cancelAction)
         alertController.popoverPresentationController?.sourceView = self.view
+        alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
         self.present(alertController, animated: true, completion: nil)
     }
     
