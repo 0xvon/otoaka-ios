@@ -50,7 +50,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         
         let fanImageView = UIImageView()
         fanImageView.translatesAutoresizingMaskIntoConstraints = false
-        fanImageView.image = UIImage(named: "selectedGuitarIcon")
+        fanImageView.image = UIImage(named: "profile")
         view.addSubview(fanImageView)
         NSLayoutConstraint.activate([
             fanImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),
@@ -94,7 +94,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         
         let bandImageView = UIImageView()
         bandImageView.translatesAutoresizingMaskIntoConstraints = false
-        bandImageView.image = UIImage(named: "selectedMusicIcon")
+        bandImageView.image = UIImage(named: "people")
         view.addSubview(bandImageView)
         NSLayoutConstraint.activate([
             bandImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 16),

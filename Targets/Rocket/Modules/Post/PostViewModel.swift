@@ -24,7 +24,7 @@ class PostViewModel {
     
     struct State {
         var text: String?
-        var track: Track?
+        var track: InternalDomain.Track?
         var group: Group?
         var thumbnailUrl: URL?
         var ogpUrl: String?
@@ -86,7 +86,7 @@ class PostViewModel {
         validatePost()
     }
     
-    func didSelectTrack(track: Track) {
+    func didSelectTrack(track: InternalDomain.Track) {
         state.track = track
         outputSubject.send(.didSelectTrack)
         searchGroup(artistName: track.artistName)

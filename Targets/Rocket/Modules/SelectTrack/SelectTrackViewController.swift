@@ -105,8 +105,8 @@ final class SelectTrackViewController: UITableViewController {
         viewModel.refresh()
     }
     
-    private var listener: (Track) -> Void = { _  in }
-    func listen(_ listener: @escaping (Track) -> Void) {
+    private var listener: (InternalDomain.Track) -> Void = { _  in }
+    func listen(_ listener: @escaping (InternalDomain.Track) -> Void) {
         self.listener = listener
     }
 }

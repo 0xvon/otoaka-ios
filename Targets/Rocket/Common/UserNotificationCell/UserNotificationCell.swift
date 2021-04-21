@@ -87,12 +87,19 @@ class UserNotificationCellContent: UIView {
             if let url = like.feed.ogpUrl.flatMap(URL.init(string: )) {
                 input.imagePipeline.loadImage(url, into: thumbnailImageView)
             }
+        case .likePost(let postLike):
+            titleLabel.text = "\(postLike.likedBy.name)が投稿にいいね"
         case .follow(let user):
             titleLabel.text = "\(user.name)がフォロー"
             if let url = user.thumbnailURL.flatMap(URL.init(string: )) {
                 input.imagePipeline.loadImage(url, into: thumbnailImageView)
             }
         case .comment(let comment):
+            titleLabel.text = "「\(comment.text)」from \(comment.author.name)"
+            if let url = comment.author.thumbnailURL.flatMap(URL.init(string: )) {
+                input.imagePipeline.loadImage(url, into: thumbnailImageView)
+            }
+        case .postComment(let comment):
             titleLabel.text = "「\(comment.text)」from \(comment.author.name)"
             if let url = comment.author.thumbnailURL.flatMap(URL.init(string: )) {
                 input.imagePipeline.loadImage(url, into: thumbnailImageView)

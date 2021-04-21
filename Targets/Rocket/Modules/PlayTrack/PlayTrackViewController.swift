@@ -544,7 +544,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         let shareButton = UIButton()
         shareButton.translatesAutoresizingMaskIntoConstraints = false
         shareButton.setImage(
-            UIImage(named: "insta"),
+            UIImage(named: "instaMargin"),
             for: .normal)
         shareButton.addTarget(self, action: #selector(shareInstagramButtonTapped), for: .touchUpInside)
         return shareButton

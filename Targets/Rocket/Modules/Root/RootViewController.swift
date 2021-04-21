@@ -103,8 +103,8 @@ final class RootViewController: UITabBarController, Instantiable {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let homeVC = BrandNavigationController(rootViewController: FeedViewController(dependencyProvider: loggedInProvider))
         homeVC.tabBarItem = UITabBarItem(
-            title: "フィード", image: UIImage(named: "musicIcon"),
-            selectedImage: UIImage(named: "selectedMusicIcon"))
+            title: "フィード", image: UIImage(systemName: "house"),
+            selectedImage: UIImage(systemName: "house.fill"))
         let groupVC = BrandNavigationController(
             rootViewController: GroupViewController(dependencyProvider: loggedInProvider)
         )
@@ -120,8 +120,8 @@ final class RootViewController: UITabBarController, Instantiable {
         let userNotificationVC = BrandNavigationController(rootViewController: UserNotificationViewControlelr(dependencyProvider: loggedInProvider))
         userNotificationVC.tabBarItem = UITabBarItem(
             title: "通知",
-            image: UIImage(named: "bellIcon"),
-            selectedImage: UIImage(named: "selectedBellIcon")
+            image: UIImage(systemName: "bell"),
+            selectedImage: UIImage(systemName: "bell.fill")
         )
         let accountVC = UserDetailViewController(dependencyProvider: loggedInProvider, input: loggedInProvider.user)
         let accountNav = BrandNavigationController(

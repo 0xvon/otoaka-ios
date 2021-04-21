@@ -14,7 +14,7 @@ import InternalDomain
 final class PlayTrackViewModel {
     enum Input {
         case youtubeVideo(String)
-        case track(Track)
+        case track(InternalDomain.Track)
         case userFeed(UserFeedSummary)
     }
     

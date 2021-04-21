@@ -98,20 +98,20 @@ final class UserDetailViewController: UIViewController, Instantiable {
     private lazy var snsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.spacing = 0
+        stackView.spacing = 12
         stackView.axis = .vertical
         stackView.distribution = .fill
         
         stackView.addArrangedSubview(twitterStackView)
         NSLayoutConstraint.activate([
             twitterStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-            twitterStackView.heightAnchor.constraint(equalToConstant: 60),
+            twitterStackView.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         stackView.addArrangedSubview(instagramStackView)
         NSLayoutConstraint.activate([
             instagramStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-            instagramStackView.heightAnchor.constraint(equalToConstant: 60),
+            instagramStackView.heightAnchor.constraint(equalToConstant: 20),
         ])
         return stackView
     }()
@@ -120,31 +120,39 @@ final class UserDetailViewController: UIViewController, Instantiable {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.spacing = 0
+        stackView.spacing = 8
         stackView.distribution = .fill
         stackView.isUserInteractionEnabled = true
         stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(twitterIdTapped)))
         
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "twitterMargin")
+        imageView.image = UIImage(named: "twitter")
+        
+        let leftSpacer = UIView()
+        leftSpacer.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(leftSpacer)
+        NSLayoutConstraint.activate([
+            leftSpacer.heightAnchor.constraint(equalToConstant: 20),
+            leftSpacer.widthAnchor.constraint(equalToConstant: 16),
+        ])
         
         stackView.addArrangedSubview(imageView)
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: 60),
-            imageView.heightAnchor.constraint(equalToConstant: 60),
+            imageView.widthAnchor.constraint(equalToConstant: 20),
+            imageView.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         stackView.addArrangedSubview(twitterIdLabel)
         NSLayoutConstraint.activate([
-            twitterIdLabel.heightAnchor.constraint(equalToConstant: 60),
+            twitterIdLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(spacer)
         NSLayoutConstraint.activate([
-            spacer.heightAnchor.constraint(equalToConstant: 60),
+            spacer.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         return stackView
@@ -162,7 +170,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.spacing = 0
+        stackView.spacing = 8
         stackView.distribution = .fill
         stackView.isUserInteractionEnabled = true
         stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(instagramIdTapped)))
@@ -172,22 +180,30 @@ final class UserDetailViewController: UIViewController, Instantiable {
         imageView.image = UIImage(named: "insta")
         imageView.clipsToBounds = true
         
+        let leftSpacer = UIView()
+        leftSpacer.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(leftSpacer)
+        NSLayoutConstraint.activate([
+            leftSpacer.heightAnchor.constraint(equalToConstant: 20),
+            leftSpacer.widthAnchor.constraint(equalToConstant: 16),
+        ])
+        
         stackView.addArrangedSubview(imageView)
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: 60),
-            imageView.heightAnchor.constraint(equalToConstant: 60),
+            imageView.widthAnchor.constraint(equalToConstant: 20),
+            imageView.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         stackView.addArrangedSubview(instagramIdLabel)
         NSLayoutConstraint.activate([
-            instagramIdLabel.heightAnchor.constraint(equalToConstant: 60),
+            instagramIdLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(spacer)
         NSLayoutConstraint.activate([
-            spacer.heightAnchor.constraint(equalToConstant: 60),
+            spacer.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         return stackView

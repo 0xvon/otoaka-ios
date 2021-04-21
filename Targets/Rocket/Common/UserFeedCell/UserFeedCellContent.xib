@@ -48,7 +48,7 @@
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bdt-wp-3av">
                             <rect key="frame" x="164" y="0.0" width="44" height="44"/>
-                            <state key="normal" image="insta"/>
+                            <state key="normal" image="instaMargin"/>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cSs-rr-A5p">
                             <rect key="frame" x="208" y="0.0" width="44" height="44"/>
@@ -153,7 +153,7 @@
     </objects>
     <resources>
         <image name="arrow.down.to.line" catalog="system" width="128" height="128"/>
-        <image name="insta" width="44" height="44"/>
+        <image name="instaMargin" width="44" height="44"/>
         <image name="square.and.arrow.up" catalog="system" width="115" height="128"/>
         <image name="trash" catalog="system" width="121" height="128"/>
         <systemColor name="labelColor">

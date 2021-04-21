@@ -170,7 +170,7 @@ class BandDetailViewModel {
 //            outputSubject.send(.pushToChartList(state.group))
         case .track(.playButtonTapped):
             guard let item = state.channelItem, let videoId = item.id.videoId, let snippet = item.snippet, let videoUrl = URL(string: "https://youtube.com/watch?v=\(videoId)") else { return }
-            let track = Track(
+            let track = InternalDomain.Track(
                 name: snippet.title ?? "",
                 artistName: snippet.channelTitle ?? "",
                 artwork: snippet.thumbnails?.high?.url ?? "",

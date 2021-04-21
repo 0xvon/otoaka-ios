@@ -17,7 +17,7 @@ final class SelectTrackViewModel {
     
     enum Output {
         case updateSearchResult(SearchResultViewController.Input)
-        case selectTrack(Track)
+        case selectTrack(InternalDomain.Track)
         case reloadData
         case isRefreshing(Bool)
         case reportError(Error)
@@ -36,7 +36,7 @@ final class SelectTrackViewModel {
     struct State {
         var isLoading = false
         var nextPageToken: String? = nil
-        var tracks: [Track] = []
+        var tracks: [InternalDomain.Track] = []
         var groups: [Group] = []
         var scope: Scope = .appleMusic
     }
@@ -89,7 +89,7 @@ final class SelectTrackViewModel {
         followingGroupPagination.refresh()
     }
     
-    func didSelectTrack(at section: Track) {
+    func didSelectTrack(at section: InternalDomain.Track) {
         outputSubject.send(.selectTrack(section))
     }
     
