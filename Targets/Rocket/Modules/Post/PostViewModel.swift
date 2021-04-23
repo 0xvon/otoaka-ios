@@ -14,20 +14,12 @@ import AVKit
 import Combine
 import InternalDomain
 
-class PostViewModel {
-//    enum PostType {
-//        case movie(URL, PHAsset?)
-//        case youtube(URL)
-//        case spotify(URL)
-//        case none
-//    }
-    
+class PostViewModel {    
     struct State {
-        var text: String?
-        var track: InternalDomain.Track?
-        var group: Group?
-        var thumbnailUrl: URL?
-        var ogpUrl: String?
+        var text: String? = ""
+        var images: [UIImage] = []
+        var groups: [Group] = []
+        var tracks: [Endpoint.Track] = []
         let maxLength: Int = 140
     }
     
@@ -37,10 +29,11 @@ class PostViewModel {
     }
     
     enum Output {
-        case didPostUserFeed(UserFeed)
+        case didPost(Post)
         case updateSubmittableState(PageState)
         case didSelectTrack
         case didSelectGroup
+        case didUploadImage
         case reportError(Error)
     }
     
@@ -49,8 +42,7 @@ class PostViewModel {
     private(set) var state: State
     var cancellables: Set<AnyCancellable> = []
     
-    private lazy var createUserFeedAction = Action(CreateUserFeed.self, httpClient: self.apiClient)
-    private lazy var searchGroupAction = Action(SearchGroup.self, httpClient: self.apiClient)
+    private lazy var createPostAction = Action(CreatePost.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -61,22 +53,15 @@ class PostViewModel {
         self.dependencyProvider = dependencyProvider
         self.state = State()
         
-        createUserFeedAction.elements
-            .map(Output.didPostUserFeed).eraseToAnyPublisher()
-            .merge(with: createUserFeedAction.errors.map(Output.reportError))
-            .merge(with: searchGroupAction.errors.map(Output.reportError))
+        createPostAction.elements
+            .map(Output.didPost).eraseToAnyPublisher()
+            .merge(with: createPostAction.errors.map(Output.reportError))
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
         
-        createUserFeedAction.elements
+        createPostAction.elements
             .sink(receiveValue: { [unowned self] _ in
                 outputSubject.send(.updateSubmittableState(.editting(true)))
-            })
-            .store(in: &cancellables)
-        
-        searchGroupAction.elements
-            .sink(receiveValue: { [unowned self] results in
-                didSelectGroup(group: results.items.first)
             })
             .store(in: &cancellables)
     }
@@ -86,68 +71,61 @@ class PostViewModel {
         validatePost()
     }
     
-    func didSelectTrack(track: InternalDomain.Track) {
-        state.track = track
-        outputSubject.send(.didSelectTrack)
-        searchGroup(artistName: track.artistName)
-        validatePost()
-    }
-    
-    func searchGroup(artistName: String) {
-        let request = Empty()
-        var uri = SearchGroup.URI()
-        uri.term = artistName
-        uri.page = 1
-        uri.per = 1
-        searchGroupAction.input((request: request, uri: uri))
-    }
-    
-    func cancelToSelectGroup() {
-        state.track = nil
-        outputSubject.send(.didSelectTrack)
-    }
-    
-    func didSelectGroup(group: Group?) {
-        state.group = group
+    func didSelectTrack(tracks: [Endpoint.Track]) {
+        state.tracks = tracks
+        state.groups = []
+        state.images = []
+        
+        outputSubject.send(.didUploadImage)
         outputSubject.send(.didSelectGroup)
-        validatePost()
+        outputSubject.send(.didSelectTrack)    }
+    
+    func didSelectGroup(groups: [Group]) {
+        state.groups = groups
+        state.images = []
+        state.tracks = []
+        
+        outputSubject.send(.didUploadImage)
+        outputSubject.send(.didSelectGroup)
+        outputSubject.send(.didSelectTrack)    }
+    
+    func didUploadImages(images: [UIImage]) {
+        state.images = images
+        state.groups = []
+        state.tracks = []
+        
+        outputSubject.send(.didUploadImage)
+        outputSubject.send(.didSelectGroup)
+        outputSubject.send(.didSelectTrack)
     }
     
     func validatePost() {
-        let submittable = (
-            state.text != nil
-                && state.text?.count ?? 0 <= state.maxLength
-                && state.track != nil
-                && state.group != nil
-        )
-        
+        let submittable = state.text != nil && state.text != ""
         outputSubject.send(.updateSubmittableState(.editting(submittable)))
     }
 
-    func postButtonTapped(ogpImage: UIImage) {
+    func postButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
-        dependencyProvider.s3Client.uploadImage(image: ogpImage) { [unowned self] res in
-            switch res {
-            case .success(let url):
-                state.ogpUrl = url
-                post()
-            case .failure(let err):
-                outputSubject.send(.reportError(err))
+        guard let image = state.images.first else {
+            post(imageUrls: [])
+            return
+        }
+        
+        dependencyProvider.s3Client.uploadImage(image: image) { [weak self] result in
+            switch result {
+            case .success(let imageUrl):
+                self?.post(imageUrls: [imageUrl])
+            case .failure(let error):
+                self?.outputSubject.send(.updateSubmittableState(.editting(true)))
+                self?.outputSubject.send(.reportError(error))
             }
         }
+        
     }
     
-    func post() {
+    func post(imageUrls: [String]) {
         guard let text = state.text else { return }
-        guard let track = state.track else { return }
-        guard let group = state.group else { return }
-        switch track.trackType {
-        case .appleMusic(let musicId):
-            let request = CreateUserFeed.Request(text: text, feedType: .appleMusic(musicId), ogpUrl: state.ogpUrl, thumbnailUrl: track.artwork, groupId: group.id, title: track.name)
-            createUserFeedAction.input((request: request, uri: CreateUserFeed.URI()))
-        case .youtube(let url):
-            let request = CreateUserFeed.Request(text: text, feedType: .youtube(url), ogpUrl: state.ogpUrl, thumbnailUrl: track.artwork, groupId: group.id, title: track.name)
-            createUserFeedAction.input((request: request, uri: CreateUserFeed.URI()))
-        }
+        let request = CreatePost.Request(author: dependencyProvider.user, text: text, tracks: state.tracks, groups: state.groups, imageUrls: imageUrls)
+        createPostAction.input((request: request, uri: CreatePost.URI()))
     }
 }

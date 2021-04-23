@@ -14,7 +14,7 @@ import InternalDomain
 
 final class SelectTrackViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
-    typealias Input = Void
+    typealias Input = [Track]
     
     lazy var searchResultController: SearchResultViewController = {
         SearchResultViewController(dependencyProvider: self.dependencyProvider)
@@ -28,6 +28,15 @@ final class SelectTrackViewController: UITableViewController {
         controller.searchBar.placeholder = "ロケバンにいるバンドから検索"
         controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
         return controller
+    }()
+    lazy var selectButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(selectButtonTapped), for: .touchUpInside)
+        button.titleLabel?.textColor = Brand.color(for: .text(.link))
+        button.titleLabel?.font = Brand.font(for: .mediumStrong)
+        
+        return button
     }()
     
     let viewModel: SelectTrackViewModel
@@ -80,9 +89,11 @@ final class SelectTrackViewController: UITableViewController {
                 } else {
                     self.refreshControl?.endRefreshing()
                 }
-            case .selectTrack(let track):
-                listener(track)
-                self.dismiss(animated: true, completion: nil)
+            case .addTrack:
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: selectButton)
+                let cancelButton = searchController.searchBar.value(forKey: "cancelButton") as? UIButton
+                cancelButton?.setTitle("\(viewModel.state.selected.count)", for: .normal)
+                selectButton.setTitle("選択(\(viewModel.state.selected.count))", for: .normal)
             case .reportError(let error):
                 print(error)
                 showAlert()
@@ -100,13 +111,18 @@ final class SelectTrackViewController: UITableViewController {
         }
     }
     
+    @objc private func selectButtonTapped() {
+        self.listener(viewModel.state.selected)
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     @objc private func refresh() {
         self.refreshControl?.beginRefreshing()
         viewModel.refresh()
     }
     
-    private var listener: (InternalDomain.Track) -> Void = { _  in }
-    func listen(_ listener: @escaping (InternalDomain.Track) -> Void) {
+    private var listener: ([Track]) -> Void = { _  in }
+    func listen(_ listener: @escaping ([Track]) -> Void) {
         self.listener = listener
     }
 }

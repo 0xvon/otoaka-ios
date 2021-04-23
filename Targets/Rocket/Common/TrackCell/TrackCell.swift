@@ -55,7 +55,7 @@ final class TrackCell: UITableViewCell, ReusableCell {
 
 class TrackCellContent: UIView {
     typealias Input = (
-        track: InternalDomain.Track,
+        track: Track,
         imagePipeline: ImagePipeline
     )
     
@@ -83,7 +83,7 @@ class TrackCellContent: UIView {
     }
     
     func setup() {
-        backgroundColor = Brand.color(for: .background(.primary))
+        backgroundColor = .clear
         
         artworkImageView.layer.cornerRadius = 30
         artworkImageView.clipsToBounds = true

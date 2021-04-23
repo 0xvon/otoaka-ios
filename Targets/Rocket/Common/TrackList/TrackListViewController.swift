@@ -93,8 +93,8 @@ final class TrackListViewController: UIViewController, Instantiable {
         sender.endRefreshing()
     }
     
-    private var listener: (InternalDomain.Track) -> Void = { _ in }
-    func listen(_ listener: @escaping (InternalDomain.Track) -> Void) {
+    private var listener: (Track) -> Void = { _ in }
+    func listen(_ listener: @escaping (Track) -> Void) {
         self.listener = listener
     }
 }
@@ -102,10 +102,6 @@ final class TrackListViewController: UIViewController, Instantiable {
 extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.state.tracks.count
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 16
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -128,7 +124,6 @@ extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
                 let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .track(track))
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
-            print("TODO")
             case .groupTapped: break
             }
         }

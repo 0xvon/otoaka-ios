@@ -7,6 +7,7 @@
 
 import UIKit
 import DomainEntity
+import Endpoint
 import InternalDomain
 
 final class SearchResultViewController: UIViewController {
@@ -23,7 +24,7 @@ final class SearchResultViewController: UIViewController {
     
     enum Output {
         case group(Group)
-        case track(InternalDomain.Track)
+        case track(Track)
     }
     
     typealias State = Input

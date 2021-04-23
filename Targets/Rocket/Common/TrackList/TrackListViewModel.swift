@@ -48,7 +48,7 @@ class TrackListViewModel {
     
     struct State {
         var isToSelect: Bool = false
-        var tracks: [InternalDomain.Track] = []
+        var tracks: [Track] = []
     }
     
     enum TrackType {

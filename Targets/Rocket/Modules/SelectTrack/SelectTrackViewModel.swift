@@ -17,7 +17,7 @@ final class SelectTrackViewModel {
     
     enum Output {
         case updateSearchResult(SearchResultViewController.Input)
-        case selectTrack(InternalDomain.Track)
+        case addTrack
         case reloadData
         case isRefreshing(Bool)
         case reportError(Error)
@@ -36,7 +36,8 @@ final class SelectTrackViewModel {
     struct State {
         var isLoading = false
         var nextPageToken: String? = nil
-        var tracks: [InternalDomain.Track] = []
+        var tracks: [Track] = []
+        var selected: [Track] = []
         var groups: [Group] = []
         var scope: Scope = .appleMusic
     }
@@ -57,9 +58,9 @@ final class SelectTrackViewModel {
 
     private var cancellables: [AnyCancellable] = []
     
-    init(dependencyProvider: LoggedInDependencyProvider, input: Void) {
+    init(dependencyProvider: LoggedInDependencyProvider, input: [Track]) {
         self.dependencyProvider = dependencyProvider
-        self.state = State()
+        self.state = State(selected: input)
         
         subscribe()
     }
@@ -89,8 +90,9 @@ final class SelectTrackViewModel {
         followingGroupPagination.refresh()
     }
     
-    func didSelectTrack(at section: InternalDomain.Track) {
-        outputSubject.send(.selectTrack(section))
+    func didSelectTrack(at section: Track) {
+        state.selected.append(section)
+        outputSubject.send(.addTrack)
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
