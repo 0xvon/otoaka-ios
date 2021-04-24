@@ -105,6 +105,7 @@ final class PostViewController: UIViewController, Instantiable {
         textView.font = Brand.font(for: .mediumStrong)
         textView.textColor = Brand.color(for: .text(.primary))
         textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        textView.textContainer.lineFragmentPadding = 0
         textView.textAlignment = .left
         
         textView.returnKeyType = .done
@@ -192,35 +193,6 @@ final class PostViewController: UIViewController, Instantiable {
         movieThumbnailImageView.layer.opacity = 0.6
         return movieThumbnailImageView
     }()
-//    private lazy var playTrackButton: UIButton = {
-//        let button = UIButton()
-//        button.isHidden = true
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.setImage(
-//            UIImage(systemName: "play.fill")!
-//                .withTintColor(.white, renderingMode: .alwaysOriginal),
-//            for: .normal
-//        )
-//        button.setTitle("再生", for: .normal)
-//        button.titleLabel?.font = Brand.font(for: .largeStrong)
-//        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
-//        button.addTarget(self, action: #selector(playTrackButtonTapped), for: .touchUpInside)
-//        return button
-//    }()
-    private lazy var cancelMovieButton: UIButton = {
-        let cancelMovieButton = UIButton()
-        cancelMovieButton.translatesAutoresizingMaskIntoConstraints = false
-        cancelMovieButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-        cancelMovieButton.setTitleColor(Brand.color(for: .background(.cellSelected)), for: .highlighted)
-        cancelMovieButton.setTitle("✗", for: .normal)
-        cancelMovieButton.addTarget(self, action: #selector(cancelMovie(_:)), for: .touchUpInside)
-        cancelMovieButton.isHidden = true
-        cancelMovieButton.titleLabel?.font = Brand.font(for: .largeStrong)
-        cancelMovieButton.layer.cornerRadius = 12
-        cancelMovieButton.layer.borderWidth = 1
-        cancelMovieButton.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
-        return cancelMovieButton
-    }()
     private lazy var activityIndicator: LoadingCollectionView = {
         let activityIndicator = LoadingCollectionView()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -280,7 +252,7 @@ final class PostViewController: UIViewController, Instantiable {
                 print(error)
                 showAlert()
             case .didSelectTrack:
-                playlistView.inject(input: (imagePipeline: dependencyProvider.imagePipeline, tracks: viewModel.state.tracks))
+                playlistView.inject(input: (tracks: viewModel.state.tracks, imagePipeline: dependencyProvider.imagePipeline))
                 playlistView.isHidden = viewModel.state.tracks.isEmpty
             case .didSelectGroup:
                 if let group = viewModel.state.groups.first {

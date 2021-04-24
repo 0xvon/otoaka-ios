@@ -89,12 +89,12 @@ version: 7.3.0
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.10.0
+version: 7.11.0
 
 name: FirebaseInstallations, nameSpecified: 
 body: 
                    …
-version: 7.10.0
+version: 7.11.0
 
 name: GoogleAppMeasurement, nameSpecified: 
 body: Copyright 2020 Googl…
@@ -124,6 +124,14 @@ body:
                    …
 version: 7.3.1
 
+name: ImageViewer, nameSpecified: 
+body: The MIT License (MIT…
+version: 6.0.0
+
+name: ImageViewer, nameSpecified: 
+body: The MIT License (MIT…
+version: 6.0.0
+
 name: KeyboardGuide, nameSpecified: 
 body: Copyright (c) 2020 Y…
 version: 0.2.0
@@ -144,13 +152,13 @@ name: LicensePlist, nameSpecified:
 body: MIT License
 
 Copyrig…
-version: 3.0.5
+version: 3.0.7
 
 name: LicensePlist, nameSpecified: 
 body: MIT License
 
 Copyrig…
-version: 3.0.5
+version: 3.0.7
 
 name: nanopb, nameSpecified: 
 body: Copyright (c) 2011 P…
@@ -220,4 +228,4 @@ name: StubKit, nameSpecified: StubKit, owner: kateinoigakukun, version: 0.1.7
 
 add-version-numbers: false
 
-LicensePlist Version: 3.0.5
+LicensePlist Version: 3.0.7

@@ -101,9 +101,9 @@ final class RootViewController: UITabBarController, Instantiable {
     
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
-        let homeVC = BrandNavigationController(rootViewController: FeedViewController(dependencyProvider: loggedInProvider))
+        let homeVC = BrandNavigationController(rootViewController: HomeViewController(dependencyProvider: loggedInProvider))
         homeVC.tabBarItem = UITabBarItem(
-            title: "フィード", image: UIImage(systemName: "house"),
+            title: "ホーム", image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill"))
         let groupVC = BrandNavigationController(
             rootViewController: GroupViewController(dependencyProvider: loggedInProvider)

@@ -25,31 +25,31 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="p68-VP-LFw">
-                    <rect key="frame" x="16" y="90" width="382" height="144"/>
+                    <rect key="frame" x="16" y="234" width="382" height="0.0"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YGD-6Y-cJe" customClass="BadgeView" customModule="UIComponent">
+                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YGD-6Y-cJe" customClass="BadgeView" customModule="UIComponent">
                             <rect key="frame" x="0.0" y="0.0" width="382" height="30"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="zKB-hN-gfK"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dKS-9Q-Jlh" customClass="BadgeView" customModule="UIComponent">
-                            <rect key="frame" x="0.0" y="38" width="382" height="30"/>
+                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dKS-9Q-Jlh" customClass="BadgeView" customModule="UIComponent">
+                            <rect key="frame" x="0.0" y="0.0" width="382" height="30"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="Z9p-fM-O48"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xaw-dn-4ak" customClass="BadgeView" customModule="UIComponent">
-                            <rect key="frame" x="0.0" y="76" width="382" height="30"/>
+                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xaw-dn-4ak" customClass="BadgeView" customModule="UIComponent">
+                            <rect key="frame" x="0.0" y="0.0" width="382" height="30"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="7fx-sH-32R"/>
                             </constraints>
                         </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I3s-94-gFE" customClass="BadgeView" customModule="UIComponent">
-                            <rect key="frame" x="0.0" y="114" width="382" height="30"/>
+                        <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I3s-94-gFE" customClass="BadgeView" customModule="UIComponent">
+                            <rect key="frame" x="0.0" y="0.0" width="382" height="30"/>
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="8mF-19-xJq"/>
