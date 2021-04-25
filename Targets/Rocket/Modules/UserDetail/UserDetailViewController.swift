@@ -217,17 +217,14 @@ final class UserDetailViewController: UIViewController, Instantiable {
         return label
     }()
     
-    private let feedSectionHeader = SummarySectionHeader(title: "FEED")
-    private lazy var feedCellContent: UserFeedCellContent = {
-        let content = UINib(nibName: "UserFeedCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! UserFeedCellContent
+    private let postSectionHeader = SummarySectionHeader(title: "POST")
+    private lazy var postCellContent: PostCellContent = {
+        let content = UINib(nibName: "PostCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! PostCellContent
         content.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300),
-        ])
         return content
     }()
-    private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
+    private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
     private let groupSectionHeader = SummarySectionHeader(title: "BAND")
     private lazy var groupCellContent: GroupCellContent = {
@@ -332,12 +329,12 @@ final class UserDetailViewController: UIViewController, Instantiable {
             headerSpacer.heightAnchor.constraint(equalToConstant: 8),
         ])
         
-        scrollStackView.addArrangedSubview(feedSectionHeader)
+        scrollStackView.addArrangedSubview(postSectionHeader)
         NSLayoutConstraint.activate([
-            feedSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+            postSectionHeader.heightAnchor.constraint(equalToConstant: 64),
         ])
-        feedCellWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(feedCellWrapper)
+        postCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(postCellWrapper)
         
         scrollStackView.addArrangedSubview(groupSectionHeader)
         NSLayoutConstraint.activate([
@@ -367,7 +364,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
             switch output {
             case .updateFollowersCount(let count):
                 guard let userDetail = viewModel.state.userDetail else { return }
-                headerView.update(input: (user: viewModel.state.user, followersCount: count, followingUsersCount: userDetail.followingUsersCount, likeFeedCount: userDetail.likeFeedCount, imagePipeline: dependencyProvider.imagePipeline))
+                headerView.update(input: (user: viewModel.state.user, followersCount: count, followingUsersCount: userDetail.followingUsersCount, likePostCount: userDetail.likePostCount, imagePipeline: dependencyProvider.imagePipeline))
             case .updateIsButtonEnabled(let enabled):
                 followButton.isEnabled = enabled
             case .updateFollowing(let isFollowing):
@@ -431,7 +428,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     instagramStackView.isHidden = true
                 }
                 biographyTextView.text = userDetail.biography
-                headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount, likeFeedCount: userDetail.likeFeedCount, imagePipeline: dependencyProvider.imagePipeline))
+                headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount, likePostCount: userDetail.likePostCount, imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
             case .pushToGroupDetail(let group):
                 let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
@@ -439,16 +436,16 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .pushToPlayTrack(let input):
                 let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToFeedAuthor(let user):
+            case .pushToPostAuthor(let user):
                 let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .didRefreshFeedSummary(let feed):
-                let isHidden = feed == nil
-                self.feedSectionHeader.isHidden = isHidden
-                self.feedCellWrapper.isHidden = isHidden
-                if let feed = feed {
-                    self.feedCellContent.inject(input: (
-                        user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline
+            case .didRefreshPostSummary(let post):
+                let isHidden = post == nil
+                self.postSectionHeader.isHidden = isHidden
+                self.postCellWrapper.isHidden = isHidden
+                if let post = post {
+                    self.postCellContent.inject(input: (
+                        post: post, user: dependencyProvider.user, imagePipeline: dependencyProvider.imagePipeline
                     ))
                 }
             case .didRefreshFollowingGroup(let group, let groupNameSummary):
@@ -464,14 +461,14 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 
                 tagListView.removeAllTags()
                 tagListView.addTags(groupNameSummary)
-            case .didDeleteFeedButtonTapped(let feed):
+            case .didDeletePostButtonTapped(let post):
                 let alertController = UIAlertController(
-                    title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+                    title: "投稿を削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
                 let acceptAction = UIAlertAction(
                     title: "OK", style: UIAlertAction.Style.default,
                     handler: { [unowned self] action in
-                        viewModel.deleteFeed(feed: feed)
+                        viewModel.deletePost(post: post)
                     })
                 let cancelAction = UIAlertAction(
                     title: "キャンセル", style: UIAlertAction.Style.cancel,
@@ -481,12 +478,15 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 alertController.popoverPresentationController?.sourceView = self.view
                 alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
                 self.present(alertController, animated: true, completion: nil)
-            case .didDeleteFeed:
+            case .didDeletePost:
                 viewModel.refresh()
-            case .didToggleLikeFeed:
+            case .didToggleLikePost:
                 viewModel.refresh()
             case .pushToFeedList(let input):
                 let vc = FeedListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostList(let input):
+                let vc = PostListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToUserList(let input):
                 let vc = UserListViewController(dependencyProvider: dependencyProvider, input: input)
@@ -502,12 +502,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
-            case .didShareFeedButtonTapped(let feed):
-                shareWithTwitter(type: .feed(feed))
-            case .didDownloadButtonTapped(let feed):
-                self.downloadButtonTapped(feed: feed)
-            case .didInstagramButtonTapped(let feed):
-                self.instagramButtonTapped(feed: feed)
+            case .didTwitterButtonTapped(_): break
+//                shareWithTwitter(type: .feed(feed))
+            case .didInstagramButtonTapped(_): break
+//                self.instagramButtonTapped(feed: feed)
             case .reportError(let error):
                 print(error)
                 self.showAlert()
@@ -525,8 +523,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
             }
             .store(in: &cancellables)
         
-        feedCellContent.listen { [unowned self] output in
-            self.viewModel.feedCellEvent(event: output)
+        postCellContent.listen { [unowned self] output in
+            self.viewModel.postCellEvent(event: output)
         }
         
         groupSectionHeader.listen { [unowned self] in
@@ -537,18 +535,18 @@ final class UserDetailViewController: UIViewController, Instantiable {
             viewModel.groupCellEvent(event: output)
         }
         
-        feedSectionHeader.listen { [unowned self] in
-            self.viewModel.didTapSeeMore(at: .feed)
+        postSectionHeader.listen { [unowned self] in
+            self.viewModel.didTapSeeMore(at: .post)
         }
         
-        feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
+        postCellContent.addTarget(self, action: #selector(postCellTaped), for: .touchUpInside)
         
         groupCellContent.addTarget(self, action: #selector(groupCellTaped), for: .touchUpInside)
         
     }
     
     func setupViews() {
-        headerView.update(input: (user: viewModel.state.user, followersCount: 0, followingUsersCount: 0, likeFeedCount: 0, imagePipeline: dependencyProvider.imagePipeline))
+        headerView.update(input: (user: viewModel.state.user, followersCount: 0, followingUsersCount: 0, likePostCount: 0, imagePipeline: dependencyProvider.imagePipeline))
     }
     
     func didEditProfileButtonTapped() {
@@ -586,7 +584,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         present(safari, animated: true, completion: nil)
     }
     
-    @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
+    @objc private func postCellTaped() { viewModel.didSelectRow(at: .post) }
     
     @objc private func groupCellTaped() { viewModel.didSelectRow(at: .group) }
     

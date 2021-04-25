@@ -15,7 +15,7 @@ public final class UserDetailHeaderView: UIView {
         user: User,
         followersCount: Int,
         followingUsersCount: Int,
-        likeFeedCount: Int,
+        likePostCount: Int,
         imagePipeline: ImagePipeline
     )
     

@@ -70,7 +70,7 @@ class UserInformationView: UIView {
         displayNameLabel.text = input.user.name
         followerCountSumamryView.update(input: (title: "フォロワー", count: input.followersCount))
         followingUserCountSummaryView.update(input: (title: "フォロー", count: input.followingUsersCount))
-        likeFeedCountSummaryView.update(input: (title: "いいね", count: input.likeFeedCount))
+        likeFeedCountSummaryView.update(input: (title: "いいね", count: input.likePostCount))
         input.imagePipeline.loadImage(URL(string: input.user.thumbnailURL!)!, into: profileImageView)
     }
     

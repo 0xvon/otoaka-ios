@@ -63,17 +63,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
 //    }()
 //    private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
 
-    private let feedSectionHeader = SummarySectionHeader(title: "FEED")
-    private lazy var feedCellContent: UserFeedCellContent = {
-        let content = UINib(nibName: "UserFeedCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! UserFeedCellContent
+    private let postSectionHeader = SummarySectionHeader(title: "POST")
+    private lazy var postCellContent: PostCellContent = {
+        let content = UINib(nibName: "PostCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! PostCellContent
         content.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300 - 32),
-        ])
         return content
     }()
-    private lazy var feedCellWrapper: UIView = Self.addPadding(to: self.feedCellContent)
+    private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
@@ -151,12 +148,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
 //        liveCellWrapper.isHidden = true
 //        scrollStackView.addArrangedSubview(liveCellWrapper)
 
-        scrollStackView.addArrangedSubview(feedSectionHeader)
+        scrollStackView.addArrangedSubview(postSectionHeader)
         NSLayoutConstraint.activate([
-            feedSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+            postSectionHeader.heightAnchor.constraint(equalToConstant: 64),
         ])
-        feedCellWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(feedCellWrapper)
+        postCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(postCellWrapper)
 
         let bottomSpacer = UIView()
         scrollStackView.addArrangedSubview(bottomSpacer) // Spacer
@@ -213,14 +210,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
 //            case .updateLiveSummary(.none):
 //                self.liveSectionHeader.isHidden = true
 //                self.liveCellWrapper.isHidden = true
-            case .didDeleteFeedButtonTapped(let feed):
+            case .didDeletePostButtonTapped(let post):
                 let alertController = UIAlertController(
                     title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
                 let acceptAction = UIAlertAction(
                     title: "OK", style: UIAlertAction.Style.default,
                     handler: { [unowned self] action in
-                        viewModel.deleteFeed(feed: feed)
+                        viewModel.deletePost(post: post)
                     })
                 let cancelAction = UIAlertAction(
                     title: "キャンセル", style: UIAlertAction.Style.cancel,
@@ -230,29 +227,24 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 alertController.popoverPresentationController?.sourceView = self.view
                 alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
                 self.present(alertController, animated: true, completion: nil)
-            case .didDeleteFeed:
+            case .didDeletePost:
                 viewModel.refresh()
-            case .didToggleLikeFeed:
+            case .didToggleLikePost:
                 viewModel.refresh()
-            case .didShareFeedButtonTapped(let feed):
-                shareWithTwitter(type: .feed(feed))
-//            case .updateLiveSummary(.some(let live)):
-//                self.liveSectionHeader.isHidden = false
-//                self.liveCellWrapper.isHidden = false
-//                self.liveCellContent.inject(input: (live: live, imagePipeline: dependencyProvider.imagePipeline))
-            case .didDownloadButtonTapped(let feed):
-                self.downloadButtonTapped(feed: feed)
-            case .didInstagramButtonTapped(let feed):
-                self.instagramButtonTapped(feed: feed)
-            case .updateFeedSummary(.none):
-                self.feedSectionHeader.isHidden = true
-                self.feedCellWrapper.isHidden = true
-            case .updateFeedSummary(.some(let feed)):
-                self.feedSectionHeader.isHidden = false
-                self.feedCellWrapper.isHidden = false
-                self.feedCellContent.inject(
-                    input: (user: dependencyProvider.user, feed: feed, imagePipeline: dependencyProvider.imagePipeline)
-                )
+            case .didTwitterButtonTapped(_): break
+            case .didInstagramButtonTapped(_): break
+            case .updatePostSummary(let post):
+                let isHidden = post == nil
+                self.postSectionHeader.isHidden = isHidden
+                self.postCellWrapper.isHidden = isHidden
+                if let post = post {
+                    self.postCellContent.inject(input: (
+                        post: post, user: dependencyProvider.user,  imagePipeline: dependencyProvider.imagePipeline
+                    ))
+                }
+            case .pushToGroupDetail(let group):
+                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
             case .reportError(let error):
@@ -271,14 +263,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     dependencyProvider: dependencyProvider, input: input)
                 let nav = BrandNavigationController(rootViewController: vc)
                 self.present(nav, animated: true, completion: nil)
-            case .pushToFeedAuthor(let user):
+            case .pushToPostAuthor(let user):
                 let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToLiveList(let input):
                 let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToGroupFeedList(let input):
-                let vc = FeedListViewController(dependencyProvider: dependencyProvider, input: input)
+            case .pushToPostList(let input):
+                let vc = PostListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToPlayTrack(let input):
                 let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
@@ -301,18 +293,18 @@ final class BandDetailViewController: UIViewController, Instantiable {
             }
             .store(in: &cancellables)
 
-        feedCellContent.listen { [unowned self] output in
-            self.viewModel.feedCellEvent(event: output)
+        postCellContent.listen { [unowned self] output in
+            self.viewModel.postCellEvent(event: output)
         }
 
 //        liveSectionHeader.listen { [unowned self] in
 //            self.viewModel.didTapSeeMore(at: .live)
 //        }
-        feedSectionHeader.listen { [unowned self] in
-            self.viewModel.didTapSeeMore(at: .feed)
+        postSectionHeader.listen { [unowned self] in
+            self.viewModel.didTapSeeMore(at: .post)
         }
 //        liveCellContent.addTarget(self, action: #selector(liveCellTaped), for: .touchUpInside)
-        feedCellContent.addTarget(self, action: #selector(feedCellTaped), for: .touchUpInside)
+        postCellContent.addTarget(self, action: #selector(postCellTaped), for: .touchUpInside)
 
         followersSummaryView.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(followerSummaryTapped))
@@ -399,7 +391,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         shareFeedWithInstagram(feed: feed)
     }
 
-    @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
+    @objc private func postCellTaped() { viewModel.didSelectRow(at: .post) }
     @objc private func liveCellTaped() { viewModel.didSelectRow(at: .live) }
 
     @objc private func followerSummaryTapped() {

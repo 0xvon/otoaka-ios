@@ -18,12 +18,12 @@ class BandDetailViewModel {
         case member
     }
     enum SummaryRow {
-        case live, feed
+        case live, post
     }
     struct State {
         var group: Group
         var lives: [Live] = []
-        var feeds: [UserFeedSummary] = []
+        var posts: [PostSummary] = []
         var groupDetail: GetGroup.Response?
         var channelItem: YouTubeVideo?
         let role: RoleProperties
@@ -45,23 +45,25 @@ class BandDetailViewModel {
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
 //        case updateLiveSummary(Live?)
-        case updateFeedSummary(UserFeedSummary?)
+        case updatePostSummary(PostSummary?)
         case didGetChart(Group, YouTubeVideo?)
         case didCreatedInvitation(InviteGroup.Invitation)
         case pushToLiveDetail(LiveDetailViewController.Input)
 //        case pushToChartList(ChartListViewController.Input)
+        
         case pushToCommentList(CommentListViewController.Input)
         case pushToLiveList(LiveListViewController.Input)
-        case pushToFeedAuthor(User)
-        case pushToGroupFeedList(FeedListViewController.Input)
+        case pushToPostAuthor(User)
+        case pushToPostList(PostListViewController.Input)
         case pushToPlayTrack(PlayTrackViewController.Input)
+        case pushToGroupDetail(Group)
         case openURLInBrowser(URL)
-        case didDeleteFeed
-        case didToggleLikeFeed
-        case didDeleteFeedButtonTapped(UserFeedSummary)
-        case didShareFeedButtonTapped(UserFeedSummary)
-        case didDownloadButtonTapped(UserFeedSummary)
-        case didInstagramButtonTapped(UserFeedSummary)
+        
+        case didDeletePost
+        case didToggleLikePost
+        case didInstagramButtonTapped(PostSummary)
+        case didDeletePostButtonTapped(PostSummary)
+        case didTwitterButtonTapped(PostSummary)
         case reportError(Error)
     }
     
@@ -73,11 +75,12 @@ class BandDetailViewModel {
     private lazy var inviteGroup = Action(InviteGroup.self, httpClient: self.apiClient)
     private lazy var getGroup = Action(GetGroup.self, httpClient: self.apiClient)
     private lazy var getGroupLives = Action(GetGroupLives.self, httpClient: self.apiClient)
-    private lazy var getGroupFeed = Action(GetGroupsUserFeeds.self, httpClient: self.apiClient)
+    private lazy var getGroupPost = Action(GetGroupPosts.self, httpClient: self.apiClient)
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
-    private lazy var deleteFeed = Action(DeleteUserFeed.self, httpClient: self.apiClient)
-    private lazy var likeFeedAction = Action(LikeUserFeed.self, httpClient: apiClient)
-    private lazy var unlikeFeedAction = Action(UnlikeUserFeed.self, httpClient: apiClient)
+    
+    private lazy var deletePostAction = Action(DeletePost.self, httpClient: apiClient)
+    private lazy var likePostAction = Action(LikePost.self, httpClient: apiClient)
+    private lazy var unLikePostAction = Action(UnlikePost.self, httpClient: apiClient)
 
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -93,11 +96,11 @@ class BandDetailViewModel {
             inviteGroup.errors,
             getGroup.errors,
 //            getGroupLives.errors,
-            getGroupFeed.errors,
+            getGroupPost.errors,
             listChannel.errors,
-            deleteFeed.errors,
-            likeFeedAction.errors,
-            unlikeFeedAction.errors
+            deletePostAction.errors,
+            likePostAction.errors,
+            unLikePostAction.errors
         )
 
         Publishers.MergeMany(
@@ -106,21 +109,21 @@ class BandDetailViewModel {
                 .didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))
             }.eraseToAnyPublisher(),
 //            getGroupLives.elements.map { .updateLiveSummary($0.items.first) }.eraseToAnyPublisher(),
-            getGroupFeed.elements.map { .updateFeedSummary($0.items.first) }.eraseToAnyPublisher(),
+            getGroupPost.elements.map { .updatePostSummary($0.items.first) }.eraseToAnyPublisher(),
             listChannel.elements.map { [unowned self] in
                 .didGetChart(self.state.group, $0.items.first)
             }.eraseToAnyPublisher(),
-            deleteFeed.elements.map { _ in .didDeleteFeed }.eraseToAnyPublisher(),
-            likeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
-            unlikeFeedAction.elements.map { _ in .didToggleLikeFeed }.eraseToAnyPublisher(),
+            deletePostAction.elements.map { _ in .didDeletePost }.eraseToAnyPublisher(),
+            likePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
+            unLikePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
-        getGroupFeed.elements
-            .sink(receiveValue: { [unowned self] feeds in
-                state.feeds = feeds.items
+        getGroupPost.elements
+            .sink(receiveValue: { [unowned self] posts in
+                state.posts = posts.items
             })
             .store(in: &cancellables)
         
@@ -135,8 +138,8 @@ class BandDetailViewModel {
         switch row {
         case .live:
             outputSubject.send(.pushToLiveList(.groupLive(state.group)))
-        case .feed:
-            outputSubject.send(.pushToGroupFeedList(.groupFeed(state.group)))
+        case .post:
+            outputSubject.send(.pushToPostList(.groupPost(state.group)))
         }
     }
     
@@ -145,9 +148,7 @@ class BandDetailViewModel {
         case .live:
             guard let live = state.lives.first else { return }
             outputSubject.send(.pushToLiveDetail(live))
-        case .feed:
-            guard let feed = state.feeds.first else { return }
-            outputSubject.send(.pushToPlayTrack(.userFeed(feed)))
+        case .post: break
         }
     }
     
@@ -160,7 +161,7 @@ class BandDetailViewModel {
         getGroupDetail()
         getChartSummary()
 //        getGroupLiveSummary()
-        getGroupFeedSummary()
+        getGroupPostSummary()
     }
     
     func headerEvent(event: BandDetailHeaderView.Output) {
@@ -197,32 +198,28 @@ class BandDetailViewModel {
         }
     }
     
-    func feedCellEvent(event: UserFeedCellContent.Output) {
+    func postCellEvent(event: PostCellContent.Output) {
+        guard let post = state.posts.first else { return }
+        
         switch event {
-        case .commentButtonTapped:
-            guard let feed = state.feeds.first else { return }
-            outputSubject.send(.pushToCommentList(.feedComment(feed)))
-        case .deleteFeedButtonTapped:
-            guard let feed = state.feeds.first else { return }
-            outputSubject.send(.didDeleteFeedButtonTapped(feed))
-        case .likeFeedButtonTapped:
-            guard let feed = state.feeds.first else { return }
-            likeFeed(feed: feed)
-        case .unlikeFeedButtonTapped:
-            guard let feed = state.feeds.first else { return }
-            unlikeFeed(feed: feed)
-        case .shareButtonTapped:
-            guard let feed = state.feeds.first else { return }
-            outputSubject.send(.didShareFeedButtonTapped(feed))
-        case .downloadButtonTapped:
-            guard let feed = state.feeds.first else { return }
-            outputSubject.send(.didDownloadButtonTapped(feed))
-        case .instagramButtonTapped:
-            guard let feed = state.feeds.first else { return }
-            outputSubject.send(.didInstagramButtonTapped(feed))
+        case .commentTapped: break
+//            outputSubject.send(.pushToCommentList(.feedComment(feed)))
+        case .deleteTapped:
+            outputSubject.send(.didDeletePostButtonTapped(post))
+        case .likeTapped:
+            post.isLiked
+                ? unlikePost(post: post)
+                : likePost(post: post)
+        case .twitterTapped:
+            outputSubject.send(.didTwitterButtonTapped(post))
+        case .instagramTapped:
+            outputSubject.send(.didInstagramButtonTapped(post))
         case .userTapped:
-            guard let feed = state.feeds.first else { return }
-            outputSubject.send(.pushToFeedAuthor(feed.author))
+            outputSubject.send(.pushToPostAuthor(post.author))
+        case .groupTapped:
+            guard let group = post.groups.first else { return }
+            outputSubject.send(.pushToGroupDetail(group))
+        default: break
         }
     }
     
@@ -246,14 +243,13 @@ class BandDetailViewModel {
         getGroupLives.input((request: request, uri: uri))
     }
     
-    private func getGroupFeedSummary() {
-        var uri = GetGroupsUserFeeds.URI()
+    private func getGroupPostSummary() {
+        var uri = GetGroupPosts.URI()
         uri.groupId = state.group.id
         uri.per = 1
         uri.page = 1
         let request = Empty()
-        
-        getGroupFeed.input((request: request, uri: uri))
+        getGroupPost.input((request: request, uri: uri))
     }
     
     private func getChartSummary() {
@@ -268,21 +264,21 @@ class BandDetailViewModel {
         listChannel.input((request: request, uri: uri))
     }
     
-    func deleteFeed(feed: UserFeedSummary) {
-        let request = DeleteUserFeed.Request(id: feed.id)
-        let uri = DeleteUserFeed.URI()
-        deleteFeed.input((request: request, uri: uri))
+    private func likePost(post: PostSummary) {
+        let request = LikePost.Request(postId: post.id)
+        let uri = LikePost.URI()
+        likePostAction.input((request: request, uri: uri))
     }
     
-    private func likeFeed(feed: UserFeedSummary) {
-        let request = LikeUserFeed.Request(feedId: feed.id)
-        let uri = LikeUserFeed.URI()
-        likeFeedAction.input((request: request, uri: uri))
+    private func unlikePost(post: PostSummary) {
+        let request = UnlikePost.Request(postId: post.id)
+        let uri = UnlikePost.URI()
+        unLikePostAction.input((request: request, uri: uri))
     }
     
-    private func unlikeFeed(feed: UserFeedSummary) {
-        let request = UnlikeUserFeed.Request(feedId: feed.id)
-        let uri = UnlikeUserFeed.URI()
-        unlikeFeedAction.input((request: request, uri: uri))
+    func deletePost(post: PostSummary) {
+        let request = DeletePost.Request(postId: post.id)
+        let uri = DeletePost.URI()
+        deletePostAction.input((request: request, uri: uri))
     }
 }

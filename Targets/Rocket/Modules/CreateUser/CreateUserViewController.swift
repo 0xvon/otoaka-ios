@@ -442,26 +442,31 @@ extension CreateUserViewController: UIImagePickerControllerDelegate, UINavigatio
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
-        let cropController = CropViewController(image: image)
-        cropController.delegate = self
-        cropController.customAspectRatio = profileImageView.frame.size
-        cropController.aspectRatioPickerButtonHidden = true
-        cropController.resetAspectRatioEnabled = false
-        cropController.rotateButtonsHidden = true
-        cropController.cropView.cropBoxResizeEnabled = false
-        picker.dismiss(animated: true) {
-            self.present(cropController, animated: true, completion: nil)
-        }
+        profileImageView.image = image
+        viewModel.didUpdateArtwork(artwork: image)
+        picker.dismiss(animated: true, completion: nil)
+//        let cropController = CropViewController(image: image)
+//        cropController.delegate = self
+//        cropController.customAspectRatio = profileImageView.frame.size
+//        cropController.aspectRatioPickerButtonHidden = true
+//        cropController.resetAspectRatioEnabled = false
+//        cropController.rotateButtonsHidden = true
+//        cropController.modalPresentationStyle = .fullScreen
+//        cropController.cropView.cropBoxResizeEnabled = false
+//        picker.dismiss(animated: true) {
+//            self.present(cropController, animated: true, completion: nil)
+//        }
     }
 }
 
-extension CreateUserViewController: CropViewControllerDelegate {
-    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-        profileImageView.image = image
-        viewModel.didUpdateArtwork(artwork: image)
-        cropViewController.dismiss(animated: true, completion: nil)
-    }
-}
+//extension CreateUserViewController: CropViewControllerDelegate {
+//    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
+//        profileImageView.image = image
+//        viewModel.didUpdateArtwork(artwork: image)
+//        cropViewController.modalPresentationStyle = .fullScreen
+//        cropViewController.dismiss(animated: true, completion: nil)
+//    }
+//}
 
 extension CreateUserViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
