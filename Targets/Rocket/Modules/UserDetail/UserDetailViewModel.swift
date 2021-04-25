@@ -156,7 +156,8 @@ class UserDetailViewModel {
         guard let post = state.post else { return }
         
         switch event {
-        case .commentTapped: break
+        case .commentTapped:
+            outputSubject.send(.pushToCommentList(.postComment(post)))
 //            outputSubject.send(.pushToCommentList(.feedComment(feed)))
         case .deleteTapped:
             outputSubject.send(.didDeletePostButtonTapped(post))

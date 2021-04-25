@@ -494,9 +494,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .pushToGroupList(let input):
                 let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToCommentList(let feed):
+            case .pushToCommentList(let input):
                 let vc = CommentListViewController(
-                    dependencyProvider: dependencyProvider, input: feed)
+                    dependencyProvider: dependencyProvider, input: input)
                 let nav = BrandNavigationController(rootViewController: vc)
                 self.present(nav, animated: true, completion: nil)
             case .openURLInBrowser(let url):

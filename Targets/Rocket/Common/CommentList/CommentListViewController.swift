@@ -58,9 +58,8 @@ final class CommentListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 commentTableView.reloadData()
                 setTableViewBackgroundView(tableView: self.commentTableView)
-            case .didPostComment(_):
-                commentTableView.reloadData()
-                setTableViewBackgroundView(tableView: self.commentTableView)
+            case .didPostComment:
+                viewModel.refresh()
             case .reportError(let error):
                 print(error)
                 self.showAlert()

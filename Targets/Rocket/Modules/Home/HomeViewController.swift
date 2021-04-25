@@ -116,7 +116,9 @@ final class HomeViewController: UITableViewController {
     }
     
     private func commentButtonTapped(post: PostSummary) {
-        
+        let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .postComment(post))
+        let nav = BrandNavigationController(rootViewController: vc)
+        self.present(nav, animated: true, completion: nil)
     }
     
     private func likeButtonTapped(post: PostSummary) {

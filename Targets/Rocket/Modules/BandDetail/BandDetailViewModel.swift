@@ -202,8 +202,8 @@ class BandDetailViewModel {
         guard let post = state.posts.first else { return }
         
         switch event {
-        case .commentTapped: break
-//            outputSubject.send(.pushToCommentList(.feedComment(feed)))
+        case .commentTapped:
+            outputSubject.send(.pushToCommentList(.postComment(post)))
         case .deleteTapped:
             outputSubject.send(.didDeletePostButtonTapped(post))
         case .likeTapped:

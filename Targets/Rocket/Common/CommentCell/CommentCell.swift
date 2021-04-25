@@ -10,7 +10,7 @@ import Endpoint
 import ImagePipeline
 
 class CommentCell: UITableViewCell, ReusableCell {
-    typealias Input = (comment: UserFeedComment, imagePipeline: ImagePipeline)
+    typealias Input = (comment: Comment, imagePipeline: ImagePipeline)
     static var reusableIdentifier: String { "CommentCell" }
 
     @IBOutlet weak var thumbnailImageView: UIImageView!
