@@ -8,6 +8,7 @@
 import UIKit
 import Endpoint
 import ImagePipeline
+import TagListView
 
 final class FanCell: UITableViewCell, ReusableCell {
     typealias Input = FanCellContent.Input
@@ -58,8 +59,76 @@ class FanCellContent: UIButton {
     typealias Output = Void
     
     @IBOutlet weak var fanArtworkImageView: UIImageView!
-    @IBOutlet weak var fanNameLabel: UILabel!
-    @IBOutlet weak var biographyTextView: UITextView!
+    @IBOutlet weak var stackView: UIStackView!
+    
+    private lazy var fanNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .smallStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var profileLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .small)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var addressLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .small)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var biographyTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.isUserInteractionEnabled = false
+        textView.isScrollEnabled = false
+        textView.font = Brand.font(for: .medium)
+        textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        textView.textContainer.lineFragmentPadding = 0
+        textView.textAlignment = .left
+        textView.backgroundColor = Brand.color(for: .background(.primary))
+        textView.textColor = Brand.color(for: .text(.primary))
+        return textView
+    }()
+    private lazy var seriousTagListView: TagListView = {
+        let tagListView = TagListView()
+        tagListView.translatesAutoresizingMaskIntoConstraints = false
+        tagListView.textColor = Brand.color(for: .text(.primary))
+        tagListView.textFont = Brand.font(for: .smallStrong)
+        tagListView.tagBackgroundColor = Brand.color(for: .text(.link))
+        tagListView.alignment = .leading
+        tagListView.cornerRadius = 10
+        tagListView.paddingY = 4
+        tagListView.paddingX = 8
+        tagListView.marginY = 8
+        tagListView.marginX = 8
+        return tagListView
+    }()
+    private lazy var dabbleTagListView: TagListView = {
+        let tagListView = TagListView()
+        tagListView.translatesAutoresizingMaskIntoConstraints = false
+        tagListView.textColor = Brand.color(for: .text(.primary))
+        tagListView.textFont = Brand.font(for: .smallStrong)
+        tagListView.tagBackgroundColor = Brand.color(for: .text(.toggle))
+        tagListView.alignment = .leading
+        tagListView.cornerRadius = 10
+        tagListView.paddingY = 4
+        tagListView.paddingX = 8
+        tagListView.marginY = 8
+        tagListView.marginX = 8
+        return tagListView
+    }()
+    private lazy var messageButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("メッセージしてみる", selected: false)
+        return button
+    }()
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -73,6 +142,14 @@ class FanCellContent: UIButton {
             input.imagePipeline.loadImage(url, into: fanArtworkImageView)
         }
         fanNameLabel.text = input.user.name
+        profileLabel.text = "21歳・男・ライブは前でガンガン派"
+        addressLabel.text = "東京都在住"
+        let seriousList = ["MY FIRST STORY", "RADWIMPS"]
+        seriousTagListView.removeAllTags()
+        seriousTagListView.addTags(seriousList)
+        let dabbleList = ["04 Limited Sazabys", "SiM"]
+        dabbleTagListView.removeAllTags()
+        dabbleTagListView.addTags(dabbleList)
         biographyTextView.text = input.user.biography
     }
     
@@ -83,14 +160,49 @@ class FanCellContent: UIButton {
         fanArtworkImageView.layer.cornerRadius = 30
         fanArtworkImageView.contentMode = .scaleAspectFill
         
-        fanNameLabel.font = Brand.font(for: .largeStrong)
-        fanNameLabel.backgroundColor = Brand.color(for: .background(.primary))
-        fanNameLabel.textColor = Brand.color(for: .text(.primary))
+        stackView.spacing = 4
+        stackView.axis = .vertical
+        stackView.backgroundColor = .clear
         
-        biographyTextView.isUserInteractionEnabled = false
-        biographyTextView.font = Brand.font(for: .medium)
-        biographyTextView.backgroundColor = Brand.color(for: .background(.primary))
-        biographyTextView.textColor = Brand.color(for: .text(.primary))
+        stackView.addArrangedSubview(fanNameLabel)
+        NSLayoutConstraint.activate([
+            fanNameLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//            fanNameLabel.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        
+        stackView.addArrangedSubview(profileLabel)
+        NSLayoutConstraint.activate([
+            profileLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//            profileLabel.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        
+        stackView.addArrangedSubview(addressLabel)
+        NSLayoutConstraint.activate([
+            addressLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//            addressLabel.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        
+        stackView.addArrangedSubview(biographyTextView)
+        NSLayoutConstraint.activate([
+            biographyTextView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//            biographyTextView.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
+        stackView.addArrangedSubview(seriousTagListView)
+        NSLayoutConstraint.activate([
+            seriousTagListView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        stackView.addArrangedSubview(dabbleTagListView)
+        NSLayoutConstraint.activate([
+            dabbleTagListView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        stackView.addArrangedSubview(messageButton)
+        NSLayoutConstraint.activate([
+            messageButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            messageButton.heightAnchor.constraint(equalToConstant: 48),
+        ])
     }
     
     private var listener: (Output) -> Void = { _ in }
