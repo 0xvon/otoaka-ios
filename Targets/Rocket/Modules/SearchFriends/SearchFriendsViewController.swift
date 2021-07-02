@@ -164,6 +164,17 @@ extension SearchFriendsViewController {
         }
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch viewModel.state.scope {
+        case .group:
+            let group = viewModel.state.groups[indexPath.row]
+            let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+            self.navigationController?.pushViewController(vc, animated: true)
+        default: break
+        }
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         switch viewModel.state.scope {
         case .fan:
