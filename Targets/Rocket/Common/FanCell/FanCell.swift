@@ -15,13 +15,13 @@ final class FanCell: UITableViewCell, ReusableCell {
     typealias Output = FanCellContent.Output
     static var reusableIdentifier: String { "FanCell" }
     
-    private let _contentView: FanCellContent
+    public let _contentView: FanCellContent
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         _contentView = UINib(nibName: "FanCellContent", bundle: nil).instantiate(withOwner: nil, options: nil).first as! FanCellContent
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
-        _contentView.isUserInteractionEnabled = false
+        _contentView.isUserInteractionEnabled = true
         backgroundColor = .clear
         NSLayoutConstraint.activate([
             _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -56,7 +56,10 @@ class FanCellContent: UIButton {
         user: User,
         imagePipeline: ImagePipeline
     )
-    typealias Output = Void
+    enum Output {
+        case openMessageButtonTapped
+        case userTapped
+    }
     
     @IBOutlet weak var fanArtworkImageView: UIImageView!
     @IBOutlet weak var stackView: UIStackView!
@@ -123,10 +126,12 @@ class FanCellContent: UIButton {
         tagListView.marginX = 8
         return tagListView
     }()
-    private lazy var messageButton: ToggleButton = {
+    public lazy var messageButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("メッセージしてみる", selected: false)
+        button.isUserInteractionEnabled = true
+        button.addTarget(self, action: #selector(openMessageButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -159,6 +164,8 @@ class FanCellContent: UIButton {
         fanArtworkImageView.clipsToBounds = true
         fanArtworkImageView.layer.cornerRadius = 30
         fanArtworkImageView.contentMode = .scaleAspectFill
+        fanArtworkImageView.isUserInteractionEnabled = true
+        fanArtworkImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(userTapped)))
         
         stackView.spacing = 4
         stackView.axis = .vertical
@@ -203,6 +210,14 @@ class FanCellContent: UIButton {
             messageButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
             messageButton.heightAnchor.constraint(equalToConstant: 48),
         ])
+    }
+    
+    @objc private func userTapped() {
+        self.listener(.userTapped)
+    }
+    
+    @objc private func openMessageButtonTapped() {
+        self.listener(.openMessageButtonTapped)
     }
     
     private var listener: (Output) -> Void = { _ in }

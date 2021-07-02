@@ -16,6 +16,7 @@ final class SearchFriendsViewModel {
     enum Output {
         case updateSearchResult(SearchResultViewController.Input)
         case reloadData
+        case jumpToMessageRoom(MessageRoom)
         case isRefreshing(Bool)
         case reportError(Error)
     }
@@ -53,11 +54,19 @@ final class SearchFriendsViewModel {
         return uri
     }())
     
+    private lazy var createMessageRoomAction = Action(CreateMessageRoom.self, httpClient: apiClient)
+    
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.state = State()
         
         subscribe()
+        
+        createMessageRoomAction.elements
+            .map { .jumpToMessageRoom($0) }.eraseToAnyPublisher()
+            .merge(with: createMessageRoomAction.errors.map(Output.reportError)).eraseToAnyPublisher()
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
     }
     
     func subscribe() {
@@ -146,5 +155,11 @@ final class SearchFriendsViewModel {
     func updateScope(_ scope: Int) {
         state.scope = Scope.allCases[scope]
         refresh()
+    }
+    
+    func createMessageRoom(partner: User) {
+        let request = CreateMessageRoom.Request(members: [partner.id], name: partner.name)
+        let uri = CreateMessageRoom.URI()
+        createMessageRoomAction.input((request: request, uri: uri))
     }
 }

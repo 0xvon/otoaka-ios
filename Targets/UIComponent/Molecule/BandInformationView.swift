@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import InternalDomain
 
 class BandInformationView: UIView {
     public typealias Input = BandDetailHeaderView.Input

@@ -101,18 +101,14 @@ final class RootViewController: UITabBarController, Instantiable {
     
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
-//        let homeVC = BrandNavigationController(rootViewController: HomeViewController(dependencyProvider: loggedInProvider))
-//        homeVC.tabBarItem = UITabBarItem(
-//            title: "ホーム", image: UIImage(systemName: "house"),
-//            selectedImage: UIImage(systemName: "house.fill"))
         let searchFriendsVC = BrandNavigationController(rootViewController: SearchFriendsViewController(dependencyProvider: loggedInProvider, input: ()))
         searchFriendsVC.tabBarItem = UITabBarItem(title: "ライブ友達を探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
-        let groupVC = BrandNavigationController(
-            rootViewController: GroupViewController(dependencyProvider: loggedInProvider)
+        let messageVC = BrandNavigationController(rootViewController: MessageListViewController(dependencyProvider: loggedInProvider, input: ()))
+        messageVC.tabBarItem = UITabBarItem(
+            title: "メッセージ",
+            image: UIImage(named: "mailIcon"),
+            selectedImage: UIImage(named: "selectedMailIcon")
         )
-        groupVC.tabBarItem = UITabBarItem(
-            title: "バンド", image: UIImage(systemName: "person.3"),
-            selectedImage: UIImage(systemName: "person.3.fill"))
         let userNotificationVC = BrandNavigationController(rootViewController: UserNotificationViewControlelr(dependencyProvider: loggedInProvider))
         userNotificationVC.tabBarItem = UITabBarItem(
             title: "通知",
@@ -131,7 +127,7 @@ final class RootViewController: UITabBarController, Instantiable {
         accountVC.listen { [unowned self] in
             checkSignupStatus()
         }
-        return [searchFriendsVC, groupVC, userNotificationVC, accountNav]
+        return [searchFriendsVC, messageVC, userNotificationVC, accountNav]
     }
     
     private func promptVersioningViewController(versionData: RequiredVersion) {

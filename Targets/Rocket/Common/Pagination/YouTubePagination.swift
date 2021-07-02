@@ -16,7 +16,7 @@ protocol YouTubePageResponse {
     var nextPageToken: String? { get }
     var prevPageToken: String? { get }
     var regionCode: String? { get }
-    var pageInfo: PageInfo { get }
+    var pageInfo: InternalDomain.PageInfo { get }
     var items: [Item] { get }
 }
 
@@ -26,9 +26,9 @@ enum YouTubePaginationEvent<Response> {
     case error(Error)
 }
 
-extension YouTubePage: YouTubePageResponse {}
+extension InternalDomain.YouTubePage: YouTubePageResponse {}
 
-class YouTubePaginationRequest<E: EndpointProtocol> where E.URI: YouTubePaginationQuery, E.Request == Endpoint.Empty, E.Response: YouTubePageResponse {
+class YouTubePaginationRequest<E: EndpointProtocol> where E.URI: InternalDomain.YouTubePaginationQuery, E.Request == Endpoint.Empty, E.Response: YouTubePageResponse {
     private var uri: E.URI
     private var apiClient: APIClient
     private lazy var requestAction = Action(E.self, httpClient: self.apiClient)

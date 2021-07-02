@@ -11,8 +11,8 @@ import InternalDomain
 
 public struct ListChannel: EndpointProtocol {
     public typealias Request = Empty
-    public typealias Response = YouTubePage<YouTubeVideo>
-    public struct URI: CodableURL, YouTubePaginationQuery {
+    public typealias Response = InternalDomain.YouTubePage<InternalDomain.YouTubeVideo>
+    public struct URI: CodableURL, InternalDomain.YouTubePaginationQuery {
         @StaticPath("youtube", "v3", "search") public var prefix: Void
         @Query public var channelId: String?
         @Query public var q: String?

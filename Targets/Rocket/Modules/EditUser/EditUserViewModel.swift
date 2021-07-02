@@ -125,7 +125,17 @@ class EditUserViewModel {
     private func editUser(imageUrl: String?) {
         guard let displayName = state.displayName else { return }
         let req = EditUserInfo.Request(
-            name: displayName, biography: state.biography, thumbnailURL: imageUrl, role: state.role, twitterUrl: state.twitterUrl, instagramUrl: state.instagramUrl)
+            name: displayName,
+            biography: state.biography,
+            sex: nil,
+            age: nil,
+            liveStyle: nil,
+            residence: nil, // TODO
+            thumbnailURL: imageUrl,
+            role: state.role,
+            twitterUrl: state.twitterUrl,
+            instagramUrl: state.instagramUrl
+        )
         editUserAction.input((request: req, uri: EditUserInfo.URI()))
     }
 }

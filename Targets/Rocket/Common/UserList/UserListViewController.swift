@@ -51,6 +51,10 @@ final class UserListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.fanTableView.reloadData()
                 self.setTableViewBackgroundView(tableView: self.fanTableView)
+            case .jumpToMessageRoom(let room):
+                let vc = MessageRoomViewController(dependencyProvider: dependencyProvider, input: room)
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
             case .error(let err):
                 print(err)
                 self.showAlert()
@@ -115,16 +119,24 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = self.viewModel.state.users[indexPath.section]
         let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: user, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        cell.listen { [unowned self] output in
+            switch output {
+            case .openMessageButtonTapped:
+                viewModel.createMessageRoom(partner: user)
+            case .userTapped:
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
+                tableView.deselectRow(at: indexPath, animated: true)
+            }
+        }
         return cell
     }
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let user = self.viewModel.state.users[indexPath.section]
-        let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
-        let nav = self.navigationController ?? presentingViewController?.navigationController
-        nav?.pushViewController(vc, animated: true)
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let user = self.viewModel.state.users[indexPath.section]
+//
+//    }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         self.viewModel.willDisplay(rowAt: indexPath)

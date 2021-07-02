@@ -13,7 +13,7 @@ import ImagePipeline
 public final class BandDetailHeaderView: UIView {
     public typealias Input = (
         group: DomainEntity.Group,
-        groupItem: YouTubeVideo?,
+        groupItem: InternalDomain.YouTubeVideo?,
         imagePipeline: ImagePipeline
     )
 

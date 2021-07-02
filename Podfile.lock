@@ -74,9 +74,14 @@ PODS:
   - GoogleUtilities/UserDefaults (7.3.1):
     - GoogleUtilities/Logger
   - ImageViewer (6.0.0)
+  - InputBarAccessoryView (5.3.1):
+    - InputBarAccessoryView/Core (= 5.3.1)
+  - InputBarAccessoryView/Core (5.3.1)
   - KeyboardGuide (0.2.0)
   - KeychainAccess (4.2.2)
   - LicensePlist (3.0.7)
+  - MessageKit (3.6.1):
+    - InputBarAccessoryView (~> 5.3.1)
   - nanopb (2.30906.0):
     - nanopb/decode (= 2.30906.0)
     - nanopb/encode (= 2.30906.0)
@@ -99,6 +104,7 @@ DEPENDENCIES:
   - KeyboardGuide (from `./KeyboardGuide.podspec`)
   - KeychainAccess
   - LicensePlist
+  - MessageKit
   - Nuke (~> 9.0)
   - SwiftGen (~> 6.0)
   - TagListView (~> 1.0)
@@ -122,8 +128,10 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - ImageViewer
+    - InputBarAccessoryView
     - KeychainAccess
     - LicensePlist
+    - MessageKit
     - nanopb
     - Nuke
     - PromisesObjC
@@ -152,9 +160,11 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
   GoogleUtilities: e1d9ed4e544fc32a93e00e721400cbc3f377200d
   ImageViewer: cb88ef1c0ba19161bc10702adfdcebc116a7a59d
+  InputBarAccessoryView: 1f75d8c9f75e5e57f3ffac36ed58635a8005e0bc
   KeyboardGuide: 24db03df5ae874e6ece4a01ae3e8ca7648c4cd1a
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
   LicensePlist: 9f7b32ff4246f615723ccaca543c4e279cb867c3
+  MessageKit: d153fbbbcb12f3f4045a1ba8874298924dacfb62
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   Nuke: 6f400a4ea957e09149ec335a3c6acdcc814d89e4
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
@@ -163,6 +173,6 @@ SPEC CHECKSUMS:
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   YoutubePlayer-in-WKWebView: cfbf46da51d7370662a695a8f351e5fa1d3e1008
 
-PODFILE CHECKSUM: af21118c55925032d4e912adb2fb98f943eb93b2
+PODFILE CHECKSUM: bb35ccb98d68e7d3cb6dc71cb97023181a0f3676
 
 COCOAPODS: 1.10.1

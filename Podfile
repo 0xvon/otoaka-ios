@@ -22,6 +22,7 @@ target 'Rocket' do
   pod 'TagListView', '~> 1.0'
   pod 'CropViewController'
   pod 'ImageViewer'
+  pod 'MessageKit'
 
   target 'RocketTests' do
     inherit! :search_paths

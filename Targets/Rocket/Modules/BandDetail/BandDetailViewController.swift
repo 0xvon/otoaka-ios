@@ -9,6 +9,7 @@ import Combine
 import Endpoint
 import SafariServices
 import UIComponent
+import InternalDomain
 
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group

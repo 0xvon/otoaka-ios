@@ -132,6 +132,16 @@ name: ImageViewer, nameSpecified:
 body: The MIT License (MIT…
 version: 6.0.0
 
+name: InputBarAccessoryView, nameSpecified: 
+body: 
+The MIT License (MI…
+version: 5.3.1
+
+name: InputBarAccessoryView, nameSpecified: 
+body: 
+The MIT License (MI…
+version: 5.3.1
+
 name: KeyboardGuide, nameSpecified: 
 body: Copyright (c) 2020 Y…
 version: 0.2.0
@@ -159,6 +169,18 @@ body: MIT License
 
 Copyrig…
 version: 3.0.7
+
+name: MessageKit, nameSpecified: 
+body: MIT License
+
+Copyrig…
+version: 3.6.1
+
+name: MessageKit, nameSpecified: 
+body: MIT License
+
+Copyrig…
+version: 3.6.1
 
 name: nanopb, nameSpecified: 
 body: Copyright (c) 2011 P…

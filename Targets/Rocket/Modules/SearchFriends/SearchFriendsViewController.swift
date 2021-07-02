@@ -45,6 +45,7 @@ final class SearchFriendsViewController: UITableViewController {
         super.viewDidLoad()
         title = "ライブ友達を探す"
         navigationItem.largeTitleDisplayMode = .never
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
         
         view.backgroundColor = Brand.color(for: .background(.primary))
         tableView.tableFooterView = UIView(frame: .zero)
@@ -88,6 +89,9 @@ final class SearchFriendsViewController: UITableViewController {
                 }
             case .updateSearchResult(let input):
                 searchResultController.inject(input)
+            case .jumpToMessageRoom(let room):
+                let vc = MessageRoomViewController(dependencyProvider: dependencyProvider, input: room)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(err)
                 showAlert()
@@ -138,6 +142,16 @@ extension SearchFriendsViewController {
         case .fan:
             let fan = viewModel.state.fans[indexPath.row]
             let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: fan, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+            cell.listen { [unowned self] output in
+                switch output {
+                case .openMessageButtonTapped:
+                    viewModel.createMessageRoom(partner: fan)
+                case .userTapped:
+                    let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: fan)
+                    navigationController?.pushViewController(vc, animated: true)
+                    tableView.deselectRow(at: indexPath, animated: true)
+                }
+            }
             return cell
         case .live:
             let live = viewModel.state.lives[indexPath.row]

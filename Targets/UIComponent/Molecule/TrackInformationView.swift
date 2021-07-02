@@ -9,10 +9,11 @@ import UIKit
 import Foundation
 import InternalDomain
 import ImagePipeline
+import DomainEntity
 
 public final class TrackInformationView: UIView {
     typealias Input = (
-        track: YouTubeVideo?,
+        track: InternalDomain.YouTubeVideo?,
         imagePipeline: ImagePipeline
     )
     // FIXME
