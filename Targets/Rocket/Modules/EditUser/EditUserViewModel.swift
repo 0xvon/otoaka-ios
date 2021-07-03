@@ -16,6 +16,10 @@ class EditUserViewModel {
     struct State {
         var displayName: String?
         var biography: String?
+        var sex: String?
+        var age: Int?
+        var liveStyle: String?
+        var residence: String?
         var role: RoleProperties
         var profileImage: UIImage?
         var instagramUrl: URL?
@@ -86,9 +90,22 @@ class EditUserViewModel {
         getUserInfoAction.input((request: Empty(), uri: GetUserInfo.URI()))
     }
     
-    func didUpdateInputItems(displayName: String?, biography: String?, twitterUrl: String?, instagramUrl: String?) {
+    func didUpdateInputItems(
+        displayName: String?,
+        biography: String?,
+        sex: String?,
+        age: String?,
+        liveStyle: String?,
+        residence: String?,
+        twitterUrl: String?,
+        instagramUrl: String?
+    ) {
         state.displayName = displayName
         state.biography = biography
+        state.sex = sex
+        state.age = age.map { Int($0) ?? 0 }
+        state.liveStyle = liveStyle
+        state.residence = residence
         state.twitterUrl = validateSnsUrl(baseUrl: "https://twitter.com/", text: twitterUrl)
         state.instagramUrl = validateSnsUrl(baseUrl: "https://instagram.com/", text: instagramUrl)
         
@@ -127,10 +144,10 @@ class EditUserViewModel {
         let req = EditUserInfo.Request(
             name: displayName,
             biography: state.biography,
-            sex: nil,
-            age: nil,
-            liveStyle: nil,
-            residence: nil, // TODO
+            sex: state.sex,
+            age: state.age,
+            liveStyle: state.liveStyle,
+            residence: state.residence,
             thumbnailURL: imageUrl,
             role: state.role,
             twitterUrl: state.twitterUrl,

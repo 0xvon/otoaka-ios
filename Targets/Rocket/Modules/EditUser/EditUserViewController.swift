@@ -41,6 +41,54 @@ final class EditUserViewController: UIViewController, Instantiable {
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
         return biographyInputView
     }()
+    private lazy var sexInputView: TextFieldView = {
+        let displayNameInputView = TextFieldView(input: (section: "性別(任意)", text: nil, maxLength: 20))
+        displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
+        return displayNameInputView
+    }()
+    private lazy var sexPickerView: UIPickerView = {
+        let picketView = UIPickerView()
+        picketView.translatesAutoresizingMaskIntoConstraints = false
+        picketView.dataSource = self
+        picketView.delegate = self
+        return picketView
+    }()
+    private lazy var ageInputView: TextFieldView = {
+        let displayNameInputView = TextFieldView(input: (section: "年齢(任意)", text: nil, maxLength: 4))
+        displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
+        return displayNameInputView
+    }()
+    private lazy var agePickerView: UIPickerView = {
+        let picketView = UIPickerView()
+        picketView.translatesAutoresizingMaskIntoConstraints = false
+        picketView.dataSource = self
+        picketView.delegate = self
+        return picketView
+    }()
+    private lazy var liveStyleInputView: TextFieldView = {
+        let displayNameInputView = TextFieldView(input: (section: "ライブの楽しみ方(任意)", text: nil, maxLength: 20))
+        displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
+        return displayNameInputView
+    }()
+    private lazy var liveStylePickerView: UIPickerView = {
+        let picketView = UIPickerView()
+        picketView.translatesAutoresizingMaskIntoConstraints = false
+        picketView.dataSource = self
+        picketView.delegate = self
+        return picketView
+    }()
+    private lazy var residenceInputView: TextFieldView = {
+        let displayNameInputView = TextFieldView(input: (section: "都道府県(任意)", text: nil, maxLength: 20))
+        displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
+        return displayNameInputView
+    }()
+    private lazy var residencePickerView: UIPickerView = {
+        let picketView = UIPickerView()
+        picketView.translatesAutoresizingMaskIntoConstraints = false
+        picketView.dataSource = self
+        picketView.delegate = self
+        return picketView
+    }()
     private lazy var twitterUrlTextFieldView: TextFieldView = {
         let twitterUrlTextFieldView = TextFieldView(input: (section: "Twitterリンク", text: nil, maxLength: 40))
         twitterUrlTextFieldView.translatesAutoresizingMaskIntoConstraints = false
@@ -149,6 +197,10 @@ final class EditUserViewController: UIViewController, Instantiable {
     func update(user: User) {
         displayNameInputView.setText(text: user.name)
         biographyInputView.setText(text: user.biography ?? "")
+        sexInputView.setText(text: user.sex ?? "")
+        ageInputView.setText(text: user.age.map { String($0) } ?? "")
+        liveStyleInputView.setText(text: user.liveStyle ?? "")
+        residenceInputView.setText(text: user.residence ?? "")
         twitterUrlTextFieldView.setText(text: user.twitterUrl?.absoluteString ?? "https://twitter.com/")
         instagramUrlTextFieldView.setText(text: user.instagramUrl?.absoluteString ?? "https://instagram.com/")
         switch user.role {
@@ -204,6 +256,26 @@ final class EditUserViewController: UIViewController, Instantiable {
         }
         
         biographyInputView.listen { [unowned self] in
+            self.didInputValue()
+        }
+        
+        sexInputView.listen { [unowned self] in
+            sexInputView.setText(text: viewModel.state.socialInputs.sex[sexPickerView.selectedRow(inComponent: 0)])
+            self.didInputValue()
+        }
+        
+        ageInputView.listen { [unowned self] in
+            ageInputView.setText(text: viewModel.state.socialInputs.age[agePickerView.selectedRow(inComponent: 0)])
+            self.didInputValue()
+        }
+        
+        liveStyleInputView.listen { [unowned self] in
+            liveStyleInputView.setText(text: viewModel.state.socialInputs.howToEnjoyLives[liveStylePickerView.selectedRow(inComponent: 0)])
+            self.didInputValue()
+        }
+        
+        residenceInputView.listen { [unowned self] in
+            residenceInputView.setText(text: viewModel.state.socialInputs.prefectures[residencePickerView.selectedRow(inComponent: 0)])
             self.didInputValue()
         }
         
@@ -288,6 +360,30 @@ final class EditUserViewController: UIViewController, Instantiable {
             biographyInputView.heightAnchor.constraint(equalToConstant: 200),
         ])
         
+        mainView.addArrangedSubview(sexInputView)
+        sexInputView.selectInputView(inputView: sexPickerView)
+        NSLayoutConstraint.activate([
+            sexInputView.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
+        mainView.addArrangedSubview(ageInputView)
+        ageInputView.selectInputView(inputView: agePickerView)
+        NSLayoutConstraint.activate([
+            ageInputView.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
+        mainView.addArrangedSubview(liveStyleInputView)
+        liveStyleInputView.selectInputView(inputView: liveStylePickerView)
+        NSLayoutConstraint.activate([
+            liveStyleInputView.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
+        mainView.addArrangedSubview(residenceInputView)
+        residenceInputView.selectInputView(inputView: residencePickerView)
+        NSLayoutConstraint.activate([
+            residenceInputView.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
         mainView.addArrangedSubview(twitterUrlTextFieldView)
         NSLayoutConstraint.activate([
             twitterUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
@@ -321,10 +417,23 @@ final class EditUserViewController: UIViewController, Instantiable {
     private func didInputValue() {
         let displayName: String? = displayNameInputView.getText()
         let biography = biographyInputView.getText()
+        let sex = sexInputView.getText()
+        let age = ageInputView.getText()
+        let liveStyle = liveStyleInputView.getText()
+        let residence = residenceInputView.getText()
         let twitterUrl = twitterUrlTextFieldView.getText()
         let instagramUrl = instagramUrlTextFieldView.getText()
         
-        viewModel.didUpdateInputItems(displayName: displayName, biography: biography, twitterUrl: twitterUrl, instagramUrl: instagramUrl)
+        viewModel.didUpdateInputItems(
+            displayName: displayName,
+            biography: biography,
+            sex: sex,
+            age: age,
+            liveStyle: liveStyle,
+            residence: residence,
+            twitterUrl: twitterUrl,
+            instagramUrl: instagramUrl
+        )
     }
 
     @objc private func selectProfileImage(_ sender: Any) {
@@ -372,12 +481,32 @@ extension EditUserViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return viewModel.state.socialInputs.parts.count
+        switch pickerView {
+        case self.sexPickerView:
+            return viewModel.state.socialInputs.sex.count
+        case self.agePickerView:
+            return viewModel.state.socialInputs.age.count
+        case self.liveStylePickerView:
+            return viewModel.state.socialInputs.howToEnjoyLives.count
+        case self.residencePickerView:
+            return viewModel.state.socialInputs.prefectures.count
+        default: return 1
+        }
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
         -> String?
     {
-        return viewModel.state.socialInputs.parts[row]
+        switch pickerView {
+        case self.sexPickerView:
+            return viewModel.state.socialInputs.sex[row]
+        case self.agePickerView:
+            return viewModel.state.socialInputs.age[row]
+        case self.liveStylePickerView:
+            return viewModel.state.socialInputs.howToEnjoyLives[row]
+        case self.residencePickerView:
+            return viewModel.state.socialInputs.prefectures[row]
+        default: return "yo"
+        }
     }
 }
