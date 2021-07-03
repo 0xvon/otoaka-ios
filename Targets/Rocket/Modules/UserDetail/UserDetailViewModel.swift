@@ -51,6 +51,7 @@ class UserDetailViewModel {
         case pushToCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
         case pushToPostAuthor(User)
+        case pushToMessageRoom(MessageRoom)
         
         case didDeletePost
         case didToggleLikePost
@@ -76,6 +77,7 @@ class UserDetailViewModel {
     private lazy var deletePostAction = Action(DeletePost.self, httpClient: apiClient)
     private lazy var likePostAction = Action(LikePost.self, httpClient: apiClient)
     private lazy var unLikePostAction = Action(UnlikePost.self, httpClient: apiClient)
+    private lazy var createMessageRoomAction = Action(CreateMessageRoom.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, user: User
@@ -89,7 +91,8 @@ class UserDetailViewModel {
             followingGroupsAction.errors,
             deletePostAction.errors,
             likePostAction.errors,
-            unLikePostAction.errors
+            unLikePostAction.errors,
+            createMessageRoomAction.errors
         )
         
         Publishers.MergeMany(
@@ -99,6 +102,7 @@ class UserDetailViewModel {
             deletePostAction.elements.map { _ in .didDeletePost }.eraseToAnyPublisher(),
             likePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
             unLikePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
+            createMessageRoomAction.elements.map(Output.pushToMessageRoom).eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -204,6 +208,12 @@ class UserDetailViewModel {
         let request = LikePost.Request(postId: post.id)
         let uri = LikePost.URI()
         likePostAction.input((request: request, uri: uri))
+    }
+    
+    func createMessageRoom(partner: User) {
+        let request = CreateMessageRoom.Request(members: [partner.id], name: partner.name)
+        let uri = CreateMessageRoom.URI()
+        createMessageRoomAction.input((request: request, uri: uri))
     }
     
     private func unlikePost(post: PostSummary) {

@@ -50,6 +50,14 @@ final class UserDetailViewController: UIViewController, Instantiable {
         return button
     }()
     
+    private let sendMessageButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("メッセージ", selected: false)
+        button.layer.cornerRadius = 24
+        return button
+    }()
+    
     private let editProfileButton: PrimaryButton = {
         let button = PrimaryButton(text: "プロフィール編集")
         button.setImage(UIImage(named: "edit"), for: .normal)
@@ -62,7 +70,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
-        stackView.distribution = .fill
+        stackView.distribution = .fillEqually
         stackView.spacing = 16.0
         stackView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         stackView.isLayoutMarginsRelativeArrangement = true
@@ -285,7 +293,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         
         scrollStackView.addArrangedSubview(headerView)
         NSLayoutConstraint.activate([
-            headerView.heightAnchor.constraint(equalToConstant: 120),
+            headerView.heightAnchor.constraint(equalToConstant: 160),
             headerView.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
         
@@ -316,9 +324,11 @@ final class UserDetailViewController: UIViewController, Instantiable {
         
         userActionStackView.addArrangedSubview(editProfileButton)
         userActionStackView.addArrangedSubview(followButton)
+        userActionStackView.addArrangedSubview(sendMessageButton)
         NSLayoutConstraint.activate([
             editProfileButton.heightAnchor.constraint(equalToConstant: 48),
             followButton.heightAnchor.constraint(equalToConstant: 48),
+            sendMessageButton.heightAnchor.constraint(equalToConstant: 48),
         ])
         
         scrollStackView.addArrangedSubview(userActionStackView)
@@ -390,6 +400,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
             .sink(receiveValue: userFollowingViewModel.didButtonTapped)
             .store(in: &cancellables)
         
+        sendMessageButton.controlEventPublisher(for: .touchUpInside)
+            .sink(receiveValue: didSendMessageButtonTapped)
+            .store(in: &cancellables)
+        
         editProfileButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: didEditProfileButtonTapped)
             .store(in: &cancellables)
@@ -403,6 +417,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     self.title = "マイページ"
                     editProfileButton.isHidden = false
                     followButton.isHidden = true
+                    sendMessageButton.isHidden = true
                     let item = UIBarButtonItem(title: "ログアウト", style: .plain, target: self, action: #selector(logoutButtonTapped(_:)))
                     navigationItem.setRightBarButton(
                         item,
@@ -413,6 +428,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     biographyTextView.text = userDetail.biography
                     editProfileButton.isHidden = true
                     followButton.isHidden = false
+                    sendMessageButton.isHidden = false
                 }
                 userFollowingViewModel.didGetUserDetail(isFollowing: userDetail.isFollowing, followersCount: userDetail.followersCount)
                 if let twitterUrl = userDetail.twitterUrl, let twitterId = twitterUrl.absoluteString.split(separator: "/").last {
@@ -438,6 +454,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToPostAuthor(let user):
                 let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToMessageRoom(let room):
+                let vc = MessageRoomViewController(dependencyProvider: dependencyProvider, input: room)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .didRefreshPostSummary(let post):
                 let isHidden = post == nil
@@ -555,6 +574,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
             self.listener()
         }
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func didSendMessageButtonTapped() {
+        viewModel.createMessageRoom(partner: viewModel.state.user)
     }
     
     private func downloadButtonTapped(feed: UserFeedSummary) {

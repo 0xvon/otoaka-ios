@@ -29,6 +29,22 @@ class UserInformationView: UIView {
         return label
     }()
     
+    private lazy var profileSummaryLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Brand.color(for: .text(.primary))
+        label.font = Brand.font(for: .medium)
+        return label
+    }()
+    
+    private lazy var liveStyleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Brand.color(for: .text(.primary))
+        label.font = Brand.font(for: .medium)
+        return label
+    }()
+    
     private lazy var followerCountSumamryView: CountSummaryView = {
         let summaryView = CountSummaryView()
         summaryView.translatesAutoresizingMaskIntoConstraints = false
@@ -68,6 +84,8 @@ class UserInformationView: UIView {
     
     func update(input: Input) {
         displayNameLabel.text = input.user.name
+        profileSummaryLabel.text = [input.user.age.map {String($0)}, input.user.sex, input.user.residence].compactMap {$0}.joined(separator: "・")
+        liveStyleLabel.text = input.user.liveStyle ?? ""
         followerCountSumamryView.update(input: (title: "フォロワー", count: input.followersCount))
         followingUserCountSummaryView.update(input: (title: "フォロー", count: input.followingUsersCount))
         likeFeedCountSummaryView.update(input: (title: "いいね", count: input.likePostCount))
@@ -92,11 +110,25 @@ class UserInformationView: UIView {
             displayNameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
         ])
         
+        addSubview(profileSummaryLabel)
+        NSLayoutConstraint.activate([
+            profileSummaryLabel.topAnchor.constraint(equalTo: displayNameLabel.bottomAnchor, constant: 8),
+            profileSummaryLabel.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
+            profileSummaryLabel.rightAnchor.constraint(equalTo: displayNameLabel.rightAnchor),
+        ])
+        
+        addSubview(liveStyleLabel)
+        NSLayoutConstraint.activate([
+            liveStyleLabel.topAnchor.constraint(equalTo: profileSummaryLabel.bottomAnchor, constant: 8),
+            liveStyleLabel.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
+            liveStyleLabel.rightAnchor.constraint(equalTo: displayNameLabel.rightAnchor),
+        ])
+        
         addSubview(followerCountSumamryView)
         NSLayoutConstraint.activate([
             followerCountSumamryView.heightAnchor.constraint(equalToConstant: 60),
             followerCountSumamryView.widthAnchor.constraint(equalToConstant: 80),
-            followerCountSumamryView.topAnchor.constraint(equalTo: displayNameLabel.bottomAnchor, constant: 12),
+            followerCountSumamryView.topAnchor.constraint(equalTo: liveStyleLabel.bottomAnchor, constant: 12),
             followerCountSumamryView.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
         ])
         

@@ -78,7 +78,7 @@ class FanCellContent: UIButton {
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
-    private lazy var addressLabel: UILabel = {
+    private lazy var liveStyleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Brand.font(for: .small)
@@ -147,8 +147,8 @@ class FanCellContent: UIButton {
             input.imagePipeline.loadImage(url, into: fanArtworkImageView)
         }
         fanNameLabel.text = input.user.name
-        profileLabel.text = "21歳・男・ライブは前でガンガン派"
-        addressLabel.text = "東京都在住"
+        profileLabel.text = [input.user.age.map {String($0)}, input.user.sex, input.user.residence].compactMap {$0}.joined(separator: "・")
+        liveStyleLabel.text = input.user.liveStyle ?? ""
         let seriousList = ["MY FIRST STORY", "RADWIMPS"]
         seriousTagListView.removeAllTags()
         seriousTagListView.addTags(seriousList)
@@ -183,9 +183,9 @@ class FanCellContent: UIButton {
 //            profileLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
         
-        stackView.addArrangedSubview(addressLabel)
+        stackView.addArrangedSubview(liveStyleLabel)
         NSLayoutConstraint.activate([
-            addressLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            liveStyleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
 //            addressLabel.heightAnchor.constraint(equalToConstant: 20),
         ])
         
