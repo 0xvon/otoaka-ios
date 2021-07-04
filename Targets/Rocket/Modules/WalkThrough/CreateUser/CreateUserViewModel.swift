@@ -15,6 +15,10 @@ import UIKit
 class CreateUserViewModel {
     struct State {
         var displayName: String?
+        var sex: String?
+        var age: Int?
+        var liveStyle: String?
+        var residence: String?
         var role: RoleProperties
         var profileImage: UIImage?
         let socialInputs: SocialInputs
@@ -75,15 +79,25 @@ class CreateUserViewModel {
         outputSubject.send(.switchUserRole(role))
     }
     
-    func didUpdateInputItems(displayName: String?, role: String?) {
+    func didUpdateInputItems(
+        displayName: String?,
+        sex: String?,
+        age: String?,
+        liveStyle: String?,
+        residence: String?
+    ) {
         state.displayName = displayName
-        switch state.role {
-        case .fan(_):
-            state.role = .fan(Fan())
-        case .artist(_):
-            guard let role = role else { return }
-            state.role = .artist(Artist(part: role))
-        }
+        state.sex = sex
+        state.age = age.map { Int($0) ?? 0 }
+        state.liveStyle = liveStyle
+        state.residence = residence
+//        switch state.role {
+//        case .fan(_):
+//            state.role = .fan(Fan())
+//        case .artist(_):
+//            guard let role = role else { return }
+//            state.role = .artist(Artist(part: role))
+//        }
         
         let isSubmittable = (displayName != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
@@ -111,10 +125,10 @@ class CreateUserViewModel {
         let req = Signup.Request(
             name: displayName,
             biography: nil,
-            sex: nil,
-            age: nil,
-            liveStyle: nil,
-            residence: nil,
+            sex: state.sex,
+            age: state.age,
+            liveStyle: state.liveStyle,
+            residence: state.residence,
             thumbnailURL: imageUrl,
             role: state.role,
             twitterUrl: nil,

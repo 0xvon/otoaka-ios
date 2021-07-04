@@ -21,11 +21,27 @@ final class RegistrationViewController: UIViewController, Instantiable {
 
     @IBOutlet weak var backgroundImageView: UIImageView! {
         didSet {
-            backgroundImageView.layer.opacity = 0.6
-            backgroundImageView.image = UIImage(named: "live")
+            backgroundImageView.layer.opacity = 0.8
+            backgroundImageView.image = UIImage(named: "dpf")
             backgroundImageView.contentMode = .scaleAspectFill
         }
     }
+    private lazy var appLogoImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "AppLogo")
+        return imageView
+    }()
+    private lazy var descriptionTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.textColor = Brand.color(for: .text(.primary))
+        textView.font = Brand.font(for: .mediumStrong)
+        textView.text = "同じアーティストが好きな人や\n同じライブに行く予定の人をすぐに探せます"
+        textView.backgroundColor = .clear
+        textView.textAlignment = .center
+        return textView
+    }()
     @IBOutlet weak var signInButtonView: Button! {
         didSet {
             signInButtonView.setTitle("ユーザー登録/ログイン", for: .normal)
@@ -65,7 +81,6 @@ final class RegistrationViewController: UIViewController, Instantiable {
     }
 
     func setup() {
-        title = "ユーザー登録"
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         signInButtonView.listen { [viewModel] in
             viewModel.getSignupStatus()
@@ -87,6 +102,22 @@ final class RegistrationViewController: UIViewController, Instantiable {
                 self.showAlert()
             }
         }.store(in: &cancellables)
+        
+        view.addSubview(appLogoImageView)
+        NSLayoutConstraint.activate([
+            appLogoImageView.widthAnchor.constraint(equalToConstant: 300),
+            appLogoImageView.heightAnchor.constraint(equalToConstant: 40),
+            appLogoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 64),
+            appLogoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+        ])
+        
+        view.addSubview(descriptionTextView)
+        NSLayoutConstraint.activate([
+            descriptionTextView.topAnchor.constraint(equalTo: appLogoImageView.bottomAnchor, constant: 16),
+            descriptionTextView.heightAnchor.constraint(equalToConstant: 60),
+            descriptionTextView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8),
+            descriptionTextView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
+        ])
     }
 
     private var awsCognitoAuthSaferiViewControllerWorkaround: AWSCognitoAuthSaferiViewControllerWorkaround?
