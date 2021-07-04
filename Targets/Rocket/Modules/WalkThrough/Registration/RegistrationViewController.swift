@@ -44,7 +44,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
     }()
     @IBOutlet weak var signInButtonView: Button! {
         didSet {
-            signInButtonView.setTitle("ユーザー登録/ログイン", for: .normal)
+            signInButtonView.setTitle("ログイン", for: .normal)
         }
     }
 
@@ -72,6 +72,10 @@ final class RegistrationViewController: UIViewController, Instantiable {
         super.viewWillAppear(animated)
         self.dependencyProvider.auth.delegate = self
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+        
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {

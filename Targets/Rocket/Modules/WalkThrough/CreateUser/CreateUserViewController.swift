@@ -281,6 +281,9 @@ final class CreateUserViewController: UIViewController, Instantiable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+        self.navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        self.navigationController?.navigationBar.shadowImage = nil
+        self.navigationController?.navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
     }
     
     func bind() {
@@ -297,7 +300,9 @@ final class CreateUserViewController: UIViewController, Instantiable {
                     let vc = InvitationViewController(dependencyProvider: loggedInDependencyProvider, input: ())
                     self.navigationController?.pushViewController(vc, animated: true)
                 case .fan(_):
-                    self.dismiss(animated: true, completion: nil)
+                    let loggedInDependencyProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
+                    let vc = FollowGroupViewController(dependencyProvider: loggedInDependencyProvider)
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
                 
             case .switchUserRole(_):
