@@ -149,12 +149,9 @@ class FanCellContent: UIButton {
         fanNameLabel.text = input.user.name
         profileLabel.text = [input.user.age.map {String($0)}, input.user.sex, input.user.residence].compactMap {$0}.joined(separator: "・")
         liveStyleLabel.text = input.user.liveStyle ?? ""
-        let seriousList = ["MY FIRST STORY", "RADWIMPS"]
-        seriousTagListView.removeAllTags()
-        seriousTagListView.addTags(seriousList)
-        let dabbleList = ["04 Limited Sazabys", "SiM"]
-        dabbleTagListView.removeAllTags()
-        dabbleTagListView.addTags(dabbleList)
+//        let seriousList = ["MY FIRST STORY", "RADWIMPS"]
+//        seriousTagListView.removeAllTags()
+//        seriousTagListView.addTags(seriousList)
         biographyTextView.text = input.user.biography
     }
     
@@ -195,15 +192,10 @@ class FanCellContent: UIButton {
 //            biographyTextView.heightAnchor.constraint(equalToConstant: 50),
         ])
         
-        stackView.addArrangedSubview(seriousTagListView)
-        NSLayoutConstraint.activate([
-            seriousTagListView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-        ])
-        
-        stackView.addArrangedSubview(dabbleTagListView)
-        NSLayoutConstraint.activate([
-            dabbleTagListView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-        ])
+//        stackView.addArrangedSubview(seriousTagListView)
+//        NSLayoutConstraint.activate([
+//            seriousTagListView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//        ])
         
         stackView.addArrangedSubview(messageButton)
         NSLayoutConstraint.activate([

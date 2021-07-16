@@ -125,7 +125,7 @@ final class SearchFriendsViewModel {
         
         switch state.scope {
         case .fan: recommendedUserPagination.refresh()
-        case .live: break
+        case .live: outputSubject.send(.reloadData)
         case .group: allGroupPagination.refresh()
         }
     }

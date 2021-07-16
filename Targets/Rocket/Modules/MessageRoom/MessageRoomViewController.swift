@@ -55,7 +55,6 @@ final class MessageRoomViewController: MessagesViewController {
         messageInputBar.inputTextView.textColor = Brand.color(for: .text(.primary))
         messageInputBar.backgroundView.backgroundColor = Brand.color(for: .background(.primary))
         messageInputBar.sendButton.setTitle("送信", for: .normal)
-        messageInputBar.inputTextView.placeholderTextView.text = "メッセージ送信"
         messageInputBar.sendButton.setTitleColor(Brand.color(for: .background(.link)), for: .normal)
         
         messagesCollectionView.backgroundColor = Brand.color(for: .background(.primary))
@@ -85,12 +84,10 @@ final class MessageRoomViewController: MessagesViewController {
                     messagesCollectionView.scrollToLastItem()
                 }
             case .sentMessage:
-                messageInputBar.inputTextView.placeholderTextView.text = "メッセージ送信"
                 messageInputBar.sendButton.stopAnimating()
                 viewModel.refresh()
             case .userTapped: break
             case .reportError(let err):
-                messageInputBar.inputTextView.placeholderTextView.text = "メッセージ送信"
                 messageInputBar.sendButton.stopAnimating()
                 print(err)
                 showAlert()
@@ -200,7 +197,6 @@ extension MessageRoomViewController: InputBarAccessoryViewDelegate {
         inputBar.sendButton.startAnimating()
         viewModel.sendMessage(text: text, image: nil)
         inputBar.inputTextView.text = ""
-        inputBar.inputTextView.placeholderTextView.text = "送信中..."
         inputBar.inputTextView.resignFirstResponder()
     }
 }
