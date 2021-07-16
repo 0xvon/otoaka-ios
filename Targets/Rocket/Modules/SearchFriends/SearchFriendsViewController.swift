@@ -43,7 +43,7 @@ final class SearchFriendsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "ライブ友達を探す"
+        title = "探す"
         navigationItem.largeTitleDisplayMode = .never
         navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
         

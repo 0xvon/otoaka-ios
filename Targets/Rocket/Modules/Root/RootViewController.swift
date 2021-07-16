@@ -105,7 +105,7 @@ final class RootViewController: UITabBarController, Instantiable {
         let homeVC = BrandNavigationController(rootViewController: HomeViewController(dependencyProvider: loggedInProvider))
         homeVC.tabBarItem = UITabBarItem(title: "ホーム", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         let searchFriendsVC = BrandNavigationController(rootViewController: SearchFriendsViewController(dependencyProvider: loggedInProvider, input: ()))
-        searchFriendsVC.tabBarItem = UITabBarItem(title: "ライブ友達を探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
+        searchFriendsVC.tabBarItem = UITabBarItem(title: "探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
         let messageVC = BrandNavigationController(rootViewController: MessageListViewController(dependencyProvider: loggedInProvider, input: ()))
         messageVC.tabBarItem = UITabBarItem(
             title: "メッセージ",
