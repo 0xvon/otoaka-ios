@@ -97,13 +97,13 @@ final class RegistrationViewController: UIViewController, Instantiable {
                     self.signedUpHandler()
                     self.dismiss(animated: true)
                 } else {
-                    let vc = CreateUserViewController(
-                        dependencyProvider: self.dependencyProvider, input: ())
-                    self.navigationController?.pushViewController(vc, animated: true)
+                    viewModel.signup()
                 }
             case .error(let error):
                 print(error)
                 self.showAlert()
+            case .didCreateUser(_):
+                self.dismiss(animated: true, completion: nil)
             }
         }.store(in: &cancellables)
         

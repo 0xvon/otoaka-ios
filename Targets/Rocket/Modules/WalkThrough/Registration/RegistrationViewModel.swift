@@ -13,6 +13,7 @@ import Combine
 class RegistrationViewModel {
     enum Output {
         case signupStatus(Bool)
+        case didCreateUser(User)
         case error(Error)
     }
 
@@ -23,6 +24,7 @@ class RegistrationViewModel {
     var cancellables: Set<AnyCancellable> = []
     
     private lazy var signupStatus = Action(SignupStatus.self, httpClient: self.apiClient)
+    private lazy var createUserAction = Action(Signup.self, httpClient: self.apiClient)
     
     init(auth: AWSCognitoAuth, apiClient: APIClient) {
         self.auth = auth
@@ -35,10 +37,12 @@ class RegistrationViewModel {
                     && error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue
                 return !isCognitoCancellError
             }
+            .merge(with: createUserAction.errors)
         Publishers.MergeMany(
             signupStatus.elements.map {
                 .signupStatus($0.isSignedup)
             }.eraseToAnyPublisher(),
+            createUserAction.elements.map(Output.didCreateUser).eraseToAnyPublisher(),
             errors.map(Output.error).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -47,5 +51,21 @@ class RegistrationViewModel {
 
     func getSignupStatus() {
         signupStatus.input((request: Empty(), uri: SignupStatus.URI()))
+    }
+    
+    func signup() {
+        let request = Signup.Request(
+            name: "ライブキッズ君",
+            biography: nil,
+            sex: nil,
+            age: nil,
+            liveStyle: nil,
+            residence: nil,
+            thumbnailURL: "https://rocket-auth-storage.s3.ap-northeast-1.amazonaws.com/assets/public/default.jpeg",
+            role: .fan(Fan()),
+            twitterUrl: nil,
+            instagramUrl: nil
+        )
+        createUserAction.input((request: request, uri: Signup.URI()))
     }
 }
