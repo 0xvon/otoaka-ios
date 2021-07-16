@@ -102,6 +102,8 @@ final class RootViewController: UITabBarController, Instantiable {
     
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
+        let homeVC = BrandNavigationController(rootViewController: HomeViewController(dependencyProvider: loggedInProvider))
+        homeVC.tabBarItem = UITabBarItem(title: "ホーム", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         let searchFriendsVC = BrandNavigationController(rootViewController: SearchFriendsViewController(dependencyProvider: loggedInProvider, input: ()))
         searchFriendsVC.tabBarItem = UITabBarItem(title: "ライブ友達を探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
         let messageVC = BrandNavigationController(rootViewController: MessageListViewController(dependencyProvider: loggedInProvider, input: ()))
@@ -128,7 +130,7 @@ final class RootViewController: UITabBarController, Instantiable {
         accountVC.listen { [unowned self] in
             checkSignupStatus()
         }
-        return [searchFriendsVC, messageVC, userNotificationVC, accountNav]
+        return [homeVC, searchFriendsVC, messageVC, userNotificationVC, accountNav]
     }
     
     private func promptVersioningViewController(versionData: RequiredVersion) {

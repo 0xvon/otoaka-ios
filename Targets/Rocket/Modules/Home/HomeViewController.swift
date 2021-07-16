@@ -231,9 +231,8 @@ extension HomeViewController {
         let emptyCollectionView: EmptyCollectionView = {
             let emptyCollectionView = EmptyCollectionView(emptyType: .post, actionButtonTitle: "投稿してみる")
             emptyCollectionView.listen { [unowned self] in
-                let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
-                let nav = BrandNavigationController(rootViewController: vc)
-                present(nav, animated: true, completion: nil)
+                let vc = PostViewController(dependencyProvider: dependencyProvider, input: ())
+                navigationController?.pushViewController(vc, animated: true)
             }
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
