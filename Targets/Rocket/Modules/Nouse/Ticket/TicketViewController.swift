@@ -12,7 +12,7 @@ import UIKit
 final class TicketViewController: UIViewController, Instantiable {
 
     typealias Input = Void
-    var tickets: [Ticket] = []
+    var tickets: [LiveFeed] = []
 
     var dependencyProvider: LoggedInDependencyProvider!
 
@@ -100,7 +100,7 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = self.tickets[indexPath.section].live
+        let live = self.tickets[indexPath.section]
         let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [weak self] output in
             switch output {
@@ -127,7 +127,7 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let ticket = self.tickets[indexPath.section]
-        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: ticket.live)
+        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: ticket)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }

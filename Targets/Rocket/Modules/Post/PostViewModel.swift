@@ -19,6 +19,7 @@ class PostViewModel {
         var text: String? = ""
         var images: [UIImage] = []
         var groups: [Group] = []
+        var live: Live? = nil
         var tracks: [Endpoint.Track] = []
         let maxLength: Int = 140
     }
@@ -125,7 +126,15 @@ class PostViewModel {
     
     func post(imageUrls: [String]) {
         guard let text = state.text else { return }
-        let request = CreatePost.Request(author: dependencyProvider.user, text: text, tracks: state.tracks, groups: state.groups, imageUrls: imageUrls)
+        guard let live = state.live else { return }
+        let request = CreatePost.Request(
+            author: dependencyProvider.user,
+            live: live,
+            text: text,
+            tracks: state.tracks,
+            groups: state.groups,
+            imageUrls: imageUrls
+        )
         createPostAction.input((request: request, uri: CreatePost.URI()))
     }
 }

@@ -12,7 +12,7 @@ import UIComponent
 import UIKit
 
 final class LiveDetailViewController: UIViewController, Instantiable {
-    typealias Input = Live
+    typealias Input = LiveFeed
     
     private lazy var headerView: LiveDetailHeaderView = {
         let headerView = LiveDetailHeaderView()
@@ -303,7 +303,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     func setupViews() {
-        headerView.update(input: (live: viewModel.state.live, imagePipeline: dependencyProvider.imagePipeline))
+        headerView.update(input: (live: viewModel.state.live.live, imagePipeline: dependencyProvider.imagePipeline))
     }
     
     func setupPerformersContents(performers: [Group]) {
@@ -341,20 +341,20 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func numOfParticipantsButtonTapped() {
-        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveParticipants(viewModel.state.live.id))
+        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveParticipants(viewModel.state.live.live.id))
         vc.title = "予約者"
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func editLive() {
         let vc = EditLiveViewController(
-            dependencyProvider: dependencyProvider, input: viewModel.state.live)
+            dependencyProvider: dependencyProvider, input: viewModel.state.live.live)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func createShare(_ sender: UIBarButtonItem) {
         let live = viewModel.state.live
-        shareWithTwitter(type: .live(live))
+        shareWithTwitter(type: .live(live.live))
     }
     
     private func downloadButtonTapped(feed: UserFeedSummary) {
@@ -371,7 +371,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }
     
     private func groupBannerTapped(cellIndex: Int) {
-        let group = viewModel.state.live.performers[cellIndex]
+        let group = viewModel.state.live.live.performers[cellIndex]
         viewModel.didSelectRow(at: .performers(group))
     }
 }

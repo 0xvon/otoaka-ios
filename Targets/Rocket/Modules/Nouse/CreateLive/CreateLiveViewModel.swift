@@ -21,12 +21,25 @@ class CreateLiveViewModel {
         var price: Int?
         var livehouse: String?
         var performers: [Group] = []
+        var date: Date = Date()
         var openAt: Date = Date()
         var startAt: Date = Date()
         var endAt: Date = Date()
         var thumbnail: UIImage?
         let socialInputs: SocialInputs
     }
+    
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY/MM/dd"
+        return dateFormatter
+    }()
+    
+    let timeFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        return dateFormatter
+    }()
     
     enum PageState {
         case loading
@@ -175,9 +188,19 @@ class CreateLiveViewModel {
         guard let livehouse = state.livehouse else { return }
         
         let req = CreateLive.Request(
-            title: title, style: liveStyle, price: price, artworkURL: URL(string: imageUrl),
-            hostGroupId: groupId, liveHouse: livehouse,
-            openAt: state.openAt, startAt: state.startAt, endAt: state.endAt)
+            title: title,
+            style: liveStyle,
+            price: price,
+            artworkURL: URL(string: imageUrl),
+            hostGroupId: groupId,
+            liveHouse: livehouse,
+            date: dateFormatter.string(from: state.date),
+            openAt: timeFormatter.string(from: state.openAt),
+            startAt: timeFormatter.string(from: state.startAt),
+            piaEventCode: nil,
+            piaReleaseUrl: nil,
+            piaEventUrl: nil
+        )
         createLiveAction.input((request: req, uri: CreateLive.URI()))
     }
 

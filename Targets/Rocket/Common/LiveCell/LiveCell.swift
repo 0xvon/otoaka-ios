@@ -54,7 +54,7 @@ class LiveCell: UITableViewCell, ReusableCell {
 
 class LiveCellContent: UIButton {
     typealias Input = (
-        live: Live,
+        live: LiveFeed,
         imagePipeline: ImagePipeline
     )
     enum Output {
@@ -108,19 +108,19 @@ class LiveCellContent: UIButton {
     }
 
     func inject(input: Input) {
-        self.liveTitleLabel.text = input.live.title
-        switch input.live.style {
+        self.liveTitleLabel.text = input.live.live.title
+        switch input.live.live.style {
         case .oneman(_):
-            self.bandsLabel.text = input.live.hostGroup.name
+            self.bandsLabel.text = input.live.live.hostGroup.name
         case .battle(let groups):
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         case .festival(let groups):
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
         
-        dateView.title = input.live.startAt.map { dateFormatter.string(from: $0) } ?? "時間未定"
-        placeView.title = input.live.liveHouse ?? "会場未定"
-        if let artworkURL = input.live.artworkURL {
+        dateView.title = input.live.live.startAt ?? "時間未定"
+        placeView.title = input.live.live.liveHouse ?? "会場未定"
+        if let artworkURL = input.live.live.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: thumbnailView)
         }
     }

@@ -22,7 +22,7 @@ class BandDetailViewModel {
     }
     struct State {
         var group: Group
-        var lives: [Live] = []
+        var lives: [LiveFeed] = []
         var posts: [PostSummary] = []
         var groupDetail: GetGroup.Response?
         var channelItem: InternalDomain.YouTubeVideo?

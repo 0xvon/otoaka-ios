@@ -47,7 +47,7 @@ class LiveListViewModel {
     }
 
     struct State {
-        var lives: [Live] = []
+        var lives: [LiveFeed] = []
     }
 
     private var storage: DataSourceStorage
@@ -83,7 +83,7 @@ class LiveListViewModel {
         }
     }
 
-    private func updateState(with result: PaginationEvent<Page<Live>>) {
+    private func updateState(with result: PaginationEvent<Page<LiveFeed>>) {
         switch result {
         case .initial(let res):
             state.lives = res.items

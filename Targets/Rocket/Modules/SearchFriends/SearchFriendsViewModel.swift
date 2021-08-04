@@ -33,7 +33,7 @@ final class SearchFriendsViewModel {
     
     struct State {
         var fans: [User] = []
-        var lives: [Live] = []
+        var lives: [LiveFeed] = []
         var groups: [Group] = []
         var scope: Scope = .fan
     }
@@ -94,7 +94,7 @@ final class SearchFriendsViewModel {
         }
     }
     
-    func updateState(with result: PaginationEvent<Page<Live>>) {
+    func updateState(with result: PaginationEvent<Page<LiveFeed>>) {
         switch result {
         case .initial(let res):
             state.lives = res.items

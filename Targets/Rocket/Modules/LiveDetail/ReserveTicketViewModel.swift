@@ -11,12 +11,11 @@ import Foundation
 
 class ReserveTicketViewModel {
     struct State {
-        let live: Live
+        let live: LiveFeed
         var hasTicket: Bool {
-            guard let ticket = ticket else { return false }
-            return ticket.status == .reserved
+            return ticket != nil
         }
-        var ticket: Ticket?
+        var ticket: LiveFeed?
         var participantsCount: Int?
     }
 
@@ -37,7 +36,7 @@ class ReserveTicketViewModel {
     private lazy var reserveTicketAction = Action(ReserveTicket.self, httpClient: self.apiClient)
     private lazy var refundTicketAction = Action(RefundTicket.self, httpClient: self.apiClient)
 
-    init(live: Live, apiClient: APIClient) {
+    init(live: LiveFeed, apiClient: APIClient) {
         self.apiClient = apiClient
         self.state = State(live: live)
         
@@ -47,11 +46,11 @@ class ReserveTicketViewModel {
         )
         
         Publishers.MergeMany(
-            reserveTicketAction.elements.map { ticket in
+            reserveTicketAction.elements.map { _ in
                 .updateHasTicket("予約済")
             }.eraseToAnyPublisher(),
-            refundTicketAction.elements.map { ticket in
-                .updateHasTicket("￥\(ticket.live.price)")
+            refundTicketAction.elements.map { _ in
+                .updateHasTicket("￥\(self.state.live.live.price)")
             }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
@@ -63,7 +62,6 @@ class ReserveTicketViewModel {
                 guard let count = state.participantsCount else {
                     preconditionFailure("Button shouldn't be enabled before got followersCount")
                 }
-                state.ticket = ticket
                 let newCount = count + 1
                 state.participantsCount = newCount
                 outputSubject.send(.updateParticipantsCount(newCount))
@@ -76,7 +74,6 @@ class ReserveTicketViewModel {
                 guard let count = state.participantsCount else {
                     preconditionFailure("Button shouldn't be enabled before got followersCount")
                 }
-                state.ticket = ticket
                 let newCount = count - 1
                 state.participantsCount = newCount
                 outputSubject.send(.updateParticipantsCount(newCount))
@@ -89,11 +86,11 @@ class ReserveTicketViewModel {
         outputSubject.send(.updateIsButtonEnabled(false))
     }
 
-    func didGetLiveDetail(ticket: Ticket?, participantsCount: Int) {
+    func didGetLiveDetail(ticket: LiveFeed?, participantsCount: Int) {
         state.ticket = ticket
         state.participantsCount = participantsCount
         outputSubject.send(.updateIsButtonEnabled(true))
-        outputSubject.send(.updateHasTicket(state.hasTicket ? "予約済" : "￥\(state.live.price)"))
+        outputSubject.send(.updateHasTicket(state.hasTicket ? "予約済" : "￥\(state.live.live.price)"))
         outputSubject.send(.updateParticipantsCount(participantsCount))
     }
 
@@ -101,13 +98,10 @@ class ReserveTicketViewModel {
         let hasTicket = state.hasTicket
         outputSubject.send(.updateIsButtonEnabled(false))
         if hasTicket {
-            guard let ticket = state.ticket else {
-                preconditionFailure("Button shouldn't be enabled before got ticket")
-            }
-            let req = RefundTicket.Request(ticketId: ticket.id)
+            let req = RefundTicket.Request(liveId: state.live.live.id)
             refundTicketAction.input((request: req, uri: RefundTicket.URI()))
         } else {
-            let req = ReserveTicket.Request(liveId: state.live.id)
+            let req = ReserveTicket.Request(liveId: state.live.live.id)
             reserveTicketAction.input((request: req, uri: ReserveTicket.URI()))
         }
     }

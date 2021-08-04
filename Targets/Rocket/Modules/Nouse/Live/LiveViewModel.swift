@@ -34,8 +34,8 @@ final class LiveViewModel {
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never>
-    private var _lives = CurrentValueSubject<[Live], Never>([])
-    var lives: [Live] { _lives.value }
+    private var _lives = CurrentValueSubject<[LiveFeed], Never>([])
+    var lives: [LiveFeed] { _lives.value }
     var scopes: [Scope] { Scope.allCases }
     
     let updateSearchQuery = PassthroughSubject<String?, Never>()
@@ -57,9 +57,9 @@ final class LiveViewModel {
         }
         .eraseToAnyPublisher()
         
-        let lives = getAllPagination.items().map { $0.map { $0.live } }
+        let lives = getAllPagination.items().map { $0 }
             // responseにはrefundedなliveも含まれているため
-            .merge(with: getReservedPagination.items().map { $0.filter { $0.status == .reserved }.map { $0.live } })
+            .merge(with: getReservedPagination.items().map { $0 })
             .multicast(subject: self._lives)
         
         let isRefreshing = getAllPagination.isRefreshing

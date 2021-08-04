@@ -15,13 +15,25 @@ class EditLiveViewModel {
     struct State {
         var title: String?
         var livehouse: String?
+        var date: Date
         var openAt: Date
         var startAt: Date
-        var endAt: Date
         var thumbnail: UIImage?
         let socialInputs: SocialInputs
         let live: Live
     }
+    
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY/MM/dd"
+        return dateFormatter
+    }()
+    
+    let timeFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        return dateFormatter
+    }()
     
     enum PageState {
         case loading
@@ -31,7 +43,6 @@ class EditLiveViewModel {
     enum DatePickerType {
         case openAt(Date)
         case startAt(Date)
-        case endAt(Date)
     }
     
     enum Output {
@@ -56,7 +67,16 @@ class EditLiveViewModel {
         dependencyProvider: LoggedInDependencyProvider, live: Live
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(title: live.title, livehouse: live.liveHouse, openAt: live.openAt ?? Date(), startAt: live.startAt ?? Date(), endAt: live.endAt ?? Date(), thumbnail: nil, socialInputs: try! dependencyProvider.masterService.blockingMasterData(), live: live)
+        self.state = State(
+            title: live.title,
+            livehouse: live.liveHouse,
+            date: dateFormatter.date(from: live.date ?? "") ?? Date(),
+            openAt: timeFormatter.date(from: live.openAt ?? "") ?? Date(),
+            startAt: timeFormatter.date(from: live.startAt ?? "") ?? Date(),
+            thumbnail: nil,
+            socialInputs: try! dependencyProvider.masterService.blockingMasterData(),
+            live: live
+        )
         
         editLiveAction.elements
             .map(Output.didEditLive).eraseToAnyPublisher()
@@ -95,12 +115,8 @@ class EditLiveViewModel {
         case .openAt(let openAt):
             state.openAt = openAt
             state.startAt = openAt > state.startAt ? openAt : state.startAt
-            state.endAt = openAt > state.endAt ? openAt : state.endAt
         case .startAt(let startAt):
             state.startAt = startAt
-            state.endAt = startAt > state.endAt ? startAt : state.endAt
-        case .endAt(let endAt):
-            state.endAt = endAt
         }
         outputSubject.send(.didUpdateDatePickers(pickerType))
     }
@@ -129,9 +145,30 @@ class EditLiveViewModel {
     private func editLive(imageUrl: URL?) {
         var uri = EditLive.URI()
         uri.id = state.live.id
+        var style: LiveStyleInput;
+        switch state.live.style {
+        case .oneman(let performer):
+            style = .oneman(performer: performer.id)
+        case .battle(let performers):
+            style = .battle(performers: performers.map { $0.id })
+        case .festival(let performers):
+            style = .festival(performers: performers.map { $0.id })
+        }
+        
         let req = EditLive.Request(
-            title: state.title ?? state.live.title, artworkURL: imageUrl, liveHouse: state.livehouse ?? state.live.liveHouse, openAt: state.openAt, startAt: state.startAt,
-            endAt: state.endAt)
+            title: state.title ?? state.live.title,
+            style: style,
+            price: state.live.price,
+            artworkURL: imageUrl,
+            hostGroupId: state.live.hostGroup.id,
+            liveHouse: state.livehouse ?? state.live.liveHouse,
+            date: dateFormatter.string(from: state.date),
+            openAt: timeFormatter.string(from: state.openAt),
+            startAt: timeFormatter.string(from: state.startAt),
+            piaEventCode: state.live.piaEventCode,
+            piaReleaseUrl: state.live.piaReleaseUrl,
+            piaEventUrl: state.live.piaEventUrl
+        )
         editLiveAction.input((request: req, uri: uri))
     }
 }

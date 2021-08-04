@@ -21,7 +21,7 @@ class LiveDetailViewModel {
         case feed, performers(Group)
     }
     struct State {
-        var live: Live
+        var live: LiveFeed
         var feeds: [UserFeedSummary] = []
         let role: RoleProperties
     }
@@ -60,7 +60,7 @@ class LiveDetailViewModel {
     var cancellables: Set<AnyCancellable> = []
     
     init(
-        dependencyProvider: LoggedInDependencyProvider, live: Live
+        dependencyProvider: LoggedInDependencyProvider, live: LiveFeed
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State(live: live, role: dependencyProvider.user.role)
@@ -106,7 +106,7 @@ class LiveDetailViewModel {
     func didTapSeeMore(at row: SummaryRow) {
         switch row {
         case .feed:
-            outputSubject.send(.pushToGroupFeedList(.groupFeed(state.live.hostGroup)))
+            outputSubject.send(.pushToGroupFeedList(.groupFeed(state.live.live.hostGroup)))
         default:
             break
         }
@@ -159,20 +159,20 @@ class LiveDetailViewModel {
     
     func getLiveDetail() {
         var uri = GetLive.URI()
-        uri.liveId = self.state.live.id
+        uri.liveId = self.state.live.live.id
         let req = Empty()
         getLive.input((request: req, uri: uri))
     }
     
     func getHostGroup() {
         var uri = GetGroup.URI()
-        uri.groupId = state.live.hostGroup.id
+        uri.groupId = state.live.live.hostGroup.id
         getGroup.input((request: Empty(), uri: uri))
     }
     
     func getGroupFeedSummary() {
         var uri = GetGroupsUserFeeds.URI()
-        uri.groupId = state.live.hostGroup.id
+        uri.groupId = state.live.live.hostGroup.id
         uri.per = 1
         uri.page = 1
         let request = Empty()

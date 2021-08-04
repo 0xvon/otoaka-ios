@@ -155,7 +155,7 @@ final class EditLiveViewController: UIViewController, Instantiable {
             case .didUpdateDatePickers(let pickerType):
                 openTimeInputView.date = viewModel.state.openAt
                 startTimeInputView.date = viewModel.state.startAt
-                endTimeInputView.date = viewModel.state.endAt
+//                endTimeInputView.date = viewModel.state.endAt
                 switch pickerType {
                 case .openAt(let openAt):
                     startTimeInputView.maximumDate = openAt
@@ -198,9 +198,9 @@ final class EditLiveViewController: UIViewController, Instantiable {
             viewModel.didUpdateDatePicker(pickerType: .startAt(startTimeInputView.date))
         }
         
-        endTimeInputView.listen { [unowned self] in
-            viewModel.didUpdateDatePicker(pickerType: .endAt(endTimeInputView.date))
-        }
+//        endTimeInputView.listen { [unowned self] in
+//            viewModel.didUpdateDatePicker(pickerType: .endAt(endTimeInputView.date))
+//        }
     }
 
     func setup() {

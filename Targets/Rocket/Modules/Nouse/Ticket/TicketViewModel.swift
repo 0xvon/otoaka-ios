@@ -10,8 +10,8 @@ import Endpoint
 
 class TicketViewModel {
     enum Output {
-        case getMyTickets([Ticket])
-        case refreshMyTickets([Ticket])
+        case getMyTickets([LiveFeed])
+        case refreshMyTickets([LiveFeed])
         case error(Error)
     }
 

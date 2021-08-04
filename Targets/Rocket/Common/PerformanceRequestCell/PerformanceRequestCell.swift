@@ -54,8 +54,7 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
         case .festival(let groups):
             self.performersLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
-        let date: String =
-            (input.live.startAt != nil) ? dateFormatter.string(from: input.live.startAt!) : "時間未定"
+        let date: String = input.live.startAt ?? "時間未定"
         dateBadgeLabel.title = date
         livehouseBadgeView.title = input.live.liveHouse ?? "会場未定"
     }

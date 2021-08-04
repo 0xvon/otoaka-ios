@@ -117,12 +117,12 @@ version: 8.1.0
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.3.1
+version: 7.5.0
 
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.3.1
+version: 7.5.0
 
 name: ImageViewer, nameSpecified: 
 body: The MIT License (MIT…
@@ -162,13 +162,13 @@ name: LicensePlist, nameSpecified:
 body: MIT License
 
 Copyrig…
-version: 3.0.7
+version: 3.13.0
 
 name: LicensePlist, nameSpecified: 
 body: MIT License
 
 Copyrig…
-version: 3.0.7
+version: 3.13.0
 
 name: MessageKit, nameSpecified: 
 body: MIT License
@@ -250,4 +250,4 @@ name: StubKit, nameSpecified: StubKit, owner: kateinoigakukun, version: 0.1.7
 
 add-version-numbers: false
 
-LicensePlist Version: 3.0.7
+LicensePlist Version: 3.13.0
