@@ -11,11 +11,8 @@ import Foundation
 
 class ReserveTicketViewModel {
     struct State {
-        let live: LiveFeed
-        var hasTicket: Bool {
-            return ticket != nil
-        }
-        var ticket: LiveFeed?
+        let live: Live
+        var hasTicket: Bool
         var participantsCount: Int?
     }
 
@@ -38,7 +35,7 @@ class ReserveTicketViewModel {
 
     init(live: LiveFeed, apiClient: APIClient) {
         self.apiClient = apiClient
-        self.state = State(live: live)
+        self.state = State(live: live.live, hasTicket: live.hasTicket, participantsCount: live.participantCount)
         
         let errors = Publishers.MergeMany(
             reserveTicketAction.errors,
@@ -50,7 +47,7 @@ class ReserveTicketViewModel {
                 .updateHasTicket("予約済")
             }.eraseToAnyPublisher(),
             refundTicketAction.elements.map { _ in
-                .updateHasTicket("￥\(self.state.live.live.price)")
+                .updateHasTicket("￥\(self.state.live.price)")
             }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
@@ -86,11 +83,11 @@ class ReserveTicketViewModel {
         outputSubject.send(.updateIsButtonEnabled(false))
     }
 
-    func didGetLiveDetail(ticket: LiveFeed?, participantsCount: Int) {
-        state.ticket = ticket
+    func didGetLiveDetail(hasTicket: Bool, participantsCount: Int) {
+        state.hasTicket = hasTicket
         state.participantsCount = participantsCount
         outputSubject.send(.updateIsButtonEnabled(true))
-        outputSubject.send(.updateHasTicket(state.hasTicket ? "予約済" : "￥\(state.live.live.price)"))
+        outputSubject.send(.updateHasTicket(state.hasTicket ? "予約済" : "￥\(state.live.price)"))
         outputSubject.send(.updateParticipantsCount(participantsCount))
     }
 
@@ -98,10 +95,10 @@ class ReserveTicketViewModel {
         let hasTicket = state.hasTicket
         outputSubject.send(.updateIsButtonEnabled(false))
         if hasTicket {
-            let req = RefundTicket.Request(liveId: state.live.live.id)
+            let req = RefundTicket.Request(liveId: state.live.id)
             refundTicketAction.input((request: req, uri: RefundTicket.URI()))
         } else {
-            let req = ReserveTicket.Request(liveId: state.live.live.id)
+            let req = ReserveTicket.Request(liveId: state.live.id)
             reserveTicketAction.input((request: req, uri: ReserveTicket.URI()))
         }
     }

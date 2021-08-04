@@ -210,7 +210,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             switch output {
             case .didGetLiveDetail(let liveDetail):
                 self.title = liveDetail.live.title
-                self.reserveTicketViewModel.didGetLiveDetail(ticket: liveDetail.ticket, participantsCount: liveDetail.participants)
+                self.reserveTicketViewModel.didGetLiveDetail(hasTicket: liveDetail.hasTicket, participantsCount: liveDetail.participants)
                 headerView.update(input: (live: liveDetail.live, imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
             case .updatePerformers(let performers):
