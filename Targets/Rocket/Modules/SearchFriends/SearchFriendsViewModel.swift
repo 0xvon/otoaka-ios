@@ -48,6 +48,12 @@ final class SearchFriendsViewModel {
     
     private lazy var allGroupPagination: PaginationRequest<GetAllGroups> = PaginationRequest<GetAllGroups>(apiClient: apiClient, uri: GetAllGroups.URI())
     
+    private lazy var upcomingLivePagination: PaginationRequest<GetUpcomingLives> = PaginationRequest<GetUpcomingLives>(apiClient: apiClient, uri: {
+        var uri = GetUpcomingLives.URI()
+        uri.userId = dependencyProvider.user.id
+        return uri
+    }())
+    
     private lazy var recommendedUserPagination: PaginationRequest<RecommendedUsers> = PaginationRequest<RecommendedUsers>(apiClient: apiClient, uri: {
         var uri = RecommendedUsers.URI()
         uri.id = dependencyProvider.user.id
@@ -71,6 +77,11 @@ final class SearchFriendsViewModel {
     
     func subscribe() {
         recommendedUserPagination.subscribe { [weak self] in
+            self?.updateState(with: $0)
+            self?.outputSubject.send(.isRefreshing(false))
+        }
+        
+        upcomingLivePagination.subscribe { [weak self] in
             self?.updateState(with: $0)
             self?.outputSubject.send(.isRefreshing(false))
         }
@@ -125,7 +136,7 @@ final class SearchFriendsViewModel {
         
         switch state.scope {
         case .fan: recommendedUserPagination.refresh()
-        case .live: outputSubject.send(.reloadData)
+        case .live: upcomingLivePagination.refresh()
         case .group: allGroupPagination.refresh()
         }
     }
@@ -136,7 +147,7 @@ final class SearchFriendsViewModel {
         
         switch state.scope {
         case .fan: recommendedUserPagination.next()
-        case .live: break
+        case .live: upcomingLivePagination.next()
         case .group: allGroupPagination.next()
         }
     }
@@ -146,7 +157,8 @@ final class SearchFriendsViewModel {
         switch state.scope {
         case .fan:
             outputSubject.send(.updateSearchResult(.user(query)))
-        case .live: break
+        case .live:
+            outputSubject.send(.updateSearchResult(.live(query)))
         case .group:
             outputSubject.send(.updateSearchResult(.group(query)))
         }

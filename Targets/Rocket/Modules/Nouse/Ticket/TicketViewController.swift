@@ -104,8 +104,8 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [weak self] output in
             switch output {
-            case .listenButtonTapped: self?.listenButtonTapped(cellIndex: indexPath.section)
             case .buyTicketButtonTapped: self?.buyTicketButtonTapped(cellIndex: indexPath.section)
+            default: break
             }
         }
         return cell

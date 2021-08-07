@@ -67,6 +67,7 @@ class FanCellContent: UIButton {
     private lazy var fanNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
         label.font = Brand.font(for: .smallStrong)
         label.textColor = Brand.color(for: .text(.primary))
         return label
@@ -74,6 +75,7 @@ class FanCellContent: UIButton {
     private lazy var profileLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
         label.font = Brand.font(for: .small)
         label.textColor = Brand.color(for: .text(.primary))
         return label
@@ -81,6 +83,7 @@ class FanCellContent: UIButton {
     private lazy var liveStyleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
         label.font = Brand.font(for: .small)
         label.textColor = Brand.color(for: .text(.primary))
         return label
@@ -134,6 +137,9 @@ class FanCellContent: UIButton {
         button.addTarget(self, action: #selector(openMessageButtonTapped), for: .touchUpInside)
         return button
     }()
+    override var isHighlighted: Bool {
+        didSet { alpha = isHighlighted ? 0.6 : 1.0 }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -202,6 +208,10 @@ class FanCellContent: UIButton {
             messageButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
             messageButton.heightAnchor.constraint(equalToConstant: 48),
         ])
+        
+        let spacer = UIView()
+        spacer.backgroundColor = .clear
+        stackView.addArrangedSubview(spacer)
     }
     
     @objc private func userTapped() {

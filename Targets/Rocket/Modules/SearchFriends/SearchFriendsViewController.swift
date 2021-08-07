@@ -52,6 +52,7 @@ final class SearchFriendsViewController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.registerCellClass(GroupCell.self)
+        tableView.registerCellClass(LiveCell.self)
         tableView.registerCellClass(FanCell.self)
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
@@ -156,6 +157,9 @@ extension SearchFriendsViewController {
         case .live:
             let live = viewModel.state.lives[indexPath.row]
             let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+            cell.listen { [unowned self] output in
+                print(output)
+            }
             return cell
         case .group:
             let group = viewModel.state.groups[indexPath.row]
@@ -170,6 +174,10 @@ extension SearchFriendsViewController {
             let group = viewModel.state.groups[indexPath.row]
             let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
             self.navigationController?.pushViewController(vc, animated: true)
+        case .live:
+            print("live tapped")
+        case .fan:
+            print("fan tapped")
         default: break
         }
         tableView.deselectRow(at: indexPath, animated: true)

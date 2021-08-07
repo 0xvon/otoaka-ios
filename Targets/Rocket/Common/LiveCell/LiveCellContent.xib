@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -30,42 +30,8 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Rh7-uL-vJd">
-                    <rect key="frame" x="16" y="180" width="382" height="104"/>
-                    <subviews>
-                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XvW-Dn-gmU" customClass="BadgeView" customModule="UIComponent">
-                            <rect key="frame" x="0.0" y="0.0" width="382" height="48"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="48" id="XZx-Wg-vHS"/>
-                            </constraints>
-                        </view>
-                        <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0jw-X9-Gfb" customClass="BadgeView" customModule="UIComponent">
-                            <rect key="frame" x="0.0" y="56" width="382" height="48"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="48" id="gMY-rc-pqz"/>
-                            </constraints>
-                        </view>
-                    </subviews>
-                </stackView>
-                <stackView hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="40x-Eh-8KY">
-                    <rect key="frame" x="218" y="180" width="180" height="104"/>
-                    <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bCB-XB-RMr" customClass="PrimaryButton" customModule="UIComponent">
-                            <rect key="frame" x="0.0" y="0.0" width="180" height="48"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="48" id="0eo-e9-3z0"/>
-                            </constraints>
-                        </view>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jXW-cI-bn0" customClass="PrimaryButton" customModule="UIComponent">
-                            <rect key="frame" x="0.0" y="56" width="180" height="48"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="48" id="F43-HK-B9b"/>
-                            </constraints>
-                        </view>
-                    </subviews>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="180" id="DXB-fb-AXS"/>
-                    </constraints>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Rh7-uL-vJd">
+                    <rect key="frame" x="16" y="73" width="382" height="211"/>
                 </stackView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
@@ -73,16 +39,12 @@
             <constraints>
                 <constraint firstItem="f6c-SZ-Ivn" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="5iD-d8-18S"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Rh7-uL-vJd" secondAttribute="trailing" constant="16" id="7xd-w9-ljk"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="40x-Eh-8KY" secondAttribute="bottom" constant="16" id="8PA-sG-Jsq"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="f6c-SZ-Ivn" secondAttribute="bottom" id="9oR-Mo-T5i"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Rh7-uL-vJd" secondAttribute="bottom" constant="16" id="FBJ-5P-71p"/>
-                <constraint firstItem="Rh7-uL-vJd" firstAttribute="top" relation="greaterThanOrEqual" secondItem="1oR-E1-o2n" secondAttribute="bottom" constant="16" id="Ipn-kY-z6Y"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Rh7-uL-vJd" secondAttribute="bottom" constant="16" id="CuK-xE-XCe"/>
+                <constraint firstItem="Rh7-uL-vJd" firstAttribute="top" secondItem="1oR-E1-o2n" secondAttribute="bottom" constant="8" id="Ipn-kY-z6Y"/>
                 <constraint firstAttribute="trailing" secondItem="FL4-ux-5xf" secondAttribute="trailing" constant="16" id="Jz5-EM-1Yb"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="1oR-E1-o2n" secondAttribute="trailing" constant="16" id="KDG-CR-7dy"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="f6c-SZ-Ivn" secondAttribute="trailing" id="Mh7-dX-h5A"/>
-                <constraint firstItem="40x-Eh-8KY" firstAttribute="bottom" secondItem="Rh7-uL-vJd" secondAttribute="bottom" id="OJg-BC-2oE"/>
-                <constraint firstItem="40x-Eh-8KY" firstAttribute="top" secondItem="Rh7-uL-vJd" secondAttribute="top" id="Oed-3i-MyL"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="40x-Eh-8KY" secondAttribute="trailing" constant="16" id="UCn-br-eUV"/>
                 <constraint firstItem="f6c-SZ-Ivn" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="dWs-zX-jsp"/>
                 <constraint firstItem="Rh7-uL-vJd" firstAttribute="leading" secondItem="FL4-ux-5xf" secondAttribute="leading" id="e6V-hS-Z7X"/>
                 <constraint firstItem="FL4-ux-5xf" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="nJF-ki-H5S"/>
@@ -93,14 +55,11 @@
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
                 <outlet property="bandsLabel" destination="1oR-E1-o2n" id="CWf-lM-ndV"/>
-                <outlet property="buyTicketButtonView" destination="jXW-cI-bn0" id="DsE-2I-Zjw"/>
-                <outlet property="dateView" destination="0jw-X9-Gfb" id="RSH-rK-x6h"/>
-                <outlet property="listenButtonView" destination="bCB-XB-RMr" id="nXa-lM-MlX"/>
                 <outlet property="liveTitleLabel" destination="FL4-ux-5xf" id="Mlt-pZ-412"/>
-                <outlet property="placeView" destination="XvW-Dn-gmU" id="aFU-mO-Rw3"/>
+                <outlet property="stackView" destination="Rh7-uL-vJd" id="2iN-XA-Vqq"/>
                 <outlet property="thumbnailView" destination="f6c-SZ-Ivn" id="PRM-T6-9C0"/>
             </connections>
-            <point key="canvasLocation" x="-197.10144927536234" y="-152.34375"/>
+            <point key="canvasLocation" x="-197.10144927536234" y="-152.67857142857142"/>
         </view>
     </objects>
     <resources>
