@@ -13,6 +13,7 @@ class PostListViewModel {
     typealias Input = DataSource
     enum DataSource {
         case groupPost(Group)
+        case livePost(Live)
         case userPost(User)
         case likedPost(User)
         case none
@@ -20,6 +21,7 @@ class PostListViewModel {
     
     enum DataSourceStorage {
         case groupPost(PaginationRequest<GetGroupPosts>)
+        case livePost(PaginationRequest<GetLivePosts>)
         case userPost(PaginationRequest<GetPosts>)
         case likedPost(PaginationRequest<GetLikedPosts>)
         case none
@@ -31,6 +33,11 @@ class PostListViewModel {
                 uri.groupId = group.id
                 let request = PaginationRequest<GetGroupPosts>(apiClient: apiClient, uri: uri)
                 self = .groupPost(request)
+            case .livePost(let live):
+                var uri = GetLivePosts.URI()
+                uri.liveId = live.id
+                let request = PaginationRequest<GetLivePosts>(apiClient: apiClient, uri: uri)
+                self = .livePost(request)
             case .userPost(let user):
                 var uri = GetPosts.URI()
                 uri.userId = user.id
@@ -101,6 +108,10 @@ class PostListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .livePost(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case let .userPost(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
@@ -136,6 +147,8 @@ class PostListViewModel {
         switch storage {
         case let .groupPost(pagination):
             pagination.refresh()
+        case let .livePost(pagination):
+            pagination.refresh()
         case let .userPost(pagination):
             pagination.refresh()
         case let .likedPost(pagination):
@@ -149,6 +162,8 @@ class PostListViewModel {
         guard indexPath.row + 25 > state.posts.count else { return }
         switch storage {
         case let .groupPost(pagination):
+            pagination.next()
+        case let .livePost(pagination):
             pagination.next()
         case let .userPost(pagination):
             pagination.next()

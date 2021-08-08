@@ -18,6 +18,7 @@ final class SearchFriendsViewModel {
         case reloadData
         case jumpToMessageRoom(MessageRoom)
         case isRefreshing(Bool)
+        case didToggleLikeLive
         case reportError(Error)
     }
     enum Scope: Int, CaseIterable {
@@ -61,16 +62,22 @@ final class SearchFriendsViewModel {
     }())
     
     private lazy var createMessageRoomAction = Action(CreateMessageRoom.self, httpClient: apiClient)
+    private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
+    private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
     
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.state = State()
         
         subscribe()
-        
+                
         createMessageRoomAction.elements
             .map { .jumpToMessageRoom($0) }.eraseToAnyPublisher()
+            .merge(with: likeLiveAction.elements.map { _ in .didToggleLikeLive }).eraseToAnyPublisher()
+            .merge(with: unlikeLiveAction.elements.map { _ in .didToggleLikeLive }).eraseToAnyPublisher()
             .merge(with: createMessageRoomAction.errors.map(Output.reportError)).eraseToAnyPublisher()
+            .merge(with: likeLiveAction.errors.map(Output.reportError)).eraseToAnyPublisher()
+            .merge(with: unlikeLiveAction.errors.map(Output.reportError)).eraseToAnyPublisher()
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
     }
@@ -173,5 +180,21 @@ final class SearchFriendsViewModel {
         let request = CreateMessageRoom.Request(members: [partner.id], name: partner.name)
         let uri = CreateMessageRoom.URI()
         createMessageRoomAction.input((request: request, uri: uri))
+    }
+    
+    func likeLiveButtonTapped(liveFeed: LiveFeed) {
+        liveFeed.isLiked ? unlikeLive(live: liveFeed.live) : likeLive(live: liveFeed.live)
+    }
+    
+    func likeLive(live: Live) {
+        let request = LikeLive.Request(liveId: live.id)
+        let uri = LikeLive.URI()
+        likeLiveAction.input((request: request, uri: uri))
+    }
+    
+    func unlikeLive(live: Live) {
+        let request = UnlikeLive.Request(liveId: live.id)
+        let uri = UnlikeLive.URI()
+        unlikeLiveAction.input((request: request, uri: uri))
     }
 }

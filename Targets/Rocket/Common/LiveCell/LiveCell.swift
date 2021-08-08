@@ -30,7 +30,7 @@ class LiveCell: UITableViewCell, ReusableCell {
             _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
-            _contentView.heightAnchor.constraint(equalToConstant: 320),
+            _contentView.heightAnchor.constraint(equalToConstant: 350),
         ])
         selectionStyle = .none
     }
@@ -241,7 +241,8 @@ class LiveCellContent: UIButton {
         }
         numOfLikeView.update(input: (title: "行きたい", count: input.live.likeCount))
         likeButton.setTitle("行きたい", selected: input.live.isLiked)
-        numOfReportView.update(input: (title: "レポート", count: 100))
+        likeButton.isSelected = input.live.isLiked
+        numOfReportView.update(input: (title: "レポート", count: input.live.postCount))
     }
 
     func setup() {
@@ -266,7 +267,8 @@ class LiveCellContent: UIButton {
         self.bandsLabel.sizeToFit()
 
         self.thumbnailView.contentMode = .scaleAspectFill
-        self.thumbnailView.layer.opacity = 0.6
+        self.thumbnailView.alpha = 0.2
+        self.thumbnailView.backgroundColor = .clear
         self.thumbnailView.layer.cornerRadius = 10
         self.thumbnailView.clipsToBounds = true
 

@@ -17,6 +17,7 @@ class UserListViewModel {
         case userFollowers(User.ID)
         case followingUsers(User.ID)
         case liveParticipants(Live.ID)
+        case liveLikedUsers(Live.ID)
         case searchResults(String)
         case recommendedUsers(User.ID)
         case none
@@ -27,6 +28,7 @@ class UserListViewModel {
         case userFollowers(PaginationRequest<UserFollowers>)
         case followingUsers(PaginationRequest<FollowingUsers>)
         case liveParticipants(PaginationRequest<GetLiveParticipants>)
+        case liveLikedUsers(PaginationRequest<GetLiveLikedUsers>)
         case searchResults(PaginationRequest<SearchUser>)
         case recommendedUsers(PaginationRequest<RecommendedUsers>)
         case none
@@ -58,6 +60,11 @@ class UserListViewModel {
                 uri.term = query
                 let request = PaginationRequest<SearchUser>(apiClient: apiClient, uri: uri)
                 self = .searchResults(request)
+            case .liveLikedUsers(let liveId):
+                var uri = GetLiveLikedUsers.URI()
+                uri.liveId = liveId
+                let request = PaginationRequest<GetLiveLikedUsers>(apiClient: apiClient, uri: uri)
+                self = .liveLikedUsers(request)
             case .recommendedUsers(let userId):
                 var uri = RecommendedUsers.URI()
                 uri.id = userId
@@ -128,6 +135,10 @@ class UserListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .liveLikedUsers(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case let .recommendedUsers(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
@@ -167,6 +178,8 @@ class UserListViewModel {
             pagination.refresh()
         case let .searchResults(pagination):
             pagination.refresh()
+        case let .liveLikedUsers(pagination):
+            pagination.refresh()
         case let .recommendedUsers(pagination):
             pagination.refresh()
         case .none: break
@@ -185,6 +198,8 @@ class UserListViewModel {
         case let .liveParticipants(pagination):
             pagination.next()
         case let .searchResults(pagination):
+            pagination.next()
+        case let .liveLikedUsers(pagination):
             pagination.next()
         case let .recommendedUsers(pagination):
             pagination.next()

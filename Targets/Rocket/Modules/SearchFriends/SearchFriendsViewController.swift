@@ -96,6 +96,8 @@ final class SearchFriendsViewController: UITableViewController {
             case .reportError(let err):
                 print(err)
                 showAlert()
+            case .didToggleLikeLive:
+                viewModel.refresh()
             }
         }.store(in: &cancellables)
         
@@ -142,7 +144,7 @@ extension SearchFriendsViewController {
         switch viewModel.state.scope {
         case .fan:
             let fan = viewModel.state.fans[indexPath.row]
-            let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: fan, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+            let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: fan, isMe: fan.id == dependencyProvider.user.id, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
             cell.listen { [unowned self] output in
                 switch output {
                 case .openMessageButtonTapped:
@@ -158,6 +160,25 @@ extension SearchFriendsViewController {
             let live = viewModel.state.lives[indexPath.row]
             let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
             cell.listen { [unowned self] output in
+                switch output {
+                case .buyTicketButtonTapped:
+                    guard let url = live.live.piaEventUrl else { return }
+                    let safari = SFSafariViewController(
+                        url: url)
+                    safari.dismissButtonStyle = .close
+                    present(safari, animated: true, completion: nil)
+                case .likeButtonTapped:
+                    viewModel.likeLiveButtonTapped(liveFeed: live)
+                case .numOfLikeTapped:
+                    let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                case .reportButtonTapped:
+                    break
+                case .numOfReportTapped:
+                    let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live.live))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                    
+                }
                 print(output)
             }
             return cell

@@ -118,7 +118,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let user = self.viewModel.state.users[indexPath.section]
-        let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: user, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: user, isMe: user.id == dependencyProvider.user.id, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
             case .openMessageButtonTapped:

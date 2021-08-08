@@ -54,6 +54,7 @@ final class FanCell: UITableViewCell, ReusableCell {
 class FanCellContent: UIButton {
     typealias Input = (
         user: User,
+        isMe: Bool,
         imagePipeline: ImagePipeline
     )
     enum Output {
@@ -158,6 +159,7 @@ class FanCellContent: UIButton {
 //        let seriousList = ["MY FIRST STORY", "RADWIMPS"]
 //        seriousTagListView.removeAllTags()
 //        seriousTagListView.addTags(seriousList)
+        messageButton.isHidden = input.isMe
         biographyTextView.text = input.user.biography
     }
     
