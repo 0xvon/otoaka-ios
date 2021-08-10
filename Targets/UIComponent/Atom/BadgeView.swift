@@ -56,6 +56,7 @@ public final class BadgeView: UIView {
         addSubview(badgeTitle)
         addSubview(badgeImageView)
 
+
         let constraints = [
             badgeImageView.leftAnchor.constraint(equalTo: leftAnchor),
             badgeImageView.widthAnchor.constraint(equalToConstant: 24),

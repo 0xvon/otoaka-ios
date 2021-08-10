@@ -19,7 +19,7 @@ class PostViewModel {
         var text: String? = ""
         var images: [UIImage] = []
         var groups: [Group] = []
-        var live: Live? = nil
+        var live: Live
         var tracks: [Endpoint.Track] = []
         let maxLength: Int = 140
     }
@@ -49,10 +49,10 @@ class PostViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
     init(
-        dependencyProvider: LoggedInDependencyProvider
+        dependencyProvider: LoggedInDependencyProvider, live: Live
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State()
+        self.state = State(live: live)
         
         createPostAction.elements
             .map(Output.didPost).eraseToAnyPublisher()
@@ -126,10 +126,9 @@ class PostViewModel {
     
     func post(imageUrls: [String]) {
         guard let text = state.text else { return }
-        guard let live = state.live else { return }
         let request = CreatePost.Request(
             author: dependencyProvider.user,
-            live: live,
+            live: state.live,
             text: text,
             tracks: state.tracks,
             groups: state.groups,

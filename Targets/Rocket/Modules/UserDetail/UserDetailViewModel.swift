@@ -19,12 +19,14 @@ class UserDetailViewModel {
     enum SummaryRow {
         case post
         case group
+        case live
     }
     struct State {
         var user: User
         var selfUser: User
         var post: PostSummary? = nil
         var group: Group? = nil
+        var live: LiveFeed? = nil
         var groupNameSummary: [String] = []
         var userDetail: UserDetail?
         
@@ -40,6 +42,7 @@ class UserDetailViewModel {
     enum Output {
         case didRefreshUserDetail(UserDetail)
         case didRefreshPostSummary(PostSummary?)
+        case didRefreshLikedLive(LiveFeed?)
         case didRefreshFollowingGroup(Group?, [String])
         
         case pushToPlayTrack(PlayTrackViewController.Input)
@@ -48,16 +51,21 @@ class UserDetailViewModel {
         case pushToPostList(PostListViewController.Input)
         case pushToGroupList(GroupListViewController.Input)
         case pushToUserList(UserListViewController.Input)
+        case pushToLiveList(LiveListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
         case openURLInBrowser(URL)
         case pushToPostAuthor(User)
         case pushToMessageRoom(MessageRoom)
+        case pushToPost(PostViewController.Input)
         
         case didDeletePost
         case didToggleLikePost
         case didInstagramButtonTapped(PostSummary)
         case didDeletePostButtonTapped(PostSummary)
         case didTwitterButtonTapped(PostSummary)
+        
+        case didToggleLikeLive
+        
         case reportError(Error)
     }
     
@@ -72,12 +80,15 @@ class UserDetailViewModel {
     
     private lazy var getUserDetailAction = Action(GetUserDetail.self, httpClient: apiClient)
     private lazy var getUserPostAction = Action(GetPosts.self, httpClient: apiClient)
+    private lazy var getLikedLiveAction = Action(GetLikedLive.self, httpClient: apiClient)
     private lazy var followingGroupsAction = Action(FollowingGroups.self, httpClient: apiClient)
     
     private lazy var deletePostAction = Action(DeletePost.self, httpClient: apiClient)
     private lazy var likePostAction = Action(LikePost.self, httpClient: apiClient)
     private lazy var unLikePostAction = Action(UnlikePost.self, httpClient: apiClient)
     private lazy var createMessageRoomAction = Action(CreateMessageRoom.self, httpClient: apiClient)
+    private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
+    private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, user: User
@@ -88,32 +99,39 @@ class UserDetailViewModel {
         let errors = Publishers.MergeMany(
             getUserDetailAction.errors,
             getUserPostAction.errors,
+            getLikedLiveAction.errors,
             followingGroupsAction.errors,
             deletePostAction.errors,
             likePostAction.errors,
             unLikePostAction.errors,
-            createMessageRoomAction.errors
+            createMessageRoomAction.errors,
+            likeLiveAction.errors,
+            unlikeLiveAction.errors
         )
         
         Publishers.MergeMany(
             getUserDetailAction.elements.map(Output.didRefreshUserDetail).eraseToAnyPublisher(),
             getUserPostAction.elements.map { .didRefreshPostSummary($0.items.first) }.eraseToAnyPublisher(),
+            getLikedLiveAction.elements.map { .didRefreshLikedLive($0.items.first) }.eraseToAnyPublisher(),
             followingGroupsAction.elements.map { .didRefreshFollowingGroup($0.items.first, $0.items.map { $0.name }) }.eraseToAnyPublisher(),
             deletePostAction.elements.map { _ in .didDeletePost }.eraseToAnyPublisher(),
             likePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
             unLikePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
             createMessageRoomAction.elements.map(Output.pushToMessageRoom).eraseToAnyPublisher(),
+            likeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
+            unlikeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
         getUserDetailAction.elements
-            .combineLatest(getUserPostAction.elements, followingGroupsAction.elements)
-            .sink(receiveValue: { [unowned self] userDetail, posts, groups in
+            .combineLatest(getUserPostAction.elements, followingGroupsAction.elements, getLikedLiveAction.elements)
+            .sink(receiveValue: { [unowned self] userDetail, posts, groups, lives in
                 state.userDetail = userDetail
                 state.post = posts.items.first
                 state.group = groups.items.first
+                state.live = lives.items.first
                 state.groupNameSummary = groups.items.map { $0.name }
             })
             .store(in: &cancellables)
@@ -125,6 +143,7 @@ class UserDetailViewModel {
         case .group:
             guard let group = state.group else { return }
             outputSubject.send(.pushToGroupDetail(group))
+        case .live: break
         }
     }
     
@@ -136,6 +155,7 @@ class UserDetailViewModel {
         getUserDetail()
         getUserPostSummary()
         getFollowingGroup()
+        getLikedLive()
     }
     
     func headerEvent(output: UserDetailHeaderView.Output) {
@@ -182,6 +202,24 @@ class UserDetailViewModel {
         }
     }
     
+    func liveCellEvent(event: LiveCellContent.Output) {
+        guard let live = state.live else { return }
+        switch event {
+        case .buyTicketButtonTapped:
+            if let url = live.live.piaEventUrl {
+                outputSubject.send(.openURLInBrowser(url))
+            }
+        case .likeButtonTapped:
+            live.isLiked ? unlikeLive(live: live.live) : likeLive(live: live.live)
+        case .numOfLikeTapped:
+            outputSubject.send(.pushToUserList(.liveLikedUsers(live.live.id)))
+        case .numOfReportTapped:
+            outputSubject.send(.pushToPostList(.livePost(live.live)))
+        case .reportButtonTapped:
+            outputSubject.send(.pushToPost(live.live))
+        }
+    }
+    
     private func getUserDetail() {
         var uri = GetUserDetail.URI()
         uri.userId = state.user.id
@@ -202,6 +240,14 @@ class UserDetailViewModel {
         uri.page = 1
         uri.per = 10
         followingGroupsAction.input((request: Empty(), uri: uri))
+    }
+    
+    private func getLikedLive() {
+        var uri = GetLikedLive.URI()
+        uri.userId = state.user.id
+        uri.page = 1
+        uri.per = 1
+        getLikedLiveAction.input((request: Empty(), uri: uri))
     }
     
     private func likePost(post: PostSummary) {
@@ -235,6 +281,20 @@ class UserDetailViewModel {
             outputSubject.send(.pushToPostList(.userPost(state.user)))
         case .group:
             outputSubject.send(.pushToGroupList(.followingGroups(state.user.id)))
+        case .live:
+            outputSubject.send(.pushToLiveList(.likedLive(state.user)))
         }
+    }
+    
+    func likeLive(live: Live) {
+        let request = LikeLive.Request(liveId: live.id)
+        let uri = LikeLive.URI()
+        likeLiveAction.input((request: request, uri: uri))
+    }
+    
+    func unlikeLive(live: Live) {
+        let request = UnlikeLive.Request(liveId: live.id)
+        let uri = UnlikeLive.URI()
+        unlikeLiveAction.input((request: request, uri: uri))
     }
 }

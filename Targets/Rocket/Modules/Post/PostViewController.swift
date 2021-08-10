@@ -15,7 +15,7 @@ import KeyboardGuide
 import UITextView_Placeholder
 
 final class PostViewController: UIViewController, Instantiable {
-    typealias Input = Void
+    typealias Input = Live
 
     private lazy var postScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -209,7 +209,7 @@ final class PostViewController: UIViewController, Instantiable {
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.viewModel = PostViewModel(dependencyProvider: dependencyProvider)
+        self.viewModel = PostViewModel(dependencyProvider: dependencyProvider, live: input)
 
         super.init(nibName: nil, bundle: nil)
     }

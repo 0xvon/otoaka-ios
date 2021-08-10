@@ -173,13 +173,12 @@ extension SearchFriendsViewController {
                     let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
                     self.navigationController?.pushViewController(vc, animated: true)
                 case .reportButtonTapped:
-                    break
+                    let vc = PostViewController(dependencyProvider: dependencyProvider, input: live.live)
+                    self.navigationController?.pushViewController(vc, animated: true)
                 case .numOfReportTapped:
                     let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live.live))
                     self.navigationController?.pushViewController(vc, animated: true)
-                    
                 }
-                print(output)
             }
             return cell
         case .group:
@@ -195,10 +194,6 @@ extension SearchFriendsViewController {
             let group = viewModel.state.groups[indexPath.row]
             let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
             self.navigationController?.pushViewController(vc, animated: true)
-        case .live:
-            print("live tapped")
-        case .fan:
-            print("fan tapped")
         default: break
         }
         tableView.deselectRow(at: indexPath, animated: true)

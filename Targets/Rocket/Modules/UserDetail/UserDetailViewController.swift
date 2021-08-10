@@ -225,7 +225,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         return label
     }()
     
-    private let postSectionHeader = SummarySectionHeader(title: "POST")
+    private let postSectionHeader = SummarySectionHeader(title: "ライブレポート")
     private lazy var postCellContent: PostCellContent = {
         let content = UINib(nibName: "PostCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! PostCellContent
@@ -234,7 +234,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
-    private let groupSectionHeader = SummarySectionHeader(title: "BAND")
+    private let groupSectionHeader = SummarySectionHeader(title: "お気に入りアーティスト")
     private lazy var groupCellContent: GroupCellContent = {
         let content = UINib(nibName: "GroupCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
@@ -245,6 +245,18 @@ final class UserDetailViewController: UIViewController, Instantiable {
         return content
     }()
     private lazy var groupCellWrapper: UIView = Self.addPadding(to: self.groupCellContent)
+    
+    private let liveSectionHeader = SummarySectionHeader(title: "行きたいライブ")
+    private lazy var liveCellContent: LiveCellContent = {
+        let content = UINib(nibName: "LiveCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 350),
+        ])
+        return content
+    }()
+    private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
     
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
@@ -345,6 +357,13 @@ final class UserDetailViewController: UIViewController, Instantiable {
         ])
         postCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(postCellWrapper)
+        
+        scrollStackView.addArrangedSubview(liveSectionHeader)
+        NSLayoutConstraint.activate([
+            liveSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+        ])
+        liveCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(liveCellWrapper)
         
         scrollStackView.addArrangedSubview(groupSectionHeader)
         NSLayoutConstraint.activate([
@@ -480,6 +499,16 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 
                 tagListView.removeAllTags()
                 tagListView.addTags(groupNameSummary)
+            case .didRefreshLikedLive(let liveFeed):
+                let isHidden = liveFeed == nil
+                self.liveSectionHeader.isHidden = isHidden
+                self.liveCellWrapper.isHidden = isHidden
+                if let liveFeed = liveFeed {
+                    self.liveCellContent.inject(input: (
+                        live: liveFeed,
+                        imagePipeline: dependencyProvider.imagePipeline
+                    ))
+                }
             case .didDeletePostButtonTapped(let post):
                 let alertController = UIAlertController(
                     title: "投稿を削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -513,11 +542,17 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .pushToGroupList(let input):
                 let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToLiveList(let input):
+                let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .pushToCommentList(let input):
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: input)
                 let nav = BrandNavigationController(rootViewController: vc)
                 self.present(nav, animated: true, completion: nil)
+            case .pushToPost(let input):
+                let vc = PostViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
@@ -525,6 +560,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
 //                shareWithTwitter(type: .feed(feed))
             case .didInstagramButtonTapped(_): break
 //                self.instagramButtonTapped(feed: feed)
+            case .didToggleLikeLive:
+                viewModel.refresh()
             case .reportError(let error):
                 print(error)
                 self.showAlert()
@@ -561,6 +598,14 @@ final class UserDetailViewController: UIViewController, Instantiable {
         postCellContent.addTarget(self, action: #selector(postCellTaped), for: .touchUpInside)
         
         groupCellContent.addTarget(self, action: #selector(groupCellTaped), for: .touchUpInside)
+        
+        liveSectionHeader.listen { [unowned self] in
+            viewModel.didTapSeeMore(at: .live)
+        }
+        
+        liveCellContent.listen { [unowned self] output in
+            viewModel.liveCellEvent(event: output)
+        }
         
     }
     

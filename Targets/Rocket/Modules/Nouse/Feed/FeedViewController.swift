@@ -130,8 +130,8 @@ final class FeedViewController: UITableViewController {
     }
     
     @objc func createFeed() {
-        let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
-        navigationController?.pushViewController(vc, animated: true)
+//        let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
+//        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
@@ -223,11 +223,6 @@ extension FeedViewController {
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
             let emptyCollectionView = EmptyCollectionView(emptyType: .feed, actionButtonTitle: "フィードを投稿してみる")
-            emptyCollectionView.listen { [unowned self] in
-                let vc = PostViewController(dependencyProvider: self.dependencyProvider, input: ())
-                let nav = BrandNavigationController(rootViewController: vc)
-                present(nav, animated: true, completion: nil)
-            }
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
             

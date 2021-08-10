@@ -19,6 +19,7 @@ class LiveListViewModel {
 
     enum DataSource {
         case groupLive(Group)
+        case likedLive(User)
         case searchResult(String)
         case none
     }
@@ -26,6 +27,7 @@ class LiveListViewModel {
     enum DataSourceStorage {
         case groupLive(PaginationRequest<GetGroupLives>)
         case searchResult(PaginationRequest<SearchLive>)
+        case likedLive(PaginationRequest<GetLikedLive>)
         case none
 
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -35,6 +37,11 @@ class LiveListViewModel {
                 uri.groupId = group.id
                 let request = PaginationRequest<GetGroupLives>(apiClient: apiClient, uri: uri)
                 self = .groupLive(request)
+            case .likedLive(let user):
+                var uri = GetLikedLive.URI()
+                uri.userId = user.id
+                let request = PaginationRequest<GetLikedLive>(apiClient: apiClient, uri: uri)
+                self = .likedLive(request)
             case .searchResult(let query):
                 var uri = SearchLive.URI()
                 uri.term = query
@@ -75,6 +82,10 @@ class LiveListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .likedLive(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case let .searchResult(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
@@ -106,6 +117,8 @@ class LiveListViewModel {
         switch storage {
         case let .groupLive(pagination):
             pagination.refresh()
+        case let .likedLive(pagination):
+            pagination.refresh()
         case let .searchResult(pagination):
             pagination.refresh()
         case .none: break
@@ -117,6 +130,8 @@ class LiveListViewModel {
         switch storage {
         case let .groupLive(pagination):
             pagination.next()
+        case let .likedLive(pagination):
+            pagination.refresh()
         case let .searchResult(pagination):
             pagination.next()
         case .none: break

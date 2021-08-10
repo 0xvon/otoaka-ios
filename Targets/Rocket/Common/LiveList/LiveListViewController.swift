@@ -114,10 +114,6 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
         return view
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 332
-    }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let live = self.viewModel.state.lives[indexPath.section]
         let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)

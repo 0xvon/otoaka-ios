@@ -111,8 +111,8 @@ final class HomeViewController: UITableViewController {
     }
     
     @objc private func createPostButtonTapped() {
-        let vc = PostViewController(dependencyProvider: dependencyProvider, input: ())
-        navigationController?.pushViewController(vc, animated: true)
+//        let vc = PostViewController(dependencyProvider: dependencyProvider, input: ())
+//        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func commentButtonTapped(post: PostSummary) {
@@ -231,8 +231,8 @@ extension HomeViewController {
         let emptyCollectionView: EmptyCollectionView = {
             let emptyCollectionView = EmptyCollectionView(emptyType: .post, actionButtonTitle: "投稿してみる")
             emptyCollectionView.listen { [unowned self] in
-                let vc = PostViewController(dependencyProvider: dependencyProvider, input: ())
-                navigationController?.pushViewController(vc, animated: true)
+//                let vc = PostViewController(dependencyProvider: dependencyProvider, input: ())
+//                navigationController?.pushViewController(vc, animated: true)
             }
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView

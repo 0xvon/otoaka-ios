@@ -68,12 +68,12 @@ class LiveCellContent: UIButton {
     }
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYYMMddHH:mm"
+        dateFormatter.dateFormat = "YYYYMMdd"
         return dateFormatter
     }()
     let displayDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd HH:mm"
+        dateFormatter.dateFormat = "YYYY/MM/dd"
         return dateFormatter
     }()
 
@@ -162,6 +162,7 @@ class LiveCellContent: UIButton {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 24
+        button.setTitle("行きたい", selected: false)
         button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         return button
     }()
@@ -232,8 +233,9 @@ class LiveCellContent: UIButton {
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
         
-        if input.live.live.date != nil && input.live.live.openAt != nil {
-            dateView.title = displayDateFormatter.string(from: dateFormatter.date(from: input.live.live.date! + input.live.live.openAt!)!)
+        if let date = input.live.live.date, let openAt = input.live.live.openAt, let formatted = dateFormatter.date(from: date) {
+            let formattedDateString = displayDateFormatter.string(from: formatted)
+            dateView.title = "\(formattedDateString) \(openAt)"
         }
         placeView.title = input.live.live.liveHouse ?? "未定"
         if let artworkURL = input.live.live.artworkURL {
