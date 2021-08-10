@@ -67,11 +67,22 @@ class PostCellContent: UIButton {
         case likeTapped
         case twitterTapped
         case instagramTapped
+        case postListTapped
         case deleteTapped
     }
-    let dateFormatter: DateFormatter = {
+    let postDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY/MM/dd HH:mm"
+        return dateFormatter
+    }()
+    let liveDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYYMMdd"
+        return dateFormatter
+    }()
+    let liveDisplayDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYY/MM/dd"
         return dateFormatter
     }()
     
@@ -135,9 +146,16 @@ class PostCellContent: UIButton {
             dateLabel.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
         ])
         
+        view.addSubview(liveInfoLabel)
+        NSLayoutConstraint.activate([
+            liveInfoLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 4),
+            liveInfoLabel.leftAnchor.constraint(equalTo: dateLabel.leftAnchor),
+            liveInfoLabel.rightAnchor.constraint(equalTo: dateLabel.rightAnchor),
+        ])
+        
         view.addSubview(textView)
         NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 8),
+            textView.topAnchor.constraint(equalTo: liveInfoLabel.bottomAnchor, constant: 8),
             textView.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
             textView.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
             textView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -204,6 +222,12 @@ class PostCellContent: UIButton {
         sectionView.translatesAutoresizingMaskIntoConstraints = false
         sectionView.distribution = .fill
         sectionView.axis = .horizontal
+        
+        sectionView.addArrangedSubview(showPostListButton)
+        NSLayoutConstraint.activate([
+            showPostListButton.widthAnchor.constraint(equalToConstant: 44),
+            showPostListButton.heightAnchor.constraint(equalToConstant: 44),
+        ])
         
         sectionView.addArrangedSubview(commentButtonView)
         NSLayoutConstraint.activate([
@@ -284,6 +308,13 @@ class PostCellContent: UIButton {
         shareButton.addTarget(self, action: #selector(shareInstagramButtonTapped), for: .touchUpInside)
         return shareButton
     }()
+    private lazy var showPostListButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "note.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(showPostListButtonTapped), for: .touchUpInside)
+        return button
+    }()
     private lazy var deleteButton: UIButton = {
         let deleteButton = UIButton()
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
@@ -319,6 +350,13 @@ class PostCellContent: UIButton {
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
+    private lazy var liveInfoLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .small)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
     
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
@@ -335,7 +373,11 @@ class PostCellContent: UIButton {
             input.imagePipeline.loadImage(avatarUrl, into: avatarImageView)
         }
         usernameLabel.text = input.post.author.name
-        dateLabel.text = dateFormatter.string(from: input.post.createdAt)
+        dateLabel.text = postDateFormatter.string(from: input.post.createdAt)
+        if let live = input.post.live, let date = live.date, let formatted = liveDateFormatter.date(from: date) {
+            let formattedDateString = liveDisplayDateFormatter.string(from: formatted)
+            liveInfoLabel.text = "\(formattedDateString) \(live.title) (\(live.liveHouse ?? "場所不明"))"
+        }
         textView.text = input.post.text
         
         if let group = input.post.groups.first {
@@ -391,6 +433,10 @@ class PostCellContent: UIButton {
     
     @objc private func shareInstagramButtonTapped() {
         self.listener(.instagramTapped)
+    }
+    
+    @objc private func showPostListButtonTapped() {
+        self.listener(.postListTapped)
     }
     
     @objc private func shareTwitterButtonTapped() {

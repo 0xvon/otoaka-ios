@@ -133,6 +133,12 @@ final class HomeViewController: UITableViewController {
         
     }
     
+    private func livePostListButtonTapped(post: PostSummary) {
+        guard let live = post.post.live else { return }
+        let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live))
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
     private func userTapped(post: PostSummary) {
         let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: post.author)
         self.navigationController?.pushViewController(vc, animated: true)
@@ -199,6 +205,8 @@ extension HomeViewController {
                 self.likeButtonTapped(post: post)
             case .instagramTapped:
                 self.instagramButtonTapped(post: post)
+            case .postListTapped:
+                self.livePostListButtonTapped(post: post)
             case .twitterTapped:
                 self.twitterButtonTapped(post: post)
             case .userTapped:

@@ -115,6 +115,12 @@ final class PostListViewController: UIViewController, Instantiable {
         
     }
     
+    private func livePostListButtonTapped(post: PostSummary) {
+        guard let live = post.post.live else { return }
+        let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live))
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
     private func userTapped(post: PostSummary) {
         let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: post.author)
         self.navigationController?.pushViewController(vc, animated: true)
@@ -185,6 +191,8 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
                 self.twitterButtonTapped(post: post)
             case .userTapped:
                 self.userTapped(post: post)
+            case .postListTapped:
+                self.livePostListButtonTapped(post: post)
             case .playTapped(let track):
                 self.playTapped(track: track)
             case .trackTapped(_): break
