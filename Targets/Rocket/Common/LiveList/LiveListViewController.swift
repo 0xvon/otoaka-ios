@@ -8,6 +8,7 @@
 import UIKit
 import Endpoint
 import Combine
+import SafariServices
 
 final class LiveListViewController: UIViewController, Instantiable {
     typealias Input = LiveListViewModel.Input
@@ -51,6 +52,8 @@ final class LiveListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.setTableViewBackgroundView(tableView: liveTableView)
                 self.liveTableView.reloadData()
+            case .didToggleLikeLive:
+                self.viewModel.refresh()
             case .error(let error):
                 print(error)
                 self.showAlert()
@@ -113,14 +116,40 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let live = self.viewModel.state.lives[indexPath.row]
+        var cellType: LiveCellContent.LiveCellContentType
         switch viewModel.dataSource {
         case .searchResultToSelect(_):
-            let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .review), for: indexPath)
-            return cell
+            cellType = .review
         default:
-            let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
-            return cell
+            cellType = .normal
         }
+        
+        let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: cellType), for: indexPath)
+        cell.listen { [unowned self] output in
+            switch output {
+            case .buyTicketButtonTapped:
+                guard let url = live.live.piaEventUrl else { return }
+                let safari = SFSafariViewController(
+                    url: url)
+                safari.dismissButtonStyle = .close
+                present(safari, animated: true, completion: nil)
+            case .likeButtonTapped:
+                viewModel.likeLiveButtonTapped(liveFeed: live)
+            case .numOfLikeTapped:
+                let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
+            case .reportButtonTapped:
+                let vc = PostViewController(dependencyProvider: dependencyProvider, input: live.live)
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
+            case .numOfReportTapped:
+                let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live.live))
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
+            }
+        }
+        return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

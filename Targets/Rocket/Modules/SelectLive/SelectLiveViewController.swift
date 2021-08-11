@@ -40,8 +40,7 @@ final class SelectLiveViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "レポートを書くライブを選択しよう"
-        
+        title = "レポートを書くライブを選択"
         navigationItem.largeTitleDisplayMode = .never
         
         view.backgroundColor = Brand.color(for: .background(.primary))

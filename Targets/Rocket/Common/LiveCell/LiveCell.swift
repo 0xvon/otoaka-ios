@@ -22,8 +22,6 @@ class LiveCell: UITableViewCell, ReusableCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
-        // Proxy tap event to tableView(_:didSelectRowAt:)
-        _contentView.isUserInteractionEnabled = true
         backgroundColor = .clear
         NSLayoutConstraint.activate([
             _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
@@ -42,10 +40,8 @@ class LiveCell: UITableViewCell, ReusableCell {
     func inject(input: LiveCellContent.Input) {
         _contentView.inject(input: input)
         switch input.type {
-        case .normal:
-            _contentView.isUserInteractionEnabled = true
-        case .review:
-            _contentView.isUserInteractionEnabled = false
+        case .normal: _contentView.isUserInteractionEnabled = true
+        case .review: _contentView.isUserInteractionEnabled = false
         }
     }
 
@@ -252,6 +248,8 @@ class LiveCellContent: UIButton {
         placeView.title = input.live.live.liveHouse ?? "未定"
         if let artworkURL = input.live.live.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: thumbnailView)
+        } else {
+            thumbnailView.image = nil
         }
         
         switch input.type {

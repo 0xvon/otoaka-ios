@@ -40,7 +40,7 @@ final class SelectGroupViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "バンド選択"
+        title = "タグ付けしたいバンドを選択"
         navigationItem.largeTitleDisplayMode = .never
         
         view.backgroundColor = Brand.color(for: .background(.primary))
