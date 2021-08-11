@@ -506,7 +506,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 if let liveFeed = liveFeed {
                     self.liveCellContent.inject(input: (
                         live: liveFeed,
-                        imagePipeline: dependencyProvider.imagePipeline
+                        imagePipeline: dependencyProvider.imagePipeline,
+                        type: .normal
                     ))
                 }
             case .didDeletePostButtonTapped(let post):

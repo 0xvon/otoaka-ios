@@ -9,6 +9,7 @@ import UIKit
 import Endpoint
 import ImagePipeline
 import ImageViewer
+import UIComponent
 
 class PostCell: UITableViewCell, ReusableCell {
     typealias Input = PostCellContent.Input
@@ -68,6 +69,7 @@ class PostCellContent: UIButton {
         case twitterTapped
         case instagramTapped
         case postListTapped
+        case postTapped
         case deleteTapped
     }
     let postDateFormatter: DateFormatter = {
@@ -112,6 +114,12 @@ class PostCellContent: UIButton {
         postView.addArrangedSubview(playlistView)
         NSLayoutConstraint.activate([
             playlistView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+        ])
+        
+        postView.addArrangedSubview(writeReportButton)
+        NSLayoutConstraint.activate([
+            writeReportButton.heightAnchor.constraint(equalToConstant: 48),
+            writeReportButton.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
         postView.addArrangedSubview(sectionView)
@@ -216,6 +224,14 @@ class PostCellContent: UIButton {
         ])
         content.isHidden = true
         return content
+    }()
+    private lazy var writeReportButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("このライブのレポートを書く", selected: false)
+        button.addTarget(self, action: #selector(postButtonTapped), for: .touchUpInside)
+        button.layer.cornerRadius = 24
+        return button
     }()
     private lazy var sectionView: UIStackView = {
         let sectionView = UIStackView()
@@ -437,6 +453,10 @@ class PostCellContent: UIButton {
     
     @objc private func showPostListButtonTapped() {
         self.listener(.postListTapped)
+    }
+    
+    @objc private func postButtonTapped() {
+        self.listener(.postTapped)
     }
     
     @objc private func shareTwitterButtonTapped() {

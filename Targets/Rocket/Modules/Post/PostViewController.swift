@@ -99,7 +99,7 @@ final class PostViewController: UIViewController, Instantiable {
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
         textView.delegate = self
-        textView.placeholder = "こんにちは！"
+        textView.placeholder = "セットリスト・MCで言っていたこと・起こった出来事・友達との思い出を記録しよう"
         textView.placeholderTextView.textAlignment = .left
         textView.placeholderColor = Brand.color(for: .background(.secondary))
         textView.font = Brand.font(for: .mediumStrong)
@@ -274,7 +274,7 @@ final class PostViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        self.title = "投稿"
+        self.title = "レポートを書く"
         self.navigationItem.largeTitleDisplayMode = .never
         
         self.view.addSubview(postScrollView)

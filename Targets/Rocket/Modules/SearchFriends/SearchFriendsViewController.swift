@@ -158,7 +158,7 @@ extension SearchFriendsViewController {
             return cell
         case .live:
             let live = viewModel.state.lives[indexPath.row]
-            let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+            let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
             cell.listen { [unowned self] output in
                 switch output {
                 case .buyTicketButtonTapped:

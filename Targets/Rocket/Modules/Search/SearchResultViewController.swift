@@ -14,6 +14,7 @@ final class SearchResultViewController: UIViewController {
     enum Input {
         case none
         case live(String)
+        case liveToSelect(String)
         case group(String)
         case groupToSelect(String)
         case track(String)
@@ -25,6 +26,7 @@ final class SearchResultViewController: UIViewController {
     enum Output {
         case group(Group)
         case track(Track)
+        case live(LiveFeed)
     }
     
     typealias State = Input
@@ -74,6 +76,15 @@ final class SearchResultViewController: UIViewController {
                 userListViewController.view.isHidden = true
                 trackListViewController.view.isHidden = true
                 liveListViewController.inject(.searchResult(query))
+            case .liveToSelect(let query):
+                groupListViewController.view.isHidden = true
+                liveListViewController.view.isHidden = false
+                userListViewController.view.isHidden = true
+                trackListViewController.view.isHidden = true
+                liveListViewController.inject(.searchResultToSelect(query))
+                liveListViewController.listen { [unowned self] live in
+                    self.listener(.live(live))
+                }
             case .user(let query):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = true

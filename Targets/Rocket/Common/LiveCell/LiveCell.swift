@@ -41,6 +41,12 @@ class LiveCell: UITableViewCell, ReusableCell {
 
     func inject(input: LiveCellContent.Input) {
         _contentView.inject(input: input)
+        switch input.type {
+        case .normal:
+            _contentView.isUserInteractionEnabled = true
+        case .review:
+            _contentView.isUserInteractionEnabled = false
+        }
     }
 
     func listen(_ listener: @escaping (Output) -> Void) {
@@ -57,8 +63,14 @@ class LiveCell: UITableViewCell, ReusableCell {
 class LiveCellContent: UIButton {
     typealias Input = (
         live: LiveFeed,
-        imagePipeline: ImagePipeline
+        imagePipeline: ImagePipeline,
+        type: LiveCellContentType
     )
+    
+    enum LiveCellContentType {
+        case normal
+        case review
+    }
     enum Output {
         case likeButtonTapped
         case numOfLikeTapped
@@ -241,10 +253,19 @@ class LiveCellContent: UIButton {
         if let artworkURL = input.live.live.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: thumbnailView)
         }
-        numOfLikeView.update(input: (title: "行きたい", count: input.live.likeCount))
-        likeButton.setTitle("行きたい", selected: input.live.isLiked)
-        likeButton.isSelected = input.live.isLiked
-        numOfReportView.update(input: (title: "レポート", count: input.live.postCount))
+        
+        switch input.type {
+        case .normal:
+            numOfLikeView.update(input: (title: "行きたい", count: input.live.likeCount))
+            likeButton.setTitle("行きたい", selected: input.live.isLiked)
+            likeButton.isSelected = input.live.isLiked
+            numOfReportView.update(input: (title: "レポート", count: input.live.postCount))
+        case .review:
+            buyTicketStackView.isHidden = true
+            likeStackView.isHidden = true
+            reportStackView.isHidden = true
+        }
+        
     }
 
     func setup() {

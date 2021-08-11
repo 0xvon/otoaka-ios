@@ -49,6 +49,7 @@ final class LiveListViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .reloadTableView:
+                self.setTableViewBackgroundView(tableView: liveTableView)
                 self.liveTableView.reloadData()
             case .error(let error):
                 print(error)
@@ -92,20 +93,16 @@ final class LiveListViewController: UIViewController, Instantiable {
         self.viewModel.refresh()
         sender.endRefreshing()
     }
+    
+    private var listener: (LiveFeed) -> Void = { _ in }
+    func listen(_ listener: @escaping (LiveFeed) -> Void) {
+        self.listener = listener
+    }
 }
 
 extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return self.viewModel.state.lives.count
-        
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 16
+        return viewModel.state.lives.count
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -115,21 +112,39 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = self.viewModel.state.lives[indexPath.section]
-        let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
-        return cell
+        let live = self.viewModel.state.lives[indexPath.row]
+        switch viewModel.dataSource {
+        case .searchResultToSelect(_):
+            let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .review), for: indexPath)
+            return cell
+        default:
+            let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
+            return cell
+        }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = self.viewModel.state.lives[indexPath.section]
-        let vc = LiveDetailViewController(dependencyProvider: self.dependencyProvider, input: live)
-        let nav = self.navigationController ?? presentingViewController?.navigationController
-        nav?.pushViewController(vc, animated: true)
+        let live = self.viewModel.state.lives[indexPath.row]
+        self.listener(live)
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         self.viewModel.willDisplay(rowAt: indexPath)
+    }
+    
+    func setTableViewBackgroundView(tableView: UITableView) {
+        let emptyCollectionView: EmptyCollectionView = {
+            let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: nil)
+            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+            return emptyCollectionView
+        }()
+        tableView.backgroundView = self.viewModel.state.lives.isEmpty ? emptyCollectionView : nil
+        if let backgroundView = tableView.backgroundView {
+            NSLayoutConstraint.activate([
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+            ])
+        }
     }
 }
 

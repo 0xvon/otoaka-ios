@@ -21,12 +21,14 @@ class LiveListViewModel {
         case groupLive(Group)
         case likedLive(User)
         case searchResult(String)
+        case searchResultToSelect(String)
         case none
     }
 
     enum DataSourceStorage {
         case groupLive(PaginationRequest<GetGroupLives>)
         case searchResult(PaginationRequest<SearchLive>)
+        case searchResultToSelect(String, PaginationRequest<SearchLive>)
         case likedLive(PaginationRequest<GetLikedLive>)
         case none
 
@@ -47,6 +49,11 @@ class LiveListViewModel {
                 uri.term = query
                 let request = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
                 self = .searchResult(request)
+            case .searchResultToSelect(let query):
+                var uri = SearchLive.URI()
+                uri.term = query
+                let request = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
+                self = .searchResultToSelect(query, request)
             case .none:
                 self = .none
             }
@@ -59,6 +66,7 @@ class LiveListViewModel {
 
     private var storage: DataSourceStorage
     private(set) var state: State
+    private(set) var dataSource: DataSource
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
@@ -71,6 +79,7 @@ class LiveListViewModel {
         self.apiClient = apiClient
         self.auth = auth
         self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        self.dataSource = input
         self.state = State()
 
         subscribe(storage: storage)
@@ -87,6 +96,10 @@ class LiveListViewModel {
                 self?.updateState(with: $0)
             }
         case let .searchResult(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .searchResultToSelect(_, pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
@@ -109,6 +122,7 @@ class LiveListViewModel {
     
     func inject(_ input: Input) {
         self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        self.dataSource = input
         subscribe(storage: storage)
         refresh()
     }
@@ -120,6 +134,8 @@ class LiveListViewModel {
         case let .likedLive(pagination):
             pagination.refresh()
         case let .searchResult(pagination):
+            pagination.refresh()
+        case let .searchResultToSelect(_, pagination):
             pagination.refresh()
         case .none: break
         }
@@ -133,6 +149,8 @@ class LiveListViewModel {
         case let .likedLive(pagination):
             pagination.refresh()
         case let .searchResult(pagination):
+            pagination.next()
+        case let .searchResultToSelect(_, pagination):
             pagination.next()
         case .none: break
         }

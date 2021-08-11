@@ -28,7 +28,7 @@ final class HomeViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "ホーム"
+        title = "レポート"
         view.backgroundColor = Brand.color(for: .background(.primary))
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = Brand.color(for: .background(.primary))
@@ -111,8 +111,8 @@ final class HomeViewController: UITableViewController {
     }
     
     @objc private func createPostButtonTapped() {
-//        let vc = PostViewController(dependencyProvider: dependencyProvider, input: ())
-//        navigationController?.pushViewController(vc, animated: true)
+        let vc = SelectLiveViewController(dependencyProvider: dependencyProvider)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func commentButtonTapped(post: PostSummary) {
@@ -136,6 +136,12 @@ final class HomeViewController: UITableViewController {
     private func livePostListButtonTapped(post: PostSummary) {
         guard let live = post.post.live else { return }
         let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live))
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    private func postTapped(post: PostSummary) {
+        guard let live = post.post.live else { return }
+        let vc = PostViewController(dependencyProvider: dependencyProvider, input: live)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -207,6 +213,8 @@ extension HomeViewController {
                 self.instagramButtonTapped(post: post)
             case .postListTapped:
                 self.livePostListButtonTapped(post: post)
+            case .postTapped:
+                self.postTapped(post: post)
             case .twitterTapped:
                 self.twitterButtonTapped(post: post)
             case .userTapped:
@@ -239,8 +247,8 @@ extension HomeViewController {
         let emptyCollectionView: EmptyCollectionView = {
             let emptyCollectionView = EmptyCollectionView(emptyType: .post, actionButtonTitle: "投稿してみる")
             emptyCollectionView.listen { [unowned self] in
-//                let vc = PostViewController(dependencyProvider: dependencyProvider, input: ())
-//                navigationController?.pushViewController(vc, animated: true)
+                let vc = SelectLiveViewController(dependencyProvider: dependencyProvider)
+                navigationController?.pushViewController(vc, animated: true)
             }
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
