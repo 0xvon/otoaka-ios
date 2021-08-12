@@ -51,7 +51,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
 
-    private let liveSectionHeader = SummarySectionHeader(title: "LIVE")
+    private let liveSectionHeader = SummarySectionHeader(title: "ライブ")
 //     FIXME: Use a safe way to instantiate views from xib
     private lazy var liveCellContent: LiveCellContent = {
         let content = UINib(nibName: "LiveCellContent", bundle: nil)
@@ -64,7 +64,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
 
-    private let postSectionHeader = SummarySectionHeader(title: "POST")
+    private let postSectionHeader = SummarySectionHeader(title: "ライブレポート")
     private lazy var postCellContent: PostCellContent = {
         let content = UINib(nibName: "PostCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! PostCellContent

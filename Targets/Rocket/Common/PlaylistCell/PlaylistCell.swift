@@ -46,7 +46,7 @@ class PlaylistCellContent: UIButton {
         self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         self.layer.cornerRadius = 10
         
-        thumbnailImageView.layer.opacity = 0.6
+        thumbnailImageView.layer.opacity = 0.3
         thumbnailImageView.layer.cornerRadius = 10
         thumbnailImageView.clipsToBounds = true
         thumbnailImageView.contentMode = .scaleAspectFill
@@ -73,10 +73,6 @@ extension PlaylistCellContent: UITableViewDelegate, UITableViewDataSource {
         } else {
             return 0
         }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 92
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

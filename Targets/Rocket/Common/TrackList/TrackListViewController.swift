@@ -104,10 +104,6 @@ extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
         return viewModel.state.tracks.count
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 92
-    }
-    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false

@@ -119,10 +119,10 @@ class LiveCellContent: UIButton {
             buyTicketButtonView.heightAnchor.constraint(equalTo: stackView.heightAnchor)
         ])
         
-        let buyTicketButtonSpacer = UIView()
-        buyTicketButtonSpacer.translatesAutoresizingMaskIntoConstraints = false
-        buyTicketButtonSpacer.backgroundColor = .clear
-        stackView.addArrangedSubview(buyTicketButtonSpacer)
+//        let buyTicketButtonSpacer = UIView()
+//        buyTicketButtonSpacer.translatesAutoresizingMaskIntoConstraints = false
+//        buyTicketButtonSpacer.backgroundColor = .clear
+//        stackView.addArrangedSubview(buyTicketButtonSpacer)
         
         return stackView
     }()
@@ -134,26 +134,15 @@ class LiveCellContent: UIButton {
         primaryButton.setImage(UIImage(named: "ticket"), for: .normal)
         return primaryButton
     }()
-    private lazy var likeStackView: UIStackView = {
+    private lazy var actionButtonStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.backgroundColor = .clear
         stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
         stackView.spacing = 4
-        
-        stackView.addArrangedSubview(numOfLikeView)
-        NSLayoutConstraint.activate([
-            numOfLikeView.widthAnchor.constraint(equalToConstant: 80),
-        ])
-        
         stackView.addArrangedSubview(likeButton)
-        NSLayoutConstraint.activate([
-            likeButton.widthAnchor.constraint(equalToConstant: 160),
-        ])
-        
-        let likeStackViewSpacer = UIView()
-        likeStackViewSpacer.backgroundColor = .clear
-        stackView.addArrangedSubview(likeStackViewSpacer)
+        stackView.addArrangedSubview(reportButton)
         
         return stackView
     }()
@@ -175,28 +164,16 @@ class LiveCellContent: UIButton {
         return button
     }()
     
-    private lazy var reportStackView: UIStackView = {
+    private lazy var actionCountStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.backgroundColor = .clear
         stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
         stackView.spacing = 4
         
+        stackView.addArrangedSubview(numOfLikeView)
         stackView.addArrangedSubview(numOfReportView)
-        NSLayoutConstraint.activate([
-            numOfReportView.widthAnchor.constraint(equalToConstant: 80),
-            numOfReportView.heightAnchor.constraint(equalTo: stackView.heightAnchor),
-        ])
-        
-        stackView.addArrangedSubview(reportButton)
-        NSLayoutConstraint.activate([
-            reportButton.widthAnchor.constraint(equalToConstant: 160),
-            reportButton.heightAnchor.constraint(equalTo: stackView.heightAnchor),
-        ])
-        
-        let reportStackViewSpacer = UIView()
-        reportStackViewSpacer.backgroundColor = .clear
-        stackView.addArrangedSubview(reportStackViewSpacer)
         
         return stackView
     }()
@@ -254,14 +231,14 @@ class LiveCellContent: UIButton {
         
         switch input.type {
         case .normal:
-            numOfLikeView.update(input: (title: "行きたい", count: input.live.likeCount))
+            numOfLikeView.update(input: (title: "", count: input.live.likeCount))
             likeButton.setTitle("行きたい", selected: input.live.isLiked)
             likeButton.isSelected = input.live.isLiked
-            numOfReportView.update(input: (title: "レポート", count: input.live.postCount))
+            numOfReportView.update(input: (title: "", count: input.live.postCount))
         case .review:
             buyTicketStackView.isHidden = true
-            likeStackView.isHidden = true
-            reportStackView.isHidden = true
+            actionButtonStackView.isHidden = true
+            actionCountStackView.isHidden = true
         }
         
     }
@@ -299,13 +276,13 @@ class LiveCellContent: UIButton {
         
         stackView.addArrangedSubview(dateView)
         NSLayoutConstraint.activate([
-            dateView.heightAnchor.constraint(equalToConstant: 32),
+            dateView.heightAnchor.constraint(equalToConstant: 20),
             dateView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
         stackView.addArrangedSubview(placeView)
         NSLayoutConstraint.activate([
-            placeView.heightAnchor.constraint(equalToConstant: 32),
+            placeView.heightAnchor.constraint(equalToConstant: 20),
             placeView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
@@ -319,16 +296,16 @@ class LiveCellContent: UIButton {
             buyTicketStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
-        stackView.addArrangedSubview(likeStackView)
+        stackView.addArrangedSubview(actionButtonStackView)
         NSLayoutConstraint.activate([
-            likeStackView.heightAnchor.constraint(equalToConstant: 48),
-            likeStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            actionButtonStackView.heightAnchor.constraint(equalToConstant: 48),
+            actionButtonStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
-        stackView.addArrangedSubview(reportStackView)
+        stackView.addArrangedSubview(actionCountStackView)
         NSLayoutConstraint.activate([
-            reportStackView.heightAnchor.constraint(equalToConstant: 48),
-            reportStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            actionCountStackView.heightAnchor.constraint(equalToConstant: 24),
+            actionCountStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
     }
     

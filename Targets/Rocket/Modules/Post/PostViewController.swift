@@ -44,20 +44,9 @@ final class PostViewController: UIViewController, Instantiable {
             textContainerView.widthAnchor.constraint(equalTo: postView.widthAnchor)
         ])
         
-        postView.addArrangedSubview(uploadedImageView)
+        postView.addArrangedSubview(postContentStackView)
         NSLayoutConstraint.activate([
-            uploadedImageView.widthAnchor.constraint(equalTo: postView.widthAnchor),
-            uploadedImageView.heightAnchor.constraint(equalTo: uploadedImageView.widthAnchor, multiplier: 1 / 1.91),
-        ])
-        
-        postView.addArrangedSubview(selectedGroupView)
-        NSLayoutConstraint.activate([
-            selectedGroupView.widthAnchor.constraint(equalTo: postView.widthAnchor),
-        ])
-        
-        postView.addArrangedSubview(playlistView)
-        NSLayoutConstraint.activate([
-            playlistView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+            postContentStackView.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
         let bottomSpacer = UIView()
@@ -110,6 +99,20 @@ final class PostViewController: UIViewController, Instantiable {
         
         textView.returnKeyType = .done
         return textView
+    }()
+    private lazy var postContentStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 4
+        stackView.axis = .horizontal
+        stackView.backgroundColor = .clear
+        stackView.distribution = .fillEqually
+        
+        stackView.addArrangedSubview(uploadedImageView)
+        stackView.addArrangedSubview(selectedGroupView)
+        stackView.addArrangedSubview(playlistView)
+        
+        return stackView
     }()
     private lazy var uploadedImageView: UIImageView = {
         let imageView = UIImageView()
@@ -251,22 +254,19 @@ final class PostViewController: UIViewController, Instantiable {
             case .reportError(let error):
                 print(error)
                 showAlert()
-            case .didSelectTrack:
-                playlistView.inject(input: (tracks: viewModel.state.tracks, imagePipeline: dependencyProvider.imagePipeline))
+            case .didUpdateContent:
+                uploadedImageView.isHidden = viewModel.state.images.isEmpty
+                selectedGroupView.isHidden = viewModel.state.groups.isEmpty
                 playlistView.isHidden = viewModel.state.tracks.isEmpty
-            case .didSelectGroup:
-                if let group = viewModel.state.groups.first {
-                    selectedGroupView.isHidden = false
-                    selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
-                } else {
-                    selectedGroupView.isHidden = true
-                }
-            case .didUploadImage:
+                
                 if let image = viewModel.state.images.first {
-                    uploadedImageView.isHidden = false
                     uploadedImageView.image = image
-                } else {
-                    uploadedImageView.isHidden = true
+                }
+                if let group = viewModel.state.groups.first {
+                    selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
+                }
+                if !viewModel.state.tracks.isEmpty {
+                    playlistView.inject(input: (tracks: viewModel.state.tracks, imagePipeline: dependencyProvider.imagePipeline))
                 }
             }
         }.store(in: &cancellables)
@@ -349,16 +349,16 @@ final class PostViewController: UIViewController, Instantiable {
             youtubeButton.heightAnchor.constraint(equalToConstant: 30),
         ])
         
-        let groupButton = UIButton()
-        groupButton.backgroundColor = .clear
-        groupButton.translatesAutoresizingMaskIntoConstraints = false
-        groupButton.setImage(UIImage(named: "guitar"), for: .normal)
-        groupButton.addTarget(self, action: #selector(searchGroup(_:)), for: .touchUpInside)
-        stackView.addArrangedSubview(groupButton)
-        NSLayoutConstraint.activate([
-            groupButton.widthAnchor.constraint(equalToConstant: 30),
-            groupButton.heightAnchor.constraint(equalToConstant: 30),
-        ])
+//        let groupButton = UIButton()
+//        groupButton.backgroundColor = .clear
+//        groupButton.translatesAutoresizingMaskIntoConstraints = false
+//        groupButton.setImage(UIImage(named: "guitar"), for: .normal)
+//        groupButton.addTarget(self, action: #selector(searchGroup(_:)), for: .touchUpInside)
+//        stackView.addArrangedSubview(groupButton)
+//        NSLayoutConstraint.activate([
+//            groupButton.widthAnchor.constraint(equalToConstant: 30),
+//            groupButton.heightAnchor.constraint(equalToConstant: 30),
+//        ])
         
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false

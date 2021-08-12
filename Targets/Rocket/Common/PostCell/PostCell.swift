@@ -100,20 +100,14 @@ class PostCellContent: UIButton {
             textContainerView.widthAnchor.constraint(equalTo: postView.widthAnchor)
         ])
         
-        postView.addArrangedSubview(uploadedImageView)
+        postView.addArrangedSubview(textView)
         NSLayoutConstraint.activate([
-            uploadedImageView.widthAnchor.constraint(equalTo: postView.widthAnchor),
-            uploadedImageView.heightAnchor.constraint(equalTo: uploadedImageView.widthAnchor, multiplier: 1 / 1.91),
+            textView.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
-        postView.addArrangedSubview(selectedGroupView)
+        postView.addArrangedSubview(postContentStackView)
         NSLayoutConstraint.activate([
-            selectedGroupView.widthAnchor.constraint(equalTo: postView.widthAnchor),
-        ])
-        
-        postView.addArrangedSubview(playlistView)
-        NSLayoutConstraint.activate([
-            playlistView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+            postContentStackView.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
         postView.addArrangedSubview(writeReportButton)
@@ -159,14 +153,7 @@ class PostCellContent: UIButton {
             liveInfoLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 4),
             liveInfoLabel.leftAnchor.constraint(equalTo: dateLabel.leftAnchor),
             liveInfoLabel.rightAnchor.constraint(equalTo: dateLabel.rightAnchor),
-        ])
-        
-        view.addSubview(textView)
-        NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: liveInfoLabel.bottomAnchor, constant: 8),
-            textView.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
-            textView.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
-            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            liveInfoLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
         
         return view
@@ -184,6 +171,20 @@ class PostCellContent: UIButton {
         textView.textContainer.lineFragmentPadding = 0
         textView.textAlignment = .left
         return textView
+    }()
+    private lazy var postContentStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.spacing = 4
+        stackView.axis = .horizontal
+        stackView.backgroundColor = .clear
+        stackView.distribution = .fillEqually
+        
+        stackView.addArrangedSubview(uploadedImageView)
+        stackView.addArrangedSubview(selectedGroupView)
+        stackView.addArrangedSubview(playlistView)
+        
+        return stackView
     }()
     private lazy var uploadedImageView: UIImageView = {
         let imageView = UIImageView()
@@ -362,14 +363,14 @@ class PostCellContent: UIButton {
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .small)
+        label.font = Brand.font(for: .xsmall)
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
     private lazy var liveInfoLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .small)
+        label.font = Brand.font(for: .xsmall)
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
@@ -396,28 +397,20 @@ class PostCellContent: UIButton {
         }
         textView.text = input.post.text
         
+        selectedGroupView.isHidden = input.post.groups.isEmpty
+        uploadedImageView.isHidden = input.post.imageUrls.isEmpty
+        playlistView.isHidden = input.post.tracks.isEmpty
+        
         if let group = input.post.groups.first {
-            selectedGroupView.isHidden = false
-            uploadedImageView.isHidden = true
-            playlistView.isHidden = true
-            
             selectedGroupView.inject(input: (group: group, imagePipeline: input.imagePipeline))
         }
         if let image = input.post.imageUrls.first, let imageUrl = URL(string: image) {
-            selectedGroupView.isHidden = true
-            uploadedImageView.isHidden = false
-            playlistView.isHidden = true
-            
             input.imagePipeline.loadImage(imageUrl, into: uploadedImageView)
         }
         let tracks = input.post.tracks.map {
             Track(name: $0.trackName, artistName: $0.groupName, artwork: $0.thumbnailUrl!, trackType: $0.type)
         }
         if (!tracks.isEmpty) {
-            selectedGroupView.isHidden = true
-            uploadedImageView.isHidden = true
-            playlistView.isHidden = false
-            
             playlistView.inject(input: (tracks: tracks, imagePipeline: input.imagePipeline))
         }
         

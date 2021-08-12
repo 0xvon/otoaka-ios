@@ -17,7 +17,7 @@ public final class BadgeView: UIView {
         let badgeTitle = UILabel()
         badgeTitle.translatesAutoresizingMaskIntoConstraints = false
         badgeTitle.textColor = Brand.color(for: .text(.primary))
-        badgeTitle.font = Brand.font(for: .mediumStrong)
+        badgeTitle.font = Brand.font(for: .smallStrong)
         return badgeTitle
     }()
 
@@ -59,7 +59,7 @@ public final class BadgeView: UIView {
 
         let constraints = [
             badgeImageView.leftAnchor.constraint(equalTo: leftAnchor),
-            badgeImageView.widthAnchor.constraint(equalToConstant: 24),
+            badgeImageView.widthAnchor.constraint(equalToConstant: 20),
             badgeImageView.heightAnchor.constraint(
                 equalTo: badgeImageView.widthAnchor),
             badgeImageView.centerYAnchor.constraint(equalTo: centerYAnchor),

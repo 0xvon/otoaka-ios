@@ -26,10 +26,11 @@ final class TrackCell: UITableViewCell, ReusableCell {
         _contentView.cellButton.isUserInteractionEnabled = false
         backgroundColor = .clear
         NSLayoutConstraint.activate([
-            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+            _contentView.heightAnchor.constraint(equalToConstant: 40),
         ])
         selectionStyle = .none
     }
@@ -85,13 +86,14 @@ class TrackCellContent: UIView {
     func setup() {
         backgroundColor = .clear
         
-        artworkImageView.layer.cornerRadius = 30
+        artworkImageView.layer.cornerRadius = 20
+        artworkImageView.alpha = 0.8
         artworkImageView.clipsToBounds = true
         
-        trackTitleLabel.font = Brand.font(for: .largeStrong)
+        trackTitleLabel.font = Brand.font(for: .mediumStrong)
         trackTitleLabel.textColor = Brand.color(for: .text(.primary))
         
-        bandNameLabel.font = Brand.font(for: .medium)
+        bandNameLabel.font = Brand.font(for: .xsmall)
         bandNameLabel.textColor = Brand.color(for: .text(.link))
         
         playButton.setImage(UIImage(systemName: "play")!

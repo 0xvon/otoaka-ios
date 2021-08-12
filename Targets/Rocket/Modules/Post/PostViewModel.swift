@@ -32,9 +32,7 @@ class PostViewModel {
     enum Output {
         case didPost(Post)
         case updateSubmittableState(PageState)
-        case didSelectTrack
-        case didSelectGroup
-        case didUploadImage
+        case didUpdateContent
         case reportError(Error)
     }
     
@@ -74,30 +72,17 @@ class PostViewModel {
     
     func didSelectTrack(tracks: [Endpoint.Track]) {
         state.tracks = tracks
-        state.groups = []
-        state.images = []
-        
-        outputSubject.send(.didUploadImage)
-        outputSubject.send(.didSelectGroup)
-        outputSubject.send(.didSelectTrack)    }
+        outputSubject.send(.didUpdateContent)
+    }
     
     func didSelectGroup(groups: [Group]) {
         state.groups = groups
-        state.images = []
-        state.tracks = []
-        
-        outputSubject.send(.didUploadImage)
-        outputSubject.send(.didSelectGroup)
-        outputSubject.send(.didSelectTrack)    }
+        outputSubject.send(.didUpdateContent)
+    }
     
     func didUploadImages(images: [UIImage]) {
         state.images = images
-        state.groups = []
-        state.tracks = []
-        
-        outputSubject.send(.didUploadImage)
-        outputSubject.send(.didSelectGroup)
-        outputSubject.send(.didSelectTrack)
+        outputSubject.send(.didUpdateContent)
     }
     
     func validatePost() {
@@ -121,7 +106,6 @@ class PostViewModel {
                 self?.outputSubject.send(.reportError(error))
             }
         }
-        
     }
     
     func post(imageUrls: [String]) {
