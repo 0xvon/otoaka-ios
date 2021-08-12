@@ -1,17 +1,15 @@
 {
   "images" : [
     {
-      "filename" : "ipad_spotlight40x40.png",
+      "filename" : "Frame 9.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "ipad_spotlight40x40@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "iphone_app60x60@2x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

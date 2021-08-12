@@ -22,17 +22,21 @@
                     <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="40" id="Ico-eG-jeg"/>
+                        <constraint firstAttribute="width" secondItem="VcJ-oA-too" secondAttribute="height" multiplier="1:1" id="trj-aW-r4i"/>
                         <constraint firstAttribute="width" constant="40" id="whu-dd-ZTp"/>
                     </constraints>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tL2-pp-fEu">
-                    <rect key="frame" x="44" y="0.0" width="356" height="20.5"/>
+                    <rect key="frame" x="44" y="0.0" width="356" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="M7d-u5-feO"/>
+                    </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="baz-G7-BZL">
-                    <rect key="frame" x="44" y="19.5" width="356" height="20.5"/>
+                    <rect key="frame" x="44" y="20" width="356" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -50,21 +54,20 @@
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="VcJ-oA-too" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="1d4-pB-td3"/>
+                <constraint firstItem="baz-G7-BZL" firstAttribute="trailing" secondItem="tL2-pp-fEu" secondAttribute="trailing" id="1le-RO-1XB"/>
                 <constraint firstItem="baz-G7-BZL" firstAttribute="leading" secondItem="VcJ-oA-too" secondAttribute="trailing" constant="4" id="AAP-ho-78d"/>
-                <constraint firstItem="VcJ-oA-too" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="KB3-qT-fd3"/>
+                <constraint firstItem="VP4-iZ-njq" firstAttribute="leading" secondItem="VcJ-oA-too" secondAttribute="leading" id="ARZ-Uh-bAf"/>
                 <constraint firstItem="baz-G7-BZL" firstAttribute="leading" secondItem="tL2-pp-fEu" secondAttribute="leading" id="MX8-i1-VtM"/>
                 <constraint firstItem="tL2-pp-fEu" firstAttribute="top" secondItem="VcJ-oA-too" secondAttribute="top" id="Nwl-Fr-Tb8"/>
-                <constraint firstAttribute="trailing" secondItem="baz-G7-BZL" secondAttribute="trailing" id="SAG-AQ-CL7"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="VcJ-oA-too" secondAttribute="bottom" id="SCH-vr-quW"/>
+                <constraint firstItem="baz-G7-BZL" firstAttribute="top" secondItem="tL2-pp-fEu" secondAttribute="bottom" id="Rtg-WO-w1f"/>
+                <constraint firstAttribute="bottom" secondItem="VcJ-oA-too" secondAttribute="bottom" id="SCH-vr-quW"/>
                 <constraint firstAttribute="trailing" secondItem="tL2-pp-fEu" secondAttribute="trailing" id="UkL-lS-Xy9"/>
                 <constraint firstItem="NgS-CF-NkC" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="VgZ-xf-qla"/>
-                <constraint firstItem="VP4-iZ-njq" firstAttribute="centerY" secondItem="VcJ-oA-too" secondAttribute="centerY" id="d02-Js-dwj"/>
-                <constraint firstItem="baz-G7-BZL" firstAttribute="bottom" secondItem="VP4-iZ-njq" secondAttribute="bottom" id="fV8-TO-eMO"/>
                 <constraint firstItem="NgS-CF-NkC" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="gKp-Vk-5HQ"/>
-                <constraint firstItem="VcJ-oA-too" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="hNO-7x-KCE"/>
-                <constraint firstItem="VP4-iZ-njq" firstAttribute="centerX" secondItem="VcJ-oA-too" secondAttribute="centerX" id="hf4-lM-c6E"/>
+                <constraint firstItem="VcJ-oA-too" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="hNO-7x-KCE"/>
                 <constraint firstItem="NgS-CF-NkC" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="sFG-aR-dal"/>
                 <constraint firstItem="NgS-CF-NkC" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="tTA-bS-WHM"/>
+                <constraint firstItem="VP4-iZ-njq" firstAttribute="top" secondItem="VcJ-oA-too" secondAttribute="top" id="zqq-4S-ohw"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>

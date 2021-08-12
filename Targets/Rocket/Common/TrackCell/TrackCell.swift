@@ -22,7 +22,6 @@ final class TrackCell: UITableViewCell, ReusableCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
-        // Proxy tap event to tableView(_:didSelectRowAt:)
         _contentView.cellButton.isUserInteractionEnabled = false
         backgroundColor = .clear
         NSLayoutConstraint.activate([

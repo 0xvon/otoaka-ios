@@ -240,7 +240,7 @@ final class PostViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didPost(_):
-                navigationController?.popViewController(animated: true)
+                navigationController?.popToRootViewController(animated: true)
             case .updateSubmittableState(let pageState):
                 switch pageState {
                 case .editting(let submittable):

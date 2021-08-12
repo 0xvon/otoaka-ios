@@ -195,17 +195,22 @@ class PostCellContent: UIButton {
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(uploadedImageTapped)))
         imageView.isHidden = true
+        
+        NSLayoutConstraint.activate([
+            imageView.heightAnchor.constraint(equalToConstant: 300),
+        ])
         return imageView
     }()
     private lazy var selectedGroupView: GroupCellContent = {
         let content = UINib(nibName: "GroupCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
         content.translatesAutoresizingMaskIntoConstraints = false
+        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
+        content.isHidden = true
+        
         NSLayoutConstraint.activate([
             content.heightAnchor.constraint(equalToConstant: 300),
         ])
-        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
-        content.isHidden = true
         return content
     }()
     private lazy var playlistView: PlaylistCellContent = {
@@ -220,10 +225,11 @@ class PostCellContent: UIButton {
                 self.listener(.trackTapped(track))
             }
         }
+        content.isHidden = true
         NSLayoutConstraint.activate([
             content.heightAnchor.constraint(equalToConstant: 300),
         ])
-        content.isHidden = true
+        
         return content
     }()
     private lazy var writeReportButton: ToggleButton = {

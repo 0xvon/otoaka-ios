@@ -385,7 +385,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         
         let logoTitle = UILabel()
         logoTitle.translatesAutoresizingMaskIntoConstraints = false
-        logoTitle.text = "ロケバン"
+        logoTitle.text = "OTOAKA"
         logoTitle.font = Brand.font(for: .mediumStrong)
         logoTitle.textColor = Brand.color(for: .text(.primary))
         logoInnerView.addSubview(logoTitle)

@@ -115,7 +115,6 @@ class LiveCellContent: UIButton {
         
         stackView.addArrangedSubview(buyTicketButtonView)
         NSLayoutConstraint.activate([
-            buyTicketButtonView.widthAnchor.constraint(equalToConstant: 244),
             buyTicketButtonView.heightAnchor.constraint(equalTo: stackView.heightAnchor)
         ])
         
