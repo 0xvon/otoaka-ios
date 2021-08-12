@@ -163,8 +163,9 @@ extension SearchFriendsViewController {
                 switch output {
                 case .buyTicketButtonTapped:
                     guard let url = live.live.piaEventUrl else { return }
+                    guard let afUrl = URL(string: "https://click.linksynergy.com/deeplink?id=HDD1WlcV/Qk&mid=36672&murl=\(url.absoluteString)") else { return }
                     let safari = SFSafariViewController(
-                        url: url)
+                        url: afUrl)
                     safari.dismissButtonStyle = .close
                     present(safari, animated: true, completion: nil)
                 case .likeButtonTapped:

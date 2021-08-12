@@ -206,8 +206,8 @@ class UserDetailViewModel {
         guard let live = state.live else { return }
         switch event {
         case .buyTicketButtonTapped:
-            if let url = live.live.piaEventUrl {
-                outputSubject.send(.openURLInBrowser(url))
+            if let url = live.live.piaEventUrl, let afUrl = URL(string: "https://click.linksynergy.com/deeplink?id=HDD1WlcV/Qk&mid=36672&murl=\(url.absoluteString)") {
+                outputSubject.send(.openURLInBrowser(afUrl))
             }
         case .likeButtonTapped:
             live.isLiked ? unlikeLive(live: live.live) : likeLive(live: live.live)
