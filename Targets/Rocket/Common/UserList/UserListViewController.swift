@@ -98,26 +98,11 @@ final class UserListViewController: UIViewController, Instantiable {
 
 extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
-
-    func numberOfSections(in tableView: UITableView) -> Int {
         return self.viewModel.state.users.count
-        
-    }
-
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 16
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UIView()
-        view.backgroundColor = .clear
-        return view
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let user = self.viewModel.state.users[indexPath.section]
+        let user = self.viewModel.state.users[indexPath.row]
         let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: user, isMe: user.id == dependencyProvider.user.id, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
@@ -132,11 +117,6 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
         }
         return cell
     }
-
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let user = self.viewModel.state.users[indexPath.section]
-//
-//    }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         self.viewModel.willDisplay(rowAt: indexPath)

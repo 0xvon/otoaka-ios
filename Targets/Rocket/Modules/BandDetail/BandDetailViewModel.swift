@@ -44,7 +44,7 @@ class BandDetailViewModel {
     
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
-//        case updateLiveSummary(Live?)
+        case updateLiveSummary(LiveFeed?)
         case updatePostSummary(PostSummary?)
         case didGetChart(Group, InternalDomain.YouTubeVideo?)
         case didCreatedInvitation(InviteGroup.Invitation)
@@ -55,6 +55,8 @@ class BandDetailViewModel {
         case pushToLiveList(LiveListViewController.Input)
         case pushToPostAuthor(User)
         case pushToPostList(PostListViewController.Input)
+        case pushToUserList(UserListViewController.Input)
+        case pushToPost(PostViewController.Input)
         case pushToPlayTrack(PlayTrackViewController.Input)
         case pushToGroupDetail(Group)
         case openURLInBrowser(URL)
@@ -63,6 +65,7 @@ class BandDetailViewModel {
         case didToggleLikePost
         case didInstagramButtonTapped(PostSummary)
         case didDeletePostButtonTapped(PostSummary)
+        case didToggleLikeLive
         case didTwitterButtonTapped(PostSummary)
         case reportError(Error)
     }
@@ -81,6 +84,8 @@ class BandDetailViewModel {
     private lazy var deletePostAction = Action(DeletePost.self, httpClient: apiClient)
     private lazy var likePostAction = Action(LikePost.self, httpClient: apiClient)
     private lazy var unLikePostAction = Action(UnlikePost.self, httpClient: apiClient)
+    private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
+    private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
 
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -95,12 +100,14 @@ class BandDetailViewModel {
         let errors = Publishers.MergeMany(
             inviteGroup.errors,
             getGroup.errors,
-//            getGroupLives.errors,
+            getGroupLives.errors,
             getGroupPost.errors,
             listChannel.errors,
             deletePostAction.errors,
             likePostAction.errors,
-            unLikePostAction.errors
+            unLikePostAction.errors,
+            likeLiveAction.errors,
+            unlikeLiveAction.errors
         )
 
         Publishers.MergeMany(
@@ -108,7 +115,7 @@ class BandDetailViewModel {
             getGroup.elements.map { result in
                 .didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))
             }.eraseToAnyPublisher(),
-//            getGroupLives.elements.map { .updateLiveSummary($0.items.first) }.eraseToAnyPublisher(),
+            getGroupLives.elements.map { .updateLiveSummary($0.items.first) }.eraseToAnyPublisher(),
             getGroupPost.elements.map { .updatePostSummary($0.items.first) }.eraseToAnyPublisher(),
             listChannel.elements.map { [unowned self] in
                 .didGetChart(self.state.group, $0.items.first)
@@ -116,14 +123,18 @@ class BandDetailViewModel {
             deletePostAction.elements.map { _ in .didDeletePost }.eraseToAnyPublisher(),
             likePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
             unLikePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
+            likeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
+            unlikeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
         getGroupPost.elements
-            .sink(receiveValue: { [unowned self] posts in
+            .combineLatest(getGroupLives.elements)
+            .sink(receiveValue: { [unowned self] posts, lives in
                 state.posts = posts.items
+                state.lives = lives.items
             })
             .store(in: &cancellables)
         
@@ -160,7 +171,7 @@ class BandDetailViewModel {
     func refresh() {
         getGroupDetail()
         getChartSummary()
-//        getGroupLiveSummary()
+        getGroupLiveSummary()
         getGroupPostSummary()
     }
     
@@ -223,6 +234,24 @@ class BandDetailViewModel {
         }
     }
     
+    func liveCellEvent(event: LiveCellContent.Output) {
+        guard let live = state.lives.first else { return }
+        switch event {
+        case .buyTicketButtonTapped:
+            if let url = live.live.piaEventUrl {
+                outputSubject.send(.openURLInBrowser(url))
+            }
+        case .likeButtonTapped:
+            live.isLiked ? unlikeLive(live: live.live) : likeLive(live: live.live)
+        case .numOfLikeTapped:
+            outputSubject.send(.pushToUserList(.liveLikedUsers(live.live.id)))
+        case .numOfReportTapped:
+            outputSubject.send(.pushToPostList(.livePost(live.live)))
+        case .reportButtonTapped:
+            outputSubject.send(.pushToPost(live.live))
+        }
+    }
+    
     func inviteGroup(groupId: Group.ID) {
         let request = InviteGroup.Request(groupId: groupId)
         inviteGroup.input((request: request, uri: InviteGroup.URI()))
@@ -280,5 +309,17 @@ class BandDetailViewModel {
         let request = DeletePost.Request(postId: post.id)
         let uri = DeletePost.URI()
         deletePostAction.input((request: request, uri: uri))
+    }
+    
+    func likeLive(live: Live) {
+        let request = LikeLive.Request(liveId: live.id)
+        let uri = LikeLive.URI()
+        likeLiveAction.input((request: request, uri: uri))
+    }
+    
+    func unlikeLive(live: Live) {
+        let request = UnlikeLive.Request(liveId: live.id)
+        let uri = UnlikeLive.URI()
+        unlikeLiveAction.input((request: request, uri: uri))
     }
 }

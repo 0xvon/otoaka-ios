@@ -51,18 +51,18 @@ final class BandDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
 
-//    private let liveSectionHeader = SummarySectionHeader(title: "LIVE")
-    // FIXME: Use a safe way to instantiate views from xib
-//    private lazy var liveCellContent: LiveCellContent = {
-//        let content = UINib(nibName: "LiveCellContent", bundle: nil)
-//            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
-//        content.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            content.heightAnchor.constraint(equalToConstant: 300),
-//        ])
-//        return content
-//    }()
-//    private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
+    private let liveSectionHeader = SummarySectionHeader(title: "LIVE")
+//     FIXME: Use a safe way to instantiate views from xib
+    private lazy var liveCellContent: LiveCellContent = {
+        let content = UINib(nibName: "LiveCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 350),
+        ])
+        return content
+    }()
+    private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
 
     private let postSectionHeader = SummarySectionHeader(title: "POST")
     private lazy var postCellContent: PostCellContent = {
@@ -142,12 +142,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
         scrollStackView.addArrangedSubview(followStackView)
 
-//        scrollStackView.addArrangedSubview(liveSectionHeader)
-//        NSLayoutConstraint.activate([
-//            liveSectionHeader.heightAnchor.constraint(equalToConstant: 64),
-//        ])
-//        liveCellWrapper.isHidden = true
-//        scrollStackView.addArrangedSubview(liveCellWrapper)
+        scrollStackView.addArrangedSubview(liveSectionHeader)
+        NSLayoutConstraint.activate([
+            liveSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+        ])
+        liveCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(liveCellWrapper)
 
         scrollStackView.addArrangedSubview(postSectionHeader)
         NSLayoutConstraint.activate([
@@ -208,9 +208,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 refreshControl.endRefreshing()
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item, imagePipeline: dependencyProvider.imagePipeline))
-//            case .updateLiveSummary(.none):
-//                self.liveSectionHeader.isHidden = true
-//                self.liveCellWrapper.isHidden = true
+            case .updateLiveSummary(let liveFeed):
+                let isHidden = liveFeed == nil
+                self.liveSectionHeader.isHidden = isHidden
+                self.liveCellWrapper.isHidden = isHidden
+                if let liveFeed = liveFeed {
+                    liveCellContent.inject(input: (live: liveFeed, imagePipeline: dependencyProvider.imagePipeline, type: .normal))
+                }
             case .didDeletePostButtonTapped(let post):
                 let alertController = UIAlertController(
                     title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -281,6 +285,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     url: url)
                 safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
+            case .pushToUserList(let input):
+                let vc = UserListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPost(let input):
+                let vc = PostViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .didToggleLikeLive:
+                viewModel.refresh()
             }
         }
         .store(in: &cancellables)
@@ -298,13 +310,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
             self.viewModel.postCellEvent(event: output)
         }
 
-//        liveSectionHeader.listen { [unowned self] in
-//            self.viewModel.didTapSeeMore(at: .live)
-//        }
+        liveSectionHeader.listen { [unowned self] in
+            self.viewModel.didTapSeeMore(at: .live)
+        }
+        liveCellContent.listen { [unowned self] output in
+            viewModel.liveCellEvent(event: output)
+        }
+        
         postSectionHeader.listen { [unowned self] in
             self.viewModel.didTapSeeMore(at: .post)
         }
-//        liveCellContent.addTarget(self, action: #selector(liveCellTaped), for: .touchUpInside)
         postCellContent.addTarget(self, action: #selector(postCellTaped), for: .touchUpInside)
 
         followersSummaryView.addGestureRecognizer(
