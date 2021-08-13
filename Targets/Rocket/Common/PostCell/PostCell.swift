@@ -189,7 +189,7 @@ class PostCellContent: UIButton {
     private lazy var uploadedImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 16
+        imageView.layer.cornerRadius = 10
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.isUserInteractionEnabled = true

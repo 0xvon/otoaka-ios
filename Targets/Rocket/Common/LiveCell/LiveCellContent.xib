@@ -19,7 +19,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Label" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FL4-ux-5xf">
-                    <rect key="frame" x="16" y="16" width="382" height="20.5"/>
+                    <rect key="frame" x="16" y="16" width="344" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -42,7 +42,7 @@
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="f6c-SZ-Ivn" secondAttribute="bottom" id="9oR-Mo-T5i"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Rh7-uL-vJd" secondAttribute="bottom" constant="16" id="CuK-xE-XCe"/>
                 <constraint firstItem="Rh7-uL-vJd" firstAttribute="top" secondItem="1oR-E1-o2n" secondAttribute="bottom" constant="8" id="Ipn-kY-z6Y"/>
-                <constraint firstAttribute="trailing" secondItem="FL4-ux-5xf" secondAttribute="trailing" constant="16" id="Jz5-EM-1Yb"/>
+                <constraint firstAttribute="trailing" secondItem="FL4-ux-5xf" secondAttribute="trailing" constant="54" id="Jz5-EM-1Yb"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="1oR-E1-o2n" secondAttribute="trailing" constant="16" id="KDG-CR-7dy"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="f6c-SZ-Ivn" secondAttribute="trailing" id="Mh7-dX-h5A"/>
                 <constraint firstItem="f6c-SZ-Ivn" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="dWs-zX-jsp"/>

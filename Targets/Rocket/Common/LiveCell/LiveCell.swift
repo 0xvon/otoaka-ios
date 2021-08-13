@@ -117,12 +117,6 @@ class LiveCellContent: UIButton {
         NSLayoutConstraint.activate([
             buyTicketButtonView.heightAnchor.constraint(equalTo: stackView.heightAnchor)
         ])
-        
-//        let buyTicketButtonSpacer = UIView()
-//        buyTicketButtonSpacer.translatesAutoresizingMaskIntoConstraints = false
-//        buyTicketButtonSpacer.backgroundColor = .clear
-//        stackView.addArrangedSubview(buyTicketButtonSpacer)
-        
         return stackView
     }()
     private lazy var buyTicketButtonView: PrimaryButton = {
@@ -140,49 +134,41 @@ class LiveCellContent: UIButton {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 4
-        stackView.addArrangedSubview(likeButton)
+//        stackView.addArrangedSubview(likeButton)
         stackView.addArrangedSubview(reportButton)
         
         return stackView
     }()
-    private lazy var numOfLikeView: CountSummaryView = {
-        let summaryView = CountSummaryView()
-        summaryView.translatesAutoresizingMaskIntoConstraints = false
-        summaryView.isUserInteractionEnabled = true
-        summaryView.addGestureRecognizer(
-            UITapGestureRecognizer(target: self, action: #selector(numOfLikeTapped))
-        )
-        return summaryView
+    private lazy var numOfReportButton: CountButton = {
+        let button = CountButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isUserInteractionEnabled = true
+        
+        button.listen { [unowned self] in
+            self.listener(.numOfReportTapped)
+        }
+        
+        return button
+    }()
+    private lazy var numOfLikeButton: CountButton = {
+        let button = CountButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isUserInteractionEnabled = true
+        
+        button.listen { [unowned self] in
+            self.listener(.numOfLikeTapped)
+        }
+        
+        return button
     }()
     private lazy var likeButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 24
-        button.setTitle("行きたい", selected: false)
+        button.setImage(UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
         button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         return button
-    }()
-    
-    private lazy var actionCountStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.backgroundColor = .clear
-        stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
-        stackView.spacing = 4
-        
-        stackView.addArrangedSubview(numOfLikeView)
-        stackView.addArrangedSubview(numOfReportView)
-        
-        return stackView
-    }()
-    private lazy var numOfReportView: CountSummaryView = {
-        let summaryView = CountSummaryView()
-        summaryView.translatesAutoresizingMaskIntoConstraints = false
-        summaryView.addGestureRecognizer(
-            UITapGestureRecognizer(target: self, action: #selector(numOfReportTapped))
-        )
-        return summaryView
     }()
     private lazy var reportButton: ToggleButton = {
         let button = ToggleButton()
@@ -230,14 +216,15 @@ class LiveCellContent: UIButton {
         
         switch input.type {
         case .normal:
-            numOfLikeView.update(input: (title: "", count: input.live.likeCount))
-            likeButton.setTitle("行きたい", selected: input.live.isLiked)
+            numOfLikeButton.setTitle("行きたい \(input.live.likeCount)人", for: .normal)
+            numOfReportButton.setTitle("レポート \(input.live.postCount)件", for: .normal)
             likeButton.isSelected = input.live.isLiked
-            numOfReportView.update(input: (title: "", count: input.live.postCount))
         case .review:
             buyTicketStackView.isHidden = true
             actionButtonStackView.isHidden = true
-            actionCountStackView.isHidden = true
+            numOfLikeButton.isHidden = true
+            numOfReportButton.isHidden = true
+            likeButton.isHidden = true
         }
         
     }
@@ -268,6 +255,14 @@ class LiveCellContent: UIButton {
         self.thumbnailView.backgroundColor = .clear
         self.thumbnailView.layer.cornerRadius = 10
         self.thumbnailView.clipsToBounds = true
+        
+        addSubview(likeButton)
+        NSLayoutConstraint.activate([
+            likeButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            likeButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            likeButton.widthAnchor.constraint(equalToConstant: 32),
+            likeButton.heightAnchor.constraint(equalTo: likeButton.widthAnchor),
+        ])
 
         stackView.spacing = 8
         stackView.axis = .vertical
@@ -285,6 +280,18 @@ class LiveCellContent: UIButton {
             placeView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
+        stackView.addArrangedSubview(numOfLikeButton)
+        NSLayoutConstraint.activate([
+            numOfLikeButton.heightAnchor.constraint(equalToConstant: 20),
+            numOfLikeButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        stackView.addArrangedSubview(numOfReportButton)
+        NSLayoutConstraint.activate([
+            numOfReportButton.heightAnchor.constraint(equalToConstant: 20),
+            numOfReportButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
         let middleSpacer = UIView()
         middleSpacer.backgroundColor = .clear
         stackView.addArrangedSubview(middleSpacer)
@@ -299,12 +306,6 @@ class LiveCellContent: UIButton {
         NSLayoutConstraint.activate([
             actionButtonStackView.heightAnchor.constraint(equalToConstant: 48),
             actionButtonStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-        ])
-        
-        stackView.addArrangedSubview(actionCountStackView)
-        NSLayoutConstraint.activate([
-            actionCountStackView.heightAnchor.constraint(equalToConstant: 24),
-            actionCountStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
     }
     
