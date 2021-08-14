@@ -112,7 +112,7 @@ class BandDetailViewModel {
 
         Publishers.MergeMany(
             inviteGroup.elements.map(Output.didCreatedInvitation).eraseToAnyPublisher(),
-            getGroup.elements.map { result in
+            getGroup.elements.map { [unowned self] result in
                 .didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))
             }.eraseToAnyPublisher(),
             getGroupLives.elements.map { .updateLiveSummary($0.items.first) }.eraseToAnyPublisher(),

@@ -57,13 +57,9 @@ final class UserNotificationViewControlelr: UITableViewController {
             case .read: break
             case .selectCell(let notification):
                 switch notification.notificationType {
-                case let .like(like):
-                    viewModel.getUserFeed(feedId: like.feed.id)
                 case let .follow(user):
                     let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
                     navigationController?.pushViewController(vc, animated: true)
-                case let .comment(comment):
-                    viewModel.getUserFeed(feedId: comment.userFeedId)
                 default:
                     break
                 }

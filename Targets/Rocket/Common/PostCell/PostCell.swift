@@ -28,6 +28,7 @@ class PostCell: UITableViewCell, ReusableCell {
             _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
+            _contentView.heightAnchor.constraint(equalToConstant: 540),
         ])
         selectionStyle = .none
     }
@@ -69,6 +70,7 @@ class PostCellContent: UIButton {
         case twitterTapped
         case instagramTapped
         case postListTapped
+        case seePlaylistTapped
         case postTapped
         case deleteTapped
     }
@@ -110,15 +112,25 @@ class PostCellContent: UIButton {
             postContentStackView.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
+//        postView.addArrangedSubview(playlistView)
+//        NSLayoutConstraint.activate([
+//            playlistView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+//        ])
+        
         postView.addArrangedSubview(writeReportButton)
         NSLayoutConstraint.activate([
             writeReportButton.heightAnchor.constraint(equalToConstant: 48),
             writeReportButton.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        postView.addArrangedSubview(spacer)
+        
         postView.addArrangedSubview(sectionView)
         NSLayoutConstraint.activate([
             sectionView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+            sectionView.heightAnchor.constraint(equalToConstant: 44),
         ])
         
         return postView
@@ -131,14 +143,14 @@ class PostCellContent: UIButton {
             avatarImageView.topAnchor.constraint(equalTo: view.topAnchor),
             avatarImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
             avatarImageView.heightAnchor.constraint(equalToConstant: 40),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 40),
+            avatarImageView.widthAnchor.constraint(equalTo: avatarImageView.heightAnchor),
         ])
         
         view.addSubview(usernameLabel)
         NSLayoutConstraint.activate([
             usernameLabel.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
             usernameLabel.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
-            usernameLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 8),
+            usernameLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
         
         view.addSubview(dateLabel)
@@ -181,8 +193,15 @@ class PostCellContent: UIButton {
         stackView.distribution = .fillEqually
         
         stackView.addArrangedSubview(uploadedImageView)
-        stackView.addArrangedSubview(selectedGroupView)
+        NSLayoutConstraint.activate([
+            uploadedImageView.heightAnchor.constraint(equalToConstant: 300),
+        ])
+        
+//        stackView.addArrangedSubview(selectedGroupView)
         stackView.addArrangedSubview(playlistView)
+        NSLayoutConstraint.activate([
+            playlistView.heightAnchor.constraint(equalToConstant: 300),
+        ])
         
         return stackView
     }()
@@ -196,26 +215,22 @@ class PostCellContent: UIButton {
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(uploadedImageTapped)))
         imageView.isHidden = true
         
-        NSLayoutConstraint.activate([
-            imageView.heightAnchor.constraint(equalToConstant: 300),
-        ])
         return imageView
     }()
-    private lazy var selectedGroupView: GroupCellContent = {
-        let content = UINib(nibName: "GroupCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
-        content.isHidden = true
-        
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300),
-        ])
-        return content
-    }()
-    private lazy var playlistView: PlaylistCellContent = {
-        let content = UINib(nibName: "PlaylistCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! PlaylistCellContent
+//    private lazy var selectedGroupView: GroupCellContent = {
+//        let content = UINib(nibName: "GroupCellContent", bundle: nil)
+//            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
+//        content.isHidden = true
+//
+//        NSLayoutConstraint.activate([
+//            content.heightAnchor.constraint(equalToConstant: 300),
+//        ])
+//        return content
+//    }()
+    private lazy var playlistView: PlaylistCell = {
+        let content = PlaylistCell()
         content.translatesAutoresizingMaskIntoConstraints = false
         content.isUserInteractionEnabled = true
         content.listen { [unowned self] output in
@@ -223,13 +238,12 @@ class PostCellContent: UIButton {
             case .playButtonTapped(let track): self.listener(.playTapped(track))
             case .trackTapped(let track):
                 self.listener(.trackTapped(track))
+            case .seeMoreTapped:
+                self.listener(.seePlaylistTapped)
             }
         }
         content.isHidden = true
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300),
-        ])
-        
+
         return content
     }()
     private lazy var writeReportButton: ToggleButton = {
@@ -249,37 +263,31 @@ class PostCellContent: UIButton {
         sectionView.addArrangedSubview(showPostListButton)
         NSLayoutConstraint.activate([
             showPostListButton.widthAnchor.constraint(equalToConstant: 44),
-            showPostListButton.heightAnchor.constraint(equalToConstant: 44),
         ])
         
         sectionView.addArrangedSubview(commentButtonView)
         NSLayoutConstraint.activate([
             commentButtonView.widthAnchor.constraint(equalToConstant: 60),
-            commentButtonView.heightAnchor.constraint(equalToConstant: 44),
         ])
         
         sectionView.addArrangedSubview(likeButtonView)
         NSLayoutConstraint.activate([
             likeButtonView.widthAnchor.constraint(equalToConstant: 60),
-            likeButtonView.heightAnchor.constraint(equalToConstant: 44),
         ])
         
         sectionView.addArrangedSubview(twitterButton)
         NSLayoutConstraint.activate([
             twitterButton.widthAnchor.constraint(equalToConstant: 44),
-            twitterButton.heightAnchor.constraint(equalToConstant: 44),
         ])
         
         sectionView.addArrangedSubview(instagramButton)
         NSLayoutConstraint.activate([
             instagramButton.widthAnchor.constraint(equalToConstant: 44),
-            instagramButton.heightAnchor.constraint(equalToConstant: 44),
         ])
         
         sectionView.addArrangedSubview(deleteButton)
         NSLayoutConstraint.activate([
             deleteButton.widthAnchor.constraint(equalToConstant: 44),
-            deleteButton.heightAnchor.constraint(equalToConstant: 44),
         ])
         
         let spacer = UIView()
@@ -403,21 +411,35 @@ class PostCellContent: UIButton {
         }
         textView.text = input.post.text
         
-        selectedGroupView.isHidden = input.post.groups.isEmpty
+//        selectedGroupView.isHidden = input.post.groups.isEmpty
         uploadedImageView.isHidden = input.post.imageUrls.isEmpty
         playlistView.isHidden = input.post.tracks.isEmpty
         
-        if let group = input.post.groups.first {
-            selectedGroupView.inject(input: (group: group, imagePipeline: input.imagePipeline))
-        }
+//        if let group = input.post.groups.first {
+//            selectedGroupView.inject(input: (group: group, imagePipeline: input.imagePipeline))
+//        }
         if let image = input.post.imageUrls.first, let imageUrl = URL(string: image) {
             input.imagePipeline.loadImage(imageUrl, into: uploadedImageView)
         }
-        let tracks = input.post.tracks.map {
-            Track(name: $0.trackName, artistName: $0.groupName, artwork: $0.thumbnailUrl!, trackType: $0.type)
+        if (!input.post.tracks.isEmpty) {
+            playlistView.inject(
+                input: (
+                    tracks: input.post.tracks.map {
+                        Track(
+                            name: $0.trackName,
+                            artistName: $0.groupName,
+                            artwork: $0.thumbnailUrl!,
+                            trackType: $0.type
+                        )
+                    },
+                    imagePipeline: input.imagePipeline
+                )
+            )
         }
-        if (!tracks.isEmpty) {
-            playlistView.inject(input: (tracks: tracks, imagePipeline: input.imagePipeline))
+        
+        if (input.post.tracks.isEmpty && input.post.imageUrls.isEmpty), let liveUrl = input.post.live?.artworkURL {
+            uploadedImageView.isHidden = false
+            input.imagePipeline.loadImage(liveUrl, into: uploadedImageView)
         }
         
         commentButtonView.setTitle("\(input.post.commentCount)", for: .normal)

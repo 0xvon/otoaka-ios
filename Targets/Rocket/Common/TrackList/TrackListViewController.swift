@@ -72,6 +72,7 @@ final class TrackListViewController: UIViewController, Instantiable {
     }
     
     func setup() {
+        navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
         
         view.addSubview(tableView)
@@ -102,13 +103,6 @@ final class TrackListViewController: UIViewController, Instantiable {
 extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.state.tracks.count
-    }
-    
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
-        return view
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -101,4 +101,8 @@ class UserFollowingViewModel {
             followUserAction.input((request: req, uri: FollowUser.URI()))
         }
     }
+    
+    deinit {
+        print("UserFollowingViewModel.deinit")
+    }
 }

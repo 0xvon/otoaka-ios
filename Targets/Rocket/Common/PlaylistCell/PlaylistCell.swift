@@ -8,36 +8,94 @@
 import UIKit
 import Endpoint
 import ImagePipeline
+import UIComponent
 
-class PlaylistCellContent: UIButton {
+class PlaylistCell: UIButton {
     typealias Input = (
         tracks: [Track],
         imagePipeline: ImagePipeline
     )
-    var input: Input?
-    
     enum Output {
         case playButtonTapped(Track)
         case trackTapped(Track)
+        case seeMoreTapped
     }
-    @IBOutlet weak var thumbnailImageView: UIImageView!
-    @IBOutlet weak var trackTableView: UITableView!
+    private lazy var thumbnailImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.opacity = 0.3
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    private lazy var trackStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.backgroundColor = .clear
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        return stackView
+    }()
+    private lazy var seeMoreButton: CountButton = {
+        let button = CountButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("すべてみる", for: .normal)
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.listen { [unowned self] in
+            self.listener(.seeMoreTapped)
+        }
+        
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        return button
+    }()
     
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    public init() {
+        super.init(frame: .zero)
+        setup()
+    }
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
         setup()
     }
     
     func inject(input: Input) {
-        self.input = input
         if let artwork = input.tracks.first?.artwork, let artworkURL = URL(string: artwork) {
             input.imagePipeline.loadImage(artworkURL, into: thumbnailImageView)
         }
-        trackTableView.reloadData()
+        trackStackView.arrangedSubviews.forEach {
+            trackStackView.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
+        input.tracks.prefix(5).forEach { track in
+            let _contentView = UINib(nibName: "TrackCellContent", bundle: nil)
+                .instantiate(withOwner: nil, options: nil).first as! TrackCellContent
+            _contentView.translatesAutoresizingMaskIntoConstraints = false
+            _contentView.cellButton.isUserInteractionEnabled = false
+            _contentView.inject(input: (
+                track: track,
+                imagePipeline: input.imagePipeline
+            ))
+            trackStackView.addArrangedSubview(_contentView)
+            _contentView.listen { [unowned self] output in
+                switch output {
+                case .playButtonTapped: self.listener(.playButtonTapped(track))
+                case .groupTapped: break
+                }
+            }
+        }
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        trackStackView.addArrangedSubview(spacer)
+        if (input.tracks.count > 5) {
+            trackStackView.addArrangedSubview(seeMoreButton)
+        }
     }
     
     func setup() {
@@ -46,50 +104,25 @@ class PlaylistCellContent: UIButton {
         self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         self.layer.cornerRadius = 10
         
-        thumbnailImageView.layer.opacity = 0.3
-        thumbnailImageView.layer.cornerRadius = 10
-        thumbnailImageView.clipsToBounds = true
-        thumbnailImageView.contentMode = .scaleAspectFill
+        addSubview(thumbnailImageView)
+        NSLayoutConstraint.activate([
+            thumbnailImageView.topAnchor.constraint(equalTo: topAnchor),
+            thumbnailImageView.rightAnchor.constraint(equalTo: rightAnchor),
+            thumbnailImageView.leftAnchor.constraint(equalTo: leftAnchor),
+            thumbnailImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
         
-        trackTableView.delegate = self
-        trackTableView.dataSource = self
-        trackTableView.registerCellClass(TrackCell.self)
-        trackTableView.separatorStyle = .none
-        trackTableView.backgroundColor = .clear
-        trackTableView.showsVerticalScrollIndicator = true
-        trackTableView.tableFooterView = UIView(frame: .zero)
+        addSubview(trackStackView)
+        NSLayoutConstraint.activate([
+            trackStackView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            trackStackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -8),
+            trackStackView.leftAnchor.constraint(equalTo: leftAnchor, constant: 8),
+            trackStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
+        ])
     }
     
     private var listener: (Output) -> Void = { _ in }
     func listen(_ listener: @escaping (Output) -> Void) {
         self.listener = listener
-    }
-}
-
-extension PlaylistCellContent: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let tracks = input?.tracks {
-            return tracks.count
-        } else {
-            return 0
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let track = input!.tracks[indexPath.row]
-        let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, imagePipeline: input!.imagePipeline), for: indexPath)
-        cell.listen { [unowned self] output in
-            switch output {
-            case .playButtonTapped: self.listener(.playButtonTapped(track))
-            case .groupTapped: break
-            }
-        }
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let track = input!.tracks[indexPath.row]
-        self.listener(.trackTapped(track))
-        tableView.deselectRow(at: indexPath, animated: true)
     }
 }

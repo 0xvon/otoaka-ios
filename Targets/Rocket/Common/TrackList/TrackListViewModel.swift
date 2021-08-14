@@ -16,12 +16,14 @@ class TrackListViewModel {
     enum DataSource {
         case searchYouTubeResults(String)
         case searchAppleMusicResults(String)
+        case playlist(Post)
         case none
     }
     
     enum DataSourceStorage {
         case searchYouTubeResults(YouTubePaginationRequest<ListChannel>)
         case searchAppleMusicResults(AppleMusicPaginationRequest<SearchSongs>)
+        case playlist(Post)
         case none
         
         init(dataSource: DataSource, dependencyProvider: LoggedInDependencyProvider) {
@@ -39,6 +41,8 @@ class TrackListViewModel {
                 uri.types = "songs"
                 let request = AppleMusicPaginationRequest<SearchSongs>(apiClient: dependencyProvider.appleMusicApiClient, uri: uri)
                 self = .searchAppleMusicResults(request)
+            case .playlist(let post):
+                self = .playlist(post)
             case .none:
                 self = .none
             }
@@ -139,6 +143,7 @@ class TrackListViewModel {
                     self?.outputSubject.send(.error(err))
                 }
             }
+        case .playlist(_): break
         case .none: break
         }
     }
@@ -156,6 +161,16 @@ class TrackListViewModel {
             pagination.refresh()
         case let .searchAppleMusicResults(pagination):
             pagination.refresh()
+        case let .playlist(post):
+            state.tracks = post.tracks.map {
+                Track(
+                    name: $0.trackName,
+                    artistName: $0.groupName,
+                    artwork: $0.thumbnailUrl!,
+                    trackType: $0.type
+                )
+            }
+            outputSubject.send(.reloadTableView)
         case .none: break
         }
     }
@@ -167,6 +182,7 @@ class TrackListViewModel {
             pagination.next()
         case let .searchAppleMusicResults(pagination):
             pagination.next()
+        case .playlist(_): break
         case .none: break
         }
     }

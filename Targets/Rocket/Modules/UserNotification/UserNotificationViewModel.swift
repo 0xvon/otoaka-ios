@@ -34,7 +34,6 @@ class UserNotificationViewModel {
     
     private lazy var pagination = PaginationRequest<GetNotifications>(apiClient: self.apiClient)
     private lazy var readAction = Action(ReadNotification.self, httpClient: apiClient)
-    private lazy var getFeedAction = Action(GetUserFeed.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider
@@ -44,13 +43,11 @@ class UserNotificationViewModel {
         subscribe()
         
         let errors = Publishers.MergeMany(
-            readAction.errors,
-            getFeedAction.errors
+            readAction.errors
         )
         
         Publishers.MergeMany(
             readAction.elements.map { _ in .read } .eraseToAnyPublisher(),
-            getFeedAction.elements.map { feed in .didPushToPlayTrack(.userFeed(feed)) }.eraseToAnyPublisher(),
             errors.map(Output.error).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -95,13 +92,6 @@ class UserNotificationViewModel {
         outputSubject.send(.selectCell(notification))
         state.notifications[cellIndex].isRead = true
         outputSubject.send(.reloadData)
-    }
-    
-    func getUserFeed(feedId: UserFeed.ID) {
-        let request = Empty()
-        var uri = GetUserFeed.URI()
-        uri.feedId = feedId
-        getFeedAction.input((request: request, uri: uri))
     }
 }
 

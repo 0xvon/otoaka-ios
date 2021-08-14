@@ -84,4 +84,12 @@ public final class Action<Input, Element> {
     public func input(_ value: Input) {
         inputsSubject.send(value)
     }
+    
+    deinit {
+        let inputName = _typeName(Input.self, qualified: true)
+//        if inputName.contains("GetPost") {
+//            print("Action.deinit", _typeName(Input.self, qualified: true))
+//        }
+        print("Action.deinit", inputName)
+    }
 }

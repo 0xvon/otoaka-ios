@@ -89,7 +89,10 @@ class UserInformationView: UIView {
         followerCountSumamryView.update(input: (title: "フォロワー", count: input.followersCount))
         followingUserCountSummaryView.update(input: (title: "フォロー", count: input.followingUsersCount))
         likeFeedCountSummaryView.update(input: (title: "いいね", count: input.likePostCount))
-        input.imagePipeline.loadImage(URL(string: input.user.thumbnailURL!)!, into: profileImageView)
+        if let thumbnail = input.user.thumbnailURL, let url = URL(string: thumbnail) {
+            input.imagePipeline.loadImage(url, into: profileImageView)
+        }
+        
     }
     
     private func setup() {

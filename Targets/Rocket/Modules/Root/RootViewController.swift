@@ -36,6 +36,7 @@ final class RootViewController: UITabBarController, Instantiable {
         self.tabBar.tintColor = Brand.color(for: .text(.primary))
         self.tabBar.barTintColor = Brand.color(for: .background(.primary))
         self.tabBar.backgroundColor = Brand.color(for: .background(.primary))
+        bind()
     }
     
     func bind() {
@@ -62,8 +63,6 @@ final class RootViewController: UITabBarController, Instantiable {
         }
         
         checkVersion()
-        
-        bind()
     }
     
     func checkSignupStatus() {
@@ -76,7 +75,7 @@ final class RootViewController: UITabBarController, Instantiable {
         }
         let nav = DismissionSubscribableNavigationController(rootViewController: vc)
         nav.navigationBar.backgroundColor = .clear
-        nav.subscribeDismission {
+        nav.subscribeDismission { [unowned self] in
             self.checkSignupStatus()
         }
         self.present(nav, animated: true)
@@ -131,6 +130,7 @@ final class RootViewController: UITabBarController, Instantiable {
             checkSignupStatus()
         }
         return [homeVC, searchFriendsVC, messageVC, userNotificationVC, accountNav]
+//        return [searchFriendsVC]
     }
     
     private func promptVersioningViewController(versionData: RequiredVersion) {

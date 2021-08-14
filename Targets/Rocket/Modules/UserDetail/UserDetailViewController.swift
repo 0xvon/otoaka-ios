@@ -285,6 +285,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
         fatalError("init(coder:) has not been implemented")
     }
     
+    deinit {
+        print("UserDetailVC.deinit")
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
@@ -384,7 +388,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         
         setupViews()
         bind()
-        
+
         userFollowingViewModel.viewDidLoad()
     }
     
@@ -414,19 +418,23 @@ final class UserDetailViewController: UIViewController, Instantiable {
             }
         }
         .store(in: &cancellables)
-        
+
         followButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: userFollowingViewModel.didButtonTapped)
             .store(in: &cancellables)
-        
+
         sendMessageButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: didSendMessageButtonTapped)
+            .sink(receiveValue: { [unowned self] in
+                self.didSendMessageButtonTapped()
+            })
             .store(in: &cancellables)
-        
+
         editProfileButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: didEditProfileButtonTapped)
+            .sink(receiveValue: { [unowned self] in
+                self.didSendMessageButtonTapped()
+            })
             .store(in: &cancellables)
-        
+
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didRefreshUserDetail(let userDetail):
@@ -496,7 +504,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                         imagePipeline: dependencyProvider.imagePipeline
                     ))
                 }
-                
+
                 tagListView.removeAllTags()
                 tagListView.addTags(groupNameSummary)
             case .didRefreshLikedLive(let liveFeed):
@@ -569,45 +577,45 @@ final class UserDetailViewController: UIViewController, Instantiable {
             }
         }
         .store(in: &cancellables)
-        
+
         headerView.listen { [viewModel] output in
             viewModel.headerEvent(output: output)
         }
-        
+
         refreshControl.controlEventPublisher(for: .valueChanged)
             .sink { [viewModel] _ in
                 viewModel.refresh()
             }
             .store(in: &cancellables)
-        
+
         postCellContent.listen { [unowned self] output in
-            self.viewModel.postCellEvent(event: output)
+            viewModel.postCellEvent(event: output)
         }
-        
+
         groupSectionHeader.listen { [unowned self] in
             viewModel.didTapSeeMore(at: .group)
         }
-        
+
         groupCellContent.listen { [unowned self] output in
             viewModel.groupCellEvent(event: output)
         }
-        
+
         postSectionHeader.listen { [unowned self] in
             self.viewModel.didTapSeeMore(at: .post)
         }
-        
+
         postCellContent.addTarget(self, action: #selector(postCellTaped), for: .touchUpInside)
-        
+
         groupCellContent.addTarget(self, action: #selector(groupCellTaped), for: .touchUpInside)
-        
+
         liveSectionHeader.listen { [unowned self] in
             viewModel.didTapSeeMore(at: .live)
         }
-        
+
         liveCellContent.listen { [unowned self] output in
             viewModel.liveCellEvent(event: output)
         }
-        
+
     }
     
     func setupViews() {

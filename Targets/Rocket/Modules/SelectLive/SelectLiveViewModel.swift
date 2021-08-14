@@ -78,7 +78,7 @@ final class SelectLiveViewModel {
     }
     
     func updateSearchQuery(query: String?) {
-        guard let query = query else { return }
+        guard let query = query, query != "", query != " " else { return }
         outputSubject.send(.updateSearchResult(.liveToSelect(query)))
     }
     

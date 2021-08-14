@@ -135,9 +135,8 @@ final class PostViewController: UIViewController, Instantiable {
         content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
         return content
     }()
-    private lazy var playlistView: PlaylistCellContent = {
-        let content = UINib(nibName: "PlaylistCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! PlaylistCellContent
+    private lazy var playlistView: PlaylistCell = {
+        let content = PlaylistCell()
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             content.heightAnchor.constraint(equalToConstant: 300),

@@ -209,6 +209,9 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
             case .groupTapped:
                 guard let group = post.groups.first else { return }
                 self.groupTapped(group: group)
+            case .seePlaylistTapped:
+                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: .playlist(post.post))
+                navigationController?.pushViewController(vc, animated: true)
             case .cellTapped:
                 break
             }

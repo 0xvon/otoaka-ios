@@ -152,7 +152,7 @@ final class HomeViewController: UITableViewController {
     
     private func deleteButtonTapped(post: PostSummary) {
         let alertController = UIAlertController(
-            title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+            title: "レポートを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
         let acceptAction = UIAlertAction(
             title: "OK", style: UIAlertAction.Style.default,
@@ -194,10 +194,6 @@ extension HomeViewController {
         return viewModel.state.posts.count
     }
     
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
-    }
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let post = viewModel.state.posts[indexPath.row]
         let cell = tableView.dequeueReusableCell(PostCell.self, input: (post: post, user: dependencyProvider.user, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
@@ -227,12 +223,19 @@ extension HomeViewController {
             case .groupTapped:
                 guard let group = post.groups.first else { return }
                 self.groupTapped(group: group)
+            case .seePlaylistTapped:
+                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: .playlist(post.post))
+                navigationController?.pushViewController(vc, animated: true)
             case .cellTapped:
                 break
             }
             
         }
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 572
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

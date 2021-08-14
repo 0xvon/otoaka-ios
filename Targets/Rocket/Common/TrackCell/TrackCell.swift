@@ -29,7 +29,6 @@ final class TrackCell: UITableViewCell, ReusableCell {
             _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            _contentView.heightAnchor.constraint(equalToConstant: 40),
         ])
         selectionStyle = .none
     }

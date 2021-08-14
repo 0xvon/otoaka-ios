@@ -200,6 +200,10 @@ extension SearchFriendsViewController {
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        viewModel.willDisplay(rowAt: indexPath)
+    }
+    
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         switch viewModel.state.scope {
         case .fan:

@@ -86,7 +86,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        signInButtonView.listen { [viewModel] in
+        signInButtonView.listen { [unowned self] in
             viewModel.getSignupStatus()
         }
 

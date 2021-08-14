@@ -69,8 +69,10 @@ class UserDetailViewModel {
         case reportError(Error)
     }
     
-    let dependencyProvider: LoggedInDependencyProvider
-    var apiClient: APIClient { dependencyProvider.apiClient }
+    var dependencyProvider: LoggedInDependencyProvider {
+        fatalError()
+    }
+    var apiClient: APIClient // { dependencyProvider.apiClient }
     
     private(set) var state: State
     
@@ -90,11 +92,15 @@ class UserDetailViewModel {
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
     private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
     
-    init(
-        dependencyProvider: LoggedInDependencyProvider, user: User
-    ) {
-        self.dependencyProvider = dependencyProvider
+//    init(
+//        dependencyProvider: LoggedInDependencyProvider, user: User
+//    ) {
+//        fatalError()
+//    }
+    init(dependencyProvider: LoggedInDependencyProvider, user: User) {
+//        self.dependencyProvider = dependencyProvider
         self.state = State(user: user, selfUser: dependencyProvider.user)
+        self.apiClient = dependencyProvider.apiClient
         
         let errors = Publishers.MergeMany(
             getUserDetailAction.errors,
@@ -296,5 +302,9 @@ class UserDetailViewModel {
         let request = UnlikeLive.Request(liveId: live.id)
         let uri = UnlikeLive.URI()
         unlikeLiveAction.input((request: request, uri: uri))
+    }
+    
+    deinit {
+        print("UserViewModel.deinit")
     }
 }

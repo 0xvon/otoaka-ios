@@ -149,13 +149,19 @@ final class SearchFriendsViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.row + 25 > state.groups.count else { return }
-        self.outputSubject.send(.isRefreshing(true))
-        
         switch state.scope {
-        case .fan: recommendedUserPagination.next()
-        case .live: upcomingLivePagination.next()
-        case .group: allGroupPagination.next()
+        case .fan:
+            guard indexPath.row + 25 > state.fans.count else { return }
+            self.outputSubject.send(.isRefreshing(true))
+            recommendedUserPagination.next()
+        case .live:
+            guard indexPath.row + 25 > state.lives.count else { return }
+            self.outputSubject.send(.isRefreshing(true))
+            upcomingLivePagination.next()
+        case .group:
+            guard indexPath.row + 25 > state.groups.count else { return }
+            self.outputSubject.send(.isRefreshing(true))
+            allGroupPagination.next()
         }
     }
     
@@ -173,6 +179,9 @@ final class SearchFriendsViewModel {
     
     func updateScope(_ scope: Int) {
         state.scope = Scope.allCases[scope]
+        state.fans = []
+        state.lives = []
+        state.groups = []
         refresh()
     }
     

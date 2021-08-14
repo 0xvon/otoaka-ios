@@ -93,7 +93,7 @@ class PostListViewModel {
         )
         
         Publishers.MergeMany(
-            deletePostAction.elements.map {_ in .didDeletePost }.eraseToAnyPublisher(),
+            deletePostAction.elements.map { _ in .didDeletePost }.eraseToAnyPublisher(),
             likePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
             unlikePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
             errors.map(Output.error).eraseToAnyPublisher()
