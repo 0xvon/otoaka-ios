@@ -64,6 +64,7 @@ final class PostListViewController: UIViewController, Instantiable {
     }
     
     func setup() {
+        navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
         
         postTableView = UITableView()

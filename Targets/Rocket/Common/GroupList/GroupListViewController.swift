@@ -58,6 +58,7 @@ final class GroupListViewController: UIViewController, Instantiable {
         .store(in: &cancellables)
     }
     private func setup() {
+        navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
         
         groupTableView = UITableView()

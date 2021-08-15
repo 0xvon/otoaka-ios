@@ -64,6 +64,7 @@ final class LiveListViewController: UIViewController, Instantiable {
 
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
+        navigationItem.largeTitleDisplayMode = .never
         
         liveTableView = UITableView()
         liveTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -106,12 +107,6 @@ final class LiveListViewController: UIViewController, Instantiable {
 extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.state.lives.count
-    }
-
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let view = UIView()
-        view.backgroundColor = .clear
-        return view
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
