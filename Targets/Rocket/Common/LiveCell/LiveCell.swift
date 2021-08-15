@@ -165,7 +165,8 @@ class LiveCellContent: UIButton {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 24
-        button.setImage(UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(
+            UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
         button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
         button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         return button
