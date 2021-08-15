@@ -102,7 +102,7 @@ final class RootViewController: UITabBarController, Instantiable {
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let homeVC = BrandNavigationController(rootViewController: HomeViewController(dependencyProvider: loggedInProvider))
-        homeVC.tabBarItem = UITabBarItem(title: "レポート", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        homeVC.tabBarItem = UITabBarItem(title: "ライブレポート", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         let searchFriendsVC = BrandNavigationController(rootViewController: SearchFriendsViewController(dependencyProvider: loggedInProvider, input: ()))
         searchFriendsVC.tabBarItem = UITabBarItem(title: "探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
         let messageVC = BrandNavigationController(rootViewController: MessageListViewController(dependencyProvider: loggedInProvider, input: ()))
@@ -130,7 +130,6 @@ final class RootViewController: UITabBarController, Instantiable {
             checkSignupStatus()
         }
         return [homeVC, searchFriendsVC, messageVC, userNotificationVC, accountNav]
-//        return [searchFriendsVC]
     }
     
     private func promptVersioningViewController(versionData: RequiredVersion) {

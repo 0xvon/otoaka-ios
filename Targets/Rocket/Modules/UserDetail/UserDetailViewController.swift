@@ -11,6 +11,7 @@ import SafariServices
 import UIComponent
 import Foundation
 import TagListView
+import ImageViewer
 
 final class UserDetailViewController: UIViewController, Instantiable {
     typealias Input = User
@@ -431,7 +432,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
 
         editProfileButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: { [unowned self] in
-                self.didSendMessageButtonTapped()
+                self.didEditProfileButtonTapped()
             })
             .store(in: &cancellables)
 
@@ -574,6 +575,12 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .reportError(let error):
                 print(error)
                 self.showAlert()
+            case .openImage(let content):
+                let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
+                self.present(galleryController, animated: true, completion: nil)
+            case .pushToTrackList(let input):
+                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: input)
+                navigationController?.pushViewController(vc, animated: true)
             }
         }
         .store(in: &cancellables)
@@ -588,7 +595,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
             }
             .store(in: &cancellables)
 
-        postCellContent.listen { [unowned self] output in
+        postCellContent.listen { [viewModel] output in
             viewModel.postCellEvent(event: output)
         }
 

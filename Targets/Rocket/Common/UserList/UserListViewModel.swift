@@ -113,6 +113,10 @@ class UserListViewModel {
         
     }
     
+    deinit {
+        print("UserListVM.deinit")
+    }
+    
     private func subscribe(storage: DataSourceStorage) {
         switch storage {
         case let .followers(pagination):

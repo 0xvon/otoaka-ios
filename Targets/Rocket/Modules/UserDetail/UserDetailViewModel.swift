@@ -10,6 +10,7 @@ import Endpoint
 import Foundation
 import InternalDomain
 import UIComponent
+import ImageViewer
 
 class UserDetailViewModel {
     enum DisplayType {
@@ -47,12 +48,14 @@ class UserDetailViewModel {
         
         case pushToPlayTrack(PlayTrackViewController.Input)
         case pushToGroupDetail(Group)
+        case openImage(GalleryItemsDataSource)
         case pushToFeedList(FeedListViewController.Input)
         case pushToPostList(PostListViewController.Input)
         case pushToGroupList(GroupListViewController.Input)
         case pushToUserList(UserListViewController.Input)
         case pushToLiveList(LiveListViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
+        case pushToTrackList(TrackListViewController.Input)
         case openURLInBrowser(URL)
         case pushToPostAuthor(User)
         case pushToMessageRoom(MessageRoom)
@@ -204,7 +207,20 @@ class UserDetailViewModel {
         case .groupTapped:
             guard let group = post.groups.first else { return }
             outputSubject.send(.pushToGroupDetail(group))
-        default: break
+        case .trackTapped(_): break
+        case .playTapped(let track):
+            outputSubject.send(.pushToPlayTrack(.track(track)))
+        case .imageTapped(let image):
+            outputSubject.send(.openImage(image))
+        case .cellTapped: break
+        case .postListTapped:
+            guard let live = post.post.live else { return }
+            outputSubject.send(.pushToPostList(.livePost(live)))
+        case .seePlaylistTapped:
+            outputSubject.send(.pushToTrackList(.playlist(post.post)))
+        case .postTapped:
+            guard let live = post.post.live else { return }
+            outputSubject.send(.pushToPost(live))
         }
     }
     

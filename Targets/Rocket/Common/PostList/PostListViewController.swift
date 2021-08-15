@@ -92,6 +92,10 @@ final class PostListViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate(constraints)
     }
     
+    deinit {
+        print("PostListVC.deinit")
+    }
+    
     @objc private func refresh(sender: UIRefreshControl) {
         viewModel.refresh()
         sender.endRefreshing()
@@ -221,6 +225,10 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         viewModel.willDisplay(rowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 572
     }
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {

@@ -8,16 +8,15 @@
 import UIKit
 import Endpoint
 import ImagePipeline
-import TagListView
 
 final class FanCell: UITableViewCell, ReusableCell {
     typealias Input = FanCellContent.Input
     typealias Output = FanCellContent.Output
     static var reusableIdentifier: String { "FanCell" }
     
-    public let _contentView: FanCellContent
+    private let _contentView: FanCellContent
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        _contentView = UINib(nibName: "FanCellContent", bundle: nil).instantiate(withOwner: nil, options: nil).first as! FanCellContent
+        _contentView = FanCellContent()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
@@ -49,6 +48,15 @@ final class FanCell: UITableViewCell, ReusableCell {
         alpha = highlighted ? 0.6 : 1.0
         _contentView.alpha = highlighted ? 0.6 : 1.0
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        _contentView.prepare()
+    }
+    
+    deinit {
+        print("FanCell.deinit")
+    }
 }
 
 class FanCellContent: UIButton {
@@ -62,9 +70,65 @@ class FanCellContent: UIButton {
         case userTapped
     }
     
-    @IBOutlet weak var fanArtworkImageView: UIImageView!
-    @IBOutlet weak var stackView: UIStackView!
+    private lazy var fanArtworkImageView: UIImageView = {
+        let fanArtworkImageView = UIImageView()
+        fanArtworkImageView.translatesAutoresizingMaskIntoConstraints = false
+        fanArtworkImageView.layer.cornerRadius = 30
+        fanArtworkImageView.clipsToBounds = true
+        fanArtworkImageView.image = nil
+        fanArtworkImageView.contentMode = .scaleAspectFill
+        fanArtworkImageView.isUserInteractionEnabled = true
+        fanArtworkImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(userTapped)))
+        
+        return fanArtworkImageView
+    }()
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.backgroundColor = .clear
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        
+        stackView.addArrangedSubview(topStackView)
+        stackView.addArrangedSubview(profileLabel)
+        NSLayoutConstraint.activate([
+            profileLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        stackView.addArrangedSubview(liveStyleLabel)
+        NSLayoutConstraint.activate([
+            liveStyleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        stackView.addArrangedSubview(biographyTextView)
+        NSLayoutConstraint.activate([
+            biographyTextView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        let spacer = UIView()
+        spacer.backgroundColor = .clear
+        stackView.addArrangedSubview(spacer)
+        
+        return stackView
+    }()
     
+    private lazy var topStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.backgroundColor = .clear
+        stackView.axis = .horizontal
+        stackView.spacing = 4
+        
+        stackView.addArrangedSubview(fanNameLabel)
+        stackView.addArrangedSubview(messageButton)
+        NSLayoutConstraint.activate([
+            messageButton.widthAnchor.constraint(equalToConstant: 32),
+            messageButton.heightAnchor.constraint(equalToConstant: 32),
+        ])
+        
+        return stackView
+    }()
     private lazy var fanNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -102,38 +166,14 @@ class FanCellContent: UIButton {
         textView.textColor = Brand.color(for: .text(.primary))
         return textView
     }()
-    private lazy var seriousTagListView: TagListView = {
-        let tagListView = TagListView()
-        tagListView.translatesAutoresizingMaskIntoConstraints = false
-        tagListView.textColor = Brand.color(for: .text(.primary))
-        tagListView.textFont = Brand.font(for: .smallStrong)
-        tagListView.tagBackgroundColor = Brand.color(for: .text(.link))
-        tagListView.alignment = .leading
-        tagListView.cornerRadius = 10
-        tagListView.paddingY = 4
-        tagListView.paddingX = 8
-        tagListView.marginY = 8
-        tagListView.marginX = 8
-        return tagListView
-    }()
-    private lazy var dabbleTagListView: TagListView = {
-        let tagListView = TagListView()
-        tagListView.translatesAutoresizingMaskIntoConstraints = false
-        tagListView.textColor = Brand.color(for: .text(.primary))
-        tagListView.textFont = Brand.font(for: .smallStrong)
-        tagListView.tagBackgroundColor = Brand.color(for: .text(.toggle))
-        tagListView.alignment = .leading
-        tagListView.cornerRadius = 10
-        tagListView.paddingY = 4
-        tagListView.paddingX = 8
-        tagListView.marginY = 8
-        tagListView.marginX = 8
-        return tagListView
-    }()
-    public lazy var messageButton: ToggleButton = {
+    private lazy var messageButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("メッセージしてみる", selected: false)
+        button.setTitle("", selected: false)
+        button.setImage(
+            UIImage(systemName: "message")!.withTintColor(Brand.color(for: .text(.toggle))),
+            for: .normal
+        )
         button.isUserInteractionEnabled = true
         button.addTarget(self, action: #selector(openMessageButtonTapped), for: .touchUpInside)
         return button
@@ -142,23 +182,25 @@ class FanCellContent: UIButton {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
+    init() {
+        super.init(frame: .zero)
         setup()
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func inject(input: Input) {
-        if let thumbnail = input.user.thumbnailURL {
-            guard let url = URL(string: thumbnail) else { return }
+        if let thumbnail = input.user.thumbnailURL, let url = URL(string: thumbnail) {
             input.imagePipeline.loadImage(url, into: fanArtworkImageView)
         }
         fanNameLabel.text = input.user.name
-        profileLabel.text = [input.user.age.map {String($0)}, input.user.sex, input.user.residence].compactMap {$0}.joined(separator: "・")
+        profileLabel.text = [
+            input.user.age.map {String($0)},
+            input.user.sex,
+            input.user.residence
+        ].compactMap {$0}.joined(separator: "・")
         liveStyleLabel.text = input.user.liveStyle ?? ""
-//        let seriousList = ["MY FIRST STORY", "RADWIMPS"]
-//        seriousTagListView.removeAllTags()
-//        seriousTagListView.addTags(seriousList)
         messageButton.isHidden = input.isMe
         biographyTextView.text = input.user.biography
     }
@@ -166,54 +208,30 @@ class FanCellContent: UIButton {
     func setup() {
         self.backgroundColor = .clear
         
-        fanArtworkImageView.clipsToBounds = true
-        fanArtworkImageView.layer.cornerRadius = 30
-        fanArtworkImageView.contentMode = .scaleAspectFill
-        fanArtworkImageView.isUserInteractionEnabled = true
-        fanArtworkImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(userTapped)))
-        
-        stackView.spacing = 4
-        stackView.axis = .vertical
-        stackView.backgroundColor = .clear
-        
-        stackView.addArrangedSubview(fanNameLabel)
+        addSubview(fanArtworkImageView)
         NSLayoutConstraint.activate([
-            fanNameLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-//            fanNameLabel.heightAnchor.constraint(equalToConstant: 20),
+            fanArtworkImageView.widthAnchor.constraint(equalToConstant: 60),
+            fanArtworkImageView.heightAnchor.constraint(equalTo: fanArtworkImageView.widthAnchor),
+            fanArtworkImageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            fanArtworkImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
         ])
         
-        stackView.addArrangedSubview(profileLabel)
+        addSubview(stackView)
         NSLayoutConstraint.activate([
-            profileLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-//            profileLabel.heightAnchor.constraint(equalToConstant: 20),
+            stackView.topAnchor.constraint(equalTo: fanArtworkImageView.topAnchor),
+            stackView.leftAnchor.constraint(equalTo: fanArtworkImageView.rightAnchor, constant: 8),
+            stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
         ])
-        
-        stackView.addArrangedSubview(liveStyleLabel)
-        NSLayoutConstraint.activate([
-            liveStyleLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-//            addressLabel.heightAnchor.constraint(equalToConstant: 20),
-        ])
-        
-        stackView.addArrangedSubview(biographyTextView)
-        NSLayoutConstraint.activate([
-            biographyTextView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-//            biographyTextView.heightAnchor.constraint(equalToConstant: 50),
-        ])
-        
-//        stackView.addArrangedSubview(seriousTagListView)
-//        NSLayoutConstraint.activate([
-//            seriousTagListView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-//        ])
-        
-        stackView.addArrangedSubview(messageButton)
-        NSLayoutConstraint.activate([
-            messageButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-            messageButton.heightAnchor.constraint(equalToConstant: 48),
-        ])
-        
-        let spacer = UIView()
-        spacer.backgroundColor = .clear
-        stackView.addArrangedSubview(spacer)
+    }
+    
+    func prepare() {
+        fanArtworkImageView.image = nil
+        fanNameLabel.text = nil
+        profileLabel.text = nil
+        liveStyleLabel.text = nil
+        messageButton.isHidden = true
+        biographyTextView.text = nil
     }
     
     @objc private func userTapped() {
@@ -227,5 +245,9 @@ class FanCellContent: UIButton {
     private var listener: (Output) -> Void = { _ in }
     func listen(_ listener: @escaping (Output) -> Void) {
         self.listener = listener
+    }
+    
+    deinit {
+        print("FanCellContent.deinit")
     }
 }

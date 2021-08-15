@@ -190,4 +190,8 @@ class PostListViewModel {
         let uri = UnlikePost.URI()
         unlikePostAction.input((request: request, uri: uri))
     }
+    
+    deinit {
+        print("PostListVM.deinit")
+    }
 }

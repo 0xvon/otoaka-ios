@@ -65,34 +65,44 @@ final class UserListViewController: UIViewController, Instantiable {
     
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
+        navigationItem.largeTitleDisplayMode = .never
         
         fanTableView = UITableView()
         fanTableView.translatesAutoresizingMaskIntoConstraints = false
         fanTableView.showsVerticalScrollIndicator = false
         fanTableView.tableFooterView = UIView(frame: .zero)
-        fanTableView.separatorStyle = .none
+        fanTableView.separatorStyle = .singleLine
+        fanTableView.separatorColor = Brand.color(for: .background(.secondary))
+        fanTableView.separatorInset = .zero
         fanTableView.backgroundColor = Brand.color(for: .background(.primary))
         fanTableView.delegate = self
         fanTableView.dataSource = self
         fanTableView.registerCellClass(FanCell.self)
         self.view.addSubview(fanTableView)
         
-        fanTableView.refreshControl = BrandRefreshControl()
-        fanTableView.refreshControl?.addTarget(
-            self, action: #selector(refreshFan(sender:)), for: .valueChanged)
-        
-        let constraints: [NSLayoutConstraint] = [
+        NSLayoutConstraint.activate([
             fanTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             fanTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             fanTableView.topAnchor.constraint(equalTo: self.view.topAnchor),
             fanTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
-        ]
-        NSLayoutConstraint.activate(constraints)
+        ])
+        
+        fanTableView.refreshControl = BrandRefreshControl()
+        fanTableView.refreshControl?.addTarget(
+            self, action: #selector(refreshFan(sender:)), for: .valueChanged)
     }
     
     @objc private func refreshFan(sender: UIRefreshControl) {
         self.viewModel.refresh()
         sender.endRefreshing()
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+    }
+    
+    deinit {
+        print("UserListVC.deinit")
     }
 }
 
@@ -112,7 +122,6 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
                 let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
-                tableView.deselectRow(at: indexPath, animated: true)
             }
         }
         return cell

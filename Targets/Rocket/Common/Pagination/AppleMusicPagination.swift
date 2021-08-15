@@ -41,15 +41,18 @@ class AppleMusicPaginationRequest<E: EndpointProtocol> where E.URI: AppleMusicPa
     typealias Event = AppleMusicPaginationEvent<E.Response>
     
     init(apiClient: APIClient, uri: E.URI = E.URI()) {
+        print("AppleMusicPaginationRequest.init", E.self)
         self.apiClient = apiClient
         self.uri = uri
         
         self.initialize()
         
         requestAction.elements
-            .map { self.state.value.isInitial ? .initial($0) : .next($0) }.eraseToAnyPublisher()
+            .map { [unowned self] in
+                self.state.value.isInitial ? .initial($0) : .next($0)
+            }.eraseToAnyPublisher()
             .merge(with: requestAction.errors.map { .error($0) }).eraseToAnyPublisher()
-            .sink(receiveValue: notify)
+            .sink(receiveValue: { [unowned self] in notify($0) })
             .store(in: &cancellables)
         
         requestAction.elements
@@ -62,6 +65,10 @@ class AppleMusicPaginationRequest<E: EndpointProtocol> where E.URI: AppleMusicPa
                 self.uri.offset += per
             })
             .store(in: &cancellables)
+    }
+    
+    deinit {
+        print("AppleMusicPaginationRequest.deinit", E.self)
     }
     
     func subscribe(_ subscriber: @escaping (Event) -> Void) {

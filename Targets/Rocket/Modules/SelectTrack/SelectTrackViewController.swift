@@ -25,7 +25,7 @@ final class SelectTrackViewController: UITableViewController {
         controller.searchResultsUpdater = self
         controller.delegate = self
         controller.searchBar.delegate = self
-        controller.searchBar.placeholder = "ロケバンにいるバンドから検索"
+        controller.searchBar.placeholder = "ロケバンにいるアーティストから検索"
         controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
         return controller
     }()
@@ -92,8 +92,8 @@ final class SelectTrackViewController: UITableViewController {
             case .addTrack:
                 self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: selectButton)
                 let cancelButton = searchController.searchBar.value(forKey: "cancelButton") as? UIButton
-                cancelButton?.setTitle("\(viewModel.state.selected.count)", for: .normal)
-                selectButton.setTitle("選択(\(viewModel.state.selected.count))", for: .normal)
+                cancelButton?.setTitle("\(viewModel.state.selected.count)曲", for: .normal)
+                selectButton.setTitle("\(viewModel.state.selected.count)曲選択", for: .normal)
             case .reportError(let error):
                 print(error)
                 showAlert()

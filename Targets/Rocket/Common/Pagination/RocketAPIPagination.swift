@@ -40,15 +40,17 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
     typealias Event = PaginationEvent<E.Response>
     
     init(apiClient: APIClient, uri: E.URI = E.URI()) {
+        print("RocketAPIPaginationRequest.init", E.self)
         self.apiClient = apiClient
         self.uri = uri
         
         self.initialize()
         
         requestAction.elements
-            .map { self.state.value.isInitial ? .initial($0) : .next($0) }.eraseToAnyPublisher()
+            .map { [unowned self] in
+                self.state.value.isInitial ? .initial($0) : .next($0) }.eraseToAnyPublisher()
             .merge(with: requestAction.errors.map { .error($0) }).eraseToAnyPublisher()
-            .sink(receiveValue: notify)
+            .sink(receiveValue: { [unowned self] in notify($0)})
             .store(in: &cancellables)
         
         requestAction.elements
@@ -91,6 +93,10 @@ class PaginationRequest<E: EndpointProtocol> where E.URI: PaginationQuery, E.Req
         }
         state.value.isLoading = true
         requestAction.input((request: Empty(), uri: uri))
+    }
+    
+    deinit {
+        print("RocketAPIPaginationRequest.deinit", E.self)
     }
 }
 

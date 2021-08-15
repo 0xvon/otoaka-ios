@@ -28,7 +28,7 @@ final class HomeViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "レポート"
+        title = "ライブレポート"
         view.backgroundColor = Brand.color(for: .background(.primary))
         tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = Brand.color(for: .background(.primary))
@@ -236,10 +236,6 @@ extension HomeViewController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 572
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("yo")
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

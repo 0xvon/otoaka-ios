@@ -49,6 +49,18 @@ final class GroupCell: UITableViewCell, ReusableCell {
         alpha = highlighted ? 0.6 : 1.0
         _contentView.alpha = highlighted ? 0.6 : 1.0
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        _contentView.bandNameLabel.text = nil
+        _contentView.jacketImageView.image = nil
+        _contentView.productionBadgeView.title = nil
+        _contentView.hometownBadgeView.title = nil
+    }
+    
+    deinit {
+        print("GroupCell.deinit")
+    }
 }
 
 class GroupCellContent: UIButton {

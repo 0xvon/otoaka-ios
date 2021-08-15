@@ -182,6 +182,7 @@ final class SearchFriendsViewModel {
         state.fans = []
         state.lives = []
         state.groups = []
+        outputSubject.send(.reloadData)
         refresh()
     }
     

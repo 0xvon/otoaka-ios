@@ -35,7 +35,7 @@ class S3Client {
                 return
             }
             
-            guard let jpegData = colordImg.jpegData(compressionQuality: 0.25) else {
+            guard let jpegData = colordImg.resize(width: 400).jpegData(compressionQuality: 0.1) else {
                 callback(.failure(S3Error.invalidUrl("failed to convert image to data")))
                 return
             }

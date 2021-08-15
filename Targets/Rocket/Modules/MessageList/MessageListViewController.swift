@@ -34,7 +34,9 @@ final class MessageListViewController: UITableViewController {
         navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
         view.backgroundColor = Brand.color(for: .background(.primary))
         tableView.tableFooterView = UIView(frame: .zero)
-        tableView.separatorStyle = .none
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = Brand.color(for: .background(.secondary))
+        tableView.separatorInset = .zero
         tableView.showsVerticalScrollIndicator = false
         tableView.registerCellClass(MessageListCell.self)
         tableView.tableFooterView = UIView(frame: .zero)

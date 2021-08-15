@@ -46,15 +46,18 @@ class YouTubePaginationRequest<E: EndpointProtocol> where E.URI: InternalDomain.
     typealias Event = AppleMusicPaginationEvent<E.Response>
     
     init(apiClient: APIClient, uri: E.URI = E.URI()) {
+        print("YouTubePaginationRequest.init", E.self)
         self.apiClient = apiClient
         self.uri = uri
         
         self.initialize()
         
         requestAction.elements
-            .map { self.state.value.isInitial ? .initial($0) : .next($0) }.eraseToAnyPublisher()
+            .map { [unowned self] in
+                self.state.value.isInitial ? .initial($0) : .next($0)
+            }.eraseToAnyPublisher()
             .merge(with: requestAction.errors.map { .error($0) }).eraseToAnyPublisher()
-            .sink(receiveValue: notify)
+            .sink(receiveValue: { [unowned self] in notify($0) })
             .store(in: &cancellables)
         
         requestAction.elements
@@ -67,6 +70,10 @@ class YouTubePaginationRequest<E: EndpointProtocol> where E.URI: InternalDomain.
                 self.uri.pageToken = response.nextPageToken
             })
             .store(in: &cancellables)
+    }
+    
+    deinit {
+        print("YouTubePaginationRequest.deinit", E.self)
     }
     
     func subscribe(_ subscriber: @escaping (Event) -> Void) {

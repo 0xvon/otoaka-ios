@@ -22,6 +22,7 @@ class PostCell: UITableViewCell, ReusableCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
+        _contentView.isUserInteractionEnabled = true
         backgroundColor = .clear
         NSLayoutConstraint.activate([
             _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
@@ -49,6 +50,10 @@ class PostCell: UITableViewCell, ReusableCell {
         super.setHighlighted(highlighted, animated: animated)
         alpha = highlighted ? 0.6 : 1.0
         _contentView.alpha = highlighted ? 0.6 : 1.0
+    }
+    
+    deinit {
+        print("PostCell.deinit")
     }
 }
 
@@ -458,6 +463,10 @@ class PostCellContent: UIButton {
             postView.leftAnchor.constraint(equalTo: leftAnchor),
             postView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
+    }
+    
+    deinit {
+        print("PostCellContent.deinit")
     }
     
     @objc private func commentButtonTapped() {
