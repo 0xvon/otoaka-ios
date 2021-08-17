@@ -152,8 +152,6 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func createShare(cellIndex: Int) {
-        let feed = self.viewModel.state.feeds[cellIndex]
-        shareWithTwitter(type: .feed(feed))
     }
     
     private func downloadButtonTapped(cellIndex: Int) {
@@ -165,8 +163,6 @@ extension FeedListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     private func instagramButtonTapped(cellIndex: Int) {
-        let feed = self.viewModel.state.feeds[cellIndex]
-        shareFeedWithInstagram(feed: feed)
     }
     
     private func userTapped(cellIndex: Int) {

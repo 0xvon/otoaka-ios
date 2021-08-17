@@ -245,8 +245,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.present(alertController, animated: true, completion: nil)
             case .didDeleteFeed:
                 viewModel.refresh()
-            case .didShareFeedButtonTapped(let feed):
-                shareWithTwitter(type: .feed(feed))
+            case .didShareFeedButtonTapped(_): break
             case .didDownloadButtonTapped(let feed):
                 self.downloadButtonTapped(feed: feed)
             case .didInstagramButtonTapped(let feed):
@@ -365,7 +364,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     private func instagramButtonTapped(feed: UserFeedSummary) {
-        shareFeedWithInstagram(feed: feed)
     }
     
     @objc private func feedCellTaped() { viewModel.didSelectRow(at: .feed) }

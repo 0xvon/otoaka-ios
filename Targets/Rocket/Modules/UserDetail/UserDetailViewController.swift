@@ -566,10 +566,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .openURLInBrowser(let url):
                 let safari = SFSafariViewController(url: url)
                 safari.dismissButtonStyle = .close
-            case .didTwitterButtonTapped(_): break
-//                shareWithTwitter(type: .feed(feed))
-            case .didInstagramButtonTapped(_): break
-//                self.instagramButtonTapped(feed: feed)
+            case .didTwitterButtonTapped(let post):
+                shareWithTwitter(type: .post(post.post))
+            case .didInstagramButtonTapped(let post):
+                self.instagramButtonTapped(post: post.post)
             case .didToggleLikeLive:
                 viewModel.refresh()
             case .reportError(let error):
@@ -648,8 +648,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
         }
     }
     
-    private func instagramButtonTapped(feed: UserFeedSummary) {
-        shareFeedWithInstagram(feed: feed)
+    private func instagramButtonTapped(post: Post) {
+        sharePostWithInstagram(post: post)
     }
     
     @objc private func twitterIdTapped() {

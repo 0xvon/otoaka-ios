@@ -11,14 +11,13 @@ import Endpoint
 
 class FeedCardView: UIView {
     typealias Input = (
-        feed: UserFeedSummary,
+        post: Post,
         artwork: URL?
     )
     
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var artworkImageView: UIImageView!
-    @IBOutlet weak var artistImageView: UIImageView!
     @IBOutlet weak var artistNameLabel: UILabel!
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var artworkImageViewHeightConstraint: NSLayoutConstraint!
@@ -29,18 +28,18 @@ class FeedCardView: UIView {
     }
     
     func inject(input: Input) {
-        if let profileImage = input.feed.author.thumbnailURL {
+        if let profileImage = input.post.author.thumbnailURL {
             profileImageView.image = UIImage(url: profileImage)
         }
-        if let artistImage = input.feed.group.artworkURL {
-            artistImageView.image = UIImage(url: artistImage.absoluteString)
-        }
-        if let artwork = input.artwork {
+//        if let liveImage = input.post.live?.artworkURL {
+//            artistImageView.image = UIImage(url: liveImage.absoluteString)
+//        }
+        if let artwork = input.post.live?.artworkURL {
             artworkImageView.image = UIImage(url: artwork.absoluteString)
         }
-        userNameLabel.text = input.feed.author.name
-        artistNameLabel.text = input.feed.title
-        textView.text = input.feed.text
+        userNameLabel.text = input.post.author.name
+        artistNameLabel.text = input.post.live?.title
+        textView.text = input.post.text
     }
     
     func setup() {
@@ -57,10 +56,6 @@ class FeedCardView: UIView {
         artworkImageView.clipsToBounds = true
         artworkImageView.contentMode = .scaleAspectFill
         artworkImageView.layer.opacity = 0.6
-        
-        artistImageView.layer.cornerRadius = 10
-        artistImageView.clipsToBounds = true
-        artistImageView.contentMode = .scaleAspectFill
         
         artistNameLabel.font = Brand.font(for: .smallStrong)
         artistNameLabel.textColor = Brand.color(for: .text(.primary))

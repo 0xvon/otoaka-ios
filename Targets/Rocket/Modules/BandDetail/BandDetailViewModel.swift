@@ -10,6 +10,7 @@ import Endpoint
 import Foundation
 import InternalDomain
 import UIComponent
+import ImageViewer
 
 class BandDetailViewModel {
     enum DisplayType {
@@ -53,9 +54,11 @@ class BandDetailViewModel {
         
         case pushToCommentList(CommentListViewController.Input)
         case pushToLiveList(LiveListViewController.Input)
+        case openImage(GalleryItemsDataSource)
         case pushToPostAuthor(User)
         case pushToPostList(PostListViewController.Input)
         case pushToUserList(UserListViewController.Input)
+        case pushToTrackList(TrackListViewController.Input)
         case pushToPost(PostViewController.Input)
         case pushToPlayTrack(PlayTrackViewController.Input)
         case pushToGroupDetail(Group)
@@ -230,7 +233,20 @@ class BandDetailViewModel {
         case .groupTapped:
             guard let group = post.groups.first else { return }
             outputSubject.send(.pushToGroupDetail(group))
-        default: break
+        case .playTapped(let track):
+            outputSubject.send(.pushToPlayTrack(.track(track)))
+        case .imageTapped(let image):
+            outputSubject.send(.openImage(image))
+        case .cellTapped: break
+        case .postListTapped:
+            guard let live = post.post.live else { return }
+            outputSubject.send(.pushToPostList(.livePost(live)))
+        case .seePlaylistTapped:
+            outputSubject.send(.pushToTrackList(.playlist(post.post)))
+        case .postTapped:
+            guard let live = post.post.live else { return }
+            outputSubject.send(.pushToPost(live))
+        case .trackTapped(_): break
         }
     }
     

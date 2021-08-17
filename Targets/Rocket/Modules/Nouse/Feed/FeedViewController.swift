@@ -245,8 +245,6 @@ extension FeedViewController {
     }
     
     private func createShare(cellIndex: Int) {
-        let feed = self.viewModel.feeds[cellIndex]
-        shareWithTwitter(type: .feed(feed))
     }
     
     private func downloadButtonTapped(cellIndex: Int) {
@@ -258,8 +256,6 @@ extension FeedViewController {
     }
     
     private func instagramButtonTapped(cellIndex: Int) {
-        let feed = self.viewModel.feeds[cellIndex]
-        shareFeedWithInstagram(feed: feed)
     }
     
     private func userTapped(cellIndex: Int) {

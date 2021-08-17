@@ -113,11 +113,7 @@ final class PostListViewController: UIViewController, Instantiable {
     }
     
     private func twitterButtonTapped(post: PostSummary) {
-        
-    }
-    
-    private func instagramButtonTapped(post: PostSummary) {
-        
+        shareWithTwitter(type: .post(post.post))
     }
     
     private func livePostListButtonTapped(post: PostSummary) {
@@ -197,7 +193,7 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
             case .likeTapped:
                 self.likeButtonTapped(post: post)
             case .instagramTapped:
-                self.instagramButtonTapped(post: post)
+                sharePostWithInstagram(post: post.post)
             case .twitterTapped:
                 self.twitterButtonTapped(post: post)
             case .userTapped:
@@ -226,10 +222,6 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         viewModel.willDisplay(rowAt: indexPath)
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 572
     }
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {

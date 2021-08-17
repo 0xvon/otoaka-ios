@@ -11,12 +11,13 @@ import UIKit
 
 @available(*, deprecated)
 func getSNSShareContent(type: ShareType) -> UIActivityViewController {
+    let ogp = "https://rocket-auth-storage.s3-ap-northeast-1.amazonaws.com/assets/public/ogp.png"
     let activityItems: [Any] = {
         switch type {
-        case .feed(let feed):
-            let shareText: String = "\(feed.text)\n\n \(hashTags.joined(separator: " "))"
-            let url = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
-//            let image = feed.ogpUrl.map { UIImage(url: $0) } ?? UIImage(named: "appIcon")
+        case .post(let post):
+            let shareText: String = "\(post.text)\n\n \(hashTags.joined(separator: " "))"
+            guard let live = post.live else { return [shareText] }
+            let url = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL?.absoluteString ?? ogp, title: live.title)
             return [shareText, url as Any?].compactMap { $0 }
         case .group(let group):
             let shareText: String = "\(group.name)\n\n\(hashTags.joined(separator: " "))"
@@ -26,7 +27,7 @@ func getSNSShareContent(type: ShareType) -> UIActivityViewController {
             return [shareText, url as Any?].compactMap { $0 }
         case .live(let live):
             let shareText: String = "\(live.title)\n\n\(hashTags.joined(separator: " "))"
-            let url = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title)
+            let url = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL?.absoluteString ?? ogp, title: live.title)
 //            let image = live.artworkURL.map { UIImage(url: $0.absoluteString) }  ?? UIImage(named: "appIcon")
             return [shareText, url as Any?].compactMap { $0 }
         }

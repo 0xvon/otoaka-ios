@@ -126,11 +126,7 @@ final class HomeViewController: UITableViewController {
     }
     
     private func twitterButtonTapped(post: PostSummary) {
-        
-    }
-    
-    private func instagramButtonTapped(post: PostSummary) {
-        
+        shareWithTwitter(type: .post(post.post))
     }
     
     private func livePostListButtonTapped(post: PostSummary) {
@@ -175,7 +171,6 @@ final class HomeViewController: UITableViewController {
     }
     
     private func trackTapped(track: Track) {
-        print("todo")
     }
     
     private func playTapped(track: Track) {
@@ -206,7 +201,7 @@ extension HomeViewController {
             case .likeTapped:
                 self.likeButtonTapped(post: post)
             case .instagramTapped:
-                self.instagramButtonTapped(post: post)
+                sharePostWithInstagram(post: post.post)
             case .postListTapped:
                 self.livePostListButtonTapped(post: post)
             case .postTapped:
@@ -232,10 +227,6 @@ extension HomeViewController {
             
         }
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 572
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -266,7 +257,7 @@ extension HomeViewController {
 
 extension HomeViewController: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.alert, .sound])
+        completionHandler([.banner, .sound, .badge])
     }
 }
 

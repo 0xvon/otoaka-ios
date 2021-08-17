@@ -14,13 +14,13 @@ let textFieldHeight: CGFloat = 60
 let dummySocialInputs: SocialInputs = try! JSONDecoder().decode(SocialInputs.self, from: Data(contentsOf: Bundle.main.url(forResource: "SocialInputs", withExtension: "json")!))
 
 let hashTags = [
-    "#ロック好きならロケバン",
+    "#音楽好きならOTOAKA",
     "#音楽記録",
     "#日曜日だし邦ロック好きな人と繋がりたい",
 ]
 
 enum ShareType {
-    case feed(UserFeedSummary)
+    case post(Post)
     case group(Group)
     case live(Live)
 }
@@ -115,10 +115,11 @@ extension UIViewController {
     }
     
     func shareWithTwitter(type: ShareType) {
+        let ogp = "https://rocket-auth-storage.s3-ap-northeast-1.amazonaws.com/assets/public/ogp.png"
         switch type {
-        case .feed(let feed):
-            let shareText: String = feed.text
-            let ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: feed.ogpUrl!, title: feed.title)
+        case .post(let post):
+            let shareText: String = post.text
+            let ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: post.live?.artworkURL?.absoluteString ?? ogp, title: post.live?.title ?? "OTOAKA")
             guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
             UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
         case .group(let group):
@@ -134,37 +135,25 @@ extension UIViewController {
         }
     }
     
-    func shareFeedWithInstagram(feed: UserFeedSummary) {
-        switch feed.feedType {
-        case .youtube(let url):
-            let youTubeClient = YouTubeClient(url: url.absoluteString)
-            let thumbnail = youTubeClient.getThumbnailUrl()
-            let cardView = UINib(nibName: "FeedCardView", bundle: nil)
-                .instantiate(withOwner: nil, options: nil).first as! FeedCardView
-            cardView.inject(input: (feed: feed, artwork: thumbnail))
-            guard let image = cardView.getSnapShot() else { return }
-            let url = URL(string: "instagram-stories://share")
-            guard let pngImageData = image.pngData() else { return }
-            let items: NSArray = [["com.instagram.sharedSticker.stickerImage": pngImageData,
-                                   "com.instagram.sharedSticker.backgroundTopColor": "#49A1F8",
-                                   "com.instagram.sharedSticker.backgroundBottomColor": "#EA6E57"]]
-            UIPasteboard.general.setItems(items as! [[String : Any]], options: [:])
-            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
-        case .appleMusic(_):
-            let cardView = UINib(nibName: "FeedCardView", bundle: nil)
-                .instantiate(withOwner: nil, options: nil).first as! FeedCardView
-            guard let thumbnail = URL(string: feed.thumbnailUrl ?? "") else { return }
-            cardView.inject(input: (feed: feed, artwork: thumbnail))
-            guard let image = cardView.getSnapShot() else { return }
-            let url = URL(string: "instagram-stories://share")
-            guard let pngImageData = image.pngData() else { return }
-            let items: NSArray = [["com.instagram.sharedSticker.stickerImage": pngImageData,
-                                   "com.instagram.sharedSticker.backgroundTopColor": "#49A1F8",
-                                   "com.instagram.sharedSticker.backgroundBottomColor": "#EA6E57"]]
-            UIPasteboard.general.setItems(items as! [[String : Any]], options: [:])
-            UIApplication.shared.open(url!, options: [:], completionHandler: nil)
-            
-        }
+    func sharePostWithInstagram(post: Post) {
+        let cell = UINib(nibName: "FeedCardView", bundle: nil).instantiate(withOwner: nil, options: nil).first as! FeedCardView
+        cell.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            cell.widthAnchor.constraint(equalToConstant: 300),
+        ])
+        cell.inject(input: (post: post, artwork: nil))
+        shareViewWithInstagram(cell: cell)
+    }
+    
+    func shareViewWithInstagram(cell: UIView) {
+        guard let image = cell.getSnapShot() else { return }
+        let url = URL(string: "instagram-stories://share")
+        guard let pngImageData = image.pngData() else { return }
+        let items: NSArray = [["com.instagram.sharedSticker.stickerImage": pngImageData,
+                               "com.instagram.sharedSticker.backgroundTopColor": "#233A60",
+                               "com.instagram.sharedSticker.backgroundBottomColor": "#233A60"]]
+        UIPasteboard.general.setItems(items as! [[String : Any]], options: [:])
+        UIApplication.shared.open(url!, options: [:], completionHandler: nil)
     }
     
     @objc func showResultOfSaveImage(_ image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutableRawPointer) {

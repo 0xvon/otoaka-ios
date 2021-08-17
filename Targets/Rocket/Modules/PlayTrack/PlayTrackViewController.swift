@@ -993,19 +993,9 @@ final class PlayTrackViewController: UIViewController, Instantiable {
     }
     
     @objc private func shareButtonTapped() {
-        switch viewModel.state.dataSource {
-        case .userFeed(let feed):
-            shareWithTwitter(type: .feed(feed))
-        default: break
-        }
     }
     
     @objc private func shareInstagramButtonTapped() {
-        switch viewModel.state.dataSource {
-        case .userFeed(let feed):
-            shareFeedWithInstagram(feed: feed)
-        default: break
-        }
     }
     
     @objc private func downloadButtonTapped() {

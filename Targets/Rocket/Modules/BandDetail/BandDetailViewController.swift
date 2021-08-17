@@ -10,6 +10,7 @@ import Endpoint
 import SafariServices
 import UIComponent
 import InternalDomain
+import ImageViewer
 
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group
@@ -236,8 +237,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 viewModel.refresh()
             case .didToggleLikePost:
                 viewModel.refresh()
-            case .didTwitterButtonTapped(_): break
-            case .didInstagramButtonTapped(_): break
+            case .didTwitterButtonTapped(let post):
+                shareWithTwitter(type: .post(post.post))
+            case .didInstagramButtonTapped(let post):
+                sharePostWithInstagram(post: post.post)
             case .updatePostSummary(let post):
                 let isHidden = post == nil
                 self.postSectionHeader.isHidden = isHidden
@@ -293,6 +296,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .didToggleLikeLive:
                 viewModel.refresh()
+            case .openImage(let content):
+                let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
+                self.present(galleryController, animated: true, completion: nil)
+            case .pushToTrackList(let input):
+                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: input)
+                navigationController?.pushViewController(vc, animated: true)
             }
         }
         .store(in: &cancellables)
@@ -401,10 +410,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
             let image = UIImage(url: thumbnail)
             downloadImage(image: image)
         }
-    }
-    
-    private func instagramButtonTapped(feed: UserFeedSummary) {
-        shareFeedWithInstagram(feed: feed)
     }
 
     @objc private func postCellTaped() { viewModel.didSelectRow(at: .post) }

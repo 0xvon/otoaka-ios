@@ -29,7 +29,6 @@ class PostCell: UITableViewCell, ReusableCell {
             _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
-            _contentView.heightAnchor.constraint(equalToConstant: 540),
         ])
         selectionStyle = .none
     }
@@ -117,20 +116,15 @@ class PostCellContent: UIButton {
             postContentStackView.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
-//        postView.addArrangedSubview(playlistView)
-//        NSLayoutConstraint.activate([
-//            playlistView.widthAnchor.constraint(equalTo: postView.widthAnchor),
-//        ])
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        postView.addArrangedSubview(spacer)
         
         postView.addArrangedSubview(writeReportButton)
         NSLayoutConstraint.activate([
             writeReportButton.heightAnchor.constraint(equalToConstant: 48),
             writeReportButton.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
-        
-        let spacer = UIView()
-        spacer.translatesAutoresizingMaskIntoConstraints = false
-        postView.addArrangedSubview(spacer)
         
         postView.addArrangedSubview(sectionView)
         NSLayoutConstraint.activate([
