@@ -72,11 +72,7 @@ class UserDetailViewModel {
         case reportError(Error)
     }
     
-    var dependencyProvider: LoggedInDependencyProvider {
-        fatalError()
-    }
-    var apiClient: APIClient // { dependencyProvider.apiClient }
-    
+    var apiClient: APIClient
     private(set) var state: State
     
     private let outputSubject = PassthroughSubject<Output, Never>()
@@ -260,7 +256,7 @@ class UserDetailViewModel {
         var uri = FollowingGroups.URI()
         uri.id = state.user.id
         uri.page = 1
-        uri.per = 10
+        uri.per = 5
         followingGroupsAction.input((request: Empty(), uri: uri))
     }
     

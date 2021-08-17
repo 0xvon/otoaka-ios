@@ -9,7 +9,6 @@ import Foundation
 import Endpoint
 import UIKit
 
-@available(*, deprecated)
 func getSNSShareContent(type: ShareType) -> UIActivityViewController {
     let ogp = "https://rocket-auth-storage.s3-ap-northeast-1.amazonaws.com/assets/public/ogp.png"
     let activityItems: [Any] = {

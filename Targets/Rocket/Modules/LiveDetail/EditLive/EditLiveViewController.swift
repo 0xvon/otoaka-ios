@@ -162,8 +162,6 @@ final class EditLiveViewController: UIViewController, Instantiable {
                     endTimeInputView.maximumDate = openAt
                 case .startAt(let startAt):
                     endTimeInputView.maximumDate = startAt
-                default:
-                    break
                 }
             case .updateSubmittableState(let state):
                 switch state {
