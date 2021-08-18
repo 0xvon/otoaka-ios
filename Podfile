@@ -23,6 +23,7 @@ target 'Rocket' do
   pod 'CropViewController'
   pod 'ImageViewer'
   pod 'MessageKit'
+  pod "BWWalkthrough"
 
   target 'RocketTests' do
     inherit! :search_paths

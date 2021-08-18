@@ -43,6 +43,7 @@ final class HomeViewController: UITableViewController {
         bind()
         requestNotification()
         viewModel.refresh()
+        showWalkThrough()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -108,6 +109,21 @@ final class HomeViewController: UITableViewController {
         items = [createFeedView]
         let floatingController = dependencyProvider.viewHierarchy.floatingViewController
         floatingController.setFloatingButtonItems(items)
+    }
+    
+    private func showWalkThrough() {
+        let userDefaults = UserDefaults.standard
+        if !userDefaults.bool(forKey: "walkThroughPresented") {
+            let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
+            let nav = DismissionSubscribableNavigationController(rootViewController: vc)
+            present(nav, animated: true, completion: nil)
+            nav.subscribeDismission { [unowned self] in
+                dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
+            }
+            
+            userDefaults.setValue(true, forKey: "walkThroughPresented")
+            userDefaults.synchronize()
+        }
     }
     
     @objc private func createPostButtonTapped() {

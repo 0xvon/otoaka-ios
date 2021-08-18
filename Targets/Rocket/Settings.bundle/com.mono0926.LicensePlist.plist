@@ -44,6 +44,14 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/BWWalkthrough</string>
+			<key>Title</key>
+			<string>BWWalkthrough</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/CropViewController</string>
 			<key>Title</key>
 			<string>CropViewController</string>
@@ -191,6 +199,14 @@
 			<string>com.mono0926.LicensePlist/PromisesObjC</string>
 			<key>Title</key>
 			<string>PromisesObjC</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist/StubKit</string>
+			<key>Title</key>
+			<string>StubKit</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
 		</dict>

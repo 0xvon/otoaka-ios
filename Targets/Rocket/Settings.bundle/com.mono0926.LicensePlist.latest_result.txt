@@ -30,6 +30,14 @@ name: AWSS3, nameSpecified:
 body: The AWS Mobile SDK f…
 version: 2.21.1
 
+name: BWWalkthrough, nameSpecified: 
+body: Copyright (c) 2016 Y…
+version: 4.0.0
+
+name: BWWalkthrough, nameSpecified: 
+body: Copyright (c) 2016 Y…
+version: 4.0.0
+
 name: CropViewController, nameSpecified: 
 body: The MIT License (MIT…
 version: 2.6.0
@@ -117,12 +125,12 @@ version: 8.1.0
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.5.0
+version: 7.5.1
 
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.5.0
+version: 7.5.1
 
 name: ImageViewer, nameSpecified: 
 body: The MIT License (MIT…

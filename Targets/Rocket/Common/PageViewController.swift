@@ -50,7 +50,7 @@ fileprivate class TransparentScrollView: UIScrollView {
     func hitTestSuperViewSubViews(at point: CGPoint, event: UIEvent?) -> UIView? {
         if isDecelerating || isDragging { return nil }
         guard let delegateView: UIView = {
-            guard let superScrollView = superScrollView else {
+            guard superScrollView != nil else {
                 if superview == parent?.view { return superview }
                 return nil
             }

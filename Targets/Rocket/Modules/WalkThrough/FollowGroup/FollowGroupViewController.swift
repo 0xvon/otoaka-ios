@@ -9,6 +9,7 @@ import UIKit
 import DomainEntity
 import UIComponent
 import Combine
+import BWWalkthrough
 
 final class FollowGroupViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
@@ -24,16 +25,6 @@ final class FollowGroupViewController: UITableViewController {
 //        controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
 //        return controller
 //    }()
-    
-    private lazy var skipButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
-        button.setTitle("スキップ", for: .normal)
-        button.titleLabel?.font = Brand.font(for: .largeStrong)
-        return button
-    }()
 
     let viewModel: FollowGroupViewModel
     private var cancellables: [AnyCancellable] = []
@@ -60,8 +51,6 @@ final class FollowGroupViewController: UITableViewController {
 //        navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: skipButton)
-        
         bind()
         viewModel.refresh()
     }
@@ -70,9 +59,6 @@ final class FollowGroupViewController: UITableViewController {
         super.viewWillAppear(animated)
 //        searchController.searchBar.showsScopeBar = false
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-        setupFloatingItems(userRole: dependencyProvider.user.role)
-        
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
     }
 
     func bind() {
@@ -97,39 +83,11 @@ final class FollowGroupViewController: UITableViewController {
         }.store(in: &cancellables)
 
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        
-        skipButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: skipButtonTapped)
-            .store(in: &cancellables)
     }
 
     @objc private func refresh() {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
-        viewModel.refresh()
-//        self.refreshControl?.endRefreshing()
-    }
-    
-    @objc private func skipButtonTapped() {
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    private func setupFloatingItems(userRole: RoleProperties) {
-        let items: [FloatingButtonItem]
-        switch userRole {
-        case .artist(_):
-            let createGroupView = FloatingButtonItem(icon: UIImage(systemName: "person.3.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal))
-            createGroupView.addTarget(self, action: #selector(createBand), for: .touchUpInside)
-            items = [createGroupView]
-        case .fan(_):
-            items = []
-        }
-        let floatingController = dependencyProvider.viewHierarchy.floatingViewController
-        floatingController.setFloatingButtonItems(items)
-    }
-    
-    @objc private func createBand() {
-        let vc = CreateBandViewController(dependencyProvider: dependencyProvider, input: ())
-        navigationController?.pushViewController(vc, animated: true)
+        self.refreshControl?.endRefreshing()
     }
 }
 
