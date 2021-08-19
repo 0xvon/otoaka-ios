@@ -6,6 +6,7 @@ target 'Rocket' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   inhibit_all_warnings!
+  current_target_definition.swift_version = '5.0'
 
   # Pods for Rocket
   pod 'AWSCognitoAuth', '~> 2.21.1'
@@ -23,7 +24,9 @@ target 'Rocket' do
   pod 'CropViewController'
   pod 'ImageViewer'
   pod 'MessageKit'
-  pod "BWWalkthrough"
+  pod 'BWWalkthrough'
+  pod 'Parchment', '~> 3.0.1'
+ 
 
   target 'RocketTests' do
     inherit! :search_paths

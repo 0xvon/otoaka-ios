@@ -21,8 +21,23 @@ final class PostListViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = PostListViewModel(dependencyProvider: dependencyProvider, input: input)
-        
         super.init(nibName: nil, bundle: nil)
+        
+        switch input {
+        case .followingPost:
+            self.title = "タイムライン"
+        case .trendPost:
+            self.title = "トレンド"
+        case .groupPost(_):
+            self.title = "このアーティストのレポート"
+        case .likedPost(_):
+            self.title = "いいねしたレポート"
+        case .livePost(_):
+            self.title = "このライブのレポート"
+        case .userPost(_):
+            self.title = "このユーザーのレポート"
+        case .none: break
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -61,6 +76,21 @@ final class PostListViewController: UIViewController, Instantiable {
     
     func inject(_ input: Input) {
         viewModel.inject(input)
+        switch input {
+        case .followingPost:
+            self.title = "タイムライン"
+        case .trendPost:
+            self.title = "トレンド"
+        case .groupPost(_):
+            self.title = "このアーティストのレポート"
+        case .likedPost(_):
+            self.title = "いいねしたレポート"
+        case .livePost(_):
+            self.title = "このライブのレポート"
+        case .userPost(_):
+            self.title = "このユーザーのレポート"
+        case .none: break
+        }
     }
     
     func setup() {
@@ -124,8 +154,14 @@ final class PostListViewController: UIViewController, Instantiable {
     
     private func postTapped(post: PostSummary) {
         guard let live = post.post.live else { return }
-        let vc = PostViewController(dependencyProvider: dependencyProvider, input: live)
-        self.navigationController?.pushViewController(vc, animated: true)
+        if post.post.author.id == dependencyProvider.user.id {
+            let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: post.post))
+            self.navigationController?.pushViewController(vc, animated: true)
+        } else {
+            let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
     }
     
     private func userTapped(post: PostSummary) {

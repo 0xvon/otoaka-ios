@@ -174,7 +174,7 @@ extension SearchFriendsViewController {
                     let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
                     self.navigationController?.pushViewController(vc, animated: true)
                 case .reportButtonTapped:
-                    let vc = PostViewController(dependencyProvider: dependencyProvider, input: live.live)
+                    let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live.live, post: nil))
                     self.navigationController?.pushViewController(vc, animated: true)
                 case .numOfReportTapped:
                     let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live.live))

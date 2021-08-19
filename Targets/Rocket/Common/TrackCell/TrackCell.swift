@@ -55,6 +55,7 @@ final class TrackCell: UITableViewCell, ReusableCell {
 class TrackCellContent: UIView {
     typealias Input = (
         track: Track,
+        isEdittable: Bool,
         imagePipeline: ImagePipeline
     )
     
@@ -68,6 +69,18 @@ class TrackCellContent: UIView {
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var cellButton: UIButton!
     
+    private lazy var deleteButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 12
+        button.setTitle("-", for: .normal)
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.backgroundColor = .red
+        button.addTarget(self, action: #selector(groupTapped), for: .touchUpInside)
+        
+        return button
+    }()
+    
     func addTarget(_ target: Any?, action: Selector, for controlEvents: UIControl.Event) {
         cellButton.addTarget(target, action: action, for: controlEvents)
     }
@@ -79,6 +92,7 @@ class TrackCellContent: UIView {
         if let url = URL(string: input.track.artwork) {
             input.imagePipeline.loadImage(url, into: artworkImageView)
         }
+        deleteButton.isHidden = !input.isEdittable
     }
     
     func setup() {
@@ -93,14 +107,26 @@ class TrackCellContent: UIView {
         
         bandNameLabel.font = Brand.font(for: .xsmall)
         bandNameLabel.textColor = Brand.color(for: .text(.link))
-        
+       
         playButton.setImage(UIImage(systemName: "play")!
                                 .withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         playButton.addTarget(self, action: #selector(playButtonTapped), for: .touchUpInside)
+        
+        addSubview(deleteButton)
+        NSLayoutConstraint.activate([
+            deleteButton.widthAnchor.constraint(equalToConstant: 24),
+            deleteButton.heightAnchor.constraint(equalTo: deleteButton.widthAnchor),
+            deleteButton.centerYAnchor.constraint(equalTo: centerYAnchor),
+            deleteButton.rightAnchor.constraint(equalTo: trackTitleLabel.rightAnchor),
+        ])
     }
     
     @objc private func playButtonTapped() {
         listener(.playButtonTapped)
+    }
+    
+    @objc private func groupTapped() {
+        listener(.groupTapped)
     }
     
     private var listener: (Output) -> Void = { _ in }

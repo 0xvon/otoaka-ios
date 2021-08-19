@@ -13,14 +13,11 @@ class UserFollowingViewModel {
     struct State {
         let user: User
         let selfUser: User
-        var isFollowing: Bool?
-        var followersCount: Int?
     }
     
     enum Output {
         case updateIsButtonEnabled(Bool)
-        case updateFollowersCount(Int)
-        case updateFollowing(Bool)
+        case updateFollowing
         case reportError(Error)
     }
     
@@ -46,9 +43,9 @@ class UserFollowingViewModel {
         )
         
         Publishers.MergeMany(
-            followUserAction.elements.map { _ in .updateFollowing(true) }.eraseToAnyPublisher(),
+            followUserAction.elements.map { _ in .updateFollowing }.eraseToAnyPublisher(),
             unfollowUserAction.elements.map { _ in
-                .updateFollowing(false)
+                .updateFollowing
             }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
@@ -57,20 +54,12 @@ class UserFollowingViewModel {
         
         followUserAction.elements
             .sink(receiveValue: { [unowned self] _ in
-                guard let count = state.followersCount else { return }
-                state.followersCount = count + 1
-                state.isFollowing = true
-                outputSubject.send(.updateFollowersCount(count + 1))
                 outputSubject.send(.updateIsButtonEnabled(true))
             })
             .store(in: &cancellables)
         
         unfollowUserAction.elements
             .sink(receiveValue: { [unowned self] _ in
-                guard let count = state.followersCount else { return }
-                state.followersCount = count - 1
-                state.isFollowing = false
-                outputSubject.send(.updateFollowersCount(count - 1))
                 outputSubject.send(.updateIsButtonEnabled(true))
             })
             .store(in: &cancellables)
@@ -80,18 +69,11 @@ class UserFollowingViewModel {
         outputSubject.send(.updateIsButtonEnabled(false))
     }
     
-    func didGetUserDetail(isFollowing: Bool, followersCount: Int) {
-        state.isFollowing = isFollowing
-        state.followersCount = followersCount
-        outputSubject.send(.updateFollowing(isFollowing))
-        outputSubject.send(.updateFollowersCount(followersCount))
+    func didGetUserDetail() {
         outputSubject.send(.updateIsButtonEnabled(true))
     }
     
-    func didButtonTapped() {
-        guard let isFollowing = state.isFollowing else {
-            preconditionFailure("Button shouldn't be enabled before got isFollowing")
-        }
+    func didButtonTapped(isFollowing: Bool) {
         outputSubject.send(.updateIsButtonEnabled(false))
         if isFollowing {
             let req = UnfollowUser.Request(userId: state.user.id)

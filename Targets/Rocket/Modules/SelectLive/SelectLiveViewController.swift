@@ -76,7 +76,7 @@ final class SelectLiveViewController: UITableViewController {
                     self.refreshControl?.endRefreshing()
                 }
             case .selectLive(let live):
-                let vc = PostViewController(dependencyProvider: dependencyProvider, input: live)
+                let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let error):
                 print(error)

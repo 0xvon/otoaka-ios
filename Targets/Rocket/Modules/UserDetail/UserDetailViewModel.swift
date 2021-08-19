@@ -72,7 +72,8 @@ class UserDetailViewModel {
         case reportError(Error)
     }
     
-    var apiClient: APIClient
+    var dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
     private(set) var state: State
     
     private let outputSubject = PassthroughSubject<Output, Never>()
@@ -99,7 +100,7 @@ class UserDetailViewModel {
     init(dependencyProvider: LoggedInDependencyProvider, user: User) {
 //        self.dependencyProvider = dependencyProvider
         self.state = State(user: user, selfUser: dependencyProvider.user)
-        self.apiClient = dependencyProvider.apiClient
+        self.dependencyProvider = dependencyProvider
         
         let errors = Publishers.MergeMany(
             getUserDetailAction.errors,
@@ -216,7 +217,11 @@ class UserDetailViewModel {
             outputSubject.send(.pushToTrackList(.playlist(post.post)))
         case .postTapped:
             guard let live = post.post.live else { return }
-            outputSubject.send(.pushToPost(live))
+            if post.post.author.id == dependencyProvider.user.id {
+                outputSubject.send(.pushToPost((live: live, post: post.post)))
+            } else {
+                outputSubject.send(.pushToPost((live: live, post: nil)))
+            }
         }
     }
     
@@ -234,7 +239,7 @@ class UserDetailViewModel {
         case .numOfReportTapped:
             outputSubject.send(.pushToPostList(.livePost(live.live)))
         case .reportButtonTapped:
-            outputSubject.send(.pushToPost(live.live))
+            outputSubject.send(.pushToPost((live: live.live, post: nil)))
         }
     }
     

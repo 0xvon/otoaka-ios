@@ -22,14 +22,27 @@ final class HomeViewModel {
         var posts: [PostSummary] = []
     }
     
+    enum Scope: Int, CaseIterable {
+        case trend, following
+        var description: String {
+            switch self {
+            case .trend: return "トレンド"
+            case .following: return "タイムライン"
+            }
+        }
+    }
+    
     let dependencyProvider: LoggedInDependencyProvider
     var apiClient: APIClient { dependencyProvider.apiClient }
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     private(set) var state: State
+    private(set) var scope: Scope
+    var scopes: [Scope] { Scope.allCases }
     var cancellables: Set<AnyCancellable> = []
     
-    private lazy var pagination = PaginationRequest<GetFollowingPosts>(apiClient: apiClient)
+    private lazy var followingPostsPagination = PaginationRequest<GetFollowingPosts>(apiClient: apiClient)
+    private lazy var trendPostsPagination = PaginationRequest<GetTrendPosts>(apiClient: apiClient)
     private lazy var deletePostAction = Action(DeletePost.self, httpClient: apiClient)
     private lazy var likePostAction = Action(LikePost.self, httpClient: apiClient)
     private lazy var unlikePostAction = Action(UnlikePost.self, httpClient: apiClient)
@@ -39,6 +52,7 @@ final class HomeViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State()
+        self.scope = .trend
         subscribe()
         
         let errors = Publishers.MergeMany(
@@ -58,7 +72,12 @@ final class HomeViewModel {
     }
     
     private func subscribe() {
-        pagination.subscribe { [weak self] in
+        trendPostsPagination.subscribe { [weak self] in
+            self?.updateState(with: $0)
+            self?.outputSubject.send(.isRefreshing(false))
+        }
+        
+        followingPostsPagination.subscribe { [weak self] in
             self?.updateState(with: $0)
             self?.outputSubject.send(.isRefreshing(false))
         }
@@ -77,14 +96,29 @@ final class HomeViewModel {
         }
     }
     
+    func updateScope(index: Int) {
+        self.scope = Scope.allCases[index]
+        refresh()
+    }
+    
     func refresh() {
         outputSubject.send(.isRefreshing(true))
-        pagination.refresh()
+        switch self.scope {
+        case .trend:
+            trendPostsPagination.refresh()
+        case .following:
+            followingPostsPagination.refresh()
+        }
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
         guard indexPath.row + 25 > state.posts.count else { return }
-        pagination.next()
+        switch self.scope {
+        case .trend:
+            trendPostsPagination.next()
+        case .following:
+            followingPostsPagination.next()
+        }
     }
     
     func deletePost(post: PostSummary) {

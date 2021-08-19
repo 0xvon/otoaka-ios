@@ -14,8 +14,13 @@ import AVKit
 import Combine
 import InternalDomain
 
-class PostViewModel {    
+class PostViewModel {
+    typealias Input = (
+        live: Live,
+        post: Post?
+    )
     struct State {
+        var post: Post?
         var text: String? = ""
         var images: [UIImage] = []
         var groups: [Group] = []
@@ -47,10 +52,10 @@ class PostViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
 
     init(
-        dependencyProvider: LoggedInDependencyProvider, live: Live
+        dependencyProvider: LoggedInDependencyProvider, input: Input
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(live: live)
+        self.state = State(post: input.post, live: input.live)
         
         createPostAction.elements
             .map(Output.didPost).eraseToAnyPublisher()
@@ -63,6 +68,21 @@ class PostViewModel {
                 outputSubject.send(.updateSubmittableState(.editting(true)))
             })
             .store(in: &cancellables)
+    }
+    
+    func viewDidLoad() {
+        state.text = state.post?.text
+        state.groups = state.post?.groups ?? []
+        state.images = state.post?.imageUrls.map { UIImage(url: $0) } ?? []
+        state.tracks = state.post?.tracks.map {
+            Track(
+                name: $0.trackName,
+                artistName: $0.groupName,
+                artwork: $0.thumbnailUrl!,
+                trackType: $0.type
+            )
+        } ?? []
+        self.outputSubject.send(.didUpdateContent)
     }
     
     func didUpdateInputText(text: String?) {

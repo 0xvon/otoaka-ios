@@ -201,7 +201,7 @@ class FanCellContent: UIButton {
             input.user.residence
         ].compactMap {$0}.joined(separator: "・")
         liveStyleLabel.text = input.user.liveStyle ?? ""
-        messageButton.isHidden = input.isMe
+        messageButton.isHidden = true
         biographyTextView.text = input.user.biography
     }
     

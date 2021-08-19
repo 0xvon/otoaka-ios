@@ -105,12 +105,12 @@ final class RootViewController: UITabBarController, Instantiable {
         homeVC.tabBarItem = UITabBarItem(title: "ライブレポート", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         let searchFriendsVC = BrandNavigationController(rootViewController: SearchFriendsViewController(dependencyProvider: loggedInProvider, input: ()))
         searchFriendsVC.tabBarItem = UITabBarItem(title: "探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
-        let messageVC = BrandNavigationController(rootViewController: MessageListViewController(dependencyProvider: loggedInProvider, input: ()))
-        messageVC.tabBarItem = UITabBarItem(
-            title: "メッセージ",
-            image: UIImage(named: "mailIcon"),
-            selectedImage: UIImage(named: "selectedMailIcon")
-        )
+//        let messageVC = BrandNavigationController(rootViewController: MessageListViewController(dependencyProvider: loggedInProvider, input: ()))
+//        messageVC.tabBarItem = UITabBarItem(
+//            title: "メッセージ",
+//            image: UIImage(named: "mailIcon"),
+//            selectedImage: UIImage(named: "selectedMailIcon")
+//        )
         let userNotificationVC = BrandNavigationController(rootViewController: UserNotificationViewControlelr(dependencyProvider: loggedInProvider))
         userNotificationVC.tabBarItem = UITabBarItem(
             title: "通知",
@@ -129,7 +129,7 @@ final class RootViewController: UITabBarController, Instantiable {
         accountVC.listen { [unowned self] in
             checkSignupStatus()
         }
-        return [homeVC, searchFriendsVC, messageVC, userNotificationVC, accountNav]
+        return [homeVC, searchFriendsVC, userNotificationVC, accountNav]
     }
     
     private func promptVersioningViewController(versionData: RequiredVersion) {

@@ -22,12 +22,12 @@ final class SearchFriendsViewModel {
         case reportError(Error)
     }
     enum Scope: Int, CaseIterable {
-        case fan, live, group
+        case live, group, fan
         var description: String {
             switch self {
-            case .fan: return "ファン"
             case .live: return "ライブ"
             case .group: return "バンド"
+            case .fan: return "ファン"
             }
         }
     }
@@ -36,7 +36,7 @@ final class SearchFriendsViewModel {
         var fans: [User] = []
         var lives: [LiveFeed] = []
         var groups: [Group] = []
-        var scope: Scope = .fan
+        var scope: Scope = .live
     }
     
     let dependencyProvider: LoggedInDependencyProvider

@@ -15,7 +15,7 @@ import KeyboardGuide
 import UITextView_Placeholder
 
 final class PostViewController: UIViewController, Instantiable {
-    typealias Input = Live
+    typealias Input = PostViewModel.Input
 
     private lazy var postScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -211,7 +211,7 @@ final class PostViewController: UIViewController, Instantiable {
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
-        self.viewModel = PostViewModel(dependencyProvider: dependencyProvider, live: input)
+        self.viewModel = PostViewModel(dependencyProvider: dependencyProvider, input: input)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -224,6 +224,8 @@ final class PostViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         setup()
         bind()
+        
+        viewModel.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -254,6 +256,7 @@ final class PostViewController: UIViewController, Instantiable {
                 print(error)
                 showAlert()
             case .didUpdateContent:
+                textView.text = viewModel.state.text
                 uploadedImageView.isHidden = viewModel.state.images.isEmpty
                 selectedGroupView.isHidden = viewModel.state.groups.isEmpty
                 playlistView.isHidden = viewModel.state.tracks.isEmpty
@@ -265,10 +268,24 @@ final class PostViewController: UIViewController, Instantiable {
                     selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
                 }
                 if !viewModel.state.tracks.isEmpty {
-                    playlistView.inject(input: (tracks: viewModel.state.tracks, imagePipeline: dependencyProvider.imagePipeline))
+                    playlistView.inject(input: (tracks: viewModel.state.tracks, isEdittable: true, imagePipeline: dependencyProvider.imagePipeline))
                 }
             }
         }.store(in: &cancellables)
+        
+        playlistView.listen { [unowned self] output in
+            switch output {
+            case .playButtonTapped(let track):
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .track(track))
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .seeMoreTapped:
+                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: .selectedPlaylist(viewModel.state.tracks))
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .groupTapped(let track):
+                viewModel.didSelectTrack(tracks: viewModel.state.tracks.filter { $0.name != track.name })
+            case .trackTapped(_): break
+            }
+        }
     }
 
     func setup() {

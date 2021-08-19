@@ -89,6 +89,7 @@ PODS:
   - nanopb/decode (2.30906.0)
   - nanopb/encode (2.30906.0)
   - Nuke (9.5.0)
+  - Parchment (3.0.1)
   - PromisesObjC (1.2.12)
   - SwiftGen (6.4.0)
   - TagListView (1.4.1)
@@ -108,6 +109,7 @@ DEPENDENCIES:
   - LicensePlist
   - MessageKit
   - Nuke (~> 9.0)
+  - Parchment (~> 3.0.1)
   - SwiftGen (~> 6.0)
   - TagListView (~> 1.0)
   - "UITextView+Placeholder"
@@ -137,6 +139,7 @@ SPEC REPOS:
     - MessageKit
     - nanopb
     - Nuke
+    - Parchment
     - PromisesObjC
     - SwiftGen
     - TagListView
@@ -171,12 +174,13 @@ SPEC CHECKSUMS:
   MessageKit: d153fbbbcb12f3f4045a1ba8874298924dacfb62
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   Nuke: 6f400a4ea957e09149ec335a3c6acdcc814d89e4
+  Parchment: 466a1cfb6151780db8acb4bbedc2d9c6bfa1e2ff
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   YoutubePlayer-in-WKWebView: cfbf46da51d7370662a695a8f351e5fa1d3e1008
 
-PODFILE CHECKSUM: a201ca44b6391f688eb53f7ed013f140f6adbed1
+PODFILE CHECKSUM: d3d797306da4a0be7cf706d47120856a412f1e51
 
 COCOAPODS: 1.10.1

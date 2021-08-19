@@ -13,11 +13,13 @@ import UIComponent
 class PlaylistCell: UIButton {
     typealias Input = (
         tracks: [Track],
+        isEdittable: Bool,
         imagePipeline: ImagePipeline
     )
     enum Output {
         case playButtonTapped(Track)
         case trackTapped(Track)
+        case groupTapped(Track)
         case seeMoreTapped
     }
     private lazy var thumbnailImageView: UIImageView = {
@@ -80,13 +82,14 @@ class PlaylistCell: UIButton {
             _contentView.cellButton.isUserInteractionEnabled = false
             _contentView.inject(input: (
                 track: track,
+                isEdittable: input.isEdittable,
                 imagePipeline: input.imagePipeline
             ))
             trackStackView.addArrangedSubview(_contentView)
             _contentView.listen { [unowned self] output in
                 switch output {
                 case .playButtonTapped: self.listener(.playButtonTapped(track))
-                case .groupTapped: break
+                case .groupTapped: self.listener(.groupTapped(track))
                 }
             }
         }

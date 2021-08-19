@@ -245,7 +245,12 @@ class BandDetailViewModel {
             outputSubject.send(.pushToTrackList(.playlist(post.post)))
         case .postTapped:
             guard let live = post.post.live else { return }
-            outputSubject.send(.pushToPost(live))
+            if post.post.author.id == dependencyProvider.user.id {
+                outputSubject.send(.pushToPost((live: live, post: post.post)))
+            } else {
+                outputSubject.send(.pushToPost((live: live, post: nil)))
+            }
+            
         case .trackTapped(_): break
         }
     }
@@ -264,7 +269,7 @@ class BandDetailViewModel {
         case .numOfReportTapped:
             outputSubject.send(.pushToPostList(.livePost(live.live)))
         case .reportButtonTapped:
-            outputSubject.send(.pushToPost(live.live))
+            outputSubject.send(.pushToPost((live: live.live, post: nil)))
         }
     }
     

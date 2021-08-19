@@ -17,6 +17,7 @@ class TrackListViewModel {
         case searchYouTubeResults(String)
         case searchAppleMusicResults(String)
         case playlist(Post)
+        case selectedPlaylist([Track])
         case none
     }
     
@@ -24,6 +25,7 @@ class TrackListViewModel {
         case searchYouTubeResults(YouTubePaginationRequest<ListChannel>)
         case searchAppleMusicResults(AppleMusicPaginationRequest<SearchSongs>)
         case playlist(Post)
+        case selectedPlaylist([Track])
         case none
         
         init(dataSource: DataSource, dependencyProvider: LoggedInDependencyProvider) {
@@ -43,6 +45,8 @@ class TrackListViewModel {
                 self = .searchAppleMusicResults(request)
             case .playlist(let post):
                 self = .playlist(post)
+            case .selectedPlaylist(let tracks):
+                self = .selectedPlaylist(tracks)
             case .none:
                 self = .none
             }
@@ -144,6 +148,7 @@ class TrackListViewModel {
                 }
             }
         case .playlist(_): break
+        case .selectedPlaylist(_): break
         case .none: break
         }
     }
@@ -171,6 +176,9 @@ class TrackListViewModel {
                 )
             }
             outputSubject.send(.reloadTableView)
+        case let .selectedPlaylist(tracks):
+            state.tracks = tracks
+            outputSubject.send(.reloadTableView)
         case .none: break
         }
     }
@@ -183,6 +191,7 @@ class TrackListViewModel {
         case let .searchAppleMusicResults(pagination):
             pagination.next()
         case .playlist(_): break
+        case .selectedPlaylist(_): break
         case .none: break
         }
     }

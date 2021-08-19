@@ -206,6 +206,14 @@ name: Nuke, nameSpecified:
 body: The MIT License (MIT…
 version: 9.5.0
 
+name: Parchment, nameSpecified: 
+body: The MIT License (MIT…
+version: 3.0.1
+
+name: Parchment, nameSpecified: 
+body: The MIT License (MIT…
+version: 3.0.1
+
 name: PromisesObjC, nameSpecified: 
 body: 
                    …

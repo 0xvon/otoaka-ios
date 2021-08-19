@@ -107,7 +107,7 @@ extension TrackListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let track = viewModel.state.tracks[indexPath.row]
-        let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let cell = tableView.dequeueReusableCell(TrackCell.self, input: (track: track, isEdittable: false, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
             case .playButtonTapped:

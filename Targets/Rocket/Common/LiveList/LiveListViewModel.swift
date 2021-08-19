@@ -48,6 +48,7 @@ class LiveListViewModel {
             case .searchResult(let query):
                 var uri = SearchLive.URI()
                 uri.term = query
+                print(query)
                 let request = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
                 self = .searchResult(request)
             case .searchResultToSelect(let query):

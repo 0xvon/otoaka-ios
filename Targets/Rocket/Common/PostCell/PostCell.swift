@@ -239,6 +239,7 @@ class PostCellContent: UIButton {
                 self.listener(.trackTapped(track))
             case .seeMoreTapped:
                 self.listener(.seePlaylistTapped)
+            case .groupTapped(_): break
             }
         }
         content.isHidden = true
@@ -248,7 +249,6 @@ class PostCellContent: UIButton {
     private lazy var writeReportButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("このライブのレポートを書く", selected: false)
         button.addTarget(self, action: #selector(postButtonTapped), for: .touchUpInside)
         button.layer.cornerRadius = 24
         return button
@@ -431,9 +431,15 @@ class PostCellContent: UIButton {
                             trackType: $0.type
                         )
                     },
+                    isEdittable: false,
                     imagePipeline: input.imagePipeline
                 )
             )
+        }
+        if input.post.author.id == input.user.id {
+            writeReportButton.setTitle("レポートを編集", selected: false)
+        } else {
+            writeReportButton.setTitle("このライブのレポートを書く", selected: false)
         }
         
         if (input.post.tracks.isEmpty && input.post.imageUrls.isEmpty), let liveUrl = input.post.live?.artworkURL {

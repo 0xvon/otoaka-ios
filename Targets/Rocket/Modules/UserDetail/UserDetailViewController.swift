@@ -396,23 +396,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
     func bind() {
         userFollowingViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .updateFollowersCount(let count):
-                guard let userDetail = viewModel.state.userDetail else { return }
-                headerView.update(input: (user: viewModel.state.user, followersCount: count, followingUsersCount: userDetail.followingUsersCount, likePostCount: userDetail.likePostCount, imagePipeline: dependencyProvider.imagePipeline))
             case .updateIsButtonEnabled(let enabled):
                 followButton.isEnabled = enabled
-            case .updateFollowing(let isFollowing):
-                guard let isFollowed = viewModel.state.userDetail?.isFollowed else { return }
-                if isFollowing {
-                    isFollowed
-                        ? followButton.setTitle("相互フォロー中", selected: true)
-                        : followButton.setTitle("フォロー中", selected: true)
-                } else {
-                    isFollowed
-                        ? followButton.setTitle("フォローバック", selected: false)
-                        : followButton.setTitle("フォロー", selected: false)
-                }
-                followButton.isSelected = isFollowing
+            case .updateFollowing:
+                viewModel.refresh()
             case .reportError(let error):
                 print(error)
                 self.showAlert()
@@ -421,7 +408,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
         .store(in: &cancellables)
 
         followButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: userFollowingViewModel.didButtonTapped)
+            .sink(receiveValue: { [unowned self] in
+                guard let isFollowing = viewModel.state.userDetail?.isFollowing else { return }
+                userFollowingViewModel.didButtonTapped(isFollowing: isFollowing)
+            })
             .store(in: &cancellables)
 
         sendMessageButton.controlEventPublisher(for: .touchUpInside)
@@ -456,9 +446,20 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     biographyTextView.text = userDetail.biography
                     editProfileButton.isHidden = true
                     followButton.isHidden = false
-                    sendMessageButton.isHidden = false
+                    sendMessageButton.isHidden = true
+                    headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount, likePostCount: userDetail.likePostCount, imagePipeline: dependencyProvider.imagePipeline))
+                    if userDetail.isFollowing {
+                        userDetail.isFollowed
+                            ? followButton.setTitle("相互フォロー中", selected: true)
+                            : followButton.setTitle("フォロー中", selected: true)
+                    } else {
+                        userDetail.isFollowed
+                            ? followButton.setTitle("フォローバック", selected: false)
+                            : followButton.setTitle("フォロー", selected: false)
+                    }
+                    followButton.isSelected = userDetail.isFollowing
                 }
-                userFollowingViewModel.didGetUserDetail(isFollowing: userDetail.isFollowing, followersCount: userDetail.followersCount)
+                userFollowingViewModel.didGetUserDetail()
                 if let twitterUrl = userDetail.twitterUrl, let twitterId = twitterUrl.absoluteString.split(separator: "/").last {
                     twitterStackView.isHidden = false
                     twitterIdLabel.text = "@" + twitterId
@@ -472,7 +473,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     instagramStackView.isHidden = true
                 }
                 biographyTextView.text = userDetail.biography
-                headerView.update(input: (user: viewModel.state.user, followersCount: userDetail.followersCount, followingUsersCount: userDetail.followingUsersCount, likePostCount: userDetail.likePostCount, imagePipeline: dependencyProvider.imagePipeline))
                 refreshControl.endRefreshing()
             case .pushToGroupDetail(let group):
                 let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)

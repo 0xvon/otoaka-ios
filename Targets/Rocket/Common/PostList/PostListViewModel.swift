@@ -16,6 +16,8 @@ class PostListViewModel {
         case livePost(Live)
         case userPost(User)
         case likedPost(User)
+        case followingPost
+        case trendPost
         case none
     }
     
@@ -24,6 +26,8 @@ class PostListViewModel {
         case livePost(PaginationRequest<GetLivePosts>)
         case userPost(PaginationRequest<GetPosts>)
         case likedPost(PaginationRequest<GetLikedPosts>)
+        case followingPost(PaginationRequest<GetFollowingPosts>)
+        case trendPost(PaginationRequest<GetTrendPosts>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -48,6 +52,12 @@ class PostListViewModel {
                 uri.userId = user.id
                 let request = PaginationRequest<GetLikedPosts>(apiClient: apiClient, uri: uri)
                 self = .likedPost(request)
+            case .followingPost:
+                let request = PaginationRequest<GetFollowingPosts>(apiClient: apiClient)
+                self = .followingPost(request)
+            case .trendPost:
+                let request = PaginationRequest<GetTrendPosts>(apiClient: apiClient)
+                self = .trendPost(request)
             case .none:
                 self = .none
             }
@@ -120,6 +130,14 @@ class PostListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .followingPost(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .trendPost(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case .none: break
         }
     }
@@ -153,6 +171,10 @@ class PostListViewModel {
             pagination.refresh()
         case let .likedPost(pagination):
             pagination.refresh()
+        case let .followingPost(pagination):
+            pagination.refresh()
+        case let .trendPost(pagination):
+            pagination.refresh()
         case .none:
             break
         }
@@ -168,6 +190,10 @@ class PostListViewModel {
         case let .userPost(pagination):
             pagination.next()
         case let .likedPost(pagination):
+            pagination.next()
+        case let .followingPost(pagination):
+            pagination.next()
+        case let .trendPost(pagination):
             pagination.next()
         case .none: break
         }

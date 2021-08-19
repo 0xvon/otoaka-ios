@@ -136,7 +136,7 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
             case .reportButtonTapped:
-                let vc = PostViewController(dependencyProvider: dependencyProvider, input: live.live)
+                let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live.live, post: nil))
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
             case .numOfReportTapped:
