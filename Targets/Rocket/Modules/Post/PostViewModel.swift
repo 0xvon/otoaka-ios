@@ -47,6 +47,7 @@ class PostViewModel {
     var cancellables: Set<AnyCancellable> = []
     
     private lazy var createPostAction = Action(CreatePost.self, httpClient: self.apiClient)
+    private lazy var editPostAction = Action(EditPost.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -59,12 +60,15 @@ class PostViewModel {
         
         createPostAction.elements
             .map(Output.didPost).eraseToAnyPublisher()
-            .merge(with: createPostAction.errors.map(Output.reportError))
+            .merge(with: editPostAction.elements.map(Output.didPost).eraseToAnyPublisher())
+            .merge(with: createPostAction.errors.map(Output.reportError).eraseToAnyPublisher())
+            .merge(with: editPostAction.errors.map(Output.reportError).eraseToAnyPublisher())
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
         
         createPostAction.elements
-            .sink(receiveValue: { [unowned self] _ in
+            .combineLatest(editPostAction.elements)
+            .sink(receiveValue: { [unowned self] _, _ in
                 outputSubject.send(.updateSubmittableState(.editting(true)))
             })
             .store(in: &cancellables)
@@ -138,6 +142,12 @@ class PostViewModel {
             groups: state.groups,
             imageUrls: imageUrls
         )
-        createPostAction.input((request: request, uri: CreatePost.URI()))
+        if let post = state.post {
+            var uri = EditPost.URI()
+            uri.id = post.id
+            editPostAction.input((request: request, uri: uri))
+        } else {
+            createPostAction.input((request: request, uri: CreatePost.URI()))
+        }
     }
 }
