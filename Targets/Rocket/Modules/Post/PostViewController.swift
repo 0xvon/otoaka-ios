@@ -255,6 +255,30 @@ final class PostViewController: UIViewController, Instantiable {
             case .reportError(let error):
                 print(error)
                 showAlert()
+            case .didInitContent:
+                if let post = viewModel.state.post {
+                    textView.text = post.text
+                    uploadedImageView.isHidden = post.imageUrls.isEmpty
+                    selectedGroupView.isHidden = post.groups.isEmpty
+                    playlistView.isHidden = post.tracks.isEmpty
+                    
+                    if let image = post.imageUrls.first, let url = URL(string: image) {
+                        dependencyProvider.imagePipeline.loadImage(url, into: uploadedImageView)
+                    }
+                    if let group = post.groups.first {
+                        selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
+                    }
+                    if !post.tracks.isEmpty {
+                        playlistView.inject(input: (tracks: post.tracks.map {
+                            Track(
+                                name: $0.trackName,
+                                artistName: $0.groupName,
+                                artwork: $0.thumbnailUrl!,
+                                trackType: $0.type
+                            )
+                        }, isEdittable: true, imagePipeline: dependencyProvider.imagePipeline))
+                    }
+                }
             case .didUpdateContent:
                 textView.text = viewModel.state.text
                 uploadedImageView.isHidden = viewModel.state.images.isEmpty

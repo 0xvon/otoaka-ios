@@ -27,6 +27,11 @@ class PostViewModel {
         var live: Live
         var tracks: [Endpoint.Track] = []
         let maxLength: Int = 140
+        var imageState: ImageState = .initial
+    }
+    
+    enum ImageState {
+        case initial, updated
     }
     
     enum PageState {
@@ -37,6 +42,7 @@ class PostViewModel {
     enum Output {
         case didPost(Post)
         case updateSubmittableState(PageState)
+        case didInitContent
         case didUpdateContent
         case reportError(Error)
     }
@@ -75,18 +81,20 @@ class PostViewModel {
     }
     
     func viewDidLoad() {
-        state.text = state.post?.text
-        state.groups = state.post?.groups ?? []
-        state.images = state.post?.imageUrls.map { UIImage(url: $0) } ?? []
-        state.tracks = state.post?.tracks.map {
-            Track(
-                name: $0.trackName,
-                artistName: $0.groupName,
-                artwork: $0.thumbnailUrl!,
-                trackType: $0.type
-            )
-        } ?? []
-        self.outputSubject.send(.didUpdateContent)
+        if let post = state.post {
+            state.text = post.text
+            state.groups = post.groups
+            state.images = post.imageUrls.map { UIImage(url: $0) }
+            state.tracks = post.tracks.map {
+                Track(
+                    name: $0.trackName,
+                    artistName: $0.groupName,
+                    artwork: $0.thumbnailUrl!,
+                    trackType: $0.type
+                )
+            }
+        }
+        self.outputSubject.send(.didInitContent)
     }
     
     func didUpdateInputText(text: String?) {
@@ -106,6 +114,7 @@ class PostViewModel {
     
     func didUploadImages(images: [UIImage]) {
         state.images = images
+        state.imageState = .updated
         outputSubject.send(.didUpdateContent)
     }
     
@@ -116,18 +125,22 @@ class PostViewModel {
 
     func postButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
-        guard let image = state.images.first else {
-            post(imageUrls: [])
-            return
-        }
-        
-        dependencyProvider.s3Client.uploadImage(image: image) { [weak self] result in
-            switch result {
-            case .success(let imageUrl):
-                self?.post(imageUrls: [imageUrl])
-            case .failure(let error):
-                self?.outputSubject.send(.updateSubmittableState(.editting(true)))
-                self?.outputSubject.send(.reportError(error))
+        if state.imageState == .initial {
+            self.post(imageUrls: state.post?.imageUrls ?? [])
+        } else {
+            guard let image = state.images.first else {
+                self.post(imageUrls: [])
+                return
+            }
+            
+            dependencyProvider.s3Client.uploadImage(image: image) { [weak self] result in
+                switch result {
+                case .success(let imageUrl):
+                    self?.post(imageUrls: [imageUrl])
+                case .failure(let error):
+                    self?.outputSubject.send(.updateSubmittableState(.editting(true)))
+                    self?.outputSubject.send(.reportError(error))
+                }
             }
         }
     }
