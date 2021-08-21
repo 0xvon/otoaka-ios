@@ -8,14 +8,14 @@ public final class CountSummaryView: UIStackView {
     let followersLabel: UILabel = {
         let label = UILabel()
         label.text = ""
-        label.font = Brand.font(for: .medium)
+        label.font = Brand.font(for: .xsmall)
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
     let followersNumberLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.font = Brand.font(for: .small)
+        label.font = Brand.font(for: .smallStrong)
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()

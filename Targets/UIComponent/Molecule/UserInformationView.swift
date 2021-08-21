@@ -20,7 +20,6 @@ class UserInformationView: UIView {
         imageView.clipsToBounds = true
         return imageView
     }()
-    
     private lazy var displayNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -28,23 +27,54 @@ class UserInformationView: UIView {
         label.font = Brand.font(for: .largeStrong)
         return label
     }()
-    
+    private lazy var followButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 16
+        button.setImage(
+            UIImage(systemName: "person.badge.plus")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "person.fill.checkmark.rtl")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
+        button.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
+    private let editProfileButton: ToggleButton = {
+        let button = ToggleButton()
+        button.setImage(
+            UIImage(systemName: "gearshape")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 16
+        button.isHidden = true
+        button.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+        return button
+    }()
     private lazy var profileSummaryLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = Brand.color(for: .text(.primary))
-        label.font = Brand.font(for: .medium)
+        label.font = Brand.font(for: .small)
         return label
     }()
-    
     private lazy var liveStyleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = Brand.color(for: .text(.primary))
-        label.font = Brand.font(for: .medium)
+        label.font = Brand.font(for: .small)
         return label
     }()
-    
+    private lazy var countSummaryStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.backgroundColor = .clear
+        stackView.axis = .horizontal
+        stackView.spacing = 4
+        
+        stackView.addArrangedSubview(followerCountSumamryView)
+        stackView.addArrangedSubview(followingUserCountSummaryView)
+        
+        return stackView
+    }()
     private lazy var followerCountSumamryView: CountSummaryView = {
         let summaryView = CountSummaryView()
         summaryView.translatesAutoresizingMaskIntoConstraints = false
@@ -53,7 +83,6 @@ class UserInformationView: UIView {
         )
         return summaryView
     }()
-    
     private lazy var followingUserCountSummaryView: CountSummaryView = {
         let summaryView = CountSummaryView()
         summaryView.translatesAutoresizingMaskIntoConstraints = false
@@ -63,13 +92,18 @@ class UserInformationView: UIView {
         return summaryView
     }()
     
-    private lazy var likeFeedCountSummaryView: CountSummaryView = {
-        let summaryView = CountSummaryView()
-        summaryView.translatesAutoresizingMaskIntoConstraints = false
-        summaryView.addGestureRecognizer(
-            UITapGestureRecognizer(target: self, action: #selector(likeFeedSummaryViewTapped))
-        )
-        return summaryView
+    private lazy var biographyTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.isScrollEnabled = false
+        textView.isUserInteractionEnabled = false
+        textView.isEditable = false
+        textView.textContainer.lineFragmentPadding = 0
+        textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        textView.font = Brand.font(for: .mediumStrong)
+        textView.textColor = Brand.color(for: .text(.primary))
+        textView.backgroundColor = .clear
+        return textView
     }()
     
     init() {
@@ -83,14 +117,22 @@ class UserInformationView: UIView {
     }
     
     func update(input: Input) {
-        displayNameLabel.text = input.user.name
-        profileSummaryLabel.text = [input.user.age.map {String($0)}, input.user.sex, input.user.residence].compactMap {$0}.joined(separator: "・")
-        liveStyleLabel.text = input.user.liveStyle ?? ""
-        followerCountSumamryView.update(input: (title: "フォロワー", count: input.followersCount))
-        followingUserCountSummaryView.update(input: (title: "フォロー", count: input.followingUsersCount))
-        likeFeedCountSummaryView.update(input: (title: "いいね", count: input.likePostCount))
-        if let thumbnail = input.user.thumbnailURL, let url = URL(string: thumbnail) {
+        displayNameLabel.text = input.userDetail?.user.name
+        profileSummaryLabel.text = [input.userDetail?.user.age.map {String($0)}, input.userDetail?.user.sex, input.userDetail?.user.residence].compactMap {$0}.joined(separator: "・")
+        liveStyleLabel.text = input.userDetail?.user.liveStyle ?? ""
+        followerCountSumamryView.update(input: (title: "フォロワー", count: input.userDetail?.followersCount ?? 0))
+        followingUserCountSummaryView.update(input: (title: "フォロー", count: input.userDetail?.followingUsersCount ?? 0))
+        if let thumbnail = input.userDetail?.thumbnailURL, let url = URL(string: thumbnail) {
             input.imagePipeline.loadImage(url, into: profileImageView)
+        }
+        biographyTextView.text = input.userDetail?.user.biography
+        if input.userDetail?.user.id == input.selfUser.id {
+            editProfileButton.isHidden = false
+            followButton.isHidden = true
+        } else {
+            editProfileButton.isHidden = true
+            followButton.isHidden = false
+            followButton.isSelected = input.userDetail?.isFollowing ?? false
         }
         
     }
@@ -110,45 +152,51 @@ class UserInformationView: UIView {
         NSLayoutConstraint.activate([
             displayNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
             displayNameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8),
-            displayNameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            displayNameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -54),
+        ])
+        
+        addSubview(followButton)
+        NSLayoutConstraint.activate([
+            followButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            followButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            followButton.widthAnchor.constraint(equalToConstant: 32),
+            followButton.heightAnchor.constraint(equalTo: followButton.widthAnchor),
+        ])
+        addSubview(editProfileButton)
+        NSLayoutConstraint.activate([
+            editProfileButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            editProfileButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            editProfileButton.widthAnchor.constraint(equalToConstant: 32),
+            editProfileButton.heightAnchor.constraint(equalTo: followButton.widthAnchor),
         ])
         
         addSubview(profileSummaryLabel)
         NSLayoutConstraint.activate([
-            profileSummaryLabel.topAnchor.constraint(equalTo: displayNameLabel.bottomAnchor, constant: 8),
+            profileSummaryLabel.topAnchor.constraint(equalTo: displayNameLabel.bottomAnchor, constant: 4),
             profileSummaryLabel.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
             profileSummaryLabel.rightAnchor.constraint(equalTo: displayNameLabel.rightAnchor),
         ])
         
         addSubview(liveStyleLabel)
         NSLayoutConstraint.activate([
-            liveStyleLabel.topAnchor.constraint(equalTo: profileSummaryLabel.bottomAnchor, constant: 8),
+            liveStyleLabel.topAnchor.constraint(equalTo: profileSummaryLabel.bottomAnchor, constant: 4),
             liveStyleLabel.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
             liveStyleLabel.rightAnchor.constraint(equalTo: displayNameLabel.rightAnchor),
         ])
         
-        addSubview(followerCountSumamryView)
+        addSubview(countSummaryStackView)
         NSLayoutConstraint.activate([
-            followerCountSumamryView.heightAnchor.constraint(equalToConstant: 60),
-            followerCountSumamryView.widthAnchor.constraint(equalToConstant: 80),
-            followerCountSumamryView.topAnchor.constraint(equalTo: liveStyleLabel.bottomAnchor, constant: 12),
-            followerCountSumamryView.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
+            countSummaryStackView.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
+            countSummaryStackView.topAnchor.constraint(equalTo: liveStyleLabel.bottomAnchor, constant: 4),
         ])
         
-        addSubview(followingUserCountSummaryView)
+        addSubview(biographyTextView)
         NSLayoutConstraint.activate([
-            followingUserCountSummaryView.heightAnchor.constraint(equalToConstant: 60),
-            followingUserCountSummaryView.widthAnchor.constraint(equalToConstant: 80),
-            followingUserCountSummaryView.topAnchor.constraint(equalTo: followerCountSumamryView.topAnchor),
-            followingUserCountSummaryView.leftAnchor.constraint(equalTo: followerCountSumamryView.rightAnchor, constant: 4),
-        ])
-        
-        addSubview(likeFeedCountSummaryView)
-        NSLayoutConstraint.activate([
-            likeFeedCountSummaryView.heightAnchor.constraint(equalToConstant: 60),
-            likeFeedCountSummaryView.widthAnchor.constraint(equalToConstant: 80),
-            likeFeedCountSummaryView.topAnchor.constraint(equalTo: followerCountSumamryView.topAnchor),
-            likeFeedCountSummaryView.leftAnchor.constraint(equalTo: followingUserCountSummaryView.rightAnchor, constant: 4),
+            biographyTextView.topAnchor.constraint(greaterThanOrEqualTo: profileImageView.bottomAnchor, constant: 8),
+            biographyTextView.topAnchor.constraint(greaterThanOrEqualTo: countSummaryStackView.bottomAnchor, constant: 8),
+            biographyTextView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
+            biographyTextView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            biographyTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
         ])
     }
     
@@ -162,6 +210,8 @@ class UserInformationView: UIView {
         case followingUserCountButtonTapped
         case likeFeedCountButtonTapped
         case arrowButtonTapped
+        case followButtonTapped
+        case editButtonTapped
     }
     
     @objc private func touchUpInsideArrowButton() {
@@ -176,7 +226,11 @@ class UserInformationView: UIView {
         listener(.followingUserCountButtonTapped)
     }
     
-    @objc private func likeFeedSummaryViewTapped() {
-        listener(.likeFeedCountButtonTapped)
+    @objc private func followButtonTapped() {
+        listener(.followButtonTapped)
+    }
+    
+    @objc private func editButtonTapped() {
+        listener(.editButtonTapped)
     }
 }

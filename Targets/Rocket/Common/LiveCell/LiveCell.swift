@@ -164,7 +164,7 @@ class LiveCellContent: UIButton {
     private lazy var likeButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 24
+        button.layer.cornerRadius = 16
         button.setImage(
             UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
         button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)

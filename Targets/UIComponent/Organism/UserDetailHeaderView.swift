@@ -6,16 +6,15 @@
 //
 
 import DomainEntity
+import Endpoint
 import InternalDomain
 import UIKit
 import ImagePipeline
 
 public final class UserDetailHeaderView: UIView {
     public typealias Input = (
-        user: User,
-        followersCount: Int,
-        followingUsersCount: Int,
-        likePostCount: Int,
+        selfUser: User,
+        userDetail: UserDetail?,
         imagePipeline: ImagePipeline
     )
     
@@ -67,6 +66,10 @@ public final class UserDetailHeaderView: UIView {
                 self.listener(.followingUsersButtonTapped)
             case .likeFeedCountButtonTapped:
                 self.listener(.likeFeedButtonTapped)
+            case .followButtonTapped:
+                self.listener(.followButtonTapped)
+            case .editButtonTapped:
+                self.listener(.editButtonTapped)
             }
         }
     }
@@ -120,5 +123,7 @@ public final class UserDetailHeaderView: UIView {
         case followersButtonTapped
         case followingUsersButtonTapped
         case likeFeedButtonTapped
+        case followButtonTapped
+        case editButtonTapped
     }
 }

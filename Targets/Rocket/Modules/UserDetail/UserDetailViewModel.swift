@@ -45,6 +45,8 @@ class UserDetailViewModel {
         case didRefreshPostSummary(PostSummary?)
         case didRefreshLikedLive(LiveFeed?)
         case didRefreshFollowingGroup(Group?, [String])
+        case followButtontapped
+        case editProfileButtonTapped
         
         case pushToPlayTrack(PlayTrackViewController.Input)
         case pushToGroupDetail(Group)
@@ -173,6 +175,10 @@ class UserDetailViewModel {
         case .likeFeedButtonTapped:
 //            outputSubject.send(.pushToFeedList(.likedFeed(state.user)))
             outputSubject.send(.pushToPostList(.likedPost(state.user)))
+        case .followButtonTapped:
+            outputSubject.send(.followButtontapped)
+        case .editButtonTapped:
+            outputSubject.send(.editProfileButtonTapped)
         }
     }
     
