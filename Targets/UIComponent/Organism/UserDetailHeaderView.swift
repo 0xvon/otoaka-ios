@@ -11,22 +11,14 @@ import InternalDomain
 import UIKit
 import ImagePipeline
 
-public final class UserDetailHeaderView: UIView {
+public final class UserDetailHeaderView: UIView, PageHeaderView {
+    public var pageHeaderHeight: CGFloat = 200
+    
     public typealias Input = (
         selfUser: User,
-        userDetail: UserDetail?,
+        userDetail: UserDetail,
         imagePipeline: ImagePipeline
     )
-    
-    private lazy var horizontalScrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.isPagingEnabled = true
-        scrollView.isScrollEnabled = true
-        scrollView.showsHorizontalScrollIndicator = false
-        scrollView.showsVerticalScrollIndicator = false
-        return scrollView
-    }()
     
     private lazy var userInformationView: UserInformationView = {
         let view = UserInformationView()
@@ -64,8 +56,6 @@ public final class UserDetailHeaderView: UIView {
                 self.listener(.followersButtonTapped)
             case .followingUserCountButtonTapped:
                 self.listener(.followingUsersButtonTapped)
-            case .likeFeedCountButtonTapped:
-                self.listener(.likeFeedButtonTapped)
             case .followButtonTapped:
                 self.listener(.followButtonTapped)
             case .editButtonTapped:
@@ -76,41 +66,14 @@ public final class UserDetailHeaderView: UIView {
     
     private func setup() {
         backgroundColor = .clear
-        
-        addSubview(horizontalScrollView)
+        addSubview(userInformationView)
         NSLayoutConstraint.activate([
-            horizontalScrollView.topAnchor.constraint(equalTo: topAnchor),
-            horizontalScrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            horizontalScrollView.leftAnchor.constraint(equalTo: leftAnchor),
-            horizontalScrollView.rightAnchor.constraint(equalTo: rightAnchor),
+            userInformationView.topAnchor.constraint(equalTo: topAnchor),
+            userInformationView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            userInformationView.leftAnchor.constraint(equalTo: leftAnchor),
+            userInformationView.rightAnchor.constraint(equalTo: rightAnchor),
         ])
-        
-        do {
-            let arrangedSubviews = [userInformationView]
-            let stackView = UIStackView(arrangedSubviews: arrangedSubviews)
-            stackView.translatesAutoresizingMaskIntoConstraints = false
-            stackView.axis = .horizontal
-            stackView.distribution = .fillEqually
-            horizontalScrollView.addSubview(stackView)
-            NSLayoutConstraint.activate([
-                stackView.topAnchor.constraint(equalTo: topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-                stackView.leftAnchor.constraint(equalTo: horizontalScrollView.leftAnchor),
-                stackView.topAnchor.constraint(equalTo: horizontalScrollView.topAnchor),
-                stackView.bottomAnchor.constraint(equalTo: horizontalScrollView.bottomAnchor),
-                stackView.rightAnchor.constraint(equalTo: horizontalScrollView.rightAnchor),
-                stackView.widthAnchor.constraint(equalTo: horizontalScrollView.widthAnchor, multiplier: CGFloat(arrangedSubviews.count))
-            ])
-            
-            bind()
-        }
-    }
-    
-    private func nextPage() {
-        UIView.animate(withDuration: 0.3) {
-            // FIXME: Support landscape mode?
-            self.horizontalScrollView.contentOffset.x += UIScreen.main.bounds.width
-        }
+        bind()
     }
 
     // MARK: - Output
@@ -122,7 +85,6 @@ public final class UserDetailHeaderView: UIView {
     public enum Output {
         case followersButtonTapped
         case followingUsersButtonTapped
-        case likeFeedButtonTapped
         case followButtonTapped
         case editButtonTapped
     }

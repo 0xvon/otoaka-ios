@@ -76,14 +76,14 @@ public final class PageViewController: UIViewController {
         tab: PageTabView,
         children: [UIViewController & PageContent]
     )
-    lazy var containerScrollView: UIScrollView = {
+    public lazy var containerScrollView: UIScrollView = {
         let scrollView = TransparentScrollView(parent: self)
         scrollView.isPagingEnabled = true
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
-    lazy var containerStackView: UIStackView = {
+    public lazy var containerStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually

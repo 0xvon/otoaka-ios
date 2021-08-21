@@ -16,7 +16,6 @@ class UserFollowingViewModel {
     }
     
     enum Output {
-        case updateIsButtonEnabled(Bool)
         case updateFollowing
         case reportError(Error)
     }
@@ -51,30 +50,9 @@ class UserFollowingViewModel {
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
-        
-        followUserAction.elements
-            .sink(receiveValue: { [unowned self] _ in
-                outputSubject.send(.updateIsButtonEnabled(true))
-            })
-            .store(in: &cancellables)
-        
-        unfollowUserAction.elements
-            .sink(receiveValue: { [unowned self] _ in
-                outputSubject.send(.updateIsButtonEnabled(true))
-            })
-            .store(in: &cancellables)
-    }
-    
-    func viewDidLoad() {
-        outputSubject.send(.updateIsButtonEnabled(false))
-    }
-    
-    func didGetUserDetail() {
-        outputSubject.send(.updateIsButtonEnabled(true))
     }
     
     func didButtonTapped(isFollowing: Bool) {
-        outputSubject.send(.updateIsButtonEnabled(false))
         if isFollowing {
             let req = UnfollowUser.Request(userId: state.user.id)
             unfollowUserAction.input((request: req, uri: UnfollowUser.URI()))

@@ -12,7 +12,7 @@ protocol InputAppliable {
     func inject(input: Input)
 }
 
-struct ViewWrapper<View>: UIViewRepresentable where View: UIView {
+struct PerviewWrapper<View>: UIViewRepresentable where View: UIView {
     typealias UIViewType = View
 
     private let view: View

@@ -59,14 +59,14 @@ final class GroupListViewController: UIViewController, Instantiable {
     }
     private func setup() {
         navigationItem.largeTitleDisplayMode = .never
-        view.backgroundColor = Brand.color(for: .background(.primary))
+        view.backgroundColor = .clear
         
         groupTableView = UITableView()
         groupTableView.translatesAutoresizingMaskIntoConstraints = false
         groupTableView.showsVerticalScrollIndicator = false
         groupTableView.tableFooterView = UIView(frame: .zero)
         groupTableView.separatorStyle = .none
-        groupTableView.backgroundColor = Brand.color(for: .background(.primary))
+        groupTableView.backgroundColor = .clear
         groupTableView.delegate = self
         groupTableView.dataSource = self
         groupTableView.registerCellClass(GroupCell.self)
@@ -104,8 +104,12 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
         return self.viewModel.state.groups.count
     }
 
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 282
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 282
+//    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -143,8 +147,17 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.backgroundView = self.viewModel.state.groups.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
-                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+                backgroundView.topAnchor.constraint(equalTo: groupTableView.topAnchor, constant: 32),
+                backgroundView.widthAnchor.constraint(equalTo: groupTableView.widthAnchor, constant: -32),
+                backgroundView.centerXAnchor.constraint(equalTo: groupTableView.centerXAnchor),
             ])
         }
+    }
+}
+
+extension GroupListViewController: PageContent {
+    var scrollView: UIScrollView {
+        _ = view
+        return self.groupTableView
     }
 }

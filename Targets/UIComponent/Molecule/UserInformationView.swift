@@ -117,22 +117,22 @@ class UserInformationView: UIView {
     }
     
     func update(input: Input) {
-        displayNameLabel.text = input.userDetail?.user.name
-        profileSummaryLabel.text = [input.userDetail?.user.age.map {String($0)}, input.userDetail?.user.sex, input.userDetail?.user.residence].compactMap {$0}.joined(separator: "・")
-        liveStyleLabel.text = input.userDetail?.user.liveStyle ?? ""
-        followerCountSumamryView.update(input: (title: "フォロワー", count: input.userDetail?.followersCount ?? 0))
-        followingUserCountSummaryView.update(input: (title: "フォロー", count: input.userDetail?.followingUsersCount ?? 0))
-        if let thumbnail = input.userDetail?.thumbnailURL, let url = URL(string: thumbnail) {
+        displayNameLabel.text = input.userDetail.user.name
+        profileSummaryLabel.text = [input.userDetail.user.age.map {String($0)}, input.userDetail.user.sex, input.userDetail.user.residence].compactMap {$0}.joined(separator: "・")
+        liveStyleLabel.text = input.userDetail.user.liveStyle ?? ""
+        followerCountSumamryView.update(input: (title: "フォロワー", count: input.userDetail.followersCount))
+        followingUserCountSummaryView.update(input: (title: "フォロー", count: input.userDetail.followingUsersCount))
+        if let thumbnail = input.userDetail.thumbnailURL, let url = URL(string: thumbnail) {
             input.imagePipeline.loadImage(url, into: profileImageView)
         }
-        biographyTextView.text = input.userDetail?.user.biography
-        if input.userDetail?.user.id == input.selfUser.id {
+        biographyTextView.text = input.userDetail.user.biography
+        if input.userDetail.user.id == input.selfUser.id {
             editProfileButton.isHidden = false
             followButton.isHidden = true
         } else {
             editProfileButton.isHidden = true
             followButton.isHidden = false
-            followButton.isSelected = input.userDetail?.isFollowing ?? false
+            followButton.isSelected = input.userDetail.isFollowing
         }
         
     }
@@ -196,7 +196,8 @@ class UserInformationView: UIView {
             biographyTextView.topAnchor.constraint(greaterThanOrEqualTo: countSummaryStackView.bottomAnchor, constant: 8),
             biographyTextView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             biographyTextView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
-            biographyTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
+//            biographyTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
+            biographyTextView.heightAnchor.constraint(equalToConstant: 88),
         ])
     }
     
@@ -208,7 +209,6 @@ class UserInformationView: UIView {
     public enum Output {
         case followerCountButtonTapped
         case followingUserCountButtonTapped
-        case likeFeedCountButtonTapped
         case arrowButtonTapped
         case followButtonTapped
         case editButtonTapped

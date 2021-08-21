@@ -9,6 +9,7 @@ import UIKit
 import Endpoint
 import Combine
 import ImageViewer
+import UIComponent
 
 final class PostListViewController: UIViewController, Instantiable {
     typealias Input = PostListViewModel.Input
@@ -95,7 +96,7 @@ final class PostListViewController: UIViewController, Instantiable {
     
     func setup() {
         navigationItem.largeTitleDisplayMode = .never
-        view.backgroundColor = Brand.color(for: .background(.primary))
+        view.backgroundColor = .clear
         
         postTableView = UITableView()
         postTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -104,7 +105,7 @@ final class PostListViewController: UIViewController, Instantiable {
         postTableView.separatorStyle = .singleLine
         postTableView.separatorColor = Brand.color(for: .background(.secondary))
         postTableView.separatorInset = .zero
-        postTableView.backgroundColor = Brand.color(for: .background(.primary))
+        postTableView.backgroundColor = .clear
         postTableView.delegate = self
         postTableView.dataSource = self
         postTableView.registerCellClass(PostCell.self)
@@ -118,7 +119,7 @@ final class PostListViewController: UIViewController, Instantiable {
             postTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             postTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             postTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
-            postTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor, constant: -16),
+            postTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -275,5 +276,12 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
                 backgroundView.centerXAnchor.constraint(equalTo: postTableView.centerXAnchor),
             ])
         }
+    }
+}
+
+extension PostListViewController: PageContent {
+    var scrollView: UIScrollView {
+        _ = view
+        return self.postTableView
     }
 }
