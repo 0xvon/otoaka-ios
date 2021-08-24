@@ -79,7 +79,7 @@ final class CollectionListViewController: UIViewController, Instantiable {
             collectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             collectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             collectionView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         ])
         
         collectionView.refreshControl = BrandRefreshControl()

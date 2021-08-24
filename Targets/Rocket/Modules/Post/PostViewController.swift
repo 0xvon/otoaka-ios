@@ -76,7 +76,7 @@ final class PostViewController: UIViewController, Instantiable {
             textView.rightAnchor.constraint(equalTo: view.rightAnchor),
             textView.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
             textView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            textView.heightAnchor.constraint(greaterThanOrEqualTo: avatarImageView.heightAnchor, multiplier: 1),
+            textView.heightAnchor.constraint(greaterThanOrEqualTo: avatarImageView.heightAnchor, multiplier: 1.6),
         ])
         
         return view
@@ -88,7 +88,7 @@ final class PostViewController: UIViewController, Instantiable {
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
         textView.delegate = self
-        textView.placeholder = "セットリスト・MCで言っていたこと・起こった出来事・友達との思い出を記録しよう"
+        textView.placeholder = "セットリスト・MCで言っていたことなどを記録しよう。下から画像や楽曲も選択できるよ。"
         textView.placeholderTextView.textAlignment = .left
         textView.placeholderColor = Brand.color(for: .background(.secondary))
         textView.font = Brand.font(for: .mediumStrong)

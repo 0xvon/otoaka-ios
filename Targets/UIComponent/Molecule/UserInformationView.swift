@@ -109,7 +109,7 @@ class UserInformationView: UIView {
         textView.isEditable = false
         textView.textContainer.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        textView.font = Brand.font(for: .mediumStrong)
+        textView.font = Brand.font(for: .smallStrong)
         textView.textColor = Brand.color(for: .text(.primary))
         textView.backgroundColor = .clear
         return textView
@@ -212,7 +212,7 @@ class UserInformationView: UIView {
             biographyTextView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             biographyTextView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
 //            biographyTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
-            biographyTextView.heightAnchor.constraint(equalToConstant: 88),
+            biographyTextView.heightAnchor.constraint(equalToConstant: 76),
         ])
     }
     

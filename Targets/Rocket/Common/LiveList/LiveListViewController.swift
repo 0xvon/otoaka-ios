@@ -84,7 +84,7 @@ final class LiveListViewController: UIViewController, Instantiable {
             liveTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             liveTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             liveTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
-            liveTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
+            liveTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -182,7 +182,9 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.backgroundView = self.viewModel.state.lives.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
-                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor),
+                backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 32),
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor, constant: -32),
+                backgroundView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             ])
         }
     }

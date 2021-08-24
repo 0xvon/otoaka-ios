@@ -82,7 +82,7 @@ final class GroupListViewController: UIViewController, Instantiable {
             groupTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             groupTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
             groupTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
-            groupTableView.bottomAnchor.constraint(equalTo: self.view.layoutMarginsGuide.bottomAnchor),
+            groupTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -147,9 +147,9 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.backgroundView = self.viewModel.state.groups.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
-                backgroundView.topAnchor.constraint(equalTo: groupTableView.topAnchor, constant: 32),
-                backgroundView.widthAnchor.constraint(equalTo: groupTableView.widthAnchor, constant: -32),
-                backgroundView.centerXAnchor.constraint(equalTo: groupTableView.centerXAnchor),
+                backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 32),
+                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor, constant: -32),
+                backgroundView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             ])
         }
     }
