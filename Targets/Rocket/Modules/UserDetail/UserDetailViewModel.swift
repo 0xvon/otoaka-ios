@@ -43,6 +43,7 @@ class UserDetailViewModel {
         
         case openImage(GalleryItemsDataSource)
         case pushToUserList(UserListViewController.Input)
+        case pushToPostList(PostListViewController.Input)
         case openURLInBrowser(URL)
         case pushToMessageRoom(MessageRoom)
         
@@ -98,6 +99,8 @@ class UserDetailViewModel {
             outputSubject.send(.pushToUserList(.userFollowers(state.user.id)))
         case .followingUsersButtonTapped:
             outputSubject.send(.pushToUserList(.followingUsers(state.user.id)))
+        case .likedPostsButtonTapped:
+            outputSubject.send(.pushToPostList(.likedPost(state.user)))
         case .followButtonTapped:
             outputSubject.send(.followButtontapped)
         case .editButtonTapped:

@@ -110,6 +110,13 @@ extension CollectionListViewController: UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         self.viewModel.willDisplay(rowAt: indexPath)
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let post = viewModel.state.posts[indexPath.item]
+        let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: post)
+        let nav = self.navigationController ?? presentingViewController?.navigationController
+        nav?.pushViewController(vc, animated: true)
+    }
 }
 
 extension CollectionListViewController: UICollectionViewDelegateFlowLayout {

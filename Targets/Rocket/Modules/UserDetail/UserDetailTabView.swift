@@ -26,17 +26,13 @@ public final class UserDetailTabView: UIView {
     private lazy var myPostButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("0", for: .normal)
-        button.setTitle("0", for: .selected)
-        button.setImage(UIImage(systemName: "rectangle.on.rectangle.angled")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "rectangle.on.rectangle.angled")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
+        button.setImage(UIImage(systemName: "doc.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "doc.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
         return button
     }()
-    private lazy var likedPostButton: TabItemButton = {
+    private lazy var likedLiveButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("0", for: .normal)
-        button.setTitle("0", for: .selected)
         button.setImage(UIImage(systemName: "heart")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         button.setImage(UIImage(systemName: "heart")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
         return button
@@ -44,8 +40,6 @@ public final class UserDetailTabView: UIView {
     private lazy var followingGroupButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("0", for: .normal)
-        button.setTitle("0", for: .selected)
         button.setImage(UIImage(systemName: "person.3")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         button.setImage(UIImage(systemName: "person.3")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
         return button
@@ -71,12 +65,12 @@ public final class UserDetailTabView: UIView {
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
         stackView.addArrangedSubview(myPostButton)
-        stackView.addArrangedSubview(likedPostButton)
+        stackView.addArrangedSubview(likedLiveButton)
         stackView.addArrangedSubview(followingGroupButton)
         
         tabButtons = [
             myPostButton,
-            likedPostButton,
+            likedLiveButton,
             followingGroupButton,
         ]
         tabButtons.forEach {
@@ -89,8 +83,8 @@ public final class UserDetailTabView: UIView {
         myPostButton.setTitle("\(userDetail.postCount)", for: .normal)
         myPostButton.setTitle("\(userDetail.postCount)", for: .selected)
         
-        likedPostButton.setTitle("\(userDetail.likePostCount)", for: .normal)
-        likedPostButton.setTitle("\(userDetail.likePostCount)", for: .selected)
+        likedLiveButton.setTitle("\(userDetail.likeLiveCount)", for: .normal)
+        likedLiveButton.setTitle("\(userDetail.likeLiveCount)", for: .selected)
         
         followingGroupButton.setTitle("\(userDetail.followingGroupsCount)", for: .normal)
         followingGroupButton.setTitle("\(userDetail.followingGroupsCount)", for: .selected)

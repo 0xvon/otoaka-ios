@@ -38,7 +38,7 @@ final class SelectTrackViewModel {
         var nextPageToken: String? = nil
         var tracks: [Track] = []
         var selected: [Track] = []
-        var groups: [Group] = []
+        var groups: [GroupFeed] = []
         var scope: Scope = .appleMusic
     }
     
@@ -72,7 +72,7 @@ final class SelectTrackViewModel {
         }
     }
     
-    func updateState(with result: PaginationEvent<Page<Group>>) {
+    func updateState(with result: PaginationEvent<Page<GroupFeed>>) {
         switch result {
         case .initial(let res):
             state.groups = res.items

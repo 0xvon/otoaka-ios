@@ -5,7 +5,7 @@
 //  Created by Masato TSUTSUMI on 2020/10/28.
 //
 
-import DomainEntity
+import Endpoint
 import UIKit
 import ImagePipeline
 
@@ -20,14 +20,14 @@ final class GroupCell: UITableViewCell, ReusableCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
-        _contentView.isUserInteractionEnabled = false
+        _contentView.isUserInteractionEnabled = true
         backgroundColor = .clear
         NSLayoutConstraint.activate([
             _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
-            _contentView.heightAnchor.constraint(equalToConstant: 250),
+            _contentView.heightAnchor.constraint(equalToConstant: 350),
         ])
         selectionStyle = .none
     }
@@ -65,11 +65,13 @@ final class GroupCell: UITableViewCell, ReusableCell {
 
 class GroupCellContent: UIButton {
     typealias Input = (
-        group: Group,
+        group: GroupFeed,
         imagePipeline: ImagePipeline
     )
     enum Output {
         case listenButtonTapped
+        case likeButtonTapped
+        case selfTapped
     }
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -84,6 +86,18 @@ class GroupCellContent: UIButton {
     @IBOutlet weak var sinceBadgeView: BadgeView!
     @IBOutlet weak var hometownBadgeView: BadgeView!
     
+    private lazy var likeButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 16
+        button.isUserInteractionEnabled = true
+        button.setImage(
+            UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
+        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
     }
@@ -95,13 +109,14 @@ class GroupCellContent: UIButton {
     }
     
     func inject(input: Input) {
-        bandNameLabel.text = input.group.name
-        if let artworkURL = input.group.artworkURL {
+        bandNameLabel.text = input.group.group.name
+        if let artworkURL = input.group.group.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: jacketImageView)
         }
-        let startYear: String = input.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
+        let startYear: String = input.group.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
         sinceBadgeView.title = startYear
-        hometownBadgeView.title = input.group.hometown.map { "\($0)出身" } ?? "出身不明"
+        hometownBadgeView.title = input.group.group.hometown.map { "\($0)出身" } ?? "出身不明"
+        likeButton.isSelected = input.group.isFollowing
 
     }
     
@@ -126,10 +141,28 @@ class GroupCellContent: UIButton {
 
         labelBadgeView.isHidden = true
         labelBadgeView.title = "Intact Records"
-        labelBadgeView.image = UIImage(named: "record")!
+        labelBadgeView.image = UIImage(named: "record")
         
-        sinceBadgeView.image = UIImage(named: "calendar")!
-        hometownBadgeView.image = UIImage(named: "map")!
+        sinceBadgeView.image = UIImage(named: "calendar")
+        hometownBadgeView.image = UIImage(named: "map")
+        
+        addSubview(likeButton)
+        NSLayoutConstraint.activate([
+            likeButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            likeButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            likeButton.widthAnchor.constraint(equalToConstant: 32),
+            likeButton.heightAnchor.constraint(equalTo: likeButton.widthAnchor),
+        ])
+        
+        addTarget(self, action: #selector(selfTapped), for: .touchUpInside)
+    }
+    
+    @objc private func likeButtonTapped() {
+        self.listener(.likeButtonTapped)
+    }
+    
+    @objc private func selfTapped() {
+        self.listener(.selfTapped)
     }
     
     private var listener: (Output) -> Void = { _ in }

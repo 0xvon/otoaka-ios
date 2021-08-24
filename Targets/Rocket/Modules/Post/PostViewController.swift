@@ -265,9 +265,9 @@ final class PostViewController: UIViewController, Instantiable {
                     if let image = post.imageUrls.first, let url = URL(string: image) {
                         dependencyProvider.imagePipeline.loadImage(url, into: uploadedImageView)
                     }
-                    if let group = post.groups.first {
-                        selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
-                    }
+//                    if let group = post.groups.first {
+//                        selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
+//                    }
                     if !post.tracks.isEmpty {
                         playlistView.inject(input: (tracks: post.tracks.map {
                             Track(
@@ -282,15 +282,15 @@ final class PostViewController: UIViewController, Instantiable {
             case .didUpdateContent:
                 textView.text = viewModel.state.text
                 uploadedImageView.isHidden = viewModel.state.images.isEmpty
-                selectedGroupView.isHidden = viewModel.state.groups.isEmpty
+                selectedGroupView.isHidden = viewModel.state.images.isEmpty
                 playlistView.isHidden = viewModel.state.tracks.isEmpty
                 
                 if let image = viewModel.state.images.first {
                     uploadedImageView.image = image
                 }
-                if let group = viewModel.state.groups.first {
-                    selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
-                }
+//                if let group = viewModel.state.groups.first {
+//                    selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
+//                }
                 if !viewModel.state.tracks.isEmpty {
                     playlistView.inject(input: (tracks: viewModel.state.tracks, isEdittable: true, imagePipeline: dependencyProvider.imagePipeline))
                 }
@@ -443,7 +443,7 @@ final class PostViewController: UIViewController, Instantiable {
         let nav = BrandNavigationController(rootViewController: vc)
         vc.listen { [unowned self] group in
             self.dismiss(animated: true, completion: nil)
-            viewModel.didSelectGroup(groups: [group])
+            viewModel.didSelectGroup(groups: [group.group])
         }
         self.present(nav, animated: true, completion: nil)
     }

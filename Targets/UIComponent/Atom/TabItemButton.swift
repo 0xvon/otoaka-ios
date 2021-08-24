@@ -28,7 +28,6 @@ public final class TabItemButton: UIButton {
     }
     
     public func update() {
-//        backgroundColor = isSelected ? Brand.color(for: .background(.toggleSelected)) : Brand.color(for: .background(.primary))
         backgroundColor = Brand.color(for: .background(.toggleSelected))
         alpha = isSelected ? 1.0 : 0.4
         

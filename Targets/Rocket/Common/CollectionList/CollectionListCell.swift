@@ -41,6 +41,10 @@ final class CollectionListCell: UICollectionViewCell, ReusableCell {
     override func prepareForReuse() {
         _contentView.prepare()
     }
+    
+    override var isHighlighted: Bool {
+        didSet { _contentView.isHighlighted = isHighlighted }
+    }
 }
 
 class CollectionListCellContent: UIButton {
@@ -59,7 +63,7 @@ class CollectionListCellContent: UIButton {
         return imageView
     }()
     override var isHighlighted: Bool {
-        didSet { alpha = isHighlighted ? 0.6 : 1.0 }
+        didSet { alpha = isHighlighted ? 0.5 : 1.0 }
     }
     
     init() {

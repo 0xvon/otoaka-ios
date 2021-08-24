@@ -50,6 +50,8 @@ final class GroupListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.setTableViewBackgroundView(tableView: self.groupTableView)
                 self.groupTableView.reloadData()
+            case .updateFollowing:
+                viewModel.refresh()
             case .error(let error):
                 print(error)
                 self.showAlert()
@@ -59,7 +61,7 @@ final class GroupListViewController: UIViewController, Instantiable {
     }
     private func setup() {
         navigationItem.largeTitleDisplayMode = .never
-        view.backgroundColor = .clear
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         groupTableView = UITableView()
         groupTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -93,8 +95,8 @@ final class GroupListViewController: UIViewController, Instantiable {
         sender.endRefreshing()
     }
     
-    private var listener: (Group) -> Void = { _ in }
-    func listen(_ listener: @escaping (Group) -> Void) {
+    private var listener: (GroupFeed) -> Void = { _ in }
+    func listen(_ listener: @escaping (GroupFeed) -> Void) {
         self.listener = listener
     }
 }
@@ -103,10 +105,6 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.viewModel.state.groups.count
     }
-
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 282
-//    }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 0
@@ -115,23 +113,25 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = self.viewModel.state.groups[indexPath.row]
         let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
-        return cell
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let band = self.viewModel.state.groups[indexPath.row]
-        
-        switch viewModel.dataSource {
-        case .searchResultsToSelect(_):
-            self.listener(band)
-        case .followingGroups(_), .memberships(_), .searchResults(_):
-            let vc = BandDetailViewController(
-                dependencyProvider: self.dependencyProvider, input: band)
-            let nav = self.navigationController ?? presentingViewController?.navigationController
-            nav?.pushViewController(vc, animated: true)
-        case .none: break
+        cell.listen { [unowned self] output in
+            switch output {
+            case .selfTapped:
+                switch viewModel.dataSource {
+                case .searchResultsToSelect(_):
+                    self.listener(group)
+                case .followingGroups(_), .searchResults(_), .allGroup:
+                    let vc = BandDetailViewController(
+                        dependencyProvider: self.dependencyProvider, input: group.group)
+                    let nav = self.navigationController ?? presentingViewController?.navigationController
+                    nav?.pushViewController(vc, animated: true)
+                case .none: break
+                }
+            case .likeButtonTapped:
+                viewModel.followButtonTapped(group: group)
+            case .listenButtonTapped: break
+            }
         }
-        tableView.deselectRow(at: indexPath, animated: true)
+        return cell
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

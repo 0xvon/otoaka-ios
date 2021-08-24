@@ -96,7 +96,7 @@ final class PostListViewController: UIViewController, Instantiable {
     
     func setup() {
         navigationItem.largeTitleDisplayMode = .never
-        view.backgroundColor = .clear
+        view.backgroundColor = Brand.color(for: .background(.primary))
         
         postTableView = UITableView()
         postTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -172,7 +172,7 @@ final class PostListViewController: UIViewController, Instantiable {
     
     private func deleteButtonTapped(post: PostSummary) {
         let alertController = UIAlertController(
-            title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+            title: "レポートを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
         let acceptAction = UIAlertAction(
             title: "OK", style: UIAlertAction.Style.default,
@@ -263,10 +263,28 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = EmptyCollectionView(emptyType: .postList, actionButtonTitle: nil)
-            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-            return emptyCollectionView
-            
+            switch viewModel.dataSource {
+            case .followingPost:
+                let emptyCollectionView = EmptyCollectionView(emptyType: .post, actionButtonTitle: "ライブを探してレポートを書く")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                emptyCollectionView.listen { [unowned self] in
+                    let vc = tabBarController?.viewControllers?[1]
+                    tabBarController?.selectedViewController = vc
+                }
+                return emptyCollectionView
+            case .livePost(let live):
+                let emptyCollectionView = EmptyCollectionView(emptyType: .livePost, actionButtonTitle: "レポートを書く")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                emptyCollectionView.listen { [unowned self] in
+                    let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+                return emptyCollectionView
+            default:
+                let emptyCollectionView = EmptyCollectionView(emptyType: .post, actionButtonTitle: nil)
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                return emptyCollectionView
+            }
         }()
         postTableView.backgroundView = isDisplay ? emptyCollectionView : nil
         if let backgroundView = postTableView.backgroundView {

@@ -77,15 +77,14 @@ class FanCellContent: UIButton {
         fanArtworkImageView.clipsToBounds = true
         fanArtworkImageView.image = nil
         fanArtworkImageView.contentMode = .scaleAspectFill
-        fanArtworkImageView.isUserInteractionEnabled = true
-        fanArtworkImageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(userTapped)))
+        fanArtworkImageView.isUserInteractionEnabled = false
         
         return fanArtworkImageView
     }()
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.isUserInteractionEnabled = false
         stackView.backgroundColor = .clear
         stackView.axis = .vertical
         stackView.spacing = 8
@@ -223,6 +222,8 @@ class FanCellContent: UIButton {
             stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
         ])
+        
+        addTarget(self, action: #selector(userTapped), for: .touchUpInside)
     }
     
     func prepare() {

@@ -22,9 +22,8 @@ final class LiveListViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = LiveListViewModel(
-            apiClient: dependencyProvider.apiClient,
-            input: input,
-            auth: dependencyProvider.auth
+            dependencyProvider: dependencyProvider,
+            input: input
         )
 
         super.init(nibName: nil, bundle: nil)
@@ -71,7 +70,7 @@ final class LiveListViewController: UIViewController, Instantiable {
         liveTableView.showsVerticalScrollIndicator = false
         liveTableView.tableFooterView = UIView(frame: .zero)
         liveTableView.separatorStyle = .none
-        liveTableView.backgroundColor = Brand.color(for: .background(.primary))
+        liveTableView.backgroundColor = .clear
         liveTableView.delegate = self
         liveTableView.dataSource = self
         liveTableView.registerCellClass(LiveCell.self)
@@ -143,6 +142,10 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
                 let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live.live))
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
+            case .selfTapped:
+                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
             }
         }
         return cell
@@ -160,9 +163,21 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func setTableViewBackgroundView(tableView: UITableView) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: nil)
-            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-            return emptyCollectionView
+            switch viewModel.dataSource {
+            case .likedLive(_):
+                let emptyCollectionView = EmptyCollectionView(emptyType: .likedLiveList, actionButtonTitle: nil)
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                return emptyCollectionView
+            case .groupLive(_):
+                let emptyCollectionView = EmptyCollectionView(emptyType: .groupLiveList, actionButtonTitle: nil)
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                return emptyCollectionView
+            default:
+                let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: nil)
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                return emptyCollectionView
+            }
+            
         }()
         tableView.backgroundView = self.viewModel.state.lives.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
@@ -173,3 +188,9 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+extension LiveListViewController: PageContent {
+    var scrollView: UIScrollView {
+        _ = view
+        return self.liveTableView
+    }
+}

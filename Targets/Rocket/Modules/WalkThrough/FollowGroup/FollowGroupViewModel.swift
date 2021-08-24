@@ -22,7 +22,7 @@ final class FollowGroupViewModel {
     }
     
     struct State {
-        var groups: [Group] = []
+        var groups: [GroupFeed] = []
     }
     
     private(set) var state: State
@@ -56,7 +56,7 @@ final class FollowGroupViewModel {
         }
     }
     
-    private func updateState(with result: PaginationEvent<Page<Group>>) {
+    private func updateState(with result: PaginationEvent<Page<GroupFeed>>) {
         switch result {
         case .initial(let res):
             state.groups = res.items
@@ -75,10 +75,10 @@ final class FollowGroupViewModel {
     
     func followGroup(index: Int) {
         let group = state.groups[index]
-        let request = FollowGroup.Request(groupId: group.id)
+        let request = FollowGroup.Request(groupId: group.group.id)
         let uri = FollowGroup.URI()
         followGroupAction.input((request: request, uri: uri))
-        state.groups = state.groups.filter { $0.id != group.id }
+        state.groups = state.groups.filter { $0.group.id != group.group.id }
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {

@@ -81,6 +81,7 @@ class PostListViewModel {
 
     private var storage: DataSourceStorage
     private(set) var state: State
+    private(set) var dataSource: DataSource
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
@@ -93,6 +94,7 @@ class PostListViewModel {
     ) {
         self.dependencyProvider = dependencyProvider
         self.state = State()
+        self.dataSource = input
         self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
         subscribe(storage: storage)
         
@@ -156,6 +158,7 @@ class PostListViewModel {
     }
     
     func inject(_ input: Input) {
+        self.dataSource = input
         self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
         subscribe(storage: storage)
         refresh()

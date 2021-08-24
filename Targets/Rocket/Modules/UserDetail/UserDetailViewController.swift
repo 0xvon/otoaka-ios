@@ -54,6 +54,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         viewModel.viewDidLoad()
     }
@@ -82,15 +83,20 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .didRefreshUserDetail(let userDetail):
                 headerView.update(input: (selfUser: dependencyProvider.user, userDetail: userDetail, imagePipeline: dependencyProvider.imagePipeline))
                 tab.update(userDetail: userDetail)
+                let item = UIBarButtonItem(
+                    image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+                    style: .plain,
+                    target: self,
+                    action: #selector(settingButtonTapped(_:))
+                )
+                navigationItem.setRightBarButton(
+                    item,
+                    animated: false
+                )
                 switch viewModel.state.displayType {
                 case .account:
                     dependencyProvider.user = userDetail.user
                     self.title = "マイページ"
-//                    let item = UIBarButtonItem(title: "ログアウト", style: .plain, target: self, action: #selector(logoutButtonTapped(_:)))
-//                    navigationItem.setRightBarButton(
-//                        item,
-//                        animated: false
-//                    )
                 case .user:
                     self.title = userDetail.name
                 }
@@ -101,9 +107,11 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .pushToUserList(let input):
                 let vc = UserListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostList(let input):
+                let vc = PostListViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
-                let safari = SFSafariViewController(url: url)
-                safari.dismissButtonStyle = .close
+                openUrlInBrowser(url: url)
             case .reportError(let error):
                 print(error)
                 self.showAlert()
@@ -149,8 +157,11 @@ final class UserDetailViewController: UIViewController, Instantiable {
         pageViewController.didMove(toParent: self)
 
         let vc1 = CollectionListViewController(dependencyProvider: dependencyProvider, input: .userPost(viewModel.state.user))
-        let vc2 = CollectionListViewController(dependencyProvider: dependencyProvider, input: .likedPost(viewModel.state.user))
+        vc1.view.backgroundColor = .clear
+        let vc2 = LiveListViewController(dependencyProvider: dependencyProvider, input: .likedLive(viewModel.state.user))
+        vc2.view.backgroundColor = .clear
         let vc3 = GroupListViewController(dependencyProvider: dependencyProvider, input: .followingGroups(viewModel.state.user.id))
+        vc3.view.backgroundColor = .clear
 
         pageViewController.embed((
             header: headerView,
@@ -168,23 +179,44 @@ final class UserDetailViewController: UIViewController, Instantiable {
         viewModel.createMessageRoom(partner: viewModel.state.user)
     }
     
-    @objc private func logoutButtonTapped(_ sender: UIBarButtonItem) {
+    @objc private func settingButtonTapped(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(
-            title: "ログアウトしますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-
-        let acceptAction = UIAlertAction(
-            title: "OK", style: UIAlertAction.Style.default,
-            handler: { [unowned self] action in
-                logout()
+            title: "設定", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        
+        var actions: [UIAlertAction] = []
+        switch viewModel.state.displayType {
+        case .account:
+            let requestLiveAction = UIAlertAction(title: "ライブ掲載申請", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
+                if let url = URL(string: "https://forms.gle/epoBeqdaGeMUcv8o9") {
+                    openUrlInBrowser(url: url)
+                }
             })
-        let cancelAction = UIAlertAction(
-            title: "キャンセル", style: UIAlertAction.Style.cancel,
-            handler: { action in })
-        alertController.addAction(acceptAction)
-        alertController.addAction(cancelAction)
+            let logoutAction = UIAlertAction(title: "ログアウト", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
+                    logout()
+            })
+            let cancelAction = UIAlertAction(
+                title: "キャンセル", style: UIAlertAction.Style.cancel,
+                handler: { _ in })
+            actions = [requestLiveAction, logoutAction, cancelAction]
+        case .user:
+            let blockAction = UIAlertAction(title: "ブロック", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
+                    block()
+            })
+            let cancelAction = UIAlertAction(
+                title: "キャンセル", style: UIAlertAction.Style.cancel,
+                handler: { _ in })
+            actions = [blockAction, cancelAction]
+        }
+        actions.forEach { alertController.addAction($0) }
         alertController.popoverPresentationController?.sourceView = self.view
         alertController.popoverPresentationController?.barButtonItem = sender
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    private func openUrlInBrowser(url: URL) {
+        let safari = SFSafariViewController(url: url)
+        safari.dismissButtonStyle = .close
+        present(safari, animated: true, completion: nil)
     }
     
     private func logout() {
@@ -196,6 +228,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
             }
             self.listener()
         }
+    }
+    private func block() {
+        
     }
     
     private var listener: () -> Void = {}

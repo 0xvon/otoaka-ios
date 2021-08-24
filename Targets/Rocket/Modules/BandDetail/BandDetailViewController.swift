@@ -158,6 +158,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         scrollStackView.addArrangedSubview(postCellWrapper)
 
         let bottomSpacer = UIView()
+        bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
         scrollStackView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
             bottomSpacer.heightAnchor.constraint(equalToConstant: 64),
@@ -218,7 +219,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 }
             case .didDeletePostButtonTapped(let post):
                 let alertController = UIAlertController(
-                    title: "フィードを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+                    title: "レポートを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
 
                 let acceptAction = UIAlertAction(
                     title: "OK", style: UIAlertAction.Style.default,

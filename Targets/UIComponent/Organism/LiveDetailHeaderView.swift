@@ -5,14 +5,14 @@
 //  Created by Masato TSUTSUMI on 2020/12/30.
 //
 
-import DomainEntity
+import Endpoint
 import InternalDomain
 import UIKit
 import ImagePipeline
 
 public final class LiveDetailHeaderView: UIView {
     public typealias Input = (
-        live: Live,
+        live: LiveDetail,
         imagePipeline: ImagePipeline
     )
     
@@ -28,6 +28,12 @@ public final class LiveDetailHeaderView: UIView {
     private lazy var liveInformationView: LiveInformationView = {
         let view = LiveInformationView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.listen { [unowned self] output in
+            switch output {
+            case .arrowButtonTapped: break
+            case .likeButtonTapped: listener(.likeButtonTapped)
+            }
+        }
         return view
     }()
     private lazy var liveThumbnailView: UIImageView = {
@@ -58,7 +64,7 @@ public final class LiveDetailHeaderView: UIView {
     
     public func update(input: Input) {
         liveInformationView.update(input: input)
-        if let artworkURL = input.live.artworkURL {
+        if let artworkURL = input.live.live.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: liveThumbnailView)
         }
     }
@@ -119,7 +125,7 @@ public final class LiveDetailHeaderView: UIView {
     }
     
     public enum Output {
-        
+        case likeButtonTapped
     }
 
 }

@@ -14,14 +14,15 @@ class GroupListViewModel {
     typealias Input = DataSource
     enum Output {
         case reloadTableView
+        case updateFollowing
         case error(Error)
     }
 
     enum DataSource {
-        case memberships(User.ID)
         case followingGroups(User.ID)
         case searchResults(String)
         case searchResultsToSelect(String)
+        case allGroup
         case none
     }
 
@@ -29,7 +30,7 @@ class GroupListViewModel {
         case followingGroups(User.ID, PaginationRequest<FollowingGroups>)
         case searchResults(String, PaginationRequest<SearchGroup>)
         case searchResultsToSelect(String, PaginationRequest<SearchGroup>)
-        case memberships(User.ID)
+        case allGroup(PaginationRequest<GetAllGroups>)
         case none
 
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -49,8 +50,9 @@ class GroupListViewModel {
                 searchGroupUri.term = query
                 let request = PaginationRequest<SearchGroup>(apiClient: apiClient, uri: searchGroupUri)
                 self = .searchResults(query, request)
-            case .memberships(let userId):
-                self = .memberships(userId)
+            case .allGroup:
+                let request = PaginationRequest<GetAllGroups>(apiClient: apiClient, uri: GetAllGroups.URI())
+                self = .allGroup(request)
             case .none:
                 self = .none
             }
@@ -58,7 +60,7 @@ class GroupListViewModel {
     }
 
     struct State {
-        var groups: [Group] = []
+        var groups: [GroupFeed] = []
     }
 
     private var storage: DataSourceStorage
@@ -69,8 +71,8 @@ class GroupListViewModel {
     var cancellables: Set<AnyCancellable> = []
     let dependencyProvider: LoggedInDependencyProvider
     var apiClient: APIClient { dependencyProvider.apiClient }
-    
-    private lazy var getMemberShipsAction = Action(GetMemberships.self, httpClient: self.apiClient)
+    private lazy var unfollowGroupAction = Action(UnfollowGroup.self, httpClient: self.apiClient)
+    private lazy var followGroupAction = Action(FollowGroup.self, httpClient: self.apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
@@ -79,20 +81,21 @@ class GroupListViewModel {
         self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
         self.dataSource = input
         self.state = State()
+        
+        let errors = Publishers.MergeMany(
+            followGroupAction.errors,
+            unfollowGroupAction.errors
+        )
+        
+        Publishers.MergeMany(
+            followGroupAction.elements.map { _ in .updateFollowing }.eraseToAnyPublisher(),
+            unfollowGroupAction.elements.map { _ in .updateFollowing }.eraseToAnyPublisher(),
+            errors.map(Output.error).eraseToAnyPublisher()
+        )
+        .sink(receiveValue: outputSubject.send)
+        .store(in: &cancellables)
 
         subscribe(storage: storage)
-        
-        getMemberShipsAction.elements
-            .map { _ in .reloadTableView }.eraseToAnyPublisher()
-            .merge(with: getMemberShipsAction.errors.map(Output.error)).eraseToAnyPublisher()
-            .sink(receiveValue: outputSubject.send)
-            .store(in: &cancellables)
-        
-        getMemberShipsAction.elements
-            .sink(receiveValue: { [unowned self] groups in
-                state.groups = groups
-            })
-            .store(in: &cancellables)
     }
 
     private func subscribe(storage: DataSourceStorage) {
@@ -109,11 +112,15 @@ class GroupListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
-        case .memberships, .none: break
+        case let .allGroup(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case .none: break
         }
     }
 
-    private func updateState(with result: PaginationEvent<Page<Group>>) {
+    private func updateState(with result: PaginationEvent<Page<GroupFeed>>) {
         switch result {
         case .initial(let res):
             state.groups = res.items
@@ -141,11 +148,8 @@ class GroupListViewModel {
             pagination.refresh()
         case let .searchResultsToSelect(_, pagination):
             pagination.refresh()
-        case .memberships(let userId):
-            let request = Empty()
-            var uri = Endpoint.GetMemberships.URI()
-            uri.artistId = userId
-            getMemberShipsAction.input((request: request, uri: uri))
+        case let .allGroup(pagination):
+            pagination.refresh()
         case .none: break
         }
     }
@@ -159,8 +163,19 @@ class GroupListViewModel {
             pagination.next()
         case let .searchResultsToSelect(_, pagination):
             pagination.next()
-        case .memberships: break
+        case let .allGroup(pagination):
+            pagination.refresh()
         case .none: break
+        }
+    }
+    
+    func followButtonTapped(group: GroupFeed) {
+        if group.isFollowing {
+            let req = UnfollowGroup.Request(groupId: group.group.id)
+            unfollowGroupAction.input((request: req, uri: UnfollowGroup.URI()))
+        } else {
+            let req = FollowGroup.Request(groupId: group.group.id)
+            followGroupAction.input((request: req, uri: FollowGroup.URI()))
         }
     }
 }

@@ -57,7 +57,6 @@ final class LiveViewController: UITableViewController {
         super.viewWillAppear(animated)
         searchController.searchBar.showsScopeBar = true
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-        setupFloatingItems(userRole: dependencyProvider.user.role)
     }
     
     func bind() {
@@ -87,25 +86,6 @@ final class LiveViewController: UITableViewController {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
         self.refreshControl?.beginRefreshing()
         viewModel.refresh.send(())
-    }
-    
-    private func setupFloatingItems(userRole: RoleProperties) {
-        let items: [FloatingButtonItem]
-        switch userRole {
-        case .artist(_):
-            let createLiveView = FloatingButtonItem(icon: UIImage(named: "selectedGuitarIcon")!)
-            createLiveView.addTarget(self, action: #selector(createLive), for: .touchUpInside)
-            items = [createLiveView]
-        case .fan(_):
-            items = []
-        }
-        let floatingController = dependencyProvider.viewHierarchy.floatingViewController
-        floatingController.setFloatingButtonItems(items)
-    }
-    
-    @objc func createLive() {
-        let vc = CreateLiveViewController(dependencyProvider: self.dependencyProvider, input: ())
-        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

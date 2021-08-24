@@ -96,7 +96,7 @@ final class SearchFriendsViewController: UITableViewController {
             case .reportError(let err):
                 print(err)
                 showAlert()
-            case .didToggleLikeLive:
+            case .didToggleLikeLive, .didToggleFollowGroup:
                 viewModel.refresh()
             }
         }.store(in: &cancellables)
@@ -179,25 +179,29 @@ extension SearchFriendsViewController {
                 case .numOfReportTapped:
                     let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live.live))
                     self.navigationController?.pushViewController(vc, animated: true)
+                case .selfTapped:
+                    let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
             return cell
         case .group:
             let group = viewModel.state.groups[indexPath.row]
             let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+            cell.listen { [unowned self] output in
+                switch output {
+                case .selfTapped:
+                    let vc = BandDetailViewController(
+                        dependencyProvider: self.dependencyProvider, input: group.group)
+                    let nav = self.navigationController ?? presentingViewController?.navigationController
+                    nav?.pushViewController(vc, animated: true)
+                case .likeButtonTapped:
+                    viewModel.followButtonTapped(group: group)
+                case .listenButtonTapped: break
+                }
+            }
             return cell
         }
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch viewModel.state.scope {
-        case .group:
-            let group = viewModel.state.groups[indexPath.row]
-            let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
-            self.navigationController?.pushViewController(vc, animated: true)
-        default: break
-        }
-        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

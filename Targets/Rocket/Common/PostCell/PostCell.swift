@@ -193,10 +193,10 @@ class PostCellContent: UIButton {
         
         stackView.addArrangedSubview(uploadedImageView)
         NSLayoutConstraint.activate([
-            uploadedImageView.heightAnchor.constraint(equalToConstant: 300),
+            playlistView.heightAnchor.constraint(equalToConstant: 300),
         ])
         
-//        stackView.addArrangedSubview(selectedGroupView)
+        stackView.addArrangedSubview(selectedGroupView)
         stackView.addArrangedSubview(playlistView)
         NSLayoutConstraint.activate([
             playlistView.heightAnchor.constraint(equalToConstant: 300),
@@ -216,18 +216,18 @@ class PostCellContent: UIButton {
         
         return imageView
     }()
-//    private lazy var selectedGroupView: GroupCellContent = {
-//        let content = UINib(nibName: "GroupCellContent", bundle: nil)
-//            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
-//        content.translatesAutoresizingMaskIntoConstraints = false
-//        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
-//        content.isHidden = true
-//
-//        NSLayoutConstraint.activate([
-//            content.heightAnchor.constraint(equalToConstant: 300),
-//        ])
-//        return content
-//    }()
+    private lazy var selectedGroupView: GroupCellContent = {
+        let content = UINib(nibName: "GroupCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
+        content.isHidden = true
+
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 300),
+        ])
+        return content
+    }()
     private lazy var playlistView: PlaylistCell = {
         let content = PlaylistCell()
         content.translatesAutoresizingMaskIntoConstraints = false
@@ -410,7 +410,7 @@ class PostCellContent: UIButton {
         }
         textView.text = input.post.text
         
-//        selectedGroupView.isHidden = input.post.groups.isEmpty
+        selectedGroupView.isHidden = input.post.groups.isEmpty
         uploadedImageView.isHidden = input.post.imageUrls.isEmpty
         playlistView.isHidden = input.post.tracks.isEmpty
         
@@ -441,10 +441,13 @@ class PostCellContent: UIButton {
         } else {
             writeReportButton.setTitle("このライブのレポートを書く", selected: false)
         }
-        
-        if (input.post.tracks.isEmpty && input.post.imageUrls.isEmpty), let liveUrl = input.post.live?.artworkURL {
+        if (input.post.tracks.isEmpty && input.post.imageUrls.isEmpty) {
             uploadedImageView.isHidden = false
-            input.imagePipeline.loadImage(liveUrl, into: uploadedImageView)
+            if let liveUrl = input.post.live?.artworkURL {
+                input.imagePipeline.loadImage(liveUrl, into: uploadedImageView)
+            } else {
+                uploadedImageView.image = Brand.color(for: .background(.cellSelected)).image
+            }
         }
         
         commentButtonView.setTitle("\(input.post.commentCount)", for: .normal)

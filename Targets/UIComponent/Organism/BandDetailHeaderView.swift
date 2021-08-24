@@ -5,14 +5,14 @@
 //  Created by Masato TSUTSUMI on 2020/10/28.
 //
 
-import DomainEntity
+import Endpoint
 import InternalDomain
 import UIKit
 import ImagePipeline
 
 public final class BandDetailHeaderView: UIView {
     public typealias Input = (
-        group: DomainEntity.Group,
+        group: Group,
         groupItem: InternalDomain.YouTubeVideo?,
         imagePipeline: ImagePipeline
     )

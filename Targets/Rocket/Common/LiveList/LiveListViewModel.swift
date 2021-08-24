@@ -23,6 +23,7 @@ class LiveListViewModel {
         case likedLive(User)
         case searchResult(String)
         case searchResultToSelect(String)
+        case upcoming(User)
         case none
     }
 
@@ -31,6 +32,7 @@ class LiveListViewModel {
         case searchResult(PaginationRequest<SearchLive>)
         case searchResultToSelect(String, PaginationRequest<SearchLive>)
         case likedLive(PaginationRequest<GetLikedLive>)
+        case upcoming(PaginationRequest<GetUpcomingLives>)
         case none
 
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -56,6 +58,11 @@ class LiveListViewModel {
                 uri.term = query
                 let request = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
                 self = .searchResultToSelect(query, request)
+            case .upcoming(let user):
+                var uri = GetUpcomingLives.URI()
+                uri.userId = user.id
+                let request = PaginationRequest<GetUpcomingLives>(apiClient: apiClient, uri: uri)
+                self = .upcoming(request)
             case .none:
                 self = .none
             }
@@ -69,6 +76,8 @@ class LiveListViewModel {
     private var storage: DataSourceStorage
     private(set) var state: State
     private(set) var dataSource: DataSource
+    let dependencyProvider: LoggedInDependencyProvider
+    var apiClient: APIClient { dependencyProvider.apiClient }
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     private var cancellables: [AnyCancellable] = []
@@ -76,15 +85,11 @@ class LiveListViewModel {
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
     private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
 
-    let auth: AWSCognitoAuth
-    let apiClient: APIClient
-
     init(
-        apiClient: APIClient, input: DataSource, auth: AWSCognitoAuth
+        dependencyProvider: LoggedInDependencyProvider, input: DataSource
     ) {
-        self.apiClient = apiClient
-        self.auth = auth
-        self.storage = DataSourceStorage(dataSource: input, apiClient: apiClient)
+        self.dependencyProvider = dependencyProvider
+        self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
         self.dataSource = input
         self.state = State()
 
@@ -113,6 +118,10 @@ class LiveListViewModel {
                 self?.updateState(with: $0)
             }
         case let .searchResultToSelect(_, pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .upcoming(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
@@ -150,6 +159,8 @@ class LiveListViewModel {
             pagination.refresh()
         case let .searchResultToSelect(_, pagination):
             pagination.refresh()
+        case let .upcoming(pagination):
+            pagination.refresh()
         case .none: break
         }
     }
@@ -164,6 +175,8 @@ class LiveListViewModel {
         case let .searchResult(pagination):
             pagination.next()
         case let .searchResultToSelect(_, pagination):
+            pagination.next()
+        case let .upcoming(pagination):
             pagination.next()
         case .none: break
         }

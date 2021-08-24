@@ -31,8 +31,8 @@ final class GroupViewModel {
 
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never>
-    private var _groups = CurrentValueSubject<[Group], Never>([])
-    var groups: [Group] { _groups.value }
+    private var _groups = CurrentValueSubject<[GroupFeed], Never>([])
+    var groups: [GroupFeed] { _groups.value }
     var scopes: [Scope] { Scope.allCases }
 
     let updateSearchQuery = PassthroughSubject<String?, Never>()

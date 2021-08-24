@@ -19,6 +19,7 @@ final class SearchFriendsViewModel {
         case jumpToMessageRoom(MessageRoom)
         case isRefreshing(Bool)
         case didToggleLikeLive
+        case didToggleFollowGroup
         case reportError(Error)
     }
     enum Scope: Int, CaseIterable {
@@ -35,7 +36,7 @@ final class SearchFriendsViewModel {
     struct State {
         var fans: [User] = []
         var lives: [LiveFeed] = []
-        var groups: [Group] = []
+        var groups: [GroupFeed] = []
         var scope: Scope = .live
     }
     
@@ -62,6 +63,8 @@ final class SearchFriendsViewModel {
     }())
     
     private lazy var createMessageRoomAction = Action(CreateMessageRoom.self, httpClient: apiClient)
+    private lazy var unfollowGroupAction = Action(UnfollowGroup.self, httpClient: self.apiClient)
+    private lazy var followGroupAction = Action(FollowGroup.self, httpClient: self.apiClient)
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
     private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
     
@@ -73,9 +76,13 @@ final class SearchFriendsViewModel {
                 
         createMessageRoomAction.elements
             .map { .jumpToMessageRoom($0) }.eraseToAnyPublisher()
+            .merge(with: followGroupAction.elements.map { _ in .didToggleFollowGroup }).eraseToAnyPublisher()
+            .merge(with: unfollowGroupAction.elements.map { _ in .didToggleFollowGroup }).eraseToAnyPublisher()
             .merge(with: likeLiveAction.elements.map { _ in .didToggleLikeLive }).eraseToAnyPublisher()
             .merge(with: unlikeLiveAction.elements.map { _ in .didToggleLikeLive }).eraseToAnyPublisher()
             .merge(with: createMessageRoomAction.errors.map(Output.reportError)).eraseToAnyPublisher()
+            .merge(with: followGroupAction.errors.map(Output.reportError)).eraseToAnyPublisher()
+            .merge(with: unfollowGroupAction.errors.map(Output.reportError)).eraseToAnyPublisher()
             .merge(with: likeLiveAction.errors.map(Output.reportError)).eraseToAnyPublisher()
             .merge(with: unlikeLiveAction.errors.map(Output.reportError)).eraseToAnyPublisher()
             .sink(receiveValue: outputSubject.send)
@@ -125,7 +132,7 @@ final class SearchFriendsViewModel {
         }
     }
     
-    func updateState(with result: PaginationEvent<Page<Group>>) {
+    func updateState(with result: PaginationEvent<Page<GroupFeed>>) {
         switch result {
         case .initial(let res):
             state.groups = res.items
@@ -206,5 +213,15 @@ final class SearchFriendsViewModel {
         let request = UnlikeLive.Request(liveId: live.id)
         let uri = UnlikeLive.URI()
         unlikeLiveAction.input((request: request, uri: uri))
+    }
+    
+    func followButtonTapped(group: GroupFeed) {
+        if group.isFollowing {
+            let req = UnfollowGroup.Request(groupId: group.group.id)
+            unfollowGroupAction.input((request: req, uri: UnfollowGroup.URI()))
+        } else {
+            let req = FollowGroup.Request(groupId: group.group.id)
+            followGroupAction.input((request: req, uri: FollowGroup.URI()))
+        }
     }
 }

@@ -24,7 +24,7 @@ final class SearchResultViewController: UIViewController {
     }
     
     enum Output {
-        case group(Group)
+        case group(GroupFeed)
         case track(Track)
         case live(LiveFeed)
     }

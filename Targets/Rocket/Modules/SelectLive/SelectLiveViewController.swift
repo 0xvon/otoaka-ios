@@ -118,16 +118,19 @@ extension SelectLiveViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let live = viewModel.state.lives[indexPath.row]
         let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .review), for: indexPath)
+        cell.listen { [unowned self] output in
+            switch output {
+            case .selfTapped:
+                let live = viewModel.state.lives[indexPath.row]
+                viewModel.didSelectLive(at: live)
+            default: break
+            }
+        }
         return cell
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.state.lives.count
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = viewModel.state.lives[indexPath.row]
-        viewModel.didSelectLive(at: live)
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

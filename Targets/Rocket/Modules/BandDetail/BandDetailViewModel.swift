@@ -270,6 +270,9 @@ class BandDetailViewModel {
             outputSubject.send(.pushToPostList(.livePost(live.live)))
         case .reportButtonTapped:
             outputSubject.send(.pushToPost((live: live.live, post: nil)))
+        case .selfTapped:
+            outputSubject.send(.pushToLiveDetail(live))
+            
         }
     }
     

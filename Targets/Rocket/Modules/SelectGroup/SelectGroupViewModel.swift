@@ -17,14 +17,14 @@ final class SelectGroupViewModel {
     
     enum Output {
         case updateSearchResult(SearchResultViewController.Input)
-        case selectGroup(Group)
+        case selectGroup(GroupFeed)
         case reloadData
         case isRefreshing(Bool)
         case reportError(Error)
     }
     
     struct State {
-        var groups: [Group] = []
+        var groups: [GroupFeed] = []
     }
     
     let dependencyProvider: LoggedInDependencyProvider
@@ -48,11 +48,11 @@ final class SelectGroupViewModel {
         }
     }
     
-    func didSelectGroup(at section: Group) {
+    func didSelectGroup(at section: GroupFeed) {
         outputSubject.send(.selectGroup(section))
     }
     
-    private func updateState(with result: PaginationEvent<Page<Group>>) {
+    private func updateState(with result: PaginationEvent<Page<GroupFeed>>) {
         switch result {
         case .initial(let res):
             state.groups = res.items

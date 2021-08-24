@@ -56,6 +56,8 @@ public final class UserDetailHeaderView: UIView, PageHeaderView {
                 self.listener(.followersButtonTapped)
             case .followingUserCountButtonTapped:
                 self.listener(.followingUsersButtonTapped)
+            case .likedPostButtonTapped:
+                self.listener(.likedPostsButtonTapped)
             case .followButtonTapped:
                 self.listener(.followButtonTapped)
             case .editButtonTapped:
@@ -85,6 +87,7 @@ public final class UserDetailHeaderView: UIView, PageHeaderView {
     public enum Output {
         case followersButtonTapped
         case followingUsersButtonTapped
+        case likedPostsButtonTapped
         case followButtonTapped
         case editButtonTapped
     }

@@ -148,7 +148,7 @@ extension GroupViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let group = viewModel.groups[indexPath.row]
-        let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+        let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
         self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }

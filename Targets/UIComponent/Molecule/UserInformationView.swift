@@ -72,6 +72,7 @@ class UserInformationView: UIView {
         
         stackView.addArrangedSubview(followerCountSumamryView)
         stackView.addArrangedSubview(followingUserCountSummaryView)
+        stackView.addArrangedSubview(likedPostCountSummaryView)
         
         return stackView
     }()
@@ -88,6 +89,14 @@ class UserInformationView: UIView {
         summaryView.translatesAutoresizingMaskIntoConstraints = false
         summaryView.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(followingUserSummaryViewTapped))
+        )
+        return summaryView
+    }()
+    private lazy var likedPostCountSummaryView: CountSummaryView = {
+        let summaryView = CountSummaryView()
+        summaryView.translatesAutoresizingMaskIntoConstraints = false
+        summaryView.addGestureRecognizer(
+            UITapGestureRecognizer(target: self, action: #selector(likedPostSummaryViewTapped))
         )
         return summaryView
     }()
@@ -122,17 +131,23 @@ class UserInformationView: UIView {
         liveStyleLabel.text = input.userDetail.user.liveStyle ?? ""
         followerCountSumamryView.update(input: (title: "フォロワー", count: input.userDetail.followersCount))
         followingUserCountSummaryView.update(input: (title: "フォロー", count: input.userDetail.followingUsersCount))
+        likedPostCountSummaryView.update(input: (title: "いいね", count: input.userDetail.likePostCount))
         if let thumbnail = input.userDetail.thumbnailURL, let url = URL(string: thumbnail) {
             input.imagePipeline.loadImage(url, into: profileImageView)
         }
-        biographyTextView.text = input.userDetail.user.biography
         if input.userDetail.user.id == input.selfUser.id {
             editProfileButton.isHidden = false
             followButton.isHidden = true
+            if input.userDetail.user.biography == nil && input.userDetail.user.sex == nil {
+                biographyTextView.text = "右上の「⚙」からプロフィールを設定するとみんなにレポートを見てもらいやすくなります。新たな出会いも生まれるかも。"
+            } else {
+                biographyTextView.text = input.userDetail.user.biography
+            }
         } else {
             editProfileButton.isHidden = true
             followButton.isHidden = false
             followButton.isSelected = input.userDetail.isFollowing
+            biographyTextView.text = input.userDetail.user.biography
         }
         
     }
@@ -209,6 +224,7 @@ class UserInformationView: UIView {
     public enum Output {
         case followerCountButtonTapped
         case followingUserCountButtonTapped
+        case likedPostButtonTapped
         case arrowButtonTapped
         case followButtonTapped
         case editButtonTapped
@@ -224,6 +240,10 @@ class UserInformationView: UIView {
     
     @objc private func followingUserSummaryViewTapped() {
         listener(.followingUserCountButtonTapped)
+    }
+    
+    @objc private func likedPostSummaryViewTapped() {
+        listener(.likedPostButtonTapped)
     }
     
     @objc private func followButtonTapped() {

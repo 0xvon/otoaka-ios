@@ -89,18 +89,18 @@ final class EditUserViewController: UIViewController, Instantiable {
         picketView.delegate = self
         return picketView
     }()
-    private lazy var twitterUrlTextFieldView: TextFieldView = {
-        let twitterUrlTextFieldView = TextFieldView(input: (section: "Twitterリンク", text: nil, maxLength: 40))
-        twitterUrlTextFieldView.translatesAutoresizingMaskIntoConstraints = false
-        twitterUrlTextFieldView.keyboardType(.alphabet)
-        return twitterUrlTextFieldView
-    }()
-    private lazy var instagramUrlTextFieldView: TextFieldView = {
-        let instagramIdTextFieldView = TextFieldView(input: (section: "Instagramリンク", text: nil, maxLength: 40))
-        instagramIdTextFieldView.translatesAutoresizingMaskIntoConstraints = false
-        instagramIdTextFieldView.keyboardType(.alphabet)
-        return instagramIdTextFieldView
-    }()
+//    private lazy var twitterUrlTextFieldView: TextFieldView = {
+//        let twitterUrlTextFieldView = TextFieldView(input: (section: "Twitterリンク", text: nil, maxLength: 40))
+//        twitterUrlTextFieldView.translatesAutoresizingMaskIntoConstraints = false
+//        twitterUrlTextFieldView.keyboardType(.alphabet)
+//        return twitterUrlTextFieldView
+//    }()
+//    private lazy var instagramUrlTextFieldView: TextFieldView = {
+//        let instagramIdTextFieldView = TextFieldView(input: (section: "Instagramリンク", text: nil, maxLength: 40))
+//        instagramIdTextFieldView.translatesAutoresizingMaskIntoConstraints = false
+//        instagramIdTextFieldView.keyboardType(.alphabet)
+//        return instagramIdTextFieldView
+//    }()
 //    private lazy var partInputView: TextFieldView = {
 //        let partInputView = TextFieldView(input: (section: "パート", text: nil, maxLength: 20))
 //        partInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -201,8 +201,8 @@ final class EditUserViewController: UIViewController, Instantiable {
         ageInputView.setText(text: user.age.map { String($0) } ?? "")
         liveStyleInputView.setText(text: user.liveStyle ?? "")
         residenceInputView.setText(text: user.residence ?? "")
-        twitterUrlTextFieldView.setText(text: user.twitterUrl?.absoluteString ?? "https://twitter.com/")
-        instagramUrlTextFieldView.setText(text: user.instagramUrl?.absoluteString ?? "https://instagram.com/")
+//        twitterUrlTextFieldView.setText(text: user.twitterUrl?.absoluteString ?? "https://twitter.com/")
+//        instagramUrlTextFieldView.setText(text: user.instagramUrl?.absoluteString ?? "https://instagram.com/")
         switch user.role {
         case .fan(_):
             break
@@ -279,13 +279,13 @@ final class EditUserViewController: UIViewController, Instantiable {
             self.didInputValue()
         }
         
-        twitterUrlTextFieldView.listen { [unowned self] in
-            self.didInputValue()
-        }
-        
-        instagramUrlTextFieldView.listen { [unowned self] in
-            self.didInputValue()
-        }
+//        twitterUrlTextFieldView.listen { [unowned self] in
+//            self.didInputValue()
+//        }
+//
+//        instagramUrlTextFieldView.listen { [unowned self] in
+//            self.didInputValue()
+//        }
         
 //        partInputView.listen {
 //            self.partInputView.setText(text: self.viewModel.state.socialInputs.parts[self.partPickerView.selectedRow(inComponent: 0)])
@@ -357,7 +357,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         
         mainView.addArrangedSubview(biographyInputView)
         NSLayoutConstraint.activate([
-            biographyInputView.heightAnchor.constraint(equalToConstant: 200),
+            biographyInputView.heightAnchor.constraint(equalToConstant: 88),
         ])
         
         mainView.addArrangedSubview(sexInputView)
@@ -384,15 +384,15 @@ final class EditUserViewController: UIViewController, Instantiable {
             residenceInputView.heightAnchor.constraint(equalToConstant: 50),
         ])
         
-        mainView.addArrangedSubview(twitterUrlTextFieldView)
-        NSLayoutConstraint.activate([
-            twitterUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
-        
-        mainView.addArrangedSubview(instagramUrlTextFieldView)
-        NSLayoutConstraint.activate([
-            instagramUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
+//        mainView.addArrangedSubview(twitterUrlTextFieldView)
+//        NSLayoutConstraint.activate([
+//            twitterUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        ])
+//
+//        mainView.addArrangedSubview(instagramUrlTextFieldView)
+//        NSLayoutConstraint.activate([
+//            instagramUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        ])
         
 //        mainView.addArrangedSubview(partInputView)
 //        partInputView.selectInputView(inputView: partPickerView)
@@ -421,8 +421,8 @@ final class EditUserViewController: UIViewController, Instantiable {
         let age = ageInputView.getText()
         let liveStyle = liveStyleInputView.getText()
         let residence = residenceInputView.getText()
-        let twitterUrl = twitterUrlTextFieldView.getText()
-        let instagramUrl = instagramUrlTextFieldView.getText()
+//        let twitterUrl = twitterUrlTextFieldView.getText()
+//        let instagramUrl = instagramUrlTextFieldView.getText()
         
         viewModel.didUpdateInputItems(
             displayName: displayName,
@@ -431,8 +431,8 @@ final class EditUserViewController: UIViewController, Instantiable {
             age: age,
             liveStyle: liveStyle,
             residence: residence,
-            twitterUrl: twitterUrl,
-            instagramUrl: instagramUrl
+            twitterUrl: nil,
+            instagramUrl: nil
         )
     }
 

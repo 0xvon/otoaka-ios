@@ -22,6 +22,7 @@ class LiveCell: UITableViewCell, ReusableCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.addSubview(_contentView)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
+        _contentView.isUserInteractionEnabled = true
         backgroundColor = .clear
         NSLayoutConstraint.activate([
             _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
@@ -39,10 +40,6 @@ class LiveCell: UITableViewCell, ReusableCell {
 
     func inject(input: LiveCellContent.Input) {
         _contentView.inject(input: input)
-        switch input.type {
-        case .normal: _contentView.isUserInteractionEnabled = true
-        case .review: _contentView.isUserInteractionEnabled = false
-        }
     }
 
     func listen(_ listener: @escaping (Output) -> Void) {
@@ -73,6 +70,7 @@ class LiveCellContent: UIButton {
         case reportButtonTapped
         case numOfReportTapped
         case buyTicketButtonTapped
+        case selfTapped
     }
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -308,6 +306,8 @@ class LiveCellContent: UIButton {
             actionButtonStackView.heightAnchor.constraint(equalToConstant: 48),
             actionButtonStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
+        
+        addTarget(self, action: #selector(selfTapped), for: .touchUpInside)
     }
     
     @objc private func numOfLikeTapped() {
@@ -324,6 +324,10 @@ class LiveCellContent: UIButton {
     
     @objc private func reportButtonTapped() {
         self.listener(.reportButtonTapped)
+    }
+    
+    @objc private func selfTapped() {
+        self.listener(.selfTapped)
     }
 
     private var listener: (Output) -> Void = { _ in }

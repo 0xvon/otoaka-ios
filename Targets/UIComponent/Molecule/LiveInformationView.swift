@@ -66,6 +66,17 @@ class LiveInformationView: UIView {
         dateBadgeView.translatesAutoresizingMaskIntoConstraints = false
         return dateBadgeView
     }()
+    private lazy var likeButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 16
+        button.setImage(
+            UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
+        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
     /*
     private let productionBadgeView: BadgeView = {
         let productionBadgeView = BadgeView(text: "Japan Music Systems", image: UIImage(named: "production"))
@@ -82,10 +93,12 @@ class LiveInformationView: UIView {
 */
 
     func update(input: Input) {
-        dateBadgeView.title = input.live.openAt ?? "不明"
-        liveTitleLabel.text = input.live.title
-        hostGroupNameLabel.text = input.live.hostGroup.name
-        mapBadgeView.title = input.live.liveHouse ?? "不明"
+        dateBadgeView.title = input.live.live.openAt ?? "不明"
+        liveTitleLabel.text = input.live.live.title
+        hostGroupNameLabel.text = input.live.live.hostGroup.name
+        mapBadgeView.title = input.live.live.liveHouse ?? "不明"
+        likeButton.isHidden = false
+        likeButton.isSelected = input.live.isLiked
     }
 
     private func setup() {
@@ -95,7 +108,7 @@ class LiveInformationView: UIView {
         NSLayoutConstraint.activate([
             liveTitleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             liveTitleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
-            rightAnchor.constraint(equalTo: liveTitleLabel.rightAnchor, constant: 16),
+            rightAnchor.constraint(equalTo: liveTitleLabel.rightAnchor, constant: 54),
         ])
         
         addSubview(hostGroupNameLabel)
@@ -104,7 +117,15 @@ class LiveInformationView: UIView {
             hostGroupNameLabel.leftAnchor.constraint(
                 equalTo: liveTitleLabel.leftAnchor),
             hostGroupNameLabel.rightAnchor.constraint(
-                equalTo: rightAnchor, constant: -16),
+                equalTo: rightAnchor, constant: -54),
+        ])
+        
+        addSubview(likeButton)
+        NSLayoutConstraint.activate([
+            likeButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            likeButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            likeButton.widthAnchor.constraint(equalToConstant: 32),
+            likeButton.heightAnchor.constraint(equalTo: likeButton.widthAnchor),
         ])
 
         addSubview(dateBadgeView)
@@ -132,9 +153,14 @@ class LiveInformationView: UIView {
 
     public enum Output {
         case arrowButtonTapped
+        case likeButtonTapped
     }
     @objc private func touchUpInsideArrowButton() {
         listener(.arrowButtonTapped)
+    }
+    
+    @objc private func likeButtonTapped() {
+        listener(.likeButtonTapped)
     }
 }
 

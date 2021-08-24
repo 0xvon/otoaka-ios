@@ -89,15 +89,12 @@ final class HomeViewController: UIViewController {
     
     private func showWalkThrough() {
         let userDefaults = UserDefaults.standard
-        if !userDefaults.bool(forKey: "walkThroughPresented") {
+        let key = "walkThroughPresented+\(UUID().uuidString)"
+        if !userDefaults.bool(forKey: key) {
             let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
-            let nav = DismissionSubscribableNavigationController(rootViewController: vc)
+            let nav = BrandNavigationController(rootViewController: vc)
             present(nav, animated: true, completion: nil)
-            nav.subscribeDismission { [unowned self] in
-                dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: true)
-            }
-            
-            userDefaults.setValue(true, forKey: "walkThroughPresented")
+            userDefaults.setValue(true, forKey: key)
             userDefaults.synchronize()
         }
     }

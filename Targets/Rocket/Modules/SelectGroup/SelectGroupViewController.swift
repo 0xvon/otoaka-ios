@@ -101,8 +101,8 @@ final class SelectGroupViewController: UITableViewController {
         viewModel.refresh()
     }
     
-    private var listener: (Group) -> Void = { _ in }
-    func listen(_ listener: @escaping (Group) -> Void) {
+    private var listener: (GroupFeed) -> Void = { _ in }
+    func listen(_ listener: @escaping (GroupFeed) -> Void) {
         self.listener = listener
     }
 }

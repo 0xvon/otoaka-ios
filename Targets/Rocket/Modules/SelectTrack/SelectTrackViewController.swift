@@ -160,9 +160,9 @@ extension SelectTrackViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let band = self.viewModel.state.groups[indexPath.row]
-        searchController.searchBar.text = band.name
-        viewModel.updateSearchQuery(query: band.name)
+        let group = self.viewModel.state.groups[indexPath.row]
+        searchController.searchBar.text = group.group.name
+        viewModel.updateSearchQuery(query: group.group.name)
         searchController.searchBar.becomeFirstResponder()
         tableView.deselectRow(at: indexPath, animated: true)
     }
