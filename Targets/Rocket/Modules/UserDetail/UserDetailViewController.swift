@@ -83,22 +83,23 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .didRefreshUserDetail(let userDetail):
                 headerView.update(input: (selfUser: dependencyProvider.user, userDetail: userDetail, imagePipeline: dependencyProvider.imagePipeline))
                 tab.update(userDetail: userDetail)
-                let item = UIBarButtonItem(
-                    image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
-                    style: .plain,
-                    target: self,
-                    action: #selector(settingButtonTapped(_:))
-                )
-                navigationItem.setRightBarButton(
-                    item,
-                    animated: false
-                )
                 switch viewModel.state.displayType {
                 case .account:
                     dependencyProvider.user = userDetail.user
                     self.title = "マイページ"
+                    let item = UIBarButtonItem(
+                        image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+                        style: .plain,
+                        target: self,
+                        action: #selector(settingButtonTapped(_:))
+                    )
+                    navigationItem.setRightBarButton(
+                        item,
+                        animated: false
+                    )
                 case .user:
                     self.title = userDetail.name
+                    navigationItem.setRightBarButton(nil, animated: true)
                 }
                 refreshControl.endRefreshing()
             case .pushToMessageRoom(let room):

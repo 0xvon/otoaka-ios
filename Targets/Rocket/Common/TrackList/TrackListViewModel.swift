@@ -117,7 +117,8 @@ class TrackListViewModel {
                     }
                     self?.outputSubject.send(.reloadTableView)
                 case .error(let err):
-                    self?.outputSubject.send(.error(err))
+                    print(err)
+//                    self?.outputSubject.send(.error(err))
                 }
             }
         case .searchAppleMusicResults(let pagination):
@@ -144,7 +145,8 @@ class TrackListViewModel {
                     } ?? []
                     self?.outputSubject.send(.reloadTableView)
                 case .error(let err):
-                    self?.outputSubject.send(.error(err))
+                    print(err)
+//                    self?.outputSubject.send(.error(err))
                 }
             }
         case .playlist(_): break

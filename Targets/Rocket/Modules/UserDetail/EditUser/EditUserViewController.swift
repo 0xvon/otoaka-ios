@@ -143,17 +143,26 @@ final class EditUserViewController: UIViewController, Instantiable {
         profileImageTitle.textColor = Brand.color(for: .text(.primary))
         return profileImageTitle
     }()
-    private lazy var registerButton: PrimaryButton = {
-        let registerButton = PrimaryButton(text: "ユーザー編集")
-        registerButton.translatesAutoresizingMaskIntoConstraints = false
-        registerButton.layer.cornerRadius = 25
-        registerButton.isEnabled = false
-        return registerButton
+//    private lazy var registerButton: PrimaryButton = {
+//        let registerButton = PrimaryButton(text: "ユーザー編集")
+//        registerButton.translatesAutoresizingMaskIntoConstraints = false
+//        registerButton.layer.cornerRadius = 25
+//        registerButton.isEnabled = false
+//        return registerButton
+//    }()
+    private lazy var registerButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
+        button.setTitle("編集", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .mediumStrong)
+        button.isEnabled = true
+        return button
     }()
     private lazy var activityIndicator: LoadingCollectionView = {
         let activityIndicator = LoadingCollectionView()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
         NSLayoutConstraint.activate([
             activityIndicator.heightAnchor.constraint(equalToConstant: 40),
             activityIndicator.widthAnchor.constraint(equalToConstant: 40),
@@ -239,9 +248,10 @@ final class EditUserViewController: UIViewController, Instantiable {
                 switch state {
                 case .editting(let submittable):
                     self.registerButton.isEnabled = submittable
+                    self.navigationItem.rightBarButtonItem = submittable ? UIBarButtonItem(customView: registerButton) : nil
                     self.activityIndicator.stopAnimating()
                 case .loading:
-                    self.registerButton.isEnabled = false
+                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
                     self.activityIndicator.startAnimating()
                 }
             case .reportError(let error):
@@ -400,10 +410,10 @@ final class EditUserViewController: UIViewController, Instantiable {
 //            partInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
 //        ])
         
-        mainView.addArrangedSubview(registerButton)
-        NSLayoutConstraint.activate([
-            registerButton.heightAnchor.constraint(equalToConstant: 50),
-        ])
+//        mainView.addArrangedSubview(registerButton)
+//        NSLayoutConstraint.activate([
+//            registerButton.heightAnchor.constraint(equalToConstant: 50),
+//        ])
         
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer

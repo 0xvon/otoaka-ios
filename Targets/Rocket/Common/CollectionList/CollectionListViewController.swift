@@ -78,7 +78,7 @@ final class CollectionListViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             collectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             collectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-            collectionView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: self.view.topAnchor),
             collectionView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         ])
         
@@ -113,7 +113,7 @@ extension CollectionListViewController: UICollectionViewDelegate, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let post = viewModel.state.posts[indexPath.item]
-        let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: post)
+        let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: post.post)
         let nav = self.navigationController ?? presentingViewController?.navigationController
         nav?.pushViewController(vc, animated: true)
     }

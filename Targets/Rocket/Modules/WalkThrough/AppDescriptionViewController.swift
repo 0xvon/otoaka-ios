@@ -53,7 +53,7 @@ final class AppDescriptionViewController: UIViewController {
         
         self.view.addSubview(imageView)
         NSLayoutConstraint.activate([
-            imageView.widthAnchor.constraint(equalToConstant: self.view.bounds.width * 0.8),
+            imageView.widthAnchor.constraint(equalToConstant: 300),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 1.37),
             imageView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             imageView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),

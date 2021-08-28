@@ -88,7 +88,14 @@ class UserNotificationCellContent: UIView {
                 input.imagePipeline.loadImage(url, into: thumbnailImageView)
             }
         case .likePost(let postLike):
-            titleLabel.text = "\(postLike.likedBy.name)が投稿にいいね"
+            titleLabel.text = "\(postLike.likedBy.name)がレポートにいいね"
+            if let url = postLike.post.live?.artworkURL {
+                input.imagePipeline.loadImage(url, into: thumbnailImageView)
+            } else if let url = postLike.post.imageUrls.first.flatMap(URL.init(string: )) {
+                input.imagePipeline.loadImage(url, into: thumbnailImageView)
+            } else {
+                thumbnailImageView.image = nil
+            }
         case .follow(let user):
             titleLabel.text = "\(user.name)がフォロー"
             if let url = user.thumbnailURL.flatMap(URL.init(string: )) {

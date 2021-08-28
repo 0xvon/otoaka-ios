@@ -83,7 +83,7 @@ final class LiveListViewController: UIViewController, Instantiable {
         let constraints: [NSLayoutConstraint] = [
             liveTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             liveTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-            liveTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
+            liveTableView.topAnchor.constraint(equalTo: self.view.topAnchor),
             liveTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
@@ -123,9 +123,8 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
             switch output {
             case .buyTicketButtonTapped:
                 guard let url = live.live.piaEventUrl else { return }
-                guard let afUrl = URL(string: "https://click.linksynergy.com/deeplink?id=HDD1WlcV/Qk&mid=36672&murl=\(url.absoluteString)") else { return }
                 let safari = SFSafariViewController(
-                    url: afUrl)
+                    url: url)
                 safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
             case .likeButtonTapped:
@@ -165,20 +164,27 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
         let emptyCollectionView: EmptyCollectionView = {
             switch viewModel.dataSource {
             case .likedLive(_):
-                let emptyCollectionView = EmptyCollectionView(emptyType: .likedLiveList, actionButtonTitle: nil)
+                let emptyCollectionView = EmptyCollectionView(emptyType: .likedLiveList, actionButtonTitle: "ライブ掲載申請する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 return emptyCollectionView
             case .groupLive(_):
-                let emptyCollectionView = EmptyCollectionView(emptyType: .groupLiveList, actionButtonTitle: nil)
+                let emptyCollectionView = EmptyCollectionView(emptyType: .groupLiveList, actionButtonTitle: "ライブ掲載申請する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 return emptyCollectionView
             default:
-                let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: nil)
+                let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: "ライブ掲載申請する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 return emptyCollectionView
             }
             
         }()
+        emptyCollectionView.listen { [unowned self] in
+            if let url = URL(string: "https://forms.gle/epoBeqdaGeMUcv8o9") {
+                let safari = SFSafariViewController(url: url)
+                safari.dismissButtonStyle = .close
+                present(safari, animated: true, completion: nil)
+            }
+        }
         tableView.backgroundView = self.viewModel.state.lives.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([

@@ -60,6 +60,12 @@ final class UserNotificationViewControlelr: UITableViewController {
                 case let .follow(user):
                     let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
                     navigationController?.pushViewController(vc, animated: true)
+                case .likePost(let like):
+                    let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: like.post)
+                    navigationController?.pushViewController(vc, animated: true)
+                case .postComment(let comment):
+                    let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: comment.post)
+                    navigationController?.pushViewController(vc, animated: true)
                 default:
                     break
                 }

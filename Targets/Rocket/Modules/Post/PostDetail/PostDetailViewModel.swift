@@ -10,10 +10,11 @@ import Endpoint
 import Combine
 
 class PostDetailViewModel {
-    typealias Input = PostSummary
+    typealias Input = Post
     
     struct State {
-        var post: PostSummary
+        var postId: Post.ID
+        var post: PostSummary?
     }
     
     enum Output {
@@ -40,7 +41,7 @@ class PostDetailViewModel {
         dependencyProvider: LoggedInDependencyProvider, input: Input
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(post: input)
+        self.state = State(postId: input.id)
         
         let errors = Publishers.MergeMany(
             getPostAction.errors,
@@ -73,7 +74,7 @@ class PostDetailViewModel {
     func refresh() {
         let request = Empty()
         var uri = GetPost.URI()
-        uri.postId = state.post.id
+        uri.postId = state.postId
         getPostAction.input((request: request, uri: uri))
     }
     

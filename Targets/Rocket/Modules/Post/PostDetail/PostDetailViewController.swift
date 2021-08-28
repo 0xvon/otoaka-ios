@@ -13,11 +13,12 @@ import InternalDomain
 import ImageViewer
 
 final class PostDetailViewController: UIViewController, Instantiable {
-    typealias Input = PostSummary
+    typealias Input = Post
     
     private lazy var verticalScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = true
+        scrollView.showsVerticalScrollIndicator = false
         scrollView.refreshControl = self.refreshControl
         return scrollView
     }()
@@ -144,31 +145,40 @@ final class PostDetailViewController: UIViewController, Instantiable {
         postCellContent.listen { [unowned self] output in
             switch output {
             case .commentTapped:
-                self.commentButtonTapped(post: viewModel.state.post)
+                guard let post = viewModel.state.post else { return }
+                self.commentButtonTapped(post: post)
             case .deleteTapped:
-                self.deleteButtonTapped(post: viewModel.state.post)
+                guard let post = viewModel.state.post else { return }
+                self.deleteButtonTapped(post: post)
             case .likeTapped:
-                self.likeButtonTapped(post: viewModel.state.post)
+                guard let post = viewModel.state.post else { return }
+                self.likeButtonTapped(post: post)
             case .instagramTapped:
-                sharePostWithInstagram(post: viewModel.state.post.post)
+                guard let post = viewModel.state.post else { return }
+                sharePostWithInstagram(post: post.post)
             case .twitterTapped:
-                self.twitterButtonTapped(post: viewModel.state.post)
+                guard let post = viewModel.state.post else { return }
+                self.twitterButtonTapped(post: post)
             case .userTapped:
-                self.userTapped(post: viewModel.state.post)
+                guard let post = viewModel.state.post else { return }
+                self.userTapped(post: post)
             case .postListTapped:
-                self.livePostListButtonTapped(post: viewModel.state.post)
+                guard let post = viewModel.state.post else { return }
+                self.livePostListButtonTapped(post: post)
             case .postTapped:
-                self.postTapped(post: viewModel.state.post)
+                guard let post = viewModel.state.post else { return }
+                self.postTapped(post: post)
             case .playTapped(let track):
                 self.playTapped(track: track)
             case .trackTapped(_): break
             case .imageTapped(let content):
                 self.uploadImageTapped(content: content)
             case .groupTapped:
-                guard let group = viewModel.state.post.groups.first else { return }
+                guard let group = viewModel.state.post?.groups.first else { return }
                 self.groupTapped(group: group)
             case .seePlaylistTapped:
-                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: .playlist(viewModel.state.post.post))
+                guard let post = viewModel.state.post else { return }
+                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: .playlist(post.post))
                 navigationController?.pushViewController(vc, animated: true)
             case .cellTapped:
                 break
@@ -183,11 +193,11 @@ final class PostDetailViewController: UIViewController, Instantiable {
     }
         
     private func setupViews() {
-        postCellContent.inject(input: (
-            post: viewModel.state.post,
-            user: dependencyProvider.user,
-            imagePipeline: dependencyProvider.imagePipeline
-        ))
+//        postCellContent.inject(input: (
+//            post: viewModel.state.post,
+//            user: dependencyProvider.user,
+//            imagePipeline: dependencyProvider.imagePipeline
+//        ))
     }
     
     private func commentButtonTapped(post: PostSummary) {

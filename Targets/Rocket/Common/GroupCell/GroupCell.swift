@@ -95,6 +95,7 @@ class GroupCellContent: UIButton {
             UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
         button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
         button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        button.isEnabled = false
         return button
     }()
     
@@ -116,6 +117,7 @@ class GroupCellContent: UIButton {
         let startYear: String = input.group.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
         sinceBadgeView.title = startYear
         hometownBadgeView.title = input.group.group.hometown.map { "\($0)出身" } ?? "出身不明"
+        likeButton.isEnabled = true
         likeButton.isSelected = input.group.isFollowing
 
     }
@@ -158,6 +160,7 @@ class GroupCellContent: UIButton {
     }
     
     @objc private func likeButtonTapped() {
+        likeButton.isEnabled = false
         self.listener(.likeButtonTapped)
     }
     

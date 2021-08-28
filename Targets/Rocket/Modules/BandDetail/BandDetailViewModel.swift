@@ -105,7 +105,7 @@ class BandDetailViewModel {
             getGroup.errors,
             getGroupLives.errors,
             getGroupPost.errors,
-            listChannel.errors,
+//            listChannel.errors,
             deletePostAction.errors,
             likePostAction.errors,
             unLikePostAction.errors,
@@ -259,8 +259,8 @@ class BandDetailViewModel {
         guard let live = state.lives.first else { return }
         switch event {
         case .buyTicketButtonTapped:
-            if let url = live.live.piaEventUrl, let afUrl = URL(string: "https://click.linksynergy.com/deeplink?id=HDD1WlcV/Qk&mid=36672&murl=\(url.absoluteString)") {
-                outputSubject.send(.openURLInBrowser(afUrl))
+            if let url = live.live.piaEventUrl {
+                outputSubject.send(.openURLInBrowser(url))
             }
         case .likeButtonTapped:
             live.isLiked ? unlikeLive(live: live.live) : likeLive(live: live.live)

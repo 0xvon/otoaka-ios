@@ -139,7 +139,13 @@ final class SearchResultViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let children = [liveListViewController, groupListViewController, userListViewController, trackListViewController]
+        let children = [
+            liveListViewController,
+            userListViewController,
+            groupListViewController,
+            trackListViewController
+        ]
+        
         for child in children {
             addChild(child)
             view.addSubview(child.view)

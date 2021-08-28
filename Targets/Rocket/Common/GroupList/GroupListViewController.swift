@@ -13,8 +13,8 @@ final class GroupListViewController: UIViewController, Instantiable {
     typealias Input = GroupListViewModel.Input
 
     let dependencyProvider: LoggedInDependencyProvider
-    private var groupTableView: UITableView!
 
+    var tableView: UITableView!
     let viewModel: GroupListViewModel
     private var cancellables: [AnyCancellable] = []
 
@@ -48,12 +48,12 @@ final class GroupListViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .reloadTableView:
-                self.setTableViewBackgroundView(tableView: self.groupTableView)
-                self.groupTableView.reloadData()
+                self.setTableViewBackgroundView(tableView: self.tableView)
+                self.tableView.reloadData()
             case .updateFollowing:
                 viewModel.refresh()
             case .error(let error):
-                print(error)
+                print(String(describing: error))
                 self.showAlert()
             }
         }
@@ -63,26 +63,26 @@ final class GroupListViewController: UIViewController, Instantiable {
         navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
         
-        groupTableView = UITableView()
-        groupTableView.translatesAutoresizingMaskIntoConstraints = false
-        groupTableView.showsVerticalScrollIndicator = false
-        groupTableView.tableFooterView = UIView(frame: .zero)
-        groupTableView.separatorStyle = .none
-        groupTableView.backgroundColor = .clear
-        groupTableView.delegate = self
-        groupTableView.dataSource = self
-        groupTableView.registerCellClass(GroupCell.self)
-        self.view.addSubview(groupTableView)
+        tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.showsVerticalScrollIndicator = false
+        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .clear
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.registerCellClass(GroupCell.self)
         
-        groupTableView.refreshControl = BrandRefreshControl()
-        groupTableView.refreshControl?.addTarget(
+        tableView.refreshControl = BrandRefreshControl()
+        tableView.refreshControl?.addTarget(
             self, action: #selector(refreshGroups(sender:)), for: .valueChanged)
-
+        self.view.addSubview(tableView)
+        
         let constraints: [NSLayoutConstraint] = [
-            groupTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-            groupTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-            groupTableView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
-            groupTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
+            tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
+            tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            tableView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
         ]
         NSLayoutConstraint.activate(constraints)
     }
@@ -158,6 +158,6 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
 extension GroupListViewController: PageContent {
     var scrollView: UIScrollView {
         _ = view
-        return self.groupTableView
+        return self.tableView
     }
 }

@@ -202,7 +202,7 @@ class PageAttachmentViewContainer {
     }
 
     func updateHeaderHeight(viaContentOffset contentOffset: CGPoint) {
-        headerHeightConstraint.constant = -(contentOffset.y + tabViewHeight())
+//        headerHeightConstraint.constant = -(contentOffset.y + tabViewHeight())
     }
 
     func updateHeaderTop(_ top: CGFloat) {
@@ -219,8 +219,6 @@ class PageViewControllersContainer {
         self.viewControllers = viewControllers
         for viewController in viewControllers {
             let syncTargets = viewControllers.lazy.filter { ($0 as UIViewController) != viewController }
-            print("syncTargets count: \(syncTargets.count)")
-            print("vc count: \(viewControllers.count)")
             let observer = Observer(
                 target: viewController,
                 syncOffset: syncOffset(targets: syncTargets),

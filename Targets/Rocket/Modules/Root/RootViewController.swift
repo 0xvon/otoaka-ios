@@ -45,7 +45,7 @@ final class RootViewController: UITabBarController, Instantiable {
             case .didGetSignupStatus(let isSignedUp):
                 isSignedUp ? makeViewFromUserInfo() : presentRegistrationScreen()
             case .didGetUserInfo(let user):
-                setViewControllers(instantiateTabs(with: user), animated: false)
+                setViewControllers(instantiateTabs(with: user), animated: true)
             case .reportError(let error):
                 print(error)
                 showAlert()

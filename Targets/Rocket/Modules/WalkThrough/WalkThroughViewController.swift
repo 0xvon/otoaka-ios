@@ -69,14 +69,10 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
         scrollview.alwaysBounceVertical = false
         scrollview.showsVerticalScrollIndicator = false
         scrollview.delegate = self
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: _closeButton)
-        
-//        let vc1 = AppDescriptionViewController(input: (description: "好きなアーティストをフォロー！", imageName: "ss_search_group"))
-//        let vc2 = AppDescriptionViewController(input: (description: "行きたいライブを検索していいね！", imageName: "ss_search_live"))
         
         let vc1 = GroupListViewController(dependencyProvider: dependencyProvider, input: .allGroup)
         let vc2 = LiveListViewController(dependencyProvider: dependencyProvider, input: .upcoming(dependencyProvider.user))
-        let vc3 = AppDescriptionViewController(input: (description: "自分が行ったライブの「レポート」を書こう！レポートにはその日のセットリスト、MCやライブ中に起こった印象的な出来事、感想を記録しよう！レポートはマイページに溜まっていくよ！", imageName: "ss_post"))
+        let vc3 = AppDescriptionViewController(input: (description: "検索🔍タブから自分が行ったライブを探して「レポート」を書こう！レポートにはその日のセットリスト、MCやライブ中に起こった印象的な出来事、感想を記録しよう！レポートはマイページに溜まっていくよ！", imageName: "ss_post"))
         
         add(viewController: vc1)
         add(viewController: vc2)
@@ -118,6 +114,8 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
     func walkthroughPageDidChange(_ pageNumber: Int) {
         _prevButton.isHidden = pageNumber == 0
         _nextButton.isHidden = pageNumber == 2
+        navigationItem.rightBarButtonItem = pageNumber == 2 ? UIBarButtonItem(customView: _closeButton) : nil
+        
         title = titles[pageNumber]
     }
     

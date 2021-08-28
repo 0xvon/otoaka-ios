@@ -108,7 +108,7 @@ class PostViewModel {
     }
     
     func didSelectGroup(groups: [Group]) {
-        state.groups = groups
+        state.groups = []
         outputSubject.send(.didUpdateContent)
     }
     

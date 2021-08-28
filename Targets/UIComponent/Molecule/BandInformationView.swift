@@ -46,6 +46,7 @@ class BandInformationView: UIView {
         arrowButton.setImage(UIImage(named: "arrow"), for: .normal)
         return arrowButton
     }()
+    /*
     private let mapBadgeView: BadgeView = {
         let mapBadgeView = BadgeView(
             text: "不明",
@@ -63,7 +64,6 @@ class BandInformationView: UIView {
         dateBadgeView.translatesAutoresizingMaskIntoConstraints = false
         return dateBadgeView
     }()
-    /*
     private let productionBadgeView: BadgeView = {
         let productionBadgeView = BadgeView(text: "Japan Music Systems", image: UIImage(named: "production"))
         productionBadgeView.translatesAutoresizingMaskIntoConstraints = false
@@ -79,10 +79,10 @@ class BandInformationView: UIView {
 */
 
     func update(input: Input) {
-        let startYear: String = input.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
-        dateBadgeView.title = startYear
+//        let startYear: String = input.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
+//        dateBadgeView.title = startYear
         bandNameLabel.text = input.group.name
-        mapBadgeView.title = input.group.hometown.map { "\($0)出身" } ?? "出身不明"
+//        mapBadgeView.title = input.group.hometown.map { "\($0)出身" } ?? "出身不明"
     }
 
     private func setup() {
@@ -95,21 +95,21 @@ class BandInformationView: UIView {
             rightAnchor.constraint(equalTo: bandNameLabel.rightAnchor, constant: 16),
         ])
 
-        addSubview(dateBadgeView)
-        NSLayoutConstraint.activate([
-            dateBadgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
-            dateBadgeView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
-            dateBadgeView.widthAnchor.constraint(equalToConstant: 160),
-            dateBadgeView.heightAnchor.constraint(equalToConstant: 30),
-        ])
-
-        addSubview(mapBadgeView)
-        NSLayoutConstraint.activate([
-            mapBadgeView.bottomAnchor.constraint(equalTo: dateBadgeView.topAnchor, constant: -8),
-            mapBadgeView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
-            mapBadgeView.widthAnchor.constraint(equalToConstant: 160),
-            mapBadgeView.heightAnchor.constraint(equalToConstant: 30),
-        ])
+//        addSubview(dateBadgeView)
+//        NSLayoutConstraint.activate([
+//            dateBadgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+//            dateBadgeView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
+//            dateBadgeView.widthAnchor.constraint(equalToConstant: 160),
+//            dateBadgeView.heightAnchor.constraint(equalToConstant: 30),
+//        ])
+//
+//        addSubview(mapBadgeView)
+//        NSLayoutConstraint.activate([
+//            mapBadgeView.bottomAnchor.constraint(equalTo: dateBadgeView.topAnchor, constant: -8),
+//            mapBadgeView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
+//            mapBadgeView.widthAnchor.constraint(equalToConstant: 160),
+//            mapBadgeView.heightAnchor.constraint(equalToConstant: 30),
+//        ])
 
         /*
         addSubview(labelBadgeView)

@@ -109,7 +109,7 @@ final class PostViewController: UIViewController, Instantiable {
         stackView.distribution = .fillEqually
         
         stackView.addArrangedSubview(uploadedImageView)
-        stackView.addArrangedSubview(selectedGroupView)
+//        stackView.addArrangedSubview(selectedGroupView)
         stackView.addArrangedSubview(playlistView)
         
         return stackView
@@ -125,16 +125,16 @@ final class PostViewController: UIViewController, Instantiable {
         
         return imageView
     }()
-    private lazy var selectedGroupView: GroupCellContent = {
-        let content = UINib(nibName: "GroupCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
-        content.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300),
-        ])
-        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
-        return content
-    }()
+//    private lazy var selectedGroupView: GroupCellContent = {
+//        let content = UINib(nibName: "GroupCellContent", bundle: nil)
+//            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            content.heightAnchor.constraint(equalToConstant: 300),
+//        ])
+//        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
+//        return content
+//    }()
     private lazy var playlistView: PlaylistCell = {
         let content = PlaylistCell()
         content.translatesAutoresizingMaskIntoConstraints = false
@@ -259,7 +259,7 @@ final class PostViewController: UIViewController, Instantiable {
                 if let post = viewModel.state.post {
                     textView.text = post.text
                     uploadedImageView.isHidden = post.imageUrls.isEmpty
-                    selectedGroupView.isHidden = post.groups.isEmpty
+//                    selectedGroupView.isHidden = post.groups.isEmpty
                     playlistView.isHidden = post.tracks.isEmpty
                     
                     if let image = post.imageUrls.first, let url = URL(string: image) {
@@ -282,7 +282,7 @@ final class PostViewController: UIViewController, Instantiable {
             case .didUpdateContent:
                 textView.text = viewModel.state.text
                 uploadedImageView.isHidden = viewModel.state.images.isEmpty
-                selectedGroupView.isHidden = viewModel.state.images.isEmpty
+//                selectedGroupView.isHidden = viewModel.state.groups.isEmpty
                 playlistView.isHidden = viewModel.state.tracks.isEmpty
                 
                 if let image = viewModel.state.images.first {
@@ -342,7 +342,7 @@ final class PostViewController: UIViewController, Instantiable {
             postView.bottomAnchor.constraint(equalTo: postScrollView.bottomAnchor),
         ])
         
-        selectedGroupView.isHidden = true
+//        selectedGroupView.isHidden = true
         uploadedImageView.isHidden = true
         playlistView.isHidden = true
         

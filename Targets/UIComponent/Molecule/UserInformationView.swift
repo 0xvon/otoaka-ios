@@ -52,14 +52,14 @@ class UserInformationView: UIView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = Brand.color(for: .text(.primary))
-        label.font = Brand.font(for: .small)
+        label.font = Brand.font(for: .xsmall)
         return label
     }()
     private lazy var liveStyleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = Brand.color(for: .text(.primary))
-        label.font = Brand.font(for: .small)
+        label.font = Brand.font(for: .xsmall)
         return label
     }()
     private lazy var countSummaryStackView: UIStackView = {
@@ -207,11 +207,9 @@ class UserInformationView: UIView {
         
         addSubview(biographyTextView)
         NSLayoutConstraint.activate([
-            biographyTextView.topAnchor.constraint(greaterThanOrEqualTo: profileImageView.bottomAnchor, constant: 8),
-            biographyTextView.topAnchor.constraint(greaterThanOrEqualTo: countSummaryStackView.bottomAnchor, constant: 8),
+            biographyTextView.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 24),
             biographyTextView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             biographyTextView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
-//            biographyTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8),
             biographyTextView.heightAnchor.constraint(equalToConstant: 76),
         ])
     }

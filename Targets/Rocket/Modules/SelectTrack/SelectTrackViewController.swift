@@ -156,15 +156,12 @@ extension SelectTrackViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = self.viewModel.state.groups[indexPath.row]
         let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        cell.listen { [unowned self] _ in
+            searchController.searchBar.text = group.group.name
+            viewModel.updateSearchQuery(query: group.group.name)
+            searchController.searchBar.becomeFirstResponder()
+        }
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let group = self.viewModel.state.groups[indexPath.row]
-        searchController.searchBar.text = group.group.name
-        viewModel.updateSearchQuery(query: group.group.name)
-        searchController.searchBar.becomeFirstResponder()
-        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
