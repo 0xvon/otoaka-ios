@@ -451,9 +451,12 @@ class PostCellContent: UIButton {
         }
         
         commentButtonView.setTitle("\(input.post.commentCount)", for: .normal)
+        commentButtonView.isEnabled = true
         likeButtonView.setTitle("\(input.post.likeCount)", for: .normal)
         likeButtonView.isSelected = input.post.isLiked
+        likeButtonView.isEnabled = true
         deleteButton.isHidden = input.post.author.id != input.user.id
+        deleteButton.isEnabled = true
     }
     
     func setup() {
@@ -473,10 +476,12 @@ class PostCellContent: UIButton {
     }
     
     @objc private func commentButtonTapped() {
+        commentButtonView.isEnabled = false
         self.listener(.commentTapped)
     }
     
     @objc private func likeButtonTapped() {
+        likeButtonView.isEnabled = false
         self.listener(.likeTapped)
     }
     
@@ -485,6 +490,7 @@ class PostCellContent: UIButton {
     }
     
     @objc private func showPostListButtonTapped() {
+        showPostListButton.isEnabled = false
         self.listener(.postListTapped)
     }
     

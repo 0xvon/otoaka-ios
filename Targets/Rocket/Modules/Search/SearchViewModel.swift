@@ -18,7 +18,7 @@ final class SearchViewModel {
         var title: String {
             switch self {
             case .live: return "ライブ"
-            case .group: return "バンド"
+            case .group: return "アーティスト"
             case .user: return "ユーザー"
             }
         }
@@ -40,7 +40,7 @@ final class SearchViewModel {
         case .group:
             outputSubject.send(.updateSearchResult(.group(query)))
         case .live:
-            outputSubject.send(.updateSearchResult(.live(query)))
+            outputSubject.send(.updateSearchResult(.live(query, nil, nil, nil)))
         case .user:
             outputSubject.send(.updateSearchResult(.user(query)))
         }

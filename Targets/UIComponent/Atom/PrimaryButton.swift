@@ -8,7 +8,6 @@
 import UIKit
 
 public final class PrimaryButton: UIButton {
-    
     public enum Style {
         case normal
         case delete
@@ -79,10 +78,10 @@ import SwiftUI
 struct Button_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(view: PrimaryButton(text: "Hello"))
+            PreviewWrapper(view: PrimaryButton(text: "Hello"))
                 .previewLayout(.fixed(width: 180, height: 48))
 
-            ViewWrapper(view: {
+            PreviewWrapper(view: {
                 let button = PrimaryButton(text: "¥1500")
                 button.setImage(BundleReference.image(named: "ticket"),
                                 for: .normal)
@@ -90,7 +89,7 @@ struct Button_Previews: PreviewProvider {
             }())
             .previewLayout(.fixed(width: 150, height: 48))
             
-            ViewWrapper(view: {
+            PreviewWrapper(view: {
                 let button = PrimaryButton(text: "再生")
                 button.setImage(
                     UIImage(systemName: "play")!

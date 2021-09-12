@@ -118,7 +118,7 @@ class LiveCellContent: UIButton {
         return stackView
     }()
     private lazy var buyTicketButtonView: PrimaryButton = {
-        let primaryButton = PrimaryButton(text: "チケット応募")
+        let primaryButton = PrimaryButton(text: "チケット申込")
         primaryButton.layer.cornerRadius = 24
         primaryButton.translatesAutoresizingMaskIntoConstraints = false
         primaryButton.isUserInteractionEnabled = true
@@ -202,10 +202,19 @@ class LiveCellContent: UIButton {
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         }
         
-        if let date = input.live.live.date, let openAt = input.live.live.openAt, let formatted = dateFormatter.date(from: date) {
-            let formattedDateString = displayDateFormatter.string(from: formatted)
-            dateView.title = "\(formattedDateString) \(openAt)"
+        if let date = input.live.live.date
+            .map(dateFormatter.date(from:))?
+            .map(displayDateFormatter.string(from:)),
+           let openAt = input.live.live.openAt {
+            if let endDate = input.live.live.endDate
+                .map(dateFormatter.date(from:))?
+                .map(displayDateFormatter.string(from:)) {
+                dateView.title = "\(date) ~ \(endDate) \(openAt)"
+            } else {
+                dateView.title = "\(date) \(openAt)"
+            }
         }
+        buyTicketButtonView.isHidden = input.live.live.piaEventUrl == nil
         placeView.title = input.live.live.liveHouse ?? "未定"
         if let artworkURL = input.live.live.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: thumbnailView)
@@ -218,6 +227,7 @@ class LiveCellContent: UIButton {
             numOfLikeButton.setTitle("行きたい \(input.live.likeCount)人", for: .normal)
             numOfReportButton.setTitle("レポート \(input.live.postCount)件", for: .normal)
             likeButton.isSelected = input.live.isLiked
+            likeButton.isEnabled = true
         case .review:
             buyTicketStackView.isHidden = true
             actionButtonStackView.isHidden = true
@@ -315,6 +325,7 @@ class LiveCellContent: UIButton {
     }
     
     @objc private func likeButtonTapped() {
+        likeButton.isEnabled = false
         self.listener(.likeButtonTapped)
     }
     

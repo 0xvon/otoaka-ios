@@ -37,7 +37,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     private let likeCountSummaryView = CountSummaryView()
     private let postCountSummaryView = CountSummaryView()
     private let buyTicketButton: PrimaryButton = {
-        let buyTicketButton = PrimaryButton(text: "チケット応募")
+        let buyTicketButton = PrimaryButton(text: "チケット申込")
         buyTicketButton.setImage(UIImage(named: "ticket"), for: .normal)
         buyTicketButton.translatesAutoresizingMaskIntoConstraints = false
         buyTicketButton.layer.cornerRadius = 24
@@ -197,6 +197,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.title = liveDetail.live.title
                 headerView.update(input: (live: liveDetail, imagePipeline: dependencyProvider.imagePipeline))
                 likeCountSummaryView.update(input: (title: "行きたい", count: liveDetail.likeCount))
+                buyTicketButton.isHidden = liveDetail.live.piaEventUrl == nil
                 postCountSummaryView.update(input: (title: "レポート", count: viewModel.state.live.postCount))
                 refreshControl.endRefreshing()
             case .updatePerformers(let performers):

@@ -128,19 +128,19 @@ import SwiftUI
 struct EmptyCollectionView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(view: EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す"))
+            PreviewWrapper(view: EmptyCollectionView(emptyType: .feed, actionButtonTitle: "バンドを探す"))
                 .previewLayout(.fixed(width: 320, height: 500))
         }
         .background(Color.black)
         
         Group {
-            ViewWrapper(view: EmptyCollectionView(emptyType: .group, actionButtonTitle: nil))
+            PreviewWrapper(view: EmptyCollectionView(emptyType: .group, actionButtonTitle: nil))
                 .previewLayout(.fixed(width: 320, height: 220))
         }
         .background(Color.black)
         
         Group {
-            ViewWrapper(view: EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す"))
+            PreviewWrapper(view: EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す"))
                 .previewLayout(.fixed(width: 320, height: 500))
         }
         .background(Color.black)

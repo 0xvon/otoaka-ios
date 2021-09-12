@@ -250,7 +250,7 @@ import Foundation
 struct TrackInformationView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(
+            PreviewWrapper(
                 view: {
                     let input: TrackInformationView.Input = try! Stub.make()
                     let contentView = TrackInformationView()

@@ -21,7 +21,7 @@ class LiveListViewModel {
     enum DataSource {
         case groupLive(Group)
         case likedLive(User)
-        case searchResult(String)
+        case searchResult(String?, Group.ID?, Date?, Date?)
         case searchResultToSelect(String)
         case upcoming(User)
         case none
@@ -47,10 +47,17 @@ class LiveListViewModel {
                 uri.userId = user.id
                 let request = PaginationRequest<GetLikedLive>(apiClient: apiClient, uri: uri)
                 self = .likedLive(request)
-            case .searchResult(let query):
+            case .searchResult(let query, let groupId, let fromDate, let toDate):
+                let dateFormatter: DateFormatter = {
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "YYYYMMdd"
+                    return dateFormatter
+                }()
                 var uri = SearchLive.URI()
                 uri.term = query
-                print(query)
+                uri.groupId = groupId
+                uri.fromDate = fromDate.map { dateFormatter.string(from: $0) }
+                uri.toDate = toDate.map { dateFormatter.string(from: $0) }
                 let request = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
                 self = .searchResult(request)
             case .searchResultToSelect(let query):
@@ -166,7 +173,7 @@ class LiveListViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.section + 25 > state.lives.count else { return }
+        guard indexPath.row + 25 > state.lives.count else { return }
         switch storage {
         case let .groupLive(pagination):
             pagination.next()

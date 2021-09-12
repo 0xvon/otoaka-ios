@@ -31,6 +31,7 @@ final class UserNotificationViewControlelr: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "通知"
+        navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
         tableView.showsVerticalScrollIndicator = false
         tableView.tableFooterView = UIView(frame: .zero)

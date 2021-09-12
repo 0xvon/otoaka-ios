@@ -26,7 +26,8 @@ target 'Rocket' do
   pod 'MessageKit'
   pod 'BWWalkthrough'
   pod 'Parchment', '~> 3.0.1'
- 
+  pod 'FSCalendar'
+  pod 'CalculateCalendarLogic'
 
   target 'RocketTests' do
     inherit! :search_paths

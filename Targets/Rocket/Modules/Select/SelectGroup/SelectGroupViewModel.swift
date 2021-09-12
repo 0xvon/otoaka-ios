@@ -71,7 +71,7 @@ final class SelectGroupViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.section + 25 > state.groups.count else { return }
+        guard indexPath.row + 25 > state.groups.count else { return }
         getAllGroupsAction.next()
     }
     

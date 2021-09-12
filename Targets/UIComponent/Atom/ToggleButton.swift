@@ -65,9 +65,9 @@ import SwiftUI
 struct ToggleButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(view: ToggleButton(text: "+ フォロー"))
+            PreviewWrapper(view: ToggleButton(text: "+ フォロー"))
                 .previewLayout(.fixed(width: 180, height: 48))
-            ViewWrapper(view: {
+            PreviewWrapper(view: {
                 let button = ToggleButton(text: "フォロー中")
                 button.isSelected = true
                 return button

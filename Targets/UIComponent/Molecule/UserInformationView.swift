@@ -146,6 +146,7 @@ class UserInformationView: UIView {
         } else {
             editProfileButton.isHidden = true
             followButton.isHidden = false
+            followButton.isEnabled = true
             followButton.isSelected = input.userDetail.isFollowing
             biographyTextView.text = input.userDetail.user.biography
         }
@@ -245,6 +246,7 @@ class UserInformationView: UIView {
     }
     
     @objc private func followButtonTapped() {
+        followButton.isEnabled = false
         listener(.followButtonTapped)
     }
     

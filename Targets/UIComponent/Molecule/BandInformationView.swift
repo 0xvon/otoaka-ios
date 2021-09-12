@@ -162,7 +162,7 @@ class BandInformationView: UIView {
     struct BandInformationView_Previews: PreviewProvider {
         static var previews: some View {
             Group {
-                ViewWrapper(
+                PreviewWrapper(
                     view: {
                         let input: BandInformationView.Input = try! (
                             group: Stub.make {

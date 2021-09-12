@@ -153,9 +153,10 @@ final class EditUserViewController: UIViewController, Instantiable {
     private lazy var registerButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .normal)
+        button.setTitleColor(Brand.color(for: .background(.secondary)), for: .disabled)
         button.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
-        button.setTitle("編集", for: .normal)
+        button.setTitle("更新", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
         button.isEnabled = true
         return button
@@ -248,7 +249,7 @@ final class EditUserViewController: UIViewController, Instantiable {
                 switch state {
                 case .editting(let submittable):
                     self.registerButton.isEnabled = submittable
-                    self.navigationItem.rightBarButtonItem = submittable ? UIBarButtonItem(customView: registerButton) : nil
+                    self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
                     self.activityIndicator.stopAnimating()
                 case .loading:
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
@@ -307,6 +308,8 @@ final class EditUserViewController: UIViewController, Instantiable {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "ユーザー編集"
         self.navigationItem.largeTitleDisplayMode = .never
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
+        registerButton.isEnabled = false
         
         self.view.addSubview(verticalScrollView)
         NSLayoutConstraint.activate([

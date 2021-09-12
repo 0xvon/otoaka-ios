@@ -111,7 +111,7 @@ import SwiftUI
 struct DateInputView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(view: {
+            PreviewWrapper(view: {
                 let dateInputView = DateInputView(section: "開演時間")
                 return dateInputView
             }())

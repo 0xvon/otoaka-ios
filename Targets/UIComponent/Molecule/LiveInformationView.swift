@@ -20,8 +20,12 @@ class LiveInformationView: UIView {
         super.init(coder: coder)
         setup()
     }
-
     let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "YYYYMMdd"
+        return dateFormatter
+    }()
+    let displayDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY/MM/dd"
         return dateFormatter
@@ -93,11 +97,23 @@ class LiveInformationView: UIView {
 */
 
     func update(input: Input) {
-        dateBadgeView.title = input.live.live.openAt ?? "不明"
+        if let date = input.live.live.date
+            .map(dateFormatter.date(from:))?
+            .map(displayDateFormatter.string(from:)),
+           let openAt = input.live.live.openAt {
+            if let endDate = input.live.live.endDate
+                .map(dateFormatter.date(from:))?
+                .map(displayDateFormatter.string(from:)) {
+                dateBadgeView.title = "\(date) ~ \(endDate) \(openAt)"
+            } else {
+                dateBadgeView.title = "\(date) \(openAt)"
+            }
+        }
         liveTitleLabel.text = input.live.live.title
         hostGroupNameLabel.text = input.live.live.hostGroup.name
         mapBadgeView.title = input.live.live.liveHouse ?? "不明"
         likeButton.isHidden = false
+        likeButton.isEnabled = true
         likeButton.isSelected = input.live.isLiked
     }
 
@@ -160,6 +176,7 @@ class LiveInformationView: UIView {
     }
     
     @objc private func likeButtonTapped() {
+        likeButton.isEnabled = false
         listener(.likeButtonTapped)
     }
 }
@@ -172,7 +189,7 @@ class LiveInformationView: UIView {
     struct LiveInformationView_Previews: PreviewProvider {
         static var previews: some View {
             Group {
-                ViewWrapper(
+                PreviewWrapper(
                     view: {
                         let input: LiveInformationView.Input = try! Stub.make()
                         let contentView = LiveInformationView()

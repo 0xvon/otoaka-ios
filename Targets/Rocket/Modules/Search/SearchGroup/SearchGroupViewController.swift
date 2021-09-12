@@ -1,20 +1,20 @@
 //
-//  SelectGroup.swift
+//  GroupViewController.swift
 //  Rocket
 //
-//  Created by Masato TSUTSUMI on 2021/03/03.
+//  Created by kateinoigakukun on 2021/01/05.
 //
 
-import Combine
-import Endpoint
-import SafariServices
+import UIKit
+import DomainEntity
 import UIComponent
-import Foundation
-import InternalDomain
+import Combine
 
-final class SelectGroupViewController: UITableViewController {
+final class SearchGroupViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
-    
+    let viewModel: SearchGroupViewModel
+    private var cancellables: [AnyCancellable] = []
+
     lazy var searchResultController: SearchResultViewController = {
         SearchResultViewController(dependencyProvider: self.dependencyProvider)
     }()
@@ -23,33 +23,34 @@ final class SelectGroupViewController: UITableViewController {
         controller.searchResultsUpdater = self
         controller.delegate = self
         controller.searchBar.delegate = self
+        controller.searchBar.showsScopeBar = false
         return controller
     }()
-    
-    let viewModel: SelectGroupViewModel
-    private var cancellables: [AnyCancellable] = []
-    
+
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
-        self.viewModel = SelectGroupViewModel(dependencyProvider: dependencyProvider)
+        self.viewModel = SearchGroupViewModel(dependencyProvider: dependencyProvider)
+        
         super.init(nibName: nil, bundle: nil)
     }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "タグ付けしたいバンドを選択"
-        navigationItem.largeTitleDisplayMode = .never
+        
+        extendedLayoutIncludesOpaqueBars = true
+        title = "アーティスト検索"
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
         
         view.backgroundColor = Brand.color(for: .background(.primary))
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.registerCellClass(GroupCell.self)
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
         refreshControl = BrandRefreshControl()
         
         bind()
@@ -58,79 +59,92 @@ final class SelectGroupViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        searchController.searchBar.showsScopeBar = false
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+        setupFloatingItems(userRole: dependencyProvider.user.role)
     }
-    
+
     func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .updateSearchResult(let input):
                 self.searchResultController.inject(input)
             case .reloadData:
-                self.setTableViewBackgroundView(isDisplay: viewModel.state.groups.isEmpty)
                 self.tableView.reloadData()
             case .isRefreshing(let value):
                 if value {
-                    self.setTableViewBackgroundView(isDisplay: false)
                 } else {
                     self.refreshControl?.endRefreshing()
                 }
-            case .selectGroup(let group):
-                self.listener(group)
-                self.dismiss(animated: true, completion: nil)
-            case .reportError(let error):
-                print(error)
+            case .didToggleFollowGroup:
+                viewModel.refresh()
+            case .reportError(let err):
+                print(err)
                 showAlert()
             }
         }.store(in: &cancellables)
-        
+
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        
-        searchResultController.listen { [unowned self] output in
-            switch output {
-            case .group(let group):
-                viewModel.didSelectGroup(at: group)
-            default: break
-            }
-        }
     }
-    
+
     @objc private func refresh() {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
         self.refreshControl?.beginRefreshing()
         viewModel.refresh()
     }
     
-    private var listener: (GroupFeed) -> Void = { _ in }
-    func listen(_ listener: @escaping (GroupFeed) -> Void) {
-        self.listener = listener
+    private func setupFloatingItems(userRole: RoleProperties) {
+        let items: [FloatingButtonItem]
+        switch userRole {
+        case .artist(_):
+            let createGroupView = FloatingButtonItem(icon: UIImage(systemName: "person.3.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal))
+            createGroupView.addTarget(self, action: #selector(createBand), for: .touchUpInside)
+            items = [createGroupView]
+        case .fan(_):
+            items = []
+        }
+        let floatingController = dependencyProvider.viewHierarchy.floatingViewController
+        floatingController.setFloatingButtonItems(items)
+    }
+    
+    @objc private func createBand() {
+        let vc = CreateBandViewController(dependencyProvider: dependencyProvider, input: ())
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
-extension SelectGroupViewController: UISearchBarDelegate {
+extension SearchGroupViewController: UISearchBarDelegate {
 }
 
-extension SelectGroupViewController: UISearchControllerDelegate {
+extension SearchGroupViewController: UISearchControllerDelegate {
 }
 
-extension SelectGroupViewController: UISearchResultsUpdating {
+extension SearchGroupViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         viewModel.updateSearchQuery(query: searchController.searchBar.text)
     }
 }
 
-extension SelectGroupViewController {
+extension SearchGroupViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = viewModel.state.groups[indexPath.row]
         let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        cell.listen { [unowned self] output in
+            switch output {
+            case .selfTapped:
+                let vc = BandDetailViewController(
+                    dependencyProvider: self.dependencyProvider, input: group.group)
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
+            case .likeButtonTapped:
+                viewModel.followButtonTapped(group: group)
+            case .listenButtonTapped: break
+            }
+        }
         return cell
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.state.groups.count
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 282
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -139,24 +153,8 @@ extension SelectGroupViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let group = viewModel.state.groups[indexPath.row]
-        viewModel.didSelectGroup(at: group)
+        let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
+        self.navigationController?.pushViewController(vc, animated: true)
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
-    func setTableViewBackgroundView(isDisplay: Bool = true) {
-        let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = EmptyCollectionView(emptyType: .group, actionButtonTitle: nil)
-            emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-            return emptyCollectionView
-        }()
-        tableView.backgroundView = isDisplay ? emptyCollectionView : nil
-        if let backgroundView = tableView.backgroundView {
-            NSLayoutConstraint.activate([
-                backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 32),
-                backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor, constant: -32),
-                backgroundView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
-            ])
-        }
-    }
 }
-

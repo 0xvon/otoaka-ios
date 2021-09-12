@@ -1,16 +1,18 @@
 //
-//  LiveViewController.swift
+//  SelectGroup.swift
 //  Rocket
 //
-//  Created by Masato TSUTSUMI on 2020/10/20.
+//  Created by Masato TSUTSUMI on 2021/03/03.
 //
 
-import UIKit
-import DomainEntity
-import UIComponent
 import Combine
+import Endpoint
+import SafariServices
+import UIComponent
+import Foundation
+import InternalDomain
 
-final class LiveViewController: UITableViewController {
+final class SelectGroupViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
     
     lazy var searchResultController: SearchResultViewController = {
@@ -21,41 +23,43 @@ final class LiveViewController: UITableViewController {
         controller.searchResultsUpdater = self
         controller.delegate = self
         controller.searchBar.delegate = self
-        controller.searchBar.scopeButtonTitles = viewModel.scopes.map(\.description)
+        controller.searchBar.showsScopeBar = false
         return controller
     }()
     
-    let viewModel: LiveViewModel
+    let viewModel: SelectGroupViewModel
     private var cancellables: [AnyCancellable] = []
-
+    
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
-        self.viewModel = LiveViewModel(dependencyProvider: dependencyProvider)
+        self.viewModel = SelectGroupViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
     }
-
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "ライブ"
-        view.backgroundColor = Brand.color(for: .background(.primary))
-        tableView.showsVerticalScrollIndicator = false
-        tableView.tableFooterView = UIView(frame: .zero)
-        tableView.separatorStyle = .none
-        tableView.registerCellClass(LiveCell.self)
+        
+        extendedLayoutIncludesOpaqueBars = true
+        title = "アーティストを選択"
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
+        
+        view.backgroundColor = Brand.color(for: .background(.primary))
+        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
+        tableView.registerCellClass(GroupCell.self)
         refreshControl = BrandRefreshControl()
         
         bind()
+        viewModel.refresh()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        searchController.searchBar.showsScopeBar = true
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
     
@@ -65,7 +69,7 @@ final class LiveViewController: UITableViewController {
             case .updateSearchResult(let input):
                 self.searchResultController.inject(input)
             case .reloadData:
-                self.setTableViewBackgroundView(isDisplay: viewModel.lives.isEmpty)
+                self.setTableViewBackgroundView(isDisplay: viewModel.state.groups.isEmpty)
                 self.tableView.reloadData()
             case .isRefreshing(let value):
                 if value {
@@ -73,82 +77,70 @@ final class LiveViewController: UITableViewController {
                 } else {
                     self.refreshControl?.endRefreshing()
                 }
+            case .selectGroup(let group):
+                self.listener(group)
+                navigationController?.popViewController(animated: true)
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+                showAlert()
             }
         }.store(in: &cancellables)
         
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        
+        searchResultController.listen { [unowned self] output in
+            switch output {
+            case .group(let group):
+                viewModel.didSelectGroup(at: group)
+            default: break
+            }
+        }
     }
     
     @objc private func refresh() {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
         self.refreshControl?.beginRefreshing()
-        viewModel.refresh.send(())
-    }
-}
-
-extension LiveViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        viewModel.updateScope.send(selectedScope)
-    }
-}
-
-extension LiveViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        viewModel.updateSearchQuery.send(searchController.searchBar.text)
-    }
-}
-
-
-extension LiveViewController: UISearchControllerDelegate {
-    func willPresentSearchController(_ searchController: UISearchController) {
-        searchController.searchBar.showsScopeBar = false
+        viewModel.refresh()
     }
     
-    func willDismissSearchController(_ searchController: UISearchController) {
-        searchController.searchBar.showsScopeBar = true
+    private var listener: (GroupFeed) -> Void = { _ in }
+    func listen(_ listener: @escaping (GroupFeed) -> Void) {
+        self.listener = listener
     }
 }
 
-extension LiveViewController {
+extension SelectGroupViewController: UISearchBarDelegate {
+}
+
+extension SelectGroupViewController: UISearchControllerDelegate {
+}
+
+extension SelectGroupViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        viewModel.updateSearchQuery(query: searchController.searchBar.text)
+    }
+}
+
+extension SelectGroupViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = viewModel.lives[indexPath.row]
-        let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
+        let group = viewModel.state.groups[indexPath.row]
+        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        cell.listen { [unowned self] _ in
+            viewModel.didSelectGroup(at: group)
+        }
         return cell
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.lives.count
+        return viewModel.state.groups.count
     }
+    
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        viewModel.willDisplayCell.send(indexPath)
-    }
-    
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 332
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let live = viewModel.lives[indexPath.row]
-        let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
-        self.navigationController?.pushViewController(vc, animated: true)
-        tableView.deselectRow(at: indexPath, animated: true)
+        viewModel.willDisplay(rowAt: indexPath)
     }
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = searchController.searchBar.selectedScopeButtonIndex == 0 ? EmptyCollectionView(emptyType: .live, actionButtonTitle: "バンドを探す") : EmptyCollectionView(emptyType: .ticket, actionButtonTitle: "ライブを探す")
-            emptyCollectionView.listen { [unowned self] in
-                if searchController.searchBar.selectedScopeButtonIndex == 0 {
-                    let vc = SearchResultViewController(dependencyProvider: dependencyProvider)
-                    vc.inject(.group(""))
-                    self.navigationController?.pushViewController(vc, animated: true)
-                } else {
-                    searchController.searchBar.selectedScopeButtonIndex = 0
-                    viewModel.updateScope.send(0)
-                }
-            }
+            let emptyCollectionView = EmptyCollectionView(emptyType: .group, actionButtonTitle: nil)
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
         }()
@@ -162,3 +154,4 @@ extension LiveViewController {
         }
     }
 }
+

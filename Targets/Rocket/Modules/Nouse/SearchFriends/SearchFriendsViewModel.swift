@@ -178,7 +178,7 @@ final class SearchFriendsViewModel {
         case .fan:
             outputSubject.send(.updateSearchResult(.user(query)))
         case .live:
-            outputSubject.send(.updateSearchResult(.live(query)))
+            outputSubject.send(.updateSearchResult(.live(query, nil, nil, nil)))
         case .group:
             outputSubject.send(.updateSearchResult(.group(query)))
         }

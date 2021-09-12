@@ -64,7 +64,7 @@ import SwiftUI
 struct SummarySectionHeader_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(view: SummarySectionHeader(title: "LIVE"))
+            PreviewWrapper(view: SummarySectionHeader(title: "LIVE"))
                 .previewLayout(.fixed(width: 320, height: 48))
         }
         .background(Color.black)

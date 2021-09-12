@@ -23,7 +23,7 @@ public class BrandSearchController: UISearchController {
     }
 
     private func setup() {
-        searchBar.barTintColor = Brand.color(for: .background(.searchBar))
+        searchBar.barTintColor = Brand.color(for: .background(.primary))
         searchBar.barStyle = .black
         // Workaround: Force to use dark mode color scheme to change text field color
         searchBar.overrideUserInterfaceStyle = .dark

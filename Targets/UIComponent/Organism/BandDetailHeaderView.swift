@@ -12,7 +12,7 @@ import ImagePipeline
 
 public final class BandDetailHeaderView: UIView {
     public typealias Input = (
-        group: Group,
+        group: Endpoint.Group,
         groupItem: InternalDomain.YouTubeVideo?,
         imagePipeline: ImagePipeline
     )
@@ -175,7 +175,7 @@ import Foundation
 struct BandDetailHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(
+            PreviewWrapper(
                 view: {
                     let wrapper = UIView()
                     wrapper.backgroundColor = .black

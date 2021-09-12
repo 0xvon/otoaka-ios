@@ -54,9 +54,9 @@ import SwiftUI
 struct FollowersSummaryView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            PerviewWrapper(view: CountSummaryView())
+            PreviewWrapper(view: CountSummaryView())
                 .previewLayout(.fixed(width: 100, height: 48))
-            PerviewWrapper(view: {
+            PreviewWrapper(view: {
                 let label = CountSummaryView()
                 label.update(input: (title: "フォロワー", count: 100))
                 return label

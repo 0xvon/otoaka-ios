@@ -13,7 +13,7 @@ import InternalDomain
 final class SearchResultViewController: UIViewController {
     enum Input {
         case none
-        case live(String)
+        case live(String, Group.ID?, Date?, Date?)
         case liveToSelect(String)
         case group(String)
         case groupToSelect(String)
@@ -70,12 +70,12 @@ final class SearchResultViewController: UIViewController {
                 groupListViewController.listen { [unowned self] group in
                     self.listener(.group(group))
                 }
-            case .live(let query):
+            case .live(let query, let groupId, let fromDate, let toDate):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = false
                 userListViewController.view.isHidden = true
                 trackListViewController.view.isHidden = true
-                liveListViewController.inject(.searchResult(query))
+                liveListViewController.inject(.searchResult(query, groupId, fromDate, toDate))
             case .liveToSelect(let query):
                 groupListViewController.view.isHidden = true
                 liveListViewController.view.isHidden = false

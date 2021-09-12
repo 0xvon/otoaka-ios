@@ -79,7 +79,7 @@ import SwiftUI
 struct BadgeView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(
+            PreviewWrapper(
                 view: BadgeView(text: "Hello", image: BundleReference.image(named: "ticket"))
             )
                 .previewLayout(.fixed(width: 100, height: 60))

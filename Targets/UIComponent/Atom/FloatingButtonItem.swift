@@ -73,7 +73,7 @@ import SwiftUI
 struct FloatingButtonItem_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(
+            PreviewWrapper(
                 view: FloatingButtonItem(
                     icon: UIImage(systemName: "plus")!
                         .withTintColor(.white, renderingMode: .alwaysOriginal)

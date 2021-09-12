@@ -30,7 +30,7 @@ import SwiftUI
 struct LoadingCollectionView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(view: LoadingCollectionView())
+            PreviewWrapper(view: LoadingCollectionView())
                 .previewLayout(.fixed(width: 320, height: 500))
         }
         .background(Color.black)

@@ -73,7 +73,7 @@ final class SelectLiveViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.section + 25 > state.lives.count else { return }
+        guard indexPath.row + 25 > state.lives.count else { return }
         getUpcomingLiveAction.next()
     }
     

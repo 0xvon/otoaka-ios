@@ -17,16 +17,84 @@ final class SearchViewController: UIViewController {
         SearchResultViewController(dependencyProvider: self.dependencyProvider)
     }()
     lazy var searchController: UISearchController = {
-        let controller = UISearchController(searchResultsController: self.searchResultController)
-        controller.searchBar.barTintColor = Brand.color(for: .background(.searchBar))
+        let controller = BrandSearchController(searchResultsController: self.searchResultController)
         controller.searchResultsUpdater = self
-        controller.searchBar.barStyle = .black
-        // Workaround: Force to use dark mode color scheme to change text field color
-        controller.searchBar.overrideUserInterfaceStyle = .dark
-        let segmentedControl = controller.searchBar.scopeSegmentedControl
-        segmentedControl?.selectedSegmentTintColor = Brand.color(for: .background(.secondary))
-        segmentedControl?.setTitleTextAttributes([.foregroundColor: Brand.color(for: .text(.primary))], for: .normal)
+        controller.delegate = self
+        controller.searchBar.delegate = self
         return controller
+    }()
+    private lazy var categoryStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.distribution = .fill
+        stackView.axis = .vertical
+        stackView.spacing = 24
+        
+        stackView.addArrangedSubview(categoryTitle)
+        NSLayoutConstraint.activate([
+            categoryTitle.heightAnchor.constraint(equalToConstant: 16),
+            categoryTitle.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        stackView.addArrangedSubview(liveCategoryButton)
+        NSLayoutConstraint.activate([
+            liveCategoryButton.heightAnchor.constraint(equalToConstant: 28),
+            liveCategoryButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        stackView.addArrangedSubview(groupCategoryButton)
+        NSLayoutConstraint.activate([
+            groupCategoryButton.heightAnchor.constraint(equalToConstant: 28),
+            groupCategoryButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        stackView.addArrangedSubview(userCategoryButton)
+        NSLayoutConstraint.activate([
+            userCategoryButton.heightAnchor.constraint(equalToConstant: 28),
+            userCategoryButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
+        return stackView
+    }()
+    private lazy var categoryTitle: UILabel = {
+        let label = UILabel()
+        label.text = "カテゴリ"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .largeStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var liveCategoryButton: CategoryButton = {
+        let button = CategoryButton()
+        button.addTarget(self, action: #selector(liveCategoryTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("ライブを探す", for: .normal)
+        button.setTitle("ライブを探す", for: .highlighted)
+        button._setImage(
+            image: UIImage(named: "selectedTicketIcon")!
+        )
+        return button
+    }()
+    private lazy var groupCategoryButton: CategoryButton = {
+        let button = CategoryButton()
+        button.addTarget(self, action: #selector(groupCategoryTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("アーティストを探す", for: .normal)
+        button._setImage(
+            image: UIImage(systemName: "guitars.fill")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal)
+        )
+        return button
+    }()
+    private lazy var userCategoryButton: CategoryButton = {
+        let button = CategoryButton()
+        button.addTarget(self, action: #selector(userCategoryTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("ユーザーを探す", for: .normal)
+        button._setImage(
+            image: UIImage(systemName: "person.fill")!
+                .withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal)
+        )
+        return button
     }()
 
     let viewModel: SearchViewModel
@@ -45,9 +113,16 @@ final class SearchViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = "検索"
+        title = "探す"
         navigationItem.searchController = searchController
         searchController.searchBar.scopeButtonTitles = viewModel.scopeButtonTitles
+        
+        view.addSubview(categoryStackView)
+        NSLayoutConstraint.activate([
+            categoryStackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+            categoryStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            categoryStackView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 16),
+        ])
 
         bind()
     }
@@ -60,6 +135,42 @@ final class SearchViewController: UIViewController {
             }
         }.store(in: &cancellables)
     }
+    
+    @objc private func liveCategoryTapped() {
+        let vc = SearchLiveViewController(dependencyProvider: dependencyProvider)
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func groupCategoryTapped() {
+        let vc = SearchGroupViewController(dependencyProvider: dependencyProvider)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func userCategoryTapped() {
+        let vc = SearchUserViewController(dependencyProvider: dependencyProvider)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension SearchViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        viewModel.updateSearchResults(
+            queryText: searchController.searchBar.text,
+            scopeIndex: searchController.searchBar.selectedScopeButtonIndex)
+    }
+}
+
+extension SearchViewController: UISearchControllerDelegate {
+    func willPresentSearchController(_ searchController: UISearchController) {
+        viewModel.updateSearchResults(
+            queryText: searchController.searchBar.text,
+            scopeIndex: searchController.searchBar.selectedScopeButtonIndex)
+    }
+    func willDismissSearchController(_ searchController: UISearchController) {
+        viewModel.updateSearchResults(
+            queryText: searchController.searchBar.text,
+            scopeIndex: searchController.searchBar.selectedScopeButtonIndex)
+    }
 }
 
 extension SearchViewController: UISearchResultsUpdating {
@@ -70,11 +181,3 @@ extension SearchViewController: UISearchResultsUpdating {
     }
 }
 
-// MARK: - Workaround
-fileprivate extension UISearchBar {
-    var scopeSegmentedControl: UISegmentedControl? {
-        subviews.flatMap { $0.subviews }.flatMap { $0.subviews }.lazy.compactMap {
-            $0 as? UISegmentedControl
-        }.first
-    }
-}

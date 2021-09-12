@@ -131,9 +131,10 @@ final class TextFieldView: UIView {
         self.textField.inputView = inputView
         let toolBar = UIToolbar()
         toolBar.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
+        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
         let doneButtonItem = UIBarButtonItem(
             barButtonSystemItem: .done, target: self, action: #selector(donePicker))
-        toolBar.setItems([doneButtonItem], animated: true)
+        toolBar.setItems([spacer, doneButtonItem], animated: true)
         self.textField.inputAccessoryView = toolBar
     }
 

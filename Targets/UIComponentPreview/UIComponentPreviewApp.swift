@@ -12,7 +12,7 @@ import StubKit
 struct UIComponentPreviewApp: App {
     var body: some Scene {
         WindowGroup {
-            ViewWrapper(
+            PreviewWrapper(
                 view: {
                     let wrapper = UIView()
                     wrapper.backgroundColor = .black

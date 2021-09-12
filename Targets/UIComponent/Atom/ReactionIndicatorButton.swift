@@ -87,10 +87,10 @@ import SwiftUI
 struct ReactionButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ViewWrapper(
+            PreviewWrapper(
                 view: ReactionIndicatorButton(text: "1", icon: BundleReference.image(named: "ticket"))
             )
-            ViewWrapper(
+            PreviewWrapper(
                 view: {
                     let button = ReactionIndicatorButton(text: "1", icon: BundleReference.image(named: "ticket"))
                     let container = UIView()

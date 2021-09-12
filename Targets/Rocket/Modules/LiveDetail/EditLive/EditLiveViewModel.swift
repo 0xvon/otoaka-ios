@@ -16,6 +16,7 @@ class EditLiveViewModel {
         var title: String?
         var livehouse: String?
         var date: Date
+        var endDate: Date?
         var openAt: Date
         var startAt: Date
         var thumbnail: UIImage?
@@ -163,6 +164,7 @@ class EditLiveViewModel {
             hostGroupId: state.live.hostGroup.id,
             liveHouse: state.livehouse ?? state.live.liveHouse,
             date: dateFormatter.string(from: state.date),
+            endDate: state.endDate.map(dateFormatter.string(from:)),
             openAt: timeFormatter.string(from: state.openAt),
             startAt: timeFormatter.string(from: state.startAt),
             piaEventCode: state.live.piaEventCode,

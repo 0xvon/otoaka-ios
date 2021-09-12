@@ -191,7 +191,7 @@ class UserListViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.section + 25 > state.users.count else { return }
+        guard indexPath.row + 25 > state.users.count else { return }
         switch storage {
         case let .followers(pagination):
             pagination.next()

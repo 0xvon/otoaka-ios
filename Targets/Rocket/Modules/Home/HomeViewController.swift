@@ -16,6 +16,16 @@ final class HomeViewController: UIViewController {
     
     private var cancellables: [AnyCancellable] = []
     
+    private lazy var createPostButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
+        button.setTitle("＋", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .largeStrong)
+        button.addTarget(self, action: #selector(createPostButtonTapped), for: .touchUpInside)
+        return button
+    }()
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         super.init(nibName: nil, bundle: nil)
@@ -29,6 +39,7 @@ final class HomeViewController: UIViewController {
         self.title = "ライブレポート"
         navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createPostButton)
         
         setPagingViewController()
         requestNotification()
@@ -97,6 +108,11 @@ final class HomeViewController: UIViewController {
             userDefaults.setValue(true, forKey: key)
             userDefaults.synchronize()
         }
+    }
+    
+    @objc private func createPostButtonTapped() {
+        let vc = SearchLiveViewController(dependencyProvider: dependencyProvider)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
