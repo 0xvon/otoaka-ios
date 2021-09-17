@@ -117,7 +117,7 @@ class TrackListViewModel {
                     }
                     self?.outputSubject.send(.reloadTableView)
                 case .error(let err):
-                    print(err)
+                    print(String(describing: err))
 //                    self?.outputSubject.send(.error(err))
                 }
             }
@@ -145,7 +145,7 @@ class TrackListViewModel {
                     } ?? []
                     self?.outputSubject.send(.reloadTableView)
                 case .error(let err):
-                    print(err)
+                    print(String(describing: err))
 //                    self?.outputSubject.send(.error(err))
                 }
             }

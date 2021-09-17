@@ -18,6 +18,12 @@ class CommentCell: UITableViewCell, ReusableCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var commentTextView: UITextView!
     
+    private lazy var editButton: UIButton = { // TODO
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "ellipsis")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        return button
+    }()
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY/MM/dd"

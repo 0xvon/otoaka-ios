@@ -104,7 +104,7 @@ class LiveInformationView: UIView {
             if let endDate = input.live.live.endDate
                 .map(dateFormatter.date(from:))?
                 .map(displayDateFormatter.string(from:)) {
-                dateBadgeView.title = "\(date) ~ \(endDate) \(openAt)"
+                dateBadgeView.title = "\(date) ~ \(endDate)"
             } else {
                 dateBadgeView.title = "\(date) \(openAt)"
             }

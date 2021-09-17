@@ -64,7 +64,7 @@ final class TrackListViewController: UIViewController, Instantiable {
                 self.tableView.reloadData()
                 setTableViewBackgroundView(isDisplay: viewModel.state.tracks.isEmpty)
             case .error(let err):
-                print(err)
+                print(String(describing: err))
                 self.showAlert()
             }
         }

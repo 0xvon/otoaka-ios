@@ -26,7 +26,7 @@ class PostViewModel {
         var groups: [Group] = []
         var live: Live
         var tracks: [Endpoint.Track] = []
-        let maxLength: Int = 140
+        let maxLength: Int = 5000
         var imageState: ImageState = .initial
     }
     
@@ -148,8 +148,8 @@ class PostViewModel {
     func post(imageUrls: [String]) {
         guard let text = state.text else { return }
         let request = CreatePost.Request(
-            author: dependencyProvider.user,
-            live: state.live,
+            author: dependencyProvider.user.id,
+            live: state.live.id,
             text: text,
             tracks: state.tracks,
             groups: state.groups,

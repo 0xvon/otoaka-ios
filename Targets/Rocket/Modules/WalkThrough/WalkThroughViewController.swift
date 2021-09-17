@@ -53,8 +53,10 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
     }()
     let titles = [
         "アーティストをフォローしよう",
-        "行きたいライブをいいねしよう",
-        "ライブの感想を記録しよう"
+        "行きたいライブをいいね♡しよう",
+        "行ったライブを探そう",
+        "ライブの感想を書こう",
+        "自分だけの記録をつくろう",
     ]
         
     override func viewDidLoad() {
@@ -72,11 +74,15 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
         
         let vc1 = GroupListViewController(dependencyProvider: dependencyProvider, input: .allGroup)
         let vc2 = LiveListViewController(dependencyProvider: dependencyProvider, input: .upcoming(dependencyProvider.user))
-        let vc3 = AppDescriptionViewController(input: (description: "検索🔍タブから自分が行ったライブを探して「このライブのレポートを書く」を押してレポートを書こう！レポートにはその日のセットリスト、MCやライブ中に起こった印象的な出来事、感想を記録しよう！レポートはマイページに溜まっていくよ！", imageName: "ss_post"))
+        let vc3 = AppDescriptionViewController(input: (description: "検索タブからライブを探せるよ！行ったことあるライブをここから探そう！アーティストや日付で条件を絞って検索することもできるよ！", imageName: "ss_search"))
+        let vc4 = AppDescriptionViewController(input: (description: "ライブを探したら「このライブのレポートを書く」を押してレポートを書こう！レポートにはその日のセットリスト、MCやライブ中に起こった印象的な出来事、感想を記録しよう！", imageName: "ss_post"))
+        let vc5 = AppDescriptionViewController(input: (description: "書いたレポートはマイページに溜まっていくよ！行きたいライブやフォローしたアーティストも一緒に溜まっていって自分だけの音楽ファン活動記録をつくることができるよ！さあOTOAKAをはじめよう！", imageName: "ss_mypage"))
         
         add(viewController: vc1)
         add(viewController: vc2)
         add(viewController: vc3)
+        add(viewController: vc4)
+        add(viewController: vc5)
         
         self.view.addSubview(_prevButton)
         self.view.addSubview(_nextButton)
@@ -113,8 +119,8 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
     
     func walkthroughPageDidChange(_ pageNumber: Int) {
         _prevButton.isHidden = pageNumber == 0
-        _nextButton.isHidden = pageNumber == 2
-        navigationItem.rightBarButtonItem = pageNumber == 2 ? UIBarButtonItem(customView: _closeButton) : nil
+        _nextButton.isHidden = pageNumber == 4
+        navigationItem.rightBarButtonItem = pageNumber == 4 ? UIBarButtonItem(customView: _closeButton) : nil
         
         title = titles[pageNumber]
     }

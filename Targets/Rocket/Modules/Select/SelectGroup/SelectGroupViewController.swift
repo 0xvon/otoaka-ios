@@ -124,7 +124,7 @@ extension SelectGroupViewController: UISearchResultsUpdating {
 extension SelectGroupViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = viewModel.state.groups[indexPath.row]
-        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: .select), for: indexPath)
         cell.listen { [unowned self] _ in
             viewModel.didSelectGroup(at: group)
         }

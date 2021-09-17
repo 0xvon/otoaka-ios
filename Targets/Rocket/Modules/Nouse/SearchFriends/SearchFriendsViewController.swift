@@ -186,7 +186,7 @@ extension SearchFriendsViewController {
             return cell
         case .group:
             let group = viewModel.state.groups[indexPath.row]
-            let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+            let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
             cell.listen { [unowned self] output in
                 switch output {
                 case .selfTapped:

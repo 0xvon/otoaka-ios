@@ -37,7 +37,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textColor = Brand.color(for: .text(.primary))
         textView.font = Brand.font(for: .mediumStrong)
-        textView.text = "同じアーティストが好きな人や\n同じライブに行く予定の人をすぐに探せます"
+        textView.text = "ライブの感想やセトリを共有するアプリ"
         textView.backgroundColor = .clear
         textView.textAlignment = .center
         return textView

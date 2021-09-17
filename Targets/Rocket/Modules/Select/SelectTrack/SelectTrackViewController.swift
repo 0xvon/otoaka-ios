@@ -53,6 +53,7 @@ final class SelectTrackViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        extendedLayoutIncludesOpaqueBars = true
         title = "楽曲選択"
         navigationItem.largeTitleDisplayMode = .never
         
@@ -155,7 +156,7 @@ extension SelectTrackViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = self.viewModel.state.groups[indexPath.row]
-        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: .select), for: indexPath)
         cell.listen { [unowned self] _ in
             searchController.searchBar.text = group.group.name
             viewModel.updateSearchQuery(query: group.group.name)

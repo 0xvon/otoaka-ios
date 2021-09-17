@@ -112,7 +112,17 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let group = self.viewModel.state.groups[indexPath.row]
-        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let type: GroupCellContent.GroupCellContentType
+        switch viewModel.dataSource {
+        case .allGroup:
+            type = .follow
+        case .searchResultsToSelect(_):
+            type = .select
+        default:
+            type = .normal
+        }
+        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: type), for: indexPath)
+        
         cell.listen { [unowned self] output in
             switch output {
             case .selfTapped:

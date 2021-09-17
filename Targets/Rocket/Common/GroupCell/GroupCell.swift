@@ -66,8 +66,12 @@ final class GroupCell: UITableViewCell, ReusableCell {
 class GroupCellContent: UIButton {
     typealias Input = (
         group: GroupFeed,
-        imagePipeline: ImagePipeline
+        imagePipeline: ImagePipeline,
+        type: GroupCellContentType
     )
+    enum GroupCellContentType {
+        case normal, follow, select
+    }
     enum Output {
         case listenButtonTapped
         case likeButtonTapped
@@ -98,6 +102,17 @@ class GroupCellContent: UIButton {
         button.isEnabled = false
         return button
     }()
+    private lazy var bigLikeButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 24
+        button.isUserInteractionEnabled = true
+        button.setTitle("フォロー", selected: false)
+        button.setTitle("フォロー中", selected: true)
+        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        button.isEnabled = false
+        return button
+    }()
     
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
@@ -118,7 +133,20 @@ class GroupCellContent: UIButton {
         sinceBadgeView.title = startYear
         hometownBadgeView.title = input.group.group.hometown.map { "\($0)出身" } ?? "出身不明"
         likeButton.isEnabled = true
+        bigLikeButton.isEnabled = true
         likeButton.isSelected = input.group.isFollowing
+        bigLikeButton.isSelected = input.group.isFollowing
+        switch input.type {
+        case .normal:
+            likeButton.isHidden = false
+            bigLikeButton.isHidden = true
+        case .follow:
+            likeButton.isHidden = true
+            bigLikeButton.isHidden = false
+        case .select:
+            likeButton.isHidden = true
+            bigLikeButton.isHidden = true
+        }
 
     }
     
@@ -128,7 +156,7 @@ class GroupCellContent: UIButton {
         self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         self.layer.cornerRadius = 10
         
-        jacketImageView.layer.opacity = 0.6
+        jacketImageView.layer.opacity = 0.3
         jacketImageView.layer.cornerRadius = 10
         jacketImageView.layer.borderWidth = 1
         jacketImageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
@@ -156,11 +184,20 @@ class GroupCellContent: UIButton {
             likeButton.heightAnchor.constraint(equalTo: likeButton.widthAnchor),
         ])
         
+        addSubview(bigLikeButton)
+        NSLayoutConstraint.activate([
+            bigLikeButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
+            bigLikeButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            bigLikeButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
+            bigLikeButton.heightAnchor.constraint(equalToConstant: 48),
+        ])
+        
         addTarget(self, action: #selector(selfTapped), for: .touchUpInside)
     }
     
     @objc private func likeButtonTapped() {
         likeButton.isEnabled = false
+        bigLikeButton.isEnabled = false
         self.listener(.likeButtonTapped)
     }
     

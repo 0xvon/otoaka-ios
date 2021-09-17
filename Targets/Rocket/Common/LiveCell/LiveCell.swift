@@ -209,7 +209,7 @@ class LiveCellContent: UIButton {
             if let endDate = input.live.live.endDate
                 .map(dateFormatter.date(from:))?
                 .map(displayDateFormatter.string(from:)) {
-                dateView.title = "\(date) ~ \(endDate) \(openAt)"
+                dateView.title = "\(date) ~ \(endDate)"
             } else {
                 dateView.title = "\(date) \(openAt)"
             }
