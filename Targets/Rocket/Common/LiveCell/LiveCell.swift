@@ -248,7 +248,7 @@ class LiveCellContent: UIButton {
         self.liveTitleLabel.font = Brand.font(for: .xlargeStrong)
         self.liveTitleLabel.textColor = Brand.color(for: .text(.primary))
         self.liveTitleLabel.backgroundColor = .clear
-        self.liveTitleLabel.lineBreakMode = .byWordWrapping
+        self.liveTitleLabel.lineBreakMode = .byTruncatingTail
         self.liveTitleLabel.numberOfLines = 0
         self.liveTitleLabel.adjustsFontSizeToFitWidth = false
         self.liveTitleLabel.sizeToFit()

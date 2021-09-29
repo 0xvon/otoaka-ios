@@ -25,7 +25,7 @@ class GroupBannerCell: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Brand.font(for: .largeStrong)
         label.textColor = Brand.color(for: .text(.primary))
-        label.lineBreakMode = .byWordWrapping
+        label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = false
         label.sizeToFit()

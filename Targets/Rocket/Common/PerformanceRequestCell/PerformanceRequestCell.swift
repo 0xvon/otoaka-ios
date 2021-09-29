@@ -81,14 +81,14 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
         liveTitleLabel.font = Brand.font(for: .xlargeStrong)
         liveTitleLabel.textColor = Brand.color(for: .text(.primary))
         liveTitleLabel.backgroundColor = .clear
-        liveTitleLabel.lineBreakMode = .byWordWrapping
+        liveTitleLabel.lineBreakMode = .byTruncatingTail
         liveTitleLabel.numberOfLines = 0
         liveTitleLabel.adjustsFontSizeToFitWidth = false
         liveTitleLabel.sizeToFit()
 
         performersLabel.font = Brand.font(for: .medium)
         performersLabel.textColor = Brand.color(for: .text(.primary))
-        performersLabel.lineBreakMode = .byWordWrapping
+        performersLabel.lineBreakMode = .byTruncatingTail
         performersLabel.numberOfLines = 0
         performersLabel.adjustsFontSizeToFitWidth = false
         performersLabel.sizeToFit()

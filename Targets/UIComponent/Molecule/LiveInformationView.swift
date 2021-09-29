@@ -36,7 +36,7 @@ class LiveInformationView: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = Brand.color(for: .text(.primary))
         label.font = Brand.font(for: .xlargeStrong)
-        label.lineBreakMode = .byWordWrapping
+        label.lineBreakMode = .byTruncatingTail
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = false
         return label
