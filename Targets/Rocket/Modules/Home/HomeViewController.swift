@@ -10,6 +10,7 @@ import Combine
 import Endpoint
 import ImageViewer
 import Parchment
+import AppTrackingTransparency
 
 final class HomeViewController: UIViewController {
     let dependencyProvider: LoggedInDependencyProvider
@@ -44,6 +45,9 @@ final class HomeViewController: UIViewController {
         setPagingViewController()
         requestNotification()
         showWalkThrough()
+        if #available(iOS 14, *) {
+            checkTrackingAuthorizationStatus()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -98,9 +102,45 @@ final class HomeViewController: UIViewController {
         }
     }
     
+    @available(iOS 14, *)
+    func checkTrackingAuthorizationStatus() {
+        switch ATTrackingManager.trackingAuthorizationStatus {
+        case .notDetermined:
+            requestTrackingAuthorization()
+        case .restricted:
+            updateTrackingAuthorizationStatus(false)
+        case .denied:
+            updateTrackingAuthorizationStatus(false)
+        case .authorized:
+            updateTrackingAuthorizationStatus(true)
+        @unknown default:
+            fatalError()
+        }
+    }
+
+    @available(iOS 14, *)
+    func requestTrackingAuthorization() {
+        ATTrackingManager.requestTrackingAuthorization { status in
+            switch status {
+            case .notDetermined: break
+            case .restricted:
+                self.updateTrackingAuthorizationStatus(false)
+            case .denied:
+                self.updateTrackingAuthorizationStatus(false)
+            case .authorized:
+                self.updateTrackingAuthorizationStatus(true)
+            @unknown default:
+                fatalError()
+            }
+        }
+    }
+
+    func updateTrackingAuthorizationStatus(_ b: Bool) {
+    }
+    
     private func showWalkThrough() {
         let userDefaults = UserDefaults.standard
-        let key = "walkThroughPresented_v3.0.0.14"
+        let key = "walkThroughPresented_v3.0.0.\(UUID().uuidString)"
         if !userDefaults.bool(forKey: key) {
             let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
             let nav = BrandNavigationController(rootViewController: vc)

@@ -74,7 +74,6 @@ final class RootViewController: UITabBarController, Instantiable {
             self.makeViewFromUserInfo()
         }
         let nav = DismissionSubscribableNavigationController(rootViewController: vc)
-        nav.navigationBar.backgroundColor = .clear
         nav.subscribeDismission { [unowned self] in
             self.checkSignupStatus()
         }

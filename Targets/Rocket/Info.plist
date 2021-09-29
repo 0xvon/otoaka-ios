@@ -60,9 +60,11 @@
 		</dict>
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>フィードの楽曲を選択・再生するためにロケバンにミュージックへのアクセスを許可します</string>
+	<string>楽曲を選択・再生するためにOTOAKAにミュージックへのアクセスを許可します</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>プロフィールなどの画像をアップロードするためにロケバンにカメラロールへのアクセスを許可します</string>
+	<string>プロフィールなどの画像をアップロードするためにOTOAKAにカメラロールへのアクセスを許可します</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>OTOAKAはユーザーに最適化されたコンテンツや広告の表示、またアプリをより良くするためにユーザーデータをトラッキングします</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -81,7 +83,7 @@
 		<string>armv7</string>
 	</array>
 	<key>UIStatusBarHidden</key>
-	<false/>
+	<true/>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>

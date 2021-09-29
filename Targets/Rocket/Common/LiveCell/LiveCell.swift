@@ -199,7 +199,8 @@ class LiveCellContent: UIButton {
         case .battle(let groups):
             self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
         case .festival(let groups):
-            self.bandsLabel.text = groups.map { $0.name }.joined(separator: ", ")
+            let groupNames = groups.map { $0.name }.prefix(3)
+            self.bandsLabel.text = groupNames.joined(separator: ", ") + "..."
         }
         
         if let date = input.live.live.date

@@ -41,17 +41,6 @@ class LiveInformationView: UIView {
         label.adjustsFontSizeToFitWidth = false
         return label
     }()
-    private lazy var hostGroupNameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .medium)
-        label.textColor = Brand.color(for: .text(.primary))
-        label.lineBreakMode = .byWordWrapping
-        label.numberOfLines = 0
-        label.adjustsFontSizeToFitWidth = false
-        label.sizeToFit()
-        return label
-    }()
     
     private let mapBadgeView: BadgeView = {
         let mapBadgeView = BadgeView(
@@ -110,7 +99,6 @@ class LiveInformationView: UIView {
             }
         }
         liveTitleLabel.text = input.live.live.title
-        hostGroupNameLabel.text = input.live.live.hostGroup.name
         mapBadgeView.title = input.live.live.liveHouse ?? "不明"
         likeButton.isHidden = false
         likeButton.isEnabled = true
@@ -125,15 +113,6 @@ class LiveInformationView: UIView {
             liveTitleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             liveTitleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             rightAnchor.constraint(equalTo: liveTitleLabel.rightAnchor, constant: 54),
-        ])
-        
-        addSubview(hostGroupNameLabel)
-        NSLayoutConstraint.activate([
-            hostGroupNameLabel.topAnchor.constraint(equalTo: liveTitleLabel.bottomAnchor, constant: 8),
-            hostGroupNameLabel.leftAnchor.constraint(
-                equalTo: liveTitleLabel.leftAnchor),
-            hostGroupNameLabel.rightAnchor.constraint(
-                equalTo: rightAnchor, constant: -54),
         ])
         
         addSubview(likeButton)

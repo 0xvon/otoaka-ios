@@ -37,14 +37,23 @@ final class RegistrationViewController: UIViewController, Instantiable {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textColor = Brand.color(for: .text(.primary))
         textView.font = Brand.font(for: .mediumStrong)
-        textView.text = "ライブの感想やセトリを共有するアプリ"
+        textView.text = "ライブ参戦履歴管理アプリ"
         textView.backgroundColor = .clear
         textView.textAlignment = .center
         return textView
     }()
+    private lazy var TermsOfServiceButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("利用規約", for: .normal)
+        button.titleLabel?.font = Brand.font(for: .mediumStrong)
+        button.setTitleColor(Brand.color(for: .text(.link)), for: .normal)
+        button.addTarget(self, action: #selector(tosDidTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     @IBOutlet weak var signInButtonView: Button! {
         didSet {
-            signInButtonView.setTitle("ログイン", for: .normal)
+            signInButtonView.setTitle("利用規約に同意してログイン", for: .normal)
         }
     }
 
@@ -66,6 +75,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         navigationItem.largeTitleDisplayMode = .never
         setup()
+        bind()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -73,9 +83,12 @@ final class RegistrationViewController: UIViewController, Instantiable {
         self.dependencyProvider.auth.delegate = self
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.navigationBar.barTintColor = .clear
+        self.navigationController?.navigationBar.backgroundColor = .clear
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
-        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
+//        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -83,9 +96,8 @@ final class RegistrationViewController: UIViewController, Instantiable {
 
         navigationController?.presentationController?.delegate = self
     }
-
-    func setup() {
-        self.view.backgroundColor = Brand.color(for: .background(.primary))
+    
+    func bind() {
         signInButtonView.listen { [unowned self] in
             viewModel.getSignupStatus()
         }
@@ -106,6 +118,10 @@ final class RegistrationViewController: UIViewController, Instantiable {
                 self.dismiss(animated: true, completion: nil)
             }
         }.store(in: &cancellables)
+    }
+
+    func setup() {
+        self.view.backgroundColor = Brand.color(for: .background(.primary))
         
         view.addSubview(appLogoImageView)
         NSLayoutConstraint.activate([
@@ -121,6 +137,13 @@ final class RegistrationViewController: UIViewController, Instantiable {
             descriptionTextView.heightAnchor.constraint(equalToConstant: 60),
             descriptionTextView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8),
             descriptionTextView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
+        ])
+        
+        view.addSubview(TermsOfServiceButton)
+        NSLayoutConstraint.activate([
+            TermsOfServiceButton.heightAnchor.constraint(equalToConstant: 20),
+            TermsOfServiceButton.topAnchor.constraint(equalTo: signInButtonView.bottomAnchor, constant: 8),
+            TermsOfServiceButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
         ])
     }
 
@@ -153,6 +176,13 @@ final class RegistrationViewController: UIViewController, Instantiable {
             flag = true
         }
         super.present(viewControllerToPresent, animated: flag, completion: completion)
+    }
+    
+    @objc private func tosDidTapped() {
+        guard let url = URL(string: "https://www.notion.so/masatojames/57b1f47c538443249baf1db83abdc462") else { return }
+        let safari = SFSafariViewController(url: url)
+        safari.dismissButtonStyle = .close
+        present(safari, animated: true, completion: nil)
     }
 }
 
