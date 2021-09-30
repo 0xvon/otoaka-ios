@@ -67,7 +67,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: band.rocketfor
-        MARKETING_VERSION: 3.0.1
+        MARKETING_VERSION: 3.0.2
         CURRENT_PROJECT_VERSION: 1
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: PRODUCTION
   Rocket-Staging:
@@ -78,7 +78,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: band.rocketfor.dev
-        MARKETING_VERSION: 3.0.1
+        MARKETING_VERSION: 3.0.2
         CURRENT_PROJECT_VERSION: 1
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: STAGING
   Rocket-Development:
@@ -89,7 +89,7 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: band.rocketfor.dev
-        MARKETING_VERSION: 3.0.1
+        MARKETING_VERSION: 3.0.2
         CURRENT_PROJECT_VERSION: 1
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEVELOPMENT
   RocketTests:
