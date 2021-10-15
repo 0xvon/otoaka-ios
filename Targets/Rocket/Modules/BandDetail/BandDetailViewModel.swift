@@ -52,24 +52,16 @@ class BandDetailViewModel {
         case pushToLiveDetail(LiveDetailViewController.Input)
 //        case pushToChartList(ChartListViewController.Input)
         
-        case pushToCommentList(CommentListViewController.Input)
         case pushToLiveList(LiveListViewController.Input)
         case openImage(GalleryItemsDataSource)
-        case pushToPostAuthor(User)
         case pushToPostList(PostListViewController.Input)
         case pushToUserList(UserListViewController.Input)
-        case pushToTrackList(TrackListViewController.Input)
         case pushToPost(PostViewController.Input)
-        case pushToPlayTrack(PlayTrackViewController.Input)
         case pushToGroupDetail(Group)
+        case pushToPlayTrack(PlayTrackViewController.Input)
         case openURLInBrowser(URL)
         
-        case didDeletePost
-        case didToggleLikePost
-        case didInstagramButtonTapped(PostSummary)
-        case didDeletePostButtonTapped(PostSummary)
         case didToggleLikeLive
-        case didTwitterButtonTapped(PostSummary)
         case reportError(Error)
     }
     
@@ -84,9 +76,6 @@ class BandDetailViewModel {
     private lazy var getGroupPost = Action(GetGroupPosts.self, httpClient: self.apiClient)
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
     
-    private lazy var deletePostAction = Action(DeletePost.self, httpClient: apiClient)
-    private lazy var likePostAction = Action(LikePost.self, httpClient: apiClient)
-    private lazy var unLikePostAction = Action(UnlikePost.self, httpClient: apiClient)
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
     private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
 
@@ -106,9 +95,6 @@ class BandDetailViewModel {
             getGroupLives.errors,
             getGroupPost.errors,
 //            listChannel.errors,
-            deletePostAction.errors,
-            likePostAction.errors,
-            unLikePostAction.errors,
             likeLiveAction.errors,
             unlikeLiveAction.errors
         )
@@ -123,9 +109,6 @@ class BandDetailViewModel {
             listChannel.elements.map { [unowned self] in
                 .didGetChart(self.state.group, $0.items.first)
             }.eraseToAnyPublisher(),
-            deletePostAction.elements.map { _ in .didDeletePost }.eraseToAnyPublisher(),
-            likePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
-            unLikePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
             likeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
             unlikeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
@@ -161,7 +144,7 @@ class BandDetailViewModel {
         switch row {
         case .live:
             guard let live = state.lives.first else { return }
-            outputSubject.send(.pushToLiveDetail(live))
+            outputSubject.send(.pushToLiveDetail(live.live))
         case .post: break
         }
     }
@@ -212,49 +195,6 @@ class BandDetailViewModel {
         }
     }
     
-    func postCellEvent(event: PostCellContent.Output) {
-        guard let post = state.posts.first else { return }
-        
-        switch event {
-        case .commentTapped:
-            outputSubject.send(.pushToCommentList(.postComment(post)))
-        case .deleteTapped:
-            outputSubject.send(.didDeletePostButtonTapped(post))
-        case .likeTapped:
-            post.isLiked
-                ? unlikePost(post: post)
-                : likePost(post: post)
-        case .twitterTapped:
-            outputSubject.send(.didTwitterButtonTapped(post))
-        case .instagramTapped:
-            outputSubject.send(.didInstagramButtonTapped(post))
-        case .userTapped:
-            outputSubject.send(.pushToPostAuthor(post.author))
-        case .groupTapped:
-            guard let group = post.groups.first else { return }
-            outputSubject.send(.pushToGroupDetail(group))
-        case .playTapped(let track):
-            outputSubject.send(.pushToPlayTrack(.track(track)))
-        case .imageTapped(let image):
-            outputSubject.send(.openImage(image))
-        case .cellTapped: break
-        case .postListTapped:
-            guard let live = post.post.live else { return }
-            outputSubject.send(.pushToPostList(.livePost(live)))
-        case .seePlaylistTapped:
-            outputSubject.send(.pushToTrackList(.playlist(post.post)))
-        case .postTapped:
-            guard let live = post.post.live else { return }
-            if post.post.author.id == dependencyProvider.user.id {
-                outputSubject.send(.pushToPost((live: live, post: post.post)))
-            } else {
-                outputSubject.send(.pushToPost((live: live, post: nil)))
-            }
-            
-        case .trackTapped(_): break
-        }
-    }
-    
     func liveCellEvent(event: LiveCellContent.Output) {
         guard let live = state.lives.first else { return }
         switch event {
@@ -271,7 +211,7 @@ class BandDetailViewModel {
         case .reportButtonTapped:
             outputSubject.send(.pushToPost((live: live.live, post: nil)))
         case .selfTapped:
-            outputSubject.send(.pushToLiveDetail(live))
+            outputSubject.send(.pushToLiveDetail(live.live))
             
         }
     }
@@ -315,24 +255,6 @@ class BandDetailViewModel {
         uri.order = "viewCount"
         
         listChannel.input((request: request, uri: uri))
-    }
-    
-    private func likePost(post: PostSummary) {
-        let request = LikePost.Request(postId: post.id)
-        let uri = LikePost.URI()
-        likePostAction.input((request: request, uri: uri))
-    }
-    
-    private func unlikePost(post: PostSummary) {
-        let request = UnlikePost.Request(postId: post.id)
-        let uri = UnlikePost.URI()
-        unLikePostAction.input((request: request, uri: uri))
-    }
-    
-    func deletePost(post: PostSummary) {
-        let request = DeletePost.Request(postId: post.id)
-        let uri = DeletePost.URI()
-        deletePostAction.input((request: request, uri: uri))
     }
     
     func likeLive(live: Live) {

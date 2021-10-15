@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UIComponent
 
 class AccountCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "AccountCell" }

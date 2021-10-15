@@ -8,6 +8,7 @@
 import UIKit
 import Endpoint
 import Combine
+import UIComponent
 
 final class CollectionListViewController: UIViewController, Instantiable {
     typealias Input = CollectionListViewModel.Input

@@ -9,6 +9,7 @@ import UIKit
 import DomainEntity
 import Combine
 import AWSCognitoAuth
+import UIComponent
 
 final class AccountViewController: UIViewController, Instantiable {
     typealias Input = Void

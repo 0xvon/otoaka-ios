@@ -179,7 +179,7 @@ extension SearchFriendsViewController {
                     let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live.live))
                     self.navigationController?.pushViewController(vc, animated: true)
                 case .selfTapped:
-                    let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                    let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live.live)
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }

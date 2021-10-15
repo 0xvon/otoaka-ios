@@ -12,7 +12,7 @@ import ImagePipeline
 
 public final class LiveDetailHeaderView: UIView {
     public typealias Input = (
-        live: LiveDetail,
+        live: Live,
         imagePipeline: ImagePipeline
     )
     
@@ -31,7 +31,6 @@ public final class LiveDetailHeaderView: UIView {
         view.listen { [unowned self] output in
             switch output {
             case .arrowButtonTapped: break
-            case .likeButtonTapped: listener(.likeButtonTapped)
             }
         }
         return view
@@ -63,8 +62,8 @@ public final class LiveDetailHeaderView: UIView {
     }
     
     public func update(input: Input) {
-        liveInformationView.update(input: input)
-        if let artworkURL = input.live.live.artworkURL {
+        liveInformationView.update(input: input.live)
+        if let artworkURL = input.live.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: liveThumbnailView)
         }
     }

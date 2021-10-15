@@ -112,8 +112,14 @@ class PostViewModel {
         outputSubject.send(.didUpdateContent)
     }
     
-    func didUploadImages(images: [UIImage]) {
-        state.images = images
+    func didUploadImage(image: UIImage) {
+        state.images.append(image)
+        state.imageState = .updated
+        outputSubject.send(.didUpdateContent)
+    }
+    
+    func didDeleteImage(at index: Int) {
+        state.images.remove(at: index)
         state.imageState = .updated
         outputSubject.send(.didUpdateContent)
     }

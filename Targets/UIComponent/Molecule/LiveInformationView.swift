@@ -10,7 +10,7 @@ import UIKit
 import DomainEntity
 
 class LiveInformationView: UIView {
-    public typealias Input = LiveDetailHeaderView.Input
+    public typealias Input = Live
     init() {
         super.init(frame: .zero)
         setup()
@@ -59,17 +59,6 @@ class LiveInformationView: UIView {
         dateBadgeView.translatesAutoresizingMaskIntoConstraints = false
         return dateBadgeView
     }()
-    private lazy var likeButton: ToggleButton = {
-        let button = ToggleButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 16
-        button.setImage(
-            UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
-        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
-        button.isHidden = true
-        return button
-    }()
     /*
     private let productionBadgeView: BadgeView = {
         let productionBadgeView = BadgeView(text: "Japan Music Systems", image: UIImage(named: "production"))
@@ -86,11 +75,11 @@ class LiveInformationView: UIView {
 */
 
     func update(input: Input) {
-        if let date = input.live.live.date
+        if let date = input.date
             .map(dateFormatter.date(from:))?
             .map(displayDateFormatter.string(from:)),
-           let openAt = input.live.live.openAt {
-            if let endDate = input.live.live.endDate
+           let openAt = input.openAt {
+            if let endDate = input.endDate
                 .map(dateFormatter.date(from:))?
                 .map(displayDateFormatter.string(from:)) {
                 dateBadgeView.title = "\(date) ~ \(endDate)"
@@ -98,11 +87,8 @@ class LiveInformationView: UIView {
                 dateBadgeView.title = "\(date) \(openAt)"
             }
         }
-        liveTitleLabel.text = input.live.live.title
-        mapBadgeView.title = input.live.live.liveHouse ?? "不明"
-        likeButton.isHidden = false
-        likeButton.isEnabled = true
-        likeButton.isSelected = input.live.isLiked
+        liveTitleLabel.text = input.title
+        mapBadgeView.title = input.liveHouse ?? "不明"
     }
 
     private func setup() {
@@ -112,15 +98,7 @@ class LiveInformationView: UIView {
         NSLayoutConstraint.activate([
             liveTitleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             liveTitleLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
-            rightAnchor.constraint(equalTo: liveTitleLabel.rightAnchor, constant: 54),
-        ])
-        
-        addSubview(likeButton)
-        NSLayoutConstraint.activate([
-            likeButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            likeButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
-            likeButton.widthAnchor.constraint(equalToConstant: 32),
-            likeButton.heightAnchor.constraint(equalTo: likeButton.widthAnchor),
+            rightAnchor.constraint(equalTo: liveTitleLabel.rightAnchor, constant: 16),
         ])
 
         addSubview(dateBadgeView)
@@ -148,15 +126,9 @@ class LiveInformationView: UIView {
 
     public enum Output {
         case arrowButtonTapped
-        case likeButtonTapped
     }
     @objc private func touchUpInsideArrowButton() {
         listener(.arrowButtonTapped)
-    }
-    
-    @objc private func likeButtonTapped() {
-        likeButton.isEnabled = false
-        listener(.likeButtonTapped)
     }
 }
 

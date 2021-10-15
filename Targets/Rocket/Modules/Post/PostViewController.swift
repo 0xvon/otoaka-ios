@@ -7,6 +7,7 @@
 
 import Combine
 import UIKit
+import UIComponent
 import Endpoint
 import Photos
 import PhotosUI
@@ -17,26 +18,29 @@ import UITextView_Placeholder
 final class PostViewController: UIViewController, Instantiable {
     typealias Input = PostViewModel.Input
 
-    private lazy var postScrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.isScrollEnabled = true
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
-    private lazy var postView: UIStackView = {
+    private lazy var liveView: LiveBannerCellContent = {
+        let content = LiveBannerCellContent()
+        content.translatesAutoresizingMaskIntoConstraints = false
+        return content
+    }()
+    private lazy var scrollStackView: UIStackView = {
         let postView = UIStackView()
         postView.translatesAutoresizingMaskIntoConstraints = false
         postView.backgroundColor = Brand.color(for: .background(.primary))
         postView.axis = .vertical
         postView.spacing = 16
         
-        let topSpacer = UIView()
-        topSpacer.translatesAutoresizingMaskIntoConstraints = false
-        postView.addArrangedSubview(topSpacer)
+        postView.addArrangedSubview(liveView)
         NSLayoutConstraint.activate([
-            topSpacer.widthAnchor.constraint(equalTo: postView.widthAnchor),
-            topSpacer.heightAnchor.constraint(equalToConstant: 16),
+            liveView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+            liveView.heightAnchor.constraint(equalToConstant: 100),
         ])
         
         postView.addArrangedSubview(textContainerView)
@@ -44,9 +48,10 @@ final class PostViewController: UIViewController, Instantiable {
             textContainerView.widthAnchor.constraint(equalTo: postView.widthAnchor)
         ])
         
-        postView.addArrangedSubview(postContentStackView)
+        postView.addArrangedSubview(imageGalleryView)
         NSLayoutConstraint.activate([
-            postContentStackView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+            imageGalleryView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+            imageGalleryView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
         ])
         
         let bottomSpacer = UIView()
@@ -65,16 +70,30 @@ final class PostViewController: UIViewController, Instantiable {
         view.addSubview(avatarImageView)
         NSLayoutConstraint.activate([
             avatarImageView.topAnchor.constraint(equalTo: view.topAnchor),
-            avatarImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            avatarImageView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
             avatarImageView.heightAnchor.constraint(equalToConstant: 40),
             avatarImageView.widthAnchor.constraint(equalToConstant: 40),
         ])
         
+        view.addSubview(usernameLabel)
+        NSLayoutConstraint.activate([
+            usernameLabel.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
+            usernameLabel.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 4),
+            usernameLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+        ])
+        
+        view.addSubview(trackNameLabel)
+        NSLayoutConstraint.activate([
+            trackNameLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor),
+            trackNameLabel.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
+            trackNameLabel.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
+        ])
+        
         view.addSubview(textView)
         NSLayoutConstraint.activate([
-            textView.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
-            textView.rightAnchor.constraint(equalTo: view.rightAnchor),
-            textView.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
+            textView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 16),
+            textView.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
+            textView.leftAnchor.constraint(equalTo: avatarImageView.leftAnchor),
             textView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             textView.heightAnchor.constraint(greaterThanOrEqualTo: avatarImageView.heightAnchor, multiplier: 1.6),
         ])
@@ -100,48 +119,10 @@ final class PostViewController: UIViewController, Instantiable {
         textView.returnKeyType = .done
         return textView
     }()
-    private lazy var postContentStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.spacing = 4
-        stackView.axis = .horizontal
-        stackView.backgroundColor = .clear
-        stackView.distribution = .fillEqually
-        
-        stackView.addArrangedSubview(uploadedImageView)
-//        stackView.addArrangedSubview(selectedGroupView)
-        stackView.addArrangedSubview(playlistView)
-        
-        return stackView
-    }()
-    private lazy var uploadedImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 16
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(uploadedImageTapped)))
-        
-        return imageView
-    }()
-//    private lazy var selectedGroupView: GroupCellContent = {
-//        let content = UINib(nibName: "GroupCellContent", bundle: nil)
-//            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
-//        content.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            content.heightAnchor.constraint(equalToConstant: 300),
-//        ])
-//        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
-//        return content
-//    }()
-    private lazy var playlistView: PlaylistCell = {
-        let content = PlaylistCell()
-        content.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300),
-        ])
-        return content
+    private lazy var imageGalleryView: ImageGalleryCollectionView = {
+        let view = ImageGalleryCollectionView(images: .none, imagePipeline: dependencyProvider.imagePipeline)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     private lazy var numOfTextLabel: UILabel = {
         let numOfTextLabel = UILabel()
@@ -177,6 +158,22 @@ final class PostViewController: UIViewController, Instantiable {
         avatarImageView.contentMode = .scaleAspectFill
         return avatarImageView
     }()
+    private lazy var usernameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .smallStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var trackNameLabel: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = Brand.font(for: .xsmall)
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.contentHorizontalAlignment = .left
+        button.addTarget(self, action: #selector(trackTapped), for: .touchUpInside)
+        return button
+    }()
     private lazy var postButton: UIButton = {
         let postButton = UIButton()
         postButton.translatesAutoresizingMaskIntoConstraints = false
@@ -185,15 +182,6 @@ final class PostViewController: UIViewController, Instantiable {
         postButton.setTitle("post", for: .normal)
         postButton.titleLabel?.font = Brand.font(for: .largeStrong)
         return postButton
-    }()
-    private lazy var movieThumbnailImageView: UIImageView = {
-        let movieThumbnailImageView = UIImageView()
-        movieThumbnailImageView.translatesAutoresizingMaskIntoConstraints = false
-        movieThumbnailImageView.layer.cornerRadius = 16
-        movieThumbnailImageView.contentMode = .scaleAspectFill
-        movieThumbnailImageView.clipsToBounds = true
-        movieThumbnailImageView.layer.opacity = 0.6
-        return movieThumbnailImageView
     }()
     private lazy var activityIndicator: LoadingCollectionView = {
         let activityIndicator = LoadingCollectionView()
@@ -256,72 +244,34 @@ final class PostViewController: UIViewController, Instantiable {
                 print(error)
                 showAlert()
             case .didInitContent:
-                if let post = viewModel.state.post {
-                    textView.text = post.text
-                    uploadedImageView.isHidden = post.imageUrls.isEmpty
-//                    selectedGroupView.isHidden = post.groups.isEmpty
-                    playlistView.isHidden = post.tracks.isEmpty
-                    
-                    if let image = post.imageUrls.first, let url = URL(string: image) {
-                        dependencyProvider.imagePipeline.loadImage(url, into: uploadedImageView)
-                    }
-//                    if let group = post.groups.first {
-//                        selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
-//                    }
-                    if !post.tracks.isEmpty {
-                        playlistView.inject(input: (tracks: post.tracks.map {
-                            Track(
-                                name: $0.trackName,
-                                artistName: $0.groupName,
-                                artwork: $0.thumbnailUrl!,
-                                trackType: $0.type
-                            )
-                        }, isEdittable: true, imagePipeline: dependencyProvider.imagePipeline))
-                    }
-                }
+                textView.text = viewModel.state.post?.text
+                trackNameLabel.setTitle(viewModel.state.tracks.first?.name, for: .normal)
+                usernameLabel.text = dependencyProvider.user.name
+                liveView.inject(input: (live: viewModel.state.live, imagePipeline: dependencyProvider.imagePipeline))
+                imageGalleryView.inject(images: .image(viewModel.state.images))
+                imageGalleryView.isHidden = viewModel.state.images.isEmpty
             case .didUpdateContent:
                 textView.text = viewModel.state.text
-                uploadedImageView.isHidden = viewModel.state.images.isEmpty
-//                selectedGroupView.isHidden = viewModel.state.groups.isEmpty
-                playlistView.isHidden = viewModel.state.tracks.isEmpty
-                
-                if let image = viewModel.state.images.first {
-                    uploadedImageView.image = image
-                }
-//                if let group = viewModel.state.groups.first {
-//                    selectedGroupView.inject(input: (group: group, imagePipeline: dependencyProvider.imagePipeline))
-//                }
-                if !viewModel.state.tracks.isEmpty {
-                    playlistView.inject(input: (tracks: viewModel.state.tracks, isEdittable: true, imagePipeline: dependencyProvider.imagePipeline))
-                }
+                trackNameLabel.setTitle(viewModel.state.tracks.first?.name, for: .normal)
+                imageGalleryView.inject(images: .image(viewModel.state.images))
+                imageGalleryView.isHidden = viewModel.state.images.isEmpty
             }
         }.store(in: &cancellables)
         
-        playlistView.listen { [unowned self] output in
-            switch output {
-            case .playButtonTapped(let track):
-                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .track(track))
-                self.navigationController?.pushViewController(vc, animated: true)
-            case .seeMoreTapped:
-                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: .selectedPlaylist(viewModel.state.tracks))
-                self.navigationController?.pushViewController(vc, animated: true)
-            case .groupTapped(let track):
-                viewModel.didSelectTrack(tracks: viewModel.state.tracks.filter { $0.name != track.name })
-            case .trackTapped(_): break
-            }
+        imageGalleryView.listen { [unowned self] index in
+            uploadedImageTapped(at: index)
         }
     }
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "レポートを書く"
-        self.navigationItem.largeTitleDisplayMode = .never
         
-        self.view.addSubview(postScrollView)
+        self.view.addSubview(scrollView)
         NSLayoutConstraint.activate([
-            postScrollView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
-            postScrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -16),
-            postScrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 16),
+            scrollView.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor),
+            scrollView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+            scrollView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
         ])
         
         self.view.addSubview(sectionView)
@@ -330,21 +280,17 @@ final class PostViewController: UIViewController, Instantiable {
             sectionView.heightAnchor.constraint(equalToConstant: 48),
             sectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             sectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-            sectionView.topAnchor.constraint(equalTo: postScrollView.bottomAnchor),
+            sectionView.topAnchor.constraint(equalTo: scrollView.bottomAnchor),
         ])
         setupSectionView()
         
-        postScrollView.addSubview(postView)
+        scrollView.addSubview(scrollStackView)
         NSLayoutConstraint.activate([
-            postView.widthAnchor.constraint(equalTo: postScrollView.widthAnchor),
-            postView.centerXAnchor.constraint(equalTo: postScrollView.centerXAnchor),
-            postView.topAnchor.constraint(equalTo: postScrollView.topAnchor),
-            postView.bottomAnchor.constraint(equalTo: postScrollView.bottomAnchor),
+            scrollStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            scrollStackView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
+            scrollStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            scrollStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
         ])
-        
-//        selectedGroupView.isHidden = true
-        uploadedImageView.isHidden = true
-        playlistView.isHidden = true
         
         if let thumbnailURL = dependencyProvider.user.thumbnailURL.flatMap(URL.init(string: )) {
             dependencyProvider.imagePipeline.loadImage(thumbnailURL, into: avatarImageView)
@@ -367,15 +313,15 @@ final class PostViewController: UIViewController, Instantiable {
             stackView.rightAnchor.constraint(equalTo: sectionView.rightAnchor, constant: -16),
         ])
         
-        let movieButton = UIButton()
-        movieButton.backgroundColor = .clear
-        movieButton.translatesAutoresizingMaskIntoConstraints = false
-        movieButton.setImage(UIImage(named: "image"), for: .normal)
-        movieButton.addTarget(self, action: #selector(searchImage(_:)), for: .touchUpInside)
-        stackView.addArrangedSubview(movieButton)
+        let selectImageButton = UIButton()
+        selectImageButton.backgroundColor = .clear
+        selectImageButton.translatesAutoresizingMaskIntoConstraints = false
+        selectImageButton.setImage(UIImage(named: "image"), for: .normal)
+        selectImageButton.addTarget(self, action: #selector(selectImageButtonTapped(_:)), for: .touchUpInside)
+        stackView.addArrangedSubview(selectImageButton)
         NSLayoutConstraint.activate([
-            movieButton.widthAnchor.constraint(equalToConstant: 30),
-            movieButton.heightAnchor.constraint(equalToConstant: 30),
+            selectImageButton.widthAnchor.constraint(equalToConstant: 30),
+            selectImageButton.heightAnchor.constraint(equalToConstant: 30),
         ])
         
         let youtubeButton = UIButton()
@@ -389,17 +335,6 @@ final class PostViewController: UIViewController, Instantiable {
             youtubeButton.heightAnchor.constraint(equalToConstant: 30),
         ])
         
-//        let groupButton = UIButton()
-//        groupButton.backgroundColor = .clear
-//        groupButton.translatesAutoresizingMaskIntoConstraints = false
-//        groupButton.setImage(UIImage(named: "guitar"), for: .normal)
-//        groupButton.addTarget(self, action: #selector(searchGroup(_:)), for: .touchUpInside)
-//        stackView.addArrangedSubview(groupButton)
-//        NSLayoutConstraint.activate([
-//            groupButton.widthAnchor.constraint(equalToConstant: 30),
-//            groupButton.heightAnchor.constraint(equalToConstant: 30),
-//        ])
-        
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(spacer)
@@ -411,20 +346,16 @@ final class PostViewController: UIViewController, Instantiable {
         ])
     }
     
-    @objc private func searchImage(_ sender: Any) {
-//        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-//            let picker = UIImagePickerController()
-//            picker.sourceType = .photoLibrary
-//            picker.delegate = self
-//            picker.mediaTypes = ["public.movie"]
-//            self.present(picker, animated: true, completion: nil)
-//        }
-        
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary
-            picker.delegate = self
-            self.present(picker, animated: true, completion: nil)
+    @objc private func selectImageButtonTapped(_ sender: Any) {
+        if viewModel.state.images.count == 4 {
+            showAlert(title: "画像は最大4枚までです", message: "")
+        } else {
+            if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+                let picker = UIImagePickerController()
+                picker.sourceType = .photoLibrary
+                picker.delegate = self
+                self.present(picker, animated: true, completion: nil)
+            }
         }
     }
     
@@ -438,42 +369,16 @@ final class PostViewController: UIViewController, Instantiable {
         self.present(nav, animated: true, completion: nil)
     }
     
-    @objc private func searchGroup(_ sender: Any) {
-        let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
-        let nav = BrandNavigationController(rootViewController: vc)
-        vc.listen { [unowned self] group in
-            self.dismiss(animated: true, completion: nil)
-            viewModel.didSelectGroup(groups: [group.group])
-        }
-        self.present(nav, animated: true, completion: nil)
-    }
-    
-    @objc private func searchSpotify(_ sender: Any) {
-        print("c")
-    }
-    
-    @objc private func cancelMovie(_ sender: UIButton) {
-//        self.viewModel.didUpdatePost(post: .none)
-    }
-    
     @objc func postButtonTapped() {
         viewModel.postButtonTapped()
     }
     
-    @objc private func playTrackButtonTapped() {
-        guard let track = viewModel.state.tracks.first else { return }
-        let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .track(track))
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @objc private func selectedGroupTapped() {
-        let alertController = UIAlertController(
-            title: "削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-
+    @objc private func trackTapped() {
+        let alertController = UIAlertController(title: "楽曲を削除しますか？", message: nil, preferredStyle: .actionSheet)
         let acceptAction = UIAlertAction(
             title: "OK", style: UIAlertAction.Style.default,
             handler: { [unowned self] action in
-                viewModel.didSelectGroup(groups: [])
+                viewModel.didSelectTrack(tracks: [])
             })
         let cancelAction = UIAlertAction(
             title: "キャンセル", style: UIAlertAction.Style.cancel,
@@ -485,14 +390,14 @@ final class PostViewController: UIViewController, Instantiable {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    @objc private func uploadedImageTapped() {
+    @objc private func uploadedImageTapped(at index: Int) {
         let alertController = UIAlertController(
-            title: "削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+            title: "削除しますか？", message: nil, preferredStyle: .actionSheet)
 
         let acceptAction = UIAlertAction(
             title: "OK", style: UIAlertAction.Style.default,
             handler: { [unowned self] action in
-                viewModel.didUploadImages(images: [])
+                viewModel.didDeleteImage(at: index)
             })
         let cancelAction = UIAlertAction(
             title: "キャンセル", style: UIAlertAction.Style.cancel,
@@ -518,7 +423,7 @@ extension PostViewController: UITextViewDelegate {
 extension PostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
-        viewModel.didUploadImages(images: [image])
+        viewModel.didUploadImage(image: image)
         picker.dismiss(animated: true, completion: nil)
     }
 }

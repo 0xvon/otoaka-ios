@@ -63,24 +63,17 @@ class PostCellContent: UIButton {
         imagePipeline: ImagePipeline
     )
     enum Output {
+        case selfTapped
         case userTapped
-        case groupTapped
-        case trackTapped(Track)
-        case playTapped(Track)
-        case imageTapped(GalleryItemsDataSource)
-        case cellTapped
+        case liveTapped
+        case trackTapped
         case commentTapped
         case likeTapped
-        case twitterTapped
-        case instagramTapped
-        case postListTapped
-        case seePlaylistTapped
-        case postTapped
-        case deleteTapped
+        case settingTapped
     }
     let postDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd HH:mm"
+        dateFormatter.dateFormat = "YYYY/MM/dd"
         return dateFormatter
     }()
     let liveDateFormatter: DateFormatter = {
@@ -106,30 +99,38 @@ class PostCellContent: UIButton {
             textContainerView.widthAnchor.constraint(equalTo: postView.widthAnchor)
         ])
         
-        postView.addArrangedSubview(textView)
+        let textStackView = UIStackView()
+        textStackView.translatesAutoresizingMaskIntoConstraints = false
+        textStackView.axis = .horizontal
+        textStackView.distribution = .fill
+        textStackView.spacing = 8
+        
+        textStackView.addArrangedSubview(textView)
+        textStackView.addSubview(seeMoreButton)
         NSLayoutConstraint.activate([
-            textView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+            seeMoreButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor),
+            seeMoreButton.leftAnchor.constraint(equalTo: textView.leftAnchor),
+            seeMoreButton.rightAnchor.constraint(equalTo: textView.rightAnchor),
+        ])
+        textStackView.addArrangedSubview(liveCardCell)
+        NSLayoutConstraint.activate([
+            textStackView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 2 / 3),
+            liveCardCell.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3),
         ])
         
-        postView.addArrangedSubview(postContentStackView)
+        postView.addArrangedSubview(textStackView)
         NSLayoutConstraint.activate([
-            postContentStackView.widthAnchor.constraint(equalTo: postView.widthAnchor),
+            textStackView.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
         postView.addArrangedSubview(spacer)
         
-        postView.addArrangedSubview(writeReportButton)
-        NSLayoutConstraint.activate([
-            writeReportButton.heightAnchor.constraint(equalToConstant: 48),
-            writeReportButton.widthAnchor.constraint(equalTo: postView.widthAnchor),
-        ])
-        
         postView.addArrangedSubview(sectionView)
         NSLayoutConstraint.activate([
             sectionView.widthAnchor.constraint(equalTo: postView.widthAnchor),
-            sectionView.heightAnchor.constraint(equalToConstant: 44),
+            sectionView.heightAnchor.constraint(equalToConstant: 32),
         ])
         
         return postView
@@ -143,37 +144,56 @@ class PostCellContent: UIButton {
             avatarImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
             avatarImageView.heightAnchor.constraint(equalToConstant: 40),
             avatarImageView.widthAnchor.constraint(equalTo: avatarImageView.heightAnchor),
+            avatarImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
         
         view.addSubview(usernameLabel)
         NSLayoutConstraint.activate([
             usernameLabel.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
             usernameLabel.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
-            usernameLabel.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
         
-        view.addSubview(dateLabel)
+        view.addSubview(trackNameLabel)
         NSLayoutConstraint.activate([
-            dateLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 4),
-            dateLabel.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
-            dateLabel.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
+            trackNameLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 4),
+            trackNameLabel.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
+            trackNameLabel.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
         ])
         
-        view.addSubview(liveInfoLabel)
+        view.addSubview(settingButton)
         NSLayoutConstraint.activate([
-            liveInfoLabel.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: 4),
-            liveInfoLabel.leftAnchor.constraint(equalTo: dateLabel.leftAnchor),
-            liveInfoLabel.rightAnchor.constraint(equalTo: dateLabel.rightAnchor),
-            liveInfoLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            settingButton.widthAnchor.constraint(equalToConstant: 24),
+            settingButton.heightAnchor.constraint(equalTo: settingButton.widthAnchor),
+            settingButton.topAnchor.constraint(equalTo: usernameLabel.topAnchor),
+            settingButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
+            settingButton.leftAnchor.constraint(equalTo: usernameLabel.rightAnchor, constant: 4),
+        ])
+        
+        view.addSubview(trackNameLabel)
+        NSLayoutConstraint.activate([
+            trackNameLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor),
+            trackNameLabel.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
+            trackNameLabel.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
         ])
         
         return view
+    }()
+    private lazy var liveCardCell: LiveCardCellContent = {
+        let contentView = LiveCardCellContent()
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        contentView.isUserInteractionEnabled = true
+        contentView.addTarget(self, action: #selector(liveTapped), for: .touchUpInside)
+        return contentView
     }()
     private lazy var textView: UITextView = {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.text = ""
         textView.isScrollEnabled = false
+        textView.isUserInteractionEnabled = true
+        textView.textContainer.lineBreakMode = .byTruncatingTail
+        textView.textContainer.maximumNumberOfLines = 10
+        textView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(selfTapped)))
         textView.backgroundColor = .clear
         textView.isEditable = false
         textView.font = Brand.font(for: .mediumStrong)
@@ -183,74 +203,26 @@ class PostCellContent: UIButton {
         textView.textAlignment = .left
         return textView
     }()
-    private lazy var postContentStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.spacing = 4
-        stackView.axis = .horizontal
-        stackView.backgroundColor = .clear
-        stackView.distribution = .fillEqually
-        
-        stackView.addArrangedSubview(uploadedImageView)
-        NSLayoutConstraint.activate([
-            playlistView.heightAnchor.constraint(equalToConstant: 300),
-        ])
-        
-        stackView.addArrangedSubview(selectedGroupView)
-        stackView.addArrangedSubview(playlistView)
-        NSLayoutConstraint.activate([
-            playlistView.heightAnchor.constraint(equalToConstant: 300),
-        ])
-        
-        return stackView
-    }()
-    private lazy var uploadedImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 10
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(uploadedImageTapped)))
-        imageView.isHidden = true
-        
-        return imageView
-    }()
-    private lazy var selectedGroupView: GroupCellContent = {
-        let content = UINib(nibName: "GroupCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! GroupCellContent
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.addTarget(self, action: #selector(selectedGroupTapped), for: .touchUpInside)
-        content.isHidden = true
-
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 300),
-        ])
-        return content
-    }()
-    private lazy var playlistView: PlaylistCell = {
-        let content = PlaylistCell()
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.isUserInteractionEnabled = true
-        content.listen { [unowned self] output in
-            switch output {
-            case .playButtonTapped(let track): self.listener(.playTapped(track))
-            case .trackTapped(let track):
-                self.listener(.trackTapped(track))
-            case .seeMoreTapped:
-                self.listener(.seePlaylistTapped)
-            case .groupTapped(_): break
-            }
-        }
-        content.isHidden = true
-
-        return content
-    }()
-    private lazy var writeReportButton: ToggleButton = {
-        let button = ToggleButton()
+    private lazy var seeMoreButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = Brand.color(for: .background(.primary))
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(postButtonTapped), for: .touchUpInside)
-        button.layer.cornerRadius = 24
+        button.setTitle("続きを読む", for: .normal)
+        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .normal)
+        button.contentHorizontalAlignment = .left
+        button.titleLabel?.font = Brand.font(for: .medium)
+        button.addTarget(self, action: #selector(selfTapped), for: .touchUpInside)
+        return button
+    }()
+    private lazy var settingButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(
+            UIImage(systemName: "ellipsis")!
+                .withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        button.addTarget(self, action: #selector(settingTapped), for: .touchUpInside)
         return button
     }()
     private lazy var sectionView: UIStackView = {
@@ -258,11 +230,6 @@ class PostCellContent: UIButton {
         sectionView.translatesAutoresizingMaskIntoConstraints = false
         sectionView.distribution = .fill
         sectionView.axis = .horizontal
-        
-        sectionView.addArrangedSubview(showPostListButton)
-        NSLayoutConstraint.activate([
-            showPostListButton.widthAnchor.constraint(equalToConstant: 44),
-        ])
         
         sectionView.addArrangedSubview(commentButtonView)
         NSLayoutConstraint.activate([
@@ -274,24 +241,11 @@ class PostCellContent: UIButton {
             likeButtonView.widthAnchor.constraint(equalToConstant: 60),
         ])
         
-        sectionView.addArrangedSubview(twitterButton)
-        NSLayoutConstraint.activate([
-            twitterButton.widthAnchor.constraint(equalToConstant: 44),
-        ])
-        
-        sectionView.addArrangedSubview(instagramButton)
-        NSLayoutConstraint.activate([
-            instagramButton.widthAnchor.constraint(equalToConstant: 44),
-        ])
-        
-        sectionView.addArrangedSubview(deleteButton)
-        NSLayoutConstraint.activate([
-            deleteButton.widthAnchor.constraint(equalToConstant: 44),
-        ])
-        
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
         sectionView.addArrangedSubview(spacer)
+        
+        sectionView.addArrangedSubview(dateLabel)
         
         return sectionView
     }()
@@ -320,42 +274,6 @@ class PostCellContent: UIButton {
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         return likeButton
     }()
-    private lazy var twitterButton: UIButton = {
-        let twitterButton = UIButton()
-        twitterButton.translatesAutoresizingMaskIntoConstraints = false
-        twitterButton.setImage(
-            UIImage(named: "twitterMargin"),
-            for: .normal)
-        twitterButton.addTarget(self, action: #selector(shareTwitterButtonTapped), for: .touchUpInside)
-        return twitterButton
-    }()
-    private lazy var instagramButton: UIButton = {
-        let shareButton = UIButton()
-        shareButton.translatesAutoresizingMaskIntoConstraints = false
-        shareButton.setImage(
-            UIImage(named: "instaMargin"),
-            for: .normal)
-        shareButton.addTarget(self, action: #selector(shareInstagramButtonTapped), for: .touchUpInside)
-        return shareButton
-    }()
-    private lazy var showPostListButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "note.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.addTarget(self, action: #selector(showPostListButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var deleteButton: UIButton = {
-        let deleteButton = UIButton()
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.setImage(
-            UIImage(systemName: "trash")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
-            for: .normal)
-        deleteButton.addTarget(self, action: #selector(deleteFeedButtonTapped), for: .touchUpInside)
-        deleteButton.isHidden = true
-        return deleteButton
-    }()
     private lazy var avatarImageView: UIImageView = {
         let avatarImageView = UIImageView()
         avatarImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -380,12 +298,14 @@ class PostCellContent: UIButton {
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
-    private lazy var liveInfoLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = Brand.font(for: .xsmall)
-        label.textColor = Brand.color(for: .text(.primary))
-        return label
+    private lazy var trackNameLabel: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = Brand.font(for: .xsmall)
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.contentHorizontalAlignment = .left
+        button.addTarget(self, action: #selector(trackTapped), for: .touchUpInside)
+        return button
     }()
     
     override var isHighlighted: Bool {
@@ -404,59 +324,16 @@ class PostCellContent: UIButton {
         }
         usernameLabel.text = input.post.author.name
         dateLabel.text = postDateFormatter.string(from: input.post.createdAt)
-        if let live = input.post.live, let date = live.date, let formatted = liveDateFormatter.date(from: date) {
-            let formattedDateString = liveDisplayDateFormatter.string(from: formatted)
-            liveInfoLabel.text = "\(formattedDateString) \(live.title) (\(live.liveHouse ?? "場所不明"))"
-        }
         textView.text = input.post.text
-        
-        selectedGroupView.isHidden = input.post.groups.isEmpty
-        uploadedImageView.isHidden = input.post.imageUrls.isEmpty
-        playlistView.isHidden = input.post.tracks.isEmpty
-        
-//        if let group = input.post.groups.first {
-//            selectedGroupView.inject(input: (group: group, imagePipeline: input.imagePipeline))
-//        }
-        if let image = input.post.imageUrls.first, let imageUrl = URL(string: image) {
-            input.imagePipeline.loadImage(imageUrl, into: uploadedImageView)
-        }
-        if (!input.post.tracks.isEmpty) {
-            playlistView.inject(
-                input: (
-                    tracks: input.post.tracks.map {
-                        Track(
-                            name: $0.trackName,
-                            artistName: $0.groupName,
-                            artwork: $0.thumbnailUrl!,
-                            trackType: $0.type
-                        )
-                    },
-                    isEdittable: false,
-                    imagePipeline: input.imagePipeline
-                )
-            )
-        }
-        if input.post.author.id == input.user.id {
-            writeReportButton.setTitle("レポートを編集", selected: false)
-        } else {
-            writeReportButton.setTitle("このライブのレポートを書く", selected: false)
-        }
-        if (input.post.tracks.isEmpty && input.post.imageUrls.isEmpty) {
-            uploadedImageView.isHidden = false
-            if let liveUrl = input.post.live?.artworkURL {
-                input.imagePipeline.loadImage(liveUrl, into: uploadedImageView)
-            } else {
-                uploadedImageView.image = Brand.color(for: .background(.cellSelected)).image
-            }
-        }
-        
+        trackNameLabel.setTitle(input.post.tracks.first?.trackName, for: .normal)
         commentButtonView.setTitle("\(input.post.commentCount)", for: .normal)
         commentButtonView.isEnabled = true
         likeButtonView.setTitle("\(input.post.likeCount)", for: .normal)
         likeButtonView.isSelected = input.post.isLiked
         likeButtonView.isEnabled = true
-        deleteButton.isHidden = input.post.author.id != input.user.id
-        deleteButton.isEnabled = true
+        if let live = input.post.live {
+            liveCardCell.inject(input: (live: live, imagePipeline: input.imagePipeline))
+        }
     }
     
     func setup() {
@@ -469,14 +346,23 @@ class PostCellContent: UIButton {
             postView.leftAnchor.constraint(equalTo: leftAnchor),
             postView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
+        
+        addTarget(self, action: #selector(selfTapped), for: .touchUpInside)
     }
     
     deinit {
         print("PostCellContent.deinit")
     }
     
+    @objc private func selfTapped() {
+        self.listener(.selfTapped)
+    }
+    
+    @objc private func liveTapped() {
+        self.listener(.liveTapped)
+    }
+    
     @objc private func commentButtonTapped() {
-        commentButtonView.isEnabled = false
         self.listener(.commentTapped)
     }
     
@@ -485,33 +371,12 @@ class PostCellContent: UIButton {
         self.listener(.likeTapped)
     }
     
-    @objc private func shareInstagramButtonTapped() {
-        self.listener(.instagramTapped)
+    @objc private func settingTapped() {
+        self.listener(.settingTapped)
     }
     
-    @objc private func showPostListButtonTapped() {
-        showPostListButton.isEnabled = false
-        self.listener(.postListTapped)
-    }
-    
-    @objc private func postButtonTapped() {
-        self.listener(.postTapped)
-    }
-    
-    @objc private func shareTwitterButtonTapped() {
-        self.listener(.twitterTapped)
-    }
-    
-    @objc private func deleteFeedButtonTapped() {
-        self.listener(.deleteTapped)
-    }
-    
-    @objc private func uploadedImageTapped() {
-        self.listener(.imageTapped(self))
-    }
-    
-    @objc private func selectedGroupTapped() {
-        self.listener(.groupTapped)
+    @objc private func trackTapped() {
+        self.listener(.trackTapped)
     }
     
     @objc private func userTapped() {
@@ -521,15 +386,5 @@ class PostCellContent: UIButton {
     private var listener: (Output) -> Void = { _ in }
     func listen(_ listener: @escaping (Output) -> Void) {
         self.listener = listener
-    }
-}
-
-extension PostCellContent: GalleryItemsDataSource {
-    func provideGalleryItem(_ index: Int) -> GalleryItem {
-        return GalleryItem.image(fetchImageBlock: { $0(self.uploadedImageView.image)} )
-    }
-    
-    func itemCount() -> Int {
-        return 1
     }
 }

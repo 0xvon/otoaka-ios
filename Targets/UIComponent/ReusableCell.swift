@@ -2,12 +2,12 @@
 //  ReusableCell.swift
 //  Rocket
 //
-//  Created by Masato TSUTSUMI on 2020/10/18.
+//  Created by Masato TSUTSUMI on 2021/10/15.
 //
 
 import UIKit
 
-protocol ReusableCell {
+public protocol ReusableCell {
     associatedtype Input
     static var reusableIdentifier: String { get }
 

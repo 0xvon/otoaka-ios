@@ -85,10 +85,6 @@ class PostListViewModel {
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
-    private lazy var deletePostAction = Action(DeletePost.self, httpClient: apiClient)
-    private lazy var likePostAction = Action(LikePost.self, httpClient: apiClient)
-    private lazy var unlikePostAction = Action(UnlikePost.self, httpClient: apiClient)
-    
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
     ) {
@@ -97,21 +93,6 @@ class PostListViewModel {
         self.dataSource = input
         self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
         subscribe(storage: storage)
-        
-        let errors = Publishers.MergeMany(
-            deletePostAction.errors,
-            likePostAction.errors,
-            unlikePostAction.errors
-        )
-        
-        Publishers.MergeMany(
-            deletePostAction.elements.map { _ in .didDeletePost }.eraseToAnyPublisher(),
-            likePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
-            unlikePostAction.elements.map { _ in .didToggleLikePost }.eraseToAnyPublisher(),
-            errors.map(Output.error).eraseToAnyPublisher()
-        )
-        .sink(receiveValue: outputSubject.send)
-        .store(in: &cancellables)
     }
     
     private func subscribe(storage: DataSourceStorage) {
@@ -200,24 +181,6 @@ class PostListViewModel {
             pagination.next()
         case .none: break
         }
-    }
-    
-    func deletePost(post: PostSummary) {
-        let request = DeletePost.Request(postId: post.id)
-        let uri = DeletePost.URI()
-        deletePostAction.input((request: request, uri: uri))
-    }
-    
-    func likePost(post: PostSummary) {
-        let request = LikePost.Request(postId: post.id)
-        let uri = LikePost.URI()
-        likePostAction.input((request: request, uri: uri))
-    }
-    
-    func unlikePost(post: PostSummary) {
-        let request = UnlikePost.Request(postId: post.id)
-        let uri = UnlikePost.URI()
-        unlikePostAction.input((request: request, uri: uri))
     }
     
     deinit {

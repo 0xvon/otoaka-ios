@@ -91,6 +91,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
 
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: BandDetailViewModel
+    let postActionViewModel: PostActionViewModel
     let followingViewModel: FollowingViewModel
     var cancellables: Set<AnyCancellable> = []
 
@@ -100,6 +101,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             dependencyProvider: dependencyProvider,
             group: input
         )
+        self.postActionViewModel = PostActionViewModel(dependencyProvider: dependencyProvider)
         self.followingViewModel = FollowingViewModel(
             group: input.id, apiClient: dependencyProvider.apiClient
         )
@@ -179,6 +181,70 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     func bind() {
+        postActionViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didSettingTapped(let post):
+                let alertController = UIAlertController(
+                    title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+                let shareTwitterAction = UIAlertAction(
+                    title: "Twitterでシェア", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        shareWithTwitter(type: .post(post.post))
+                    })
+                let shareInstagramAction = UIAlertAction(
+                    title: "インスタでシェア", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        sharePostWithInstagram(post: post.post)
+                    })
+                let cancelAction = UIAlertAction(
+                    title: "キャンセル", style: UIAlertAction.Style.cancel,
+                    handler: { action in })
+                alertController.addAction(shareTwitterAction)
+                alertController.addAction(shareInstagramAction)
+                if post.author.id == dependencyProvider.user.id {
+                    let editPostAction = UIAlertAction(title: "編集", style: .default, handler:  { [unowned self] action in
+                        if let live = post.live {
+                            let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: post.post))
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                    })
+                    let deletePostAction = UIAlertAction(title: "削除", style: .destructive, handler: { [unowned self] action in
+                        postActionViewModel.deletePost(post: post)
+                    })
+                    alertController.addAction(editPostAction)
+                    alertController.addAction(deletePostAction)
+                }
+                alertController.addAction(cancelAction)
+                alertController.popoverPresentationController?.sourceView = self.view
+                alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
+                self.present(alertController, animated: true, completion: nil)
+            case .didDeletePost:
+                viewModel.refresh()
+            case .didToggleLikePost:
+                viewModel.refresh()
+            case .pushToCommentList(let input):
+                let vc = CommentListViewController(
+                    dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPlayTrack(let input):
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostAuthor(let user):
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostDetail(let post):
+                let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: post.post)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToLiveDetail(let live):
+                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+                showAlert()
+            }
+        }
+        .store(in: &cancellables)
+        
         followingViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .updateFollowing(let isFollowing):
@@ -217,31 +283,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 if let liveFeed = liveFeed {
                     liveCellContent.inject(input: (live: liveFeed, imagePipeline: dependencyProvider.imagePipeline, type: .normal))
                 }
-            case .didDeletePostButtonTapped(let post):
-                let alertController = UIAlertController(
-                    title: "レポートを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-
-                let acceptAction = UIAlertAction(
-                    title: "OK", style: UIAlertAction.Style.default,
-                    handler: { [unowned self] action in
-                        viewModel.deletePost(post: post)
-                    })
-                let cancelAction = UIAlertAction(
-                    title: "キャンセル", style: UIAlertAction.Style.cancel,
-                    handler: { action in })
-                alertController.addAction(acceptAction)
-                alertController.addAction(cancelAction)
-                alertController.popoverPresentationController?.sourceView = self.view
-                alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
-                self.present(alertController, animated: true, completion: nil)
-            case .didDeletePost:
-                viewModel.refresh()
-            case .didToggleLikePost:
-                viewModel.refresh()
-            case .didTwitterButtonTapped(let post):
-                shareWithTwitter(type: .post(post.post))
-            case .didInstagramButtonTapped(let post):
-                sharePostWithInstagram(post: post.post)
             case .updatePostSummary(let post):
                 let isHidden = post == nil
                 self.postSectionHeader.isHidden = isHidden
@@ -267,14 +308,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
 //                let vc = ChartListViewController(
 //                    dependencyProvider: self.dependencyProvider, input: input)
 //                self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToCommentList(let input):
-                let vc = CommentListViewController(
-                    dependencyProvider: dependencyProvider, input: input)
-                let nav = BrandNavigationController(rootViewController: vc)
-                self.present(nav, animated: true, completion: nil)
-            case .pushToPostAuthor(let user):
-                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
-                self.navigationController?.pushViewController(vc, animated: true)
             case .pushToLiveList(let input):
                 let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -300,9 +333,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .openImage(let content):
                 let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
                 self.present(galleryController, animated: true, completion: nil)
-            case .pushToTrackList(let input):
-                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: input)
-                navigationController?.pushViewController(vc, animated: true)
             }
         }
         .store(in: &cancellables)
@@ -317,7 +347,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
             .store(in: &cancellables)
 
         postCellContent.listen { [unowned self] output in
-            self.viewModel.postCellEvent(event: output)
+            guard let post = viewModel.state.posts.first else { return }
+            postActionViewModel.postCellEvent(post, event: output)
         }
 
         liveSectionHeader.listen { [unowned self] in

@@ -106,7 +106,7 @@ final class SelectTrackViewController: UITableViewController {
         searchResultController.listen { [unowned self] output in
             switch output {
             case .track(let track):
-                viewModel.didSelectTrack(at: track)
+                self.listener([track])
             default: break
             }
         }

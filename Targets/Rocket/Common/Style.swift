@@ -8,6 +8,7 @@
 import UIKit
 import InternalDomain
 import Endpoint
+import Foundation
 
 let per = 20
 let textFieldHeight: CGFloat = 60
@@ -222,4 +223,35 @@ enum BorderPosition {
     case left
     case right
     case bottom
+}
+
+extension Track {
+    static func translate(_ youtubeVideo: InternalDomain.YouTubeVideo) -> Track? {
+        guard let youtubeUrl = URL(string: "https://youtube.com/watch?v=\(youtubeVideo.id.videoId ?? "")") else { return nil }
+        return Track(
+            name: youtubeVideo.snippet?.title ?? "no title",
+            artistName: youtubeVideo.snippet?.channelTitle ?? "no artist",
+            artwork: youtubeVideo.snippet?.thumbnails?.high?.url ?? "",
+            trackType: .youtube(youtubeUrl)
+        )
+    }
+    
+    static func translate(_ appleMusicSong: AppleMusicSong) -> Track {
+        return Track(
+            name: appleMusicSong.attributes.name,
+            artistName: appleMusicSong.attributes.artistName,
+            artwork: appleMusicSong.attributes.artwork.url?.replacingOccurrences(of: "{w}", with: String(appleMusicSong.attributes.artwork.width)).replacingOccurrences(of: "{h}", with: String(appleMusicSong.attributes.artwork.height)) ?? "",
+            trackType: .appleMusic(appleMusicSong.id)
+        )
+    }
+    
+    static func translate(_ postTrack: PostTrack) -> Track? {
+        guard let thumbnail = postTrack.thumbnailUrl else { return nil }
+        return Track(
+            name: postTrack.trackName,
+            artistName: postTrack.groupName,
+            artwork: thumbnail,
+            trackType: postTrack.type
+        )
+    }
 }

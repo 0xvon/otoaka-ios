@@ -17,11 +17,13 @@ final class PostListViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider
     private var postTableView: UITableView!
     let viewModel: PostListViewModel
+    let postActionViewModel: PostActionViewModel
     var cancellables: Set<AnyCancellable> = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = PostListViewModel(dependencyProvider: dependencyProvider, input: input)
+        self.postActionViewModel = PostActionViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
         
         switch input {
@@ -58,6 +60,70 @@ final class PostListViewController: UIViewController, Instantiable {
     }
     
     func bind() {
+        postActionViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didSettingTapped(let post):
+                let alertController = UIAlertController(
+                    title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+                let shareTwitterAction = UIAlertAction(
+                    title: "Twitterでシェア", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        shareWithTwitter(type: .post(post.post))
+                    })
+                let shareInstagramAction = UIAlertAction(
+                    title: "インスタでシェア", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        sharePostWithInstagram(post: post.post)
+                    })
+                let cancelAction = UIAlertAction(
+                    title: "キャンセル", style: UIAlertAction.Style.cancel,
+                    handler: { action in })
+                alertController.addAction(shareTwitterAction)
+                alertController.addAction(shareInstagramAction)
+                if post.author.id == dependencyProvider.user.id {
+                    let editPostAction = UIAlertAction(title: "編集", style: .default, handler:  { [unowned self] action in
+                        if let live = post.live {
+                            let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: post.post))
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                    })
+                    let deletePostAction = UIAlertAction(title: "削除", style: .destructive, handler: { [unowned self] action in
+                        postActionViewModel.deletePost(post: post)
+                    })
+                    alertController.addAction(editPostAction)
+                    alertController.addAction(deletePostAction)
+                }
+                alertController.addAction(cancelAction)
+                alertController.popoverPresentationController?.sourceView = self.view
+                alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
+                self.present(alertController, animated: true, completion: nil)
+            case .didDeletePost:
+                viewModel.refresh()
+            case .didToggleLikePost:
+                viewModel.refresh()
+            case .pushToCommentList(let input):
+                let vc = CommentListViewController(
+                    dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPlayTrack(let input):
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostAuthor(let user):
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostDetail(let post):
+                let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: post.post)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToLiveDetail(let live):
+                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+                showAlert()
+            }
+        }
+        .store(in: &cancellables)
+        
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .reloadData:
@@ -132,81 +198,6 @@ final class PostListViewController: UIViewController, Instantiable {
         viewModel.refresh()
         sender.endRefreshing()
     }
-    
-    private func commentButtonTapped(post: PostSummary) {
-        let vc = CommentListViewController(dependencyProvider: dependencyProvider, input: .postComment(post))
-        let nav = BrandNavigationController(rootViewController: vc)
-        self.present(nav, animated: true, completion: nil)
-    }
-    
-    private func likeButtonTapped(post: PostSummary) {
-        post.isLiked ? viewModel.unlikePost(post: post) : viewModel.likePost(post: post)
-    }
-    
-    private func twitterButtonTapped(post: PostSummary) {
-        shareWithTwitter(type: .post(post.post))
-    }
-    
-    private func livePostListButtonTapped(post: PostSummary) {
-        guard let live = post.post.live else { return }
-        let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live))
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    private func postTapped(post: PostSummary) {
-        guard let live = post.post.live else { return }
-        if post.post.author.id == dependencyProvider.user.id {
-            let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: post.post))
-            self.navigationController?.pushViewController(vc, animated: true)
-        } else {
-            let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
-        
-    }
-    
-    private func userTapped(post: PostSummary) {
-        let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: post.author)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    private func deleteButtonTapped(post: PostSummary) {
-        let alertController = UIAlertController(
-            title: "レポートを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-
-        let acceptAction = UIAlertAction(
-            title: "OK", style: UIAlertAction.Style.default,
-            handler: { [unowned self] action in
-                viewModel.deletePost(post: post)
-            })
-        let cancelAction = UIAlertAction(
-            title: "キャンセル", style: UIAlertAction.Style.cancel,
-            handler: { action in })
-        alertController.addAction(acceptAction)
-        alertController.addAction(cancelAction)
-        alertController.popoverPresentationController?.sourceView = self.view
-        alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
-        self.present(alertController, animated: true, completion: nil)
-    }
-    
-    private func uploadImageTapped(content: GalleryItemsDataSource) {
-        let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
-        self.present(galleryController, animated: true, completion: nil)
-    }
-    
-    private func trackTapped(track: Track) {
-        print("todo")
-    }
-    
-    private func playTapped(track: Track) {
-        let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: .track(track))
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    private func groupTapped(group: Group) {
-        let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
 }
 
 extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -222,37 +213,7 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
         let post = viewModel.state.posts[indexPath.row]
         let cell = tableView.dequeueReusableCell(PostCell.self, input: (post: post, user: dependencyProvider.user, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [unowned self] output in
-            switch output {
-            case .commentTapped:
-                self.commentButtonTapped(post: post)
-            case .deleteTapped:
-                self.deleteButtonTapped(post: post)
-            case .likeTapped:
-                self.likeButtonTapped(post: post)
-            case .instagramTapped:
-                sharePostWithInstagram(post: post.post)
-            case .twitterTapped:
-                self.twitterButtonTapped(post: post)
-            case .userTapped:
-                self.userTapped(post: post)
-            case .postListTapped:
-                self.livePostListButtonTapped(post: post)
-            case .postTapped:
-                self.postTapped(post: post)
-            case .playTapped(let track):
-                self.playTapped(track: track)
-            case .trackTapped(_): break
-            case .imageTapped(let content):
-                self.uploadImageTapped(content: content)
-            case .groupTapped:
-                guard let group = post.groups.first else { return }
-                self.groupTapped(group: group)
-            case .seePlaylistTapped:
-                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: .playlist(post.post))
-                navigationController?.pushViewController(vc, animated: true)
-            case .cellTapped:
-                break
-            }
+            postActionViewModel.postCellEvent(post, event: output)
         }
         return cell
     }

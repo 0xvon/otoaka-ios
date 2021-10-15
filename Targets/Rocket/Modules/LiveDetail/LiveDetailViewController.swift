@@ -13,7 +13,7 @@ import UIKit
 import ImageViewer
 
 final class LiveDetailViewController: UIViewController, Instantiable {
-    typealias Input = LiveFeed
+    typealias Input = Live
     
     private lazy var headerView: LiveDetailHeaderView = {
         let headerView = LiveDetailHeaderView()
@@ -101,15 +101,17 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: LiveDetailViewModel
+    let postActionViewModel: PostActionViewModel
     var cancellables: Set<AnyCancellable> = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
-        print(input.live.id)
+        print(input.id)
         self.dependencyProvider = dependencyProvider
         self.viewModel = LiveDetailViewModel(
             dependencyProvider: dependencyProvider,
             live: input
         )
+        self.postActionViewModel = PostActionViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -186,20 +188,84 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     func bind() {
         buyTicketButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: { [unowned self] in
-                if let url = viewModel.state.live.live.piaEventUrl {
+                if let url = viewModel.state.live.piaEventUrl {
                     openUrl(url: url)
                 }
             })
             .store(in: &cancellables)
         
+        postActionViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didSettingTapped(let post):
+                let alertController = UIAlertController(
+                    title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+                let shareTwitterAction = UIAlertAction(
+                    title: "Twitterでシェア", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        shareWithTwitter(type: .post(post.post))
+                    })
+                let shareInstagramAction = UIAlertAction(
+                    title: "インスタでシェア", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        sharePostWithInstagram(post: post.post)
+                    })
+                let cancelAction = UIAlertAction(
+                    title: "キャンセル", style: UIAlertAction.Style.cancel,
+                    handler: { action in })
+                alertController.addAction(shareTwitterAction)
+                alertController.addAction(shareInstagramAction)
+                if post.author.id == dependencyProvider.user.id {
+                    let editPostAction = UIAlertAction(title: "編集", style: .default, handler:  { [unowned self] action in
+                        if let live = post.live {
+                            let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: post.post))
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                    })
+                    let deletePostAction = UIAlertAction(title: "削除", style: .destructive, handler: { [unowned self] action in
+                        postActionViewModel.deletePost(post: post)
+                    })
+                    alertController.addAction(editPostAction)
+                    alertController.addAction(deletePostAction)
+                }
+                alertController.addAction(cancelAction)
+                alertController.popoverPresentationController?.sourceView = self.view
+                alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
+                self.present(alertController, animated: true, completion: nil)
+            case .didDeletePost:
+                viewModel.refresh()
+            case .didToggleLikePost:
+                viewModel.refresh()
+            case .pushToCommentList(let input):
+                let vc = CommentListViewController(
+                    dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPlayTrack(let input):
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostAuthor(let user):
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostDetail(let post):
+                let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: post.post)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToLiveDetail(let live):
+                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+                showAlert()
+            }
+        }
+        .store(in: &cancellables)
+        
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didGetLiveDetail(let liveDetail):
                 self.title = liveDetail.live.title
-                headerView.update(input: (live: liveDetail, imagePipeline: dependencyProvider.imagePipeline))
+                headerView.update(input: (live: liveDetail.live, imagePipeline: dependencyProvider.imagePipeline))
                 likeCountSummaryView.update(input: (title: "行きたい", count: liveDetail.likeCount))
                 buyTicketButton.isHidden = liveDetail.live.piaEventUrl == nil
-                postCountSummaryView.update(input: (title: "レポート", count: viewModel.state.live.postCount))
+                postCountSummaryView.update(input: (title: "レポート", count: 1))
                 refreshControl.endRefreshing()
             case .updatePerformers(let performers):
                 self.setupPerformersContents(performers: performers)
@@ -218,8 +284,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 }
             case .didDeletePost:
                 viewModel.refresh()
-            case .didInstagramButtonTapped(let post):
-                sharePostWithInstagram(post: post.post)
             case .reportError(let error):
                 print(error)
                 self.showAlert()
@@ -227,49 +291,14 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 let vc = PostListViewController(
                     dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToPlayTrack(let input):
-                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
-                self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToTrackList(let input):
-                let vc = TrackListViewController(dependencyProvider: dependencyProvider, input: input)
-                navigationController?.pushViewController(vc, animated: true)
             case .openURLInBrowser(let url):
                 openUrl(url: url)
             case .pushToGroup(let group):
                 let vc = BandDetailViewController(
                     dependencyProvider: dependencyProvider, input: group)
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToUser(let user):
-                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
-                self.navigationController?.pushViewController(vc, animated: true)
-            case .pushToCommentList(let input):
-                let vc = CommentListViewController(
-                    dependencyProvider: dependencyProvider, input: input)
-                let nav = BrandNavigationController(rootViewController: vc)
-                self.present(nav, animated: true, completion: nil)
-            case .didToggleLikeLive, .didToggleLikePost:
+            case .didToggleLikeLive:
                 viewModel.refresh()
-            case .didDeletePostButtonTapped(let post):
-                let alertController = UIAlertController(
-                    title: "レポートを削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-                let acceptAction = UIAlertAction(
-                    title: "OK", style: UIAlertAction.Style.default,
-                    handler: { [unowned self] action in
-                        viewModel.deletePost(post: post)
-                    })
-                let cancelAction = UIAlertAction(
-                    title: "キャンセル", style: UIAlertAction.Style.cancel,
-                    handler: { action in })
-                alertController.addAction(acceptAction)
-                alertController.addAction(cancelAction)
-                alertController.popoverPresentationController?.sourceView = self.view
-                alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
-                self.present(alertController, animated: true, completion: nil)
-            case .pushToPost(let input):
-                let vc = PostViewController(dependencyProvider: dependencyProvider, input: input)
-                navigationController?.pushViewController(vc, animated: true)
-            case .didTwitterButtonTapped(let post):
-                shareWithTwitter(type: .post(post.post))
             case .openImage(let content):
                 let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
                 self.present(galleryController, animated: true, completion: nil)
@@ -290,13 +319,14 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             switch output {
             case .likeButtonTapped:
                 if let isLiked = viewModel.state.liveDetail?.isLiked {
-                    isLiked ? viewModel.unlikeLive(live: viewModel.state.live.live) : viewModel.likeLive(live: viewModel.state.live.live)
+                    isLiked ? viewModel.unlikeLive(live: viewModel.state.live) : viewModel.likeLive(live: viewModel.state.live)
                 }
             }
         }
         
         postCellContent.listen { [unowned self] output in
-            self.viewModel.postCellEvent(event: output)
+            guard let post = viewModel.state.posts.first else { return }
+            self.postActionViewModel.postCellEvent(post, event: output)
         }
         
         postSectionHeader.listen { [unowned self] in
@@ -331,7 +361,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func numOfParticipantsButtonTapped() {
-        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveParticipants(viewModel.state.live.live.id))
+        let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveParticipants(viewModel.state.live.id))
         vc.title = "予約者"
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -358,7 +388,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     private func groupBannerTapped(cellIndex: Int) {
-        let group = viewModel.state.live.live.performers[cellIndex]
+        let group = viewModel.state.live.performers[cellIndex]
         viewModel.didSelectRow(at: .performers(group))
     }
 }
