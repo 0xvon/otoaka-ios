@@ -34,11 +34,11 @@ final class LiveCardCell: UICollectionViewCell, ReusableCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func inject(input: Input) {
+    public func inject(input: Input) {
         _contentView.inject(input: input)
     }
     
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         _contentView.prepare()
     }
     
@@ -47,8 +47,8 @@ final class LiveCardCell: UICollectionViewCell, ReusableCell {
     }
 }
 
-class LiveCardCellContent: UIButton {
-    typealias Input = (
+public final class LiveCardCellContent: UIButton {
+    public typealias Input = (
         live: Live,
         imagePipeline: ImagePipeline
     )
@@ -81,11 +81,11 @@ class LiveCardCellContent: UIButton {
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
-    override var isHighlighted: Bool {
+    public override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.5 : 1.0 }
     }
     
-    init() {
+    public init() {
         super.init(frame: .zero)
         setup()
     }
@@ -95,7 +95,7 @@ class LiveCardCellContent: UIButton {
         setup()
     }
     
-    func inject(input: Input) {
+    public func inject(input: Input) {
         if let url = input.live.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
@@ -114,6 +114,8 @@ class LiveCardCellContent: UIButton {
     
     func prepare() {
         thumbnailView.image = nil
+        liveTitleLabel.text = nil
+        groupNameLabel.text = nil
     }
     
     func setup() {
@@ -131,6 +133,7 @@ class LiveCardCellContent: UIButton {
             liveTitleLabel.topAnchor.constraint(equalTo: thumbnailView.bottomAnchor, constant: 4),
             liveTitleLabel.leftAnchor.constraint(equalTo: leftAnchor),
             liveTitleLabel.rightAnchor.constraint(equalTo: rightAnchor),
+            liveTitleLabel.heightAnchor.constraint(equalToConstant: 14.4)
         ])
         
         addSubview(groupNameLabel)
@@ -139,6 +142,7 @@ class LiveCardCellContent: UIButton {
             groupNameLabel.leftAnchor.constraint(equalTo: leftAnchor),
             groupNameLabel.rightAnchor.constraint(equalTo: rightAnchor),
             groupNameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            groupNameLabel.heightAnchor.constraint(equalToConstant: 13.4)
         ])
     }
 }

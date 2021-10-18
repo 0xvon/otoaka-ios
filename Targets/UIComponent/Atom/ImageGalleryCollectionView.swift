@@ -109,8 +109,6 @@ class ImageGalleryCollectionCell: UICollectionViewCell, ReusableCell {
         _contentView.translatesAutoresizingMaskIntoConstraints = false
         _contentView.isUserInteractionEnabled = false
         backgroundColor = .clear
-        _contentView.isUserInteractionEnabled = false
-        backgroundColor = .clear
         contentView.addSubview(_contentView)
         NSLayoutConstraint.activate([
             _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),

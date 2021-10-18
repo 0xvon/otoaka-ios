@@ -72,6 +72,7 @@ class PostListViewModel {
         case reloadData
         case didDeletePost
         case didToggleLikePost
+        case getLatestLives([Live])
         case error(Error)
     }
     
@@ -84,6 +85,7 @@ class PostListViewModel {
     private(set) var dataSource: DataSource
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
+    private lazy var getLatestLivesAction = Action(SearchLive.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
@@ -93,6 +95,11 @@ class PostListViewModel {
         self.dataSource = input
         self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
         subscribe(storage: storage)
+        
+        getLatestLivesAction.elements.map { item in .getLatestLives(item.items.map { $0.live }.reversed()) }
+            .eraseToAnyPublisher()
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
     }
     
     private func subscribe(storage: DataSourceStorage) {
@@ -159,9 +166,27 @@ class PostListViewModel {
             pagination.refresh()
         case let .trendPost(pagination):
             pagination.refresh()
+            getLatestLives()
         case .none:
             break
         }
+    }
+    
+    func getLatestLives() {
+        let dateFormatter: DateFormatter = {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YYYYMMdd"
+            return dateFormatter
+        }()
+        let date = Date()
+        let weekLater = date.addingTimeInterval(60 * 60 * 24 * 7)
+        let threeDaysAgo = date.addingTimeInterval(-60 * 60 * 24 * 3)
+        var uri = SearchLive.URI()
+        uri.fromDate = dateFormatter.string(from: threeDaysAgo)
+        uri.toDate = dateFormatter.string(from: weekLater)
+        uri.per = 50
+        uri.page = 1
+        getLatestLivesAction.input((request: Empty(), uri: uri))
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {

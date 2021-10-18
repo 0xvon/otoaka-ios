@@ -19,6 +19,11 @@ final class PostListViewController: UIViewController, Instantiable {
     let viewModel: PostListViewModel
     let postActionViewModel: PostActionViewModel
     var cancellables: Set<AnyCancellable> = []
+    private lazy var header: LiveCardCollectionView = {
+        let view = LiveCardCollectionView(lives: [], imagePipeline: dependencyProvider.imagePipeline)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -139,12 +144,19 @@ final class PostListViewController: UIViewController, Instantiable {
                 viewModel.refresh()
             case .didToggleLikePost:
                 viewModel.refresh()
+            case .getLatestLives(let lives):
+                header.inject(lives: lives)
             case .error(let err):
                 print(err)
                 showAlert()
             }
         }
         .store(in: &cancellables)
+        
+        header.listen { [unowned self] live in
+            let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     func inject(_ input: Input) {
@@ -170,7 +182,7 @@ final class PostListViewController: UIViewController, Instantiable {
         navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
         
-        postTableView = UITableView()
+        postTableView = UITableView(frame: .zero, style: .grouped)
         postTableView.translatesAutoresizingMaskIntoConstraints = false
         postTableView.showsVerticalScrollIndicator = false
         postTableView.tableFooterView = UIView(frame: .zero)
@@ -212,9 +224,22 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
+        switch viewModel.dataSource {
+        case .trendPost:
+            return 192
+        default: return 0
+        }
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        switch viewModel.dataSource {
+        case .trendPost:
+            let view = header
+            return view
+        default: return nil
+        }
+    }
+        
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let post = viewModel.state.posts[indexPath.row]
         let cell = tableView.dequeueReusableCell(PostCell.self, input: (post: post, user: dependencyProvider.user, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
