@@ -283,11 +283,17 @@ final class PostDetailViewController: UIViewController, Instantiable {
                     handler: { [unowned self] action in
                         sharePostWithInstagram(post: post.post)
                     })
+                let postAction = UIAlertAction(title: "このライブのレポートを書く", style: .default, handler: { [unowned self] action in
+                    guard let live = post.live else { return }
+                    let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                })
                 let cancelAction = UIAlertAction(
                     title: "キャンセル", style: UIAlertAction.Style.cancel,
                     handler: { action in })
                 alertController.addAction(shareTwitterAction)
                 alertController.addAction(shareInstagramAction)
+                alertController.addAction(postAction)
                 if post.author.id == dependencyProvider.user.id {
                     let editPostAction = UIAlertAction(title: "編集", style: .default, handler:  { [unowned self] action in
                         if let live = post.live {

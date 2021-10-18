@@ -153,13 +153,6 @@ class PostCellContent: UIButton {
             usernameLabel.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
         ])
         
-        view.addSubview(trackNameLabel)
-        NSLayoutConstraint.activate([
-            trackNameLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor, constant: 4),
-            trackNameLabel.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
-            trackNameLabel.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
-        ])
-        
         view.addSubview(settingButton)
         NSLayoutConstraint.activate([
             settingButton.widthAnchor.constraint(equalToConstant: 24),

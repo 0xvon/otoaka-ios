@@ -36,12 +36,22 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     private let likeCountSummaryView = CountSummaryView()
     private let postCountSummaryView = CountSummaryView()
-    private let buyTicketButton: PrimaryButton = {
-        let buyTicketButton = PrimaryButton(text: "チケット申込")
-        buyTicketButton.setImage(UIImage(named: "ticket"), for: .normal)
-        buyTicketButton.translatesAutoresizingMaskIntoConstraints = false
-        buyTicketButton.layer.cornerRadius = 24
-        return buyTicketButton
+    private let liveActionButton: PrimaryButton = {
+        let button = PrimaryButton(text: "")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 24
+        button.isHidden = true
+        return button
+    }()
+    private lazy var likeButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 24
+        button.setImage(
+            UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
+        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        return button
     }()
     private lazy var ticketStackView: UIStackView = {
         let stackView = UIStackView()
@@ -144,10 +154,15 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         ticketStackView.addArrangedSubview(likeCountSummaryView)
         ticketStackView.addArrangedSubview(postCountSummaryView)
-        ticketStackView.addArrangedSubview(buyTicketButton)
+        ticketStackView.addArrangedSubview(liveActionButton)
+        
         NSLayoutConstraint.activate([
-            buyTicketButton.heightAnchor.constraint(equalToConstant: 48),
-            buyTicketButton.widthAnchor.constraint(equalToConstant: 200),
+            liveActionButton.heightAnchor.constraint(equalToConstant: 48),
+            liveActionButton.widthAnchor.constraint(equalToConstant: 160),
+        ])
+        ticketStackView.addArrangedSubview(likeButton)
+        NSLayoutConstraint.activate([
+            likeButton.widthAnchor.constraint(equalToConstant: 48)
         ])
         ticketStackView.addArrangedSubview(UIView()) // Spacer
         
@@ -186,9 +201,12 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     func bind() {
-        buyTicketButton.controlEventPublisher(for: .touchUpInside)
+        liveActionButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: { [unowned self] in
-                if let url = viewModel.state.live.piaEventUrl {
+                if viewModel.isLivePast() {
+                    let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: viewModel.state.live, post: nil))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                } else if let url = viewModel.state.live.piaEventUrl {
                     openUrl(url: url)
                 }
             })
@@ -209,11 +227,17 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                     handler: { [unowned self] action in
                         sharePostWithInstagram(post: post.post)
                     })
+                let postAction = UIAlertAction(title: "このライブのレポートを書く", style: .default, handler: { [unowned self] action in
+                    guard let live = post.live else { return }
+                    let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                })
                 let cancelAction = UIAlertAction(
                     title: "キャンセル", style: UIAlertAction.Style.cancel,
                     handler: { action in })
                 alertController.addAction(shareTwitterAction)
                 alertController.addAction(shareInstagramAction)
+                alertController.addAction(postAction)
                 if post.author.id == dependencyProvider.user.id {
                     let editPostAction = UIAlertAction(title: "編集", style: .default, handler:  { [unowned self] action in
                         if let live = post.live {
@@ -264,9 +288,19 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.title = liveDetail.live.title
                 headerView.update(input: (live: liveDetail.live, imagePipeline: dependencyProvider.imagePipeline))
                 likeCountSummaryView.update(input: (title: "行きたい", count: liveDetail.likeCount))
-                buyTicketButton.isHidden = liveDetail.live.piaEventUrl == nil
-                postCountSummaryView.update(input: (title: "レポート", count: 1))
+                postCountSummaryView.update(input: (title: "レポート", count: liveDetail.postCount))
+                likeButton.isSelected = liveDetail.isLiked
+                likeButton.isEnabled = true
                 refreshControl.endRefreshing()
+                if viewModel.isLivePast() {
+                    liveActionButton.isHidden = false
+                    liveActionButton.setTitle("レポートを書く", for: .normal)
+                } else if viewModel.state.live.piaEventUrl != nil {
+                    liveActionButton.isHidden = false
+                    liveActionButton.setTitle("チケット申込", for: .normal)
+                } else {
+                    liveActionButton.isHidden = true
+                }
             case .updatePerformers(let performers):
                 self.setupPerformersContents(performers: performers)
             case .updatePostSummary(let post):
@@ -314,15 +348,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 viewModel.refresh()
             }
             .store(in: &cancellables)
-        
-        headerView.listen { [unowned self] output in
-            switch output {
-            case .likeButtonTapped:
-                if let isLiked = viewModel.state.liveDetail?.isLiked {
-                    isLiked ? viewModel.unlikeLive(live: viewModel.state.live) : viewModel.likeLive(live: viewModel.state.live)
-                }
-            }
-        }
         
         postCellContent.listen { [unowned self] output in
             guard let post = viewModel.state.posts.first else { return }
@@ -379,6 +404,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     @objc private func postCountTapped() {
         viewModel.postCountTapped()
+    }
+    
+    @objc private func likeButtonTapped() {
+        likeButton.isEnabled = false
+        viewModel.likeButtonTapped()
     }
     
     private func openUrl(url: URL) {

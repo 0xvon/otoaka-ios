@@ -117,6 +117,17 @@ class LiveDetailViewModel {
         getLiveAction.input((request: req, uri: uri))
     }
     
+    func isLivePast() -> Bool {
+        let dateFormatter: DateFormatter = {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YYYYMMdd"
+            return dateFormatter
+        }()
+        let today = Date()
+        guard let date = state.live.date else { return false }
+        return date < dateFormatter.string(from: today)
+    }
+    
     func getLivePostSummary() {
         var uri = GetLivePosts.URI()
         uri.liveId = state.live.id
@@ -134,14 +145,19 @@ class LiveDetailViewModel {
         outputSubject.send(.pushToPostList(.livePost(state.live)))
     }
     
-    func likeLive(live: Live) {
-        let request = LikeLive.Request(liveId: live.id)
+    func likeButtonTapped() {
+        guard let liveDetail = state.liveDetail else { return }
+        liveDetail.isLiked ? unlikeLive() : likeLive()
+    }
+    
+    func likeLive() {
+        let request = LikeLive.Request(liveId: state.live.id)
         let uri = LikeLive.URI()
         likeLiveAction.input((request: request, uri: uri))
     }
     
-    func unlikeLive(live: Live) {
-        let request = UnlikeLive.Request(liveId: live.id)
+    func unlikeLive() {
+        let request = UnlikeLive.Request(liveId: state.live.id)
         let uri = UnlikeLive.URI()
         unlikeLiveAction.input((request: request, uri: uri))
     }
