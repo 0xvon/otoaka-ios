@@ -29,6 +29,7 @@ public final class EmptyCollectionView: UIStackView {
         case request = "リクエストがまだありません。ここには他のアーティストからの対バンリクエストが表示されます。試しに他のバンドにコンタクトを取ってみましょう。"
         case ticket = "チケットがまだありません。ここには取り置き予約したライブチケットが表示されます。いきたいライブを探して予約しましょう。"
         case search = "検索結果はありません。"
+        case friend = ""
         case notification = "通知はありません。"
     }
     

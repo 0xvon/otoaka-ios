@@ -61,7 +61,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
     
-    private let postSectionHeader = SummarySectionHeader(title: "このライブのレポート")
+    private let postSectionHeader = SummarySectionHeader(title: "みんなの感想")
     // FIXME: Use a safe way to instantiate views from xib
     private lazy var postCellContent: PostCellContent = {
         let content = UINib(nibName: "PostCellContent", bundle: nil)
@@ -73,6 +73,17 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         return content
     }()
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
+    
+    private let participatingFriendSectionHeader = SummarySectionHeader(title: "参戦する友達")
+    private lazy var participatingFriendContent: UserStoryCollectionView = {
+        let content = UserStoryCollectionView(users: [], imagePipeline: dependencyProvider.imagePipeline)
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 82),
+        ])
+        return content
+    }()
+    private lazy var participatingFriendWrapper: UIView = Self.addPadding(to: self.participatingFriendContent)
     
     private let performersSectionHeader: SummarySectionHeader = {
         let view = SummarySectionHeader(title: "出演アーティスト")
@@ -178,6 +189,13 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         ])
         postCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(postCellWrapper)
+        
+        scrollStackView.addArrangedSubview(participatingFriendSectionHeader)
+        NSLayoutConstraint.activate([
+            participatingFriendSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+        ])
+        participatingFriendWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(participatingFriendWrapper)
         
         let bottomSpacer = UIView()
         scrollStackView.addArrangedSubview(bottomSpacer) // Spacer
@@ -302,10 +320,14 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 } else {
                     liveActionButton.isHidden = true
                 }
+                
+                participatingFriendSectionHeader.isHidden = false
+                participatingFriendWrapper.isHidden = false
+                participatingFriendContent.inject(users: liveDetail.participatingFriends)
             case .updatePerformers(let performers):
                 self.setupPerformersContents(performers: performers)
             case .updatePostSummary(let post):
-                let isHidden = post == nil
+                let isHidden = post == nil || !viewModel.isLivePast()
                 self.postSectionHeader.isHidden = isHidden
                 self.postCellWrapper.isHidden = isHidden
                 if let post = post {
@@ -357,6 +379,16 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         postSectionHeader.listen { [unowned self] in
             self.viewModel.didTapSeeMore(at: .post)
+        }
+        
+        participatingFriendSectionHeader.listen { [unowned self] in
+            let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .users(viewModel.state.liveDetail?.participatingFriends ?? []))
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        participatingFriendContent.listen { [unowned self] user in
+            let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+            self.navigationController?.pushViewController(vc, animated: true)
         }
         
         likeCountSummaryView.addGestureRecognizer(

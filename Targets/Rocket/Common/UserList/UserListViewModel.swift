@@ -20,6 +20,7 @@ class UserListViewModel {
         case liveLikedUsers(Live.ID)
         case searchResults(String)
         case recommendedUsers(User.ID)
+        case users([User])
         case none
     }
     
@@ -31,6 +32,7 @@ class UserListViewModel {
         case liveLikedUsers(PaginationRequest<GetLiveLikedUsers>)
         case searchResults(PaginationRequest<SearchUser>)
         case recommendedUsers(PaginationRequest<RecommendedUsers>)
+        case users([User])
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -70,6 +72,8 @@ class UserListViewModel {
                 uri.id = userId
                 let request = PaginationRequest<RecommendedUsers>(apiClient: apiClient, uri: uri)
                 self = .recommendedUsers(request)
+            case .users(let users):
+                self = .users(users)
             case .none:
                 self = .none
             }
@@ -147,6 +151,8 @@ class UserListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .users(users):
+            state.users = users
         case .none: break
         }
     }
@@ -186,6 +192,8 @@ class UserListViewModel {
             pagination.refresh()
         case let .recommendedUsers(pagination):
             pagination.refresh()
+        case .users:
+            self.outputSubject.send(.reloadTableView)
         case .none: break
         }
     }
@@ -207,7 +215,7 @@ class UserListViewModel {
             pagination.next()
         case let .recommendedUsers(pagination):
             pagination.next()
-        case .none: break
+        case .users, .none: break
         }
     }
     
