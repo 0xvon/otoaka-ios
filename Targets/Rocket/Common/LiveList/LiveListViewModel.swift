@@ -20,7 +20,8 @@ class LiveListViewModel {
 
     enum DataSource {
         case groupLive(Group)
-        case likedLive(User)
+        case likedLive(User.ID)
+        case likedFutureLive(User.ID)
         case searchResult(String?, Group.ID?, Date?, Date?)
         case searchResultToSelect(String)
         case upcoming(User)
@@ -32,6 +33,7 @@ class LiveListViewModel {
         case searchResult(PaginationRequest<SearchLive>)
         case searchResultToSelect(String, PaginationRequest<SearchLive>)
         case likedLive(PaginationRequest<GetLikedLive>)
+        case likedFutureLive(PaginationRequest<GetLikedFutureLive>)
         case upcoming(PaginationRequest<GetUpcomingLives>)
         case none
 
@@ -42,11 +44,16 @@ class LiveListViewModel {
                 uri.groupId = group.id
                 let request = PaginationRequest<GetGroupLives>(apiClient: apiClient, uri: uri)
                 self = .groupLive(request)
-            case .likedLive(let user):
+            case .likedLive(let userId):
                 var uri = GetLikedLive.URI()
-                uri.userId = user.id
+                uri.userId = userId
                 let request = PaginationRequest<GetLikedLive>(apiClient: apiClient, uri: uri)
                 self = .likedLive(request)
+            case .likedFutureLive(let userId):
+                var uri = GetLikedFutureLive.URI()
+                uri.userId = userId
+                let request = PaginationRequest<GetLikedFutureLive>(apiClient: apiClient, uri: uri)
+                self = .likedFutureLive(request)
             case .searchResult(let query, let groupId, let fromDate, let toDate):
                 let dateFormatter: DateFormatter = {
                     let dateFormatter = DateFormatter()
@@ -120,6 +127,10 @@ class LiveListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .likedFutureLive(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case let .searchResult(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
@@ -162,6 +173,8 @@ class LiveListViewModel {
             pagination.refresh()
         case let .likedLive(pagination):
             pagination.refresh()
+        case let .likedFutureLive(pagination):
+            pagination.refresh()
         case let .searchResult(pagination):
             pagination.refresh()
         case let .searchResultToSelect(_, pagination):
@@ -178,6 +191,8 @@ class LiveListViewModel {
         case let .groupLive(pagination):
             pagination.next()
         case let .likedLive(pagination):
+            pagination.next()
+        case let .likedFutureLive(pagination):
             pagination.next()
         case let .searchResult(pagination):
             pagination.next()

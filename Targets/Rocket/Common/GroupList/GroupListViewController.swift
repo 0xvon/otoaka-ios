@@ -129,7 +129,7 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
                 switch viewModel.dataSource {
                 case .searchResultsToSelect(_):
                     self.listener(group)
-                case .followingGroups(_), .searchResults(_), .allGroup:
+                case .followingGroups(_), .searchResults(_), .allGroup, .group(_):
                     let vc = BandDetailViewController(
                         dependencyProvider: self.dependencyProvider, input: group.group)
                     let nav = self.navigationController ?? presentingViewController?.navigationController

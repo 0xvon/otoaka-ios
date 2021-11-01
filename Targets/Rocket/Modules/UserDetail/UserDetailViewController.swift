@@ -157,11 +157,11 @@ final class UserDetailViewController: UIViewController, Instantiable {
         ])
         pageViewController.didMove(toParent: self)
 
-        let vc1 = CollectionListViewController(dependencyProvider: dependencyProvider, input: .userPost(viewModel.state.user))
+        let vc1 = UserProfileViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
         vc1.view.backgroundColor = .clear
-        let vc2 = LiveListViewController(dependencyProvider: dependencyProvider, input: .likedLive(viewModel.state.user))
+        let vc2 = LiveListViewController(dependencyProvider: dependencyProvider, input: .likedLive(viewModel.state.user.id))
         vc2.view.backgroundColor = .clear
-        let vc3 = GroupListViewController(dependencyProvider: dependencyProvider, input: .followingGroups(viewModel.state.user.id))
+        let vc3 = CollectionListViewController(dependencyProvider: dependencyProvider, input: .userPost(viewModel.state.user))
         vc3.view.backgroundColor = .clear
 
         pageViewController.embed((

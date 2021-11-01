@@ -20,7 +20,7 @@ public final class EmptyCollectionView: UIStackView {
         case userList = "ユーザーがいません。"
         case postList = "ライブレポートがありません。"
         case liveList = "ライブが見つかりませんでした。掲載申請しよう！"
-        case likedLiveList = "「探す」タブから行きたいライブを探して♡を押すとここに表示されます。行きたいライブが見つからなかった場合申請することができます。"
+        case likedLiveList = "「探す」タブから行くライブを探して「行く」を押すとここに表示されます。ライブが見つからなかった場合申請することができます。"
         case groupLiveList = "このアーティストのライブが見つかりませんでした。掲載申請しよう！"
         case messageList = "メッセージがまだありません。ライブ友達を探して好きなアーティストやライブ予定の話をしてみましょう。"
         case message = "やりとりがまだありません。"
@@ -30,6 +30,7 @@ public final class EmptyCollectionView: UIStackView {
         case ticket = "チケットがまだありません。ここには取り置き予約したライブチケットが表示されます。いきたいライブを探して予約しましょう。"
         case search = "検索結果はありません。"
         case friend = ""
+        case liveSchedule = "ライブ予定はありません。"
         case notification = "通知はありません。"
     }
     

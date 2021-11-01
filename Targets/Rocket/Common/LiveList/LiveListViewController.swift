@@ -163,7 +163,7 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     func setTableViewBackgroundView(tableView: UITableView) {
         let emptyCollectionView: EmptyCollectionView = {
             switch viewModel.dataSource {
-            case .likedLive(_):
+            case .likedLive(_), .likedFutureLive(_):
                 let emptyCollectionView = EmptyCollectionView(emptyType: .likedLiveList, actionButtonTitle: "ライブ掲載申請する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 return emptyCollectionView

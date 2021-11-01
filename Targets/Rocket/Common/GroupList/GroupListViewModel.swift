@@ -23,6 +23,7 @@ class GroupListViewModel {
         case searchResults(String)
         case searchResultsToSelect(String)
         case allGroup
+        case group([GroupFeed])
         case none
     }
 
@@ -31,6 +32,7 @@ class GroupListViewModel {
         case searchResults(String, PaginationRequest<SearchGroup>)
         case searchResultsToSelect(String, PaginationRequest<SearchGroup>)
         case allGroup(PaginationRequest<GetAllGroups>)
+        case group([GroupFeed])
         case none
 
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -53,6 +55,8 @@ class GroupListViewModel {
             case .allGroup:
                 let request = PaginationRequest<GetAllGroups>(apiClient: apiClient, uri: GetAllGroups.URI())
                 self = .allGroup(request)
+            case .group(let groups):
+                self = .group(groups)
             case .none:
                 self = .none
             }
@@ -116,6 +120,8 @@ class GroupListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .group(groups):
+            state.groups = groups
         case .none: break
         }
     }
@@ -150,6 +156,8 @@ class GroupListViewModel {
             pagination.refresh()
         case let .allGroup(pagination):
             pagination.refresh()
+        case .group(_):
+            outputSubject.send(.reloadTableView)
         case .none: break
         }
     }
@@ -165,7 +173,7 @@ class GroupListViewModel {
             pagination.next()
         case let .allGroup(pagination):
             pagination.refresh()
-        case .none: break
+        case .group(_), .none: break
         }
     }
     

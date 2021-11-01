@@ -23,25 +23,25 @@ public final class UserDetailTabView: UIView {
         
         return stackView
     }()
+    private lazy var profileButton: TabItemButton = {
+        let button = TabItemButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "person")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "person")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
+        return button
+    }()
+    private lazy var statsButton: TabItemButton = {
+        let button = TabItemButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "chart.bar")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "chart.bar")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
+        return button
+    }()
     private lazy var myPostButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "doc.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
         button.setImage(UIImage(systemName: "doc.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
-        return button
-    }()
-    private lazy var likedLiveButton: TabItemButton = {
-        let button = TabItemButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "heart")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "heart")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
-        return button
-    }()
-    private lazy var followingGroupButton: TabItemButton = {
-        let button = TabItemButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "person.3")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "person.3")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
         return button
     }()
     
@@ -64,14 +64,14 @@ public final class UserDetailTabView: UIView {
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
+        stackView.addArrangedSubview(profileButton)
+        stackView.addArrangedSubview(statsButton)
         stackView.addArrangedSubview(myPostButton)
-        stackView.addArrangedSubview(likedLiveButton)
-        stackView.addArrangedSubview(followingGroupButton)
         
         tabButtons = [
+            profileButton,
+            statsButton,
             myPostButton,
-            likedLiveButton,
-            followingGroupButton,
         ]
         tabButtons.forEach {
             $0.addTarget(self, action: #selector(didSelect(at:)), for: .touchUpInside)
@@ -80,14 +80,6 @@ public final class UserDetailTabView: UIView {
     }
     
     func update(userDetail: UserDetail) {
-        myPostButton.setTitle("\(userDetail.postCount)", for: .normal)
-        myPostButton.setTitle("\(userDetail.postCount)", for: .selected)
-        
-        likedLiveButton.setTitle("\(userDetail.likePastLiveCount)", for: .normal)
-        likedLiveButton.setTitle("\(userDetail.likePastLiveCount)", for: .selected)
-        
-        followingGroupButton.setTitle("\(userDetail.followingGroupsCount)", for: .normal)
-        followingGroupButton.setTitle("\(userDetail.followingGroupsCount)", for: .selected)
     }
 }
 
