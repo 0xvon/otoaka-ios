@@ -12,7 +12,7 @@ import UIKit
 import ImagePipeline
 
 public final class UserDetailHeaderView: UIView, PageHeaderView {
-    public var pageHeaderHeight: CGFloat = 200
+    public var pageHeaderHeight: CGFloat = 156
     
     public typealias Input = (
         selfUser: User,
