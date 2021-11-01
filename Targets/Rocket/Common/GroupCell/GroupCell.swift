@@ -70,7 +70,7 @@ class GroupCellContent: UIButton {
         type: GroupCellContentType
     )
     enum GroupCellContentType {
-        case normal, follow, select
+        case normal, select
     }
     enum Output {
         case listenButtonTapped
@@ -90,24 +90,12 @@ class GroupCellContent: UIButton {
     @IBOutlet weak var sinceBadgeView: BadgeView!
     @IBOutlet weak var hometownBadgeView: BadgeView!
     
-    private lazy var likeButton: ToggleButton = {
-        let button = ToggleButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 16
-        button.isUserInteractionEnabled = true
-        button.setImage(
-            UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
-        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
-        button.isEnabled = false
-        return button
-    }()
     private lazy var bigLikeButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 24
         button.isUserInteractionEnabled = true
-        button.setTitle("フォロー", selected: false)
+        button.setTitle("フォローする", selected: false)
         button.setTitle("フォロー中", selected: true)
         button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         button.isEnabled = false
@@ -132,19 +120,12 @@ class GroupCellContent: UIButton {
         let startYear: String = input.group.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
         sinceBadgeView.title = startYear
         hometownBadgeView.title = input.group.group.hometown.map { "\($0)出身" } ?? "出身不明"
-        likeButton.isEnabled = true
         bigLikeButton.isEnabled = true
-        likeButton.isSelected = input.group.isFollowing
         bigLikeButton.isSelected = input.group.isFollowing
         switch input.type {
         case .normal:
-            likeButton.isHidden = false
-            bigLikeButton.isHidden = true
-        case .follow:
-            likeButton.isHidden = true
             bigLikeButton.isHidden = false
         case .select:
-            likeButton.isHidden = true
             bigLikeButton.isHidden = true
         }
 
@@ -176,14 +157,6 @@ class GroupCellContent: UIButton {
         sinceBadgeView.image = UIImage(named: "calendar")
         hometownBadgeView.image = UIImage(named: "map")
         
-        addSubview(likeButton)
-        NSLayoutConstraint.activate([
-            likeButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            likeButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
-            likeButton.widthAnchor.constraint(equalToConstant: 32),
-            likeButton.heightAnchor.constraint(equalTo: likeButton.widthAnchor),
-        ])
-        
         addSubview(bigLikeButton)
         NSLayoutConstraint.activate([
             bigLikeButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
@@ -196,7 +169,6 @@ class GroupCellContent: UIButton {
     }
     
     @objc private func likeButtonTapped() {
-        likeButton.isEnabled = false
         bigLikeButton.isEnabled = false
         self.listener(.likeButtonTapped)
     }

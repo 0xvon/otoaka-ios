@@ -56,8 +56,8 @@ final class HomeViewController: UIViewController {
     }
     
     private func setPagingViewController() {
-        let vc1 = PostListViewController(dependencyProvider: dependencyProvider, input: .trendPost)
-        let vc2 = PostListViewController(dependencyProvider: dependencyProvider, input: .followingPost)
+        let vc1 = PostListViewController(dependencyProvider: dependencyProvider, input: .followingPost)
+        let vc2 = PostListViewController(dependencyProvider: dependencyProvider, input: .trendPost)
         let pagingViewController = PagingViewController(viewControllers: [
             vc1,
             vc2,

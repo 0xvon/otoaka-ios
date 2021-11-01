@@ -83,8 +83,8 @@ public final class UserDetailTabView: UIView {
         myPostButton.setTitle("\(userDetail.postCount)", for: .normal)
         myPostButton.setTitle("\(userDetail.postCount)", for: .selected)
         
-        likedLiveButton.setTitle("\(userDetail.likeLiveCount)", for: .normal)
-        likedLiveButton.setTitle("\(userDetail.likeLiveCount)", for: .selected)
+        likedLiveButton.setTitle("\(userDetail.likePastLiveCount)", for: .normal)
+        likedLiveButton.setTitle("\(userDetail.likePastLiveCount)", for: .selected)
         
         followingGroupButton.setTitle("\(userDetail.followingGroupsCount)", for: .normal)
         followingGroupButton.setTitle("\(userDetail.followingGroupsCount)", for: .selected)

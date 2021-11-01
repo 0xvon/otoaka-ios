@@ -226,7 +226,7 @@ class PostCellContent: UIButton {
         
         sectionView.addArrangedSubview(commentButtonView)
         NSLayoutConstraint.activate([
-            commentButtonView.widthAnchor.constraint(equalToConstant: 60),
+            commentButtonView.widthAnchor.constraint(equalToConstant: 80),
         ])
         
         sectionView.addArrangedSubview(likeButtonView)
@@ -246,7 +246,7 @@ class PostCellContent: UIButton {
         let commentButton = ReactionIndicatorButton()
         commentButton.translatesAutoresizingMaskIntoConstraints = false
         commentButton.setImage(
-            UIImage(systemName: "bubble.right")!
+            UIImage(systemName: "message")!
                 .withTintColor(.white, renderingMode: .alwaysOriginal),
             for: .normal
         )
@@ -319,7 +319,7 @@ class PostCellContent: UIButton {
         dateLabel.text = postDateFormatter.string(from: input.post.createdAt)
         textView.text = input.post.text
         trackNameLabel.setTitle(input.post.tracks.first?.trackName, for: .normal)
-        commentButtonView.setTitle("\(input.post.commentCount)", for: .normal)
+        commentButtonView.setTitle("DM", for: .normal)
         commentButtonView.isEnabled = true
         likeButtonView.setTitle("\(input.post.likeCount)", for: .normal)
         likeButtonView.isSelected = input.post.isLiked

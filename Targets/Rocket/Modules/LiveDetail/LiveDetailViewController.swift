@@ -47,9 +47,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 24
-        button.setImage(
-            UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
         button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         return button
     }()
@@ -58,7 +55,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.distribution = .fill
-        stackView.spacing = 4
+        stackView.spacing = 8
         stackView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         stackView.isLayoutMarginsRelativeArrangement = true
         return stackView
@@ -158,11 +155,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         NSLayoutConstraint.activate([
             liveActionButton.heightAnchor.constraint(equalToConstant: 48),
-            liveActionButton.widthAnchor.constraint(equalToConstant: 160),
+            liveActionButton.widthAnchor.constraint(equalToConstant: 136),
         ])
         ticketStackView.addArrangedSubview(likeButton)
         NSLayoutConstraint.activate([
-            likeButton.widthAnchor.constraint(equalToConstant: 48)
+            likeButton.widthAnchor.constraint(equalToConstant: 120)
         ])
         ticketStackView.addArrangedSubview(UIView()) // Spacer
         
@@ -287,17 +284,21 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             case .didGetLiveDetail(let liveDetail):
                 self.title = liveDetail.live.title
                 headerView.update(input: (live: liveDetail.live, imagePipeline: dependencyProvider.imagePipeline))
-                likeCountSummaryView.update(input: (title: "行きたい", count: liveDetail.likeCount))
-                postCountSummaryView.update(input: (title: "レポート", count: liveDetail.postCount))
+                likeCountSummaryView.update(input: (title: "参戦", count: liveDetail.likeCount))
+                postCountSummaryView.update(input: (title: "感想", count: liveDetail.postCount))
                 likeButton.isSelected = liveDetail.isLiked
                 likeButton.isEnabled = true
                 refreshControl.endRefreshing()
                 if viewModel.isLivePast() {
                     liveActionButton.isHidden = false
-                    liveActionButton.setTitle("レポートを書く", for: .normal)
+                    liveActionButton.setTitle("感想を書く", for: .normal)
+                    likeButton.setTitle("行った", for: .normal)
+                    likeButton.setTitle("参戦済", for: .selected)
                 } else if viewModel.state.live.piaEventUrl != nil {
                     liveActionButton.isHidden = false
                     liveActionButton.setTitle("チケット申込", for: .normal)
+                    likeButton.setTitle("行く", for: .normal)
+                    likeButton.setTitle("参戦予定", for: .selected)
                 } else {
                     liveActionButton.isHidden = true
                 }

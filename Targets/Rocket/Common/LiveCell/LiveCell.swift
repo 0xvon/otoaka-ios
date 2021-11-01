@@ -60,6 +60,8 @@ class LiveCellContent: UIButton {
         type: LiveCellContentType
     )
     
+    var series: LiveSeries = .future
+    
     enum LiveCellContentType {
         case normal
         case review
@@ -118,11 +120,10 @@ class LiveCellContent: UIButton {
         return stackView
     }()
     private lazy var buyTicketButtonView: PrimaryButton = {
-        let primaryButton = PrimaryButton(text: "チケット申込")
+        let primaryButton = PrimaryButton(text: "")
         primaryButton.layer.cornerRadius = 24
         primaryButton.translatesAutoresizingMaskIntoConstraints = false
         primaryButton.isUserInteractionEnabled = true
-        primaryButton.setImage(UIImage(named: "ticket"), for: .normal)
         return primaryButton
     }()
     private lazy var actionButtonStackView: UIStackView = {
@@ -132,8 +133,7 @@ class LiveCellContent: UIButton {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 4
-//        stackView.addArrangedSubview(likeButton)
-        stackView.addArrangedSubview(reportButton)
+        stackView.addArrangedSubview(likeButton)
         
         return stackView
     }()
@@ -162,19 +162,8 @@ class LiveCellContent: UIButton {
     private lazy var likeButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.layer.cornerRadius = 16
-        button.setImage(
-            UIImage(systemName: "heart")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "heart.fill")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
-        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var reportButton: ToggleButton = {
-        let button = ToggleButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 24
-        button.setTitle("レポートを書く", selected: false)
-        button.addTarget(self, action: #selector(reportButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         return button
     }()
 
@@ -186,7 +175,11 @@ class LiveCellContent: UIButton {
         super.awakeFromNib()
         
         buyTicketButtonView.listen { [unowned self] in
-            self.listener(.buyTicketButtonTapped)
+            switch series {
+            case .future: self.listener(.buyTicketButtonTapped)
+            case .past: self.listener(.reportButtonTapped)
+            case .all: break
+            }
         }
         setup()
     }
@@ -225,16 +218,29 @@ class LiveCellContent: UIButton {
         
         switch input.type {
         case .normal:
-            numOfLikeButton.setTitle("行きたい \(input.live.likeCount)人", for: .normal)
-            numOfReportButton.setTitle("レポート \(input.live.postCount)件", for: .normal)
+            numOfLikeButton.setTitle("参戦 \(input.live.likeCount)人", for: .normal)
+            numOfReportButton.setTitle("感想 \(input.live.postCount)件", for: .normal)
             likeButton.isSelected = input.live.isLiked
             likeButton.isEnabled = true
+            
+            if let date = input.live.live.date, date >= dateFormatter.string(from: Date()) {
+                self.series = .future
+                buyTicketButtonView.isHidden = input.live.live.piaEventUrl == nil
+                buyTicketButtonView.setTitle("チケット申込", for: .normal)
+                likeButton.setTitle("行く", for: .normal)
+                likeButton.setTitle("参戦予定", for: .selected)
+            } else {
+                self.series = .past
+                buyTicketButtonView.isHidden = false
+                buyTicketButtonView.setTitle("感想を書く", for: .normal)
+                likeButton.setTitle("行った", for: .normal)
+                likeButton.setTitle("参戦済", for: .selected)
+            }
         case .review:
             buyTicketStackView.isHidden = true
             actionButtonStackView.isHidden = true
             numOfLikeButton.isHidden = true
             numOfReportButton.isHidden = true
-            likeButton.isHidden = true
         }
         
     }
@@ -265,14 +271,6 @@ class LiveCellContent: UIButton {
         self.thumbnailView.backgroundColor = .clear
         self.thumbnailView.layer.cornerRadius = 10
         self.thumbnailView.clipsToBounds = true
-        
-        addSubview(likeButton)
-        NSLayoutConstraint.activate([
-            likeButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            likeButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
-            likeButton.widthAnchor.constraint(equalToConstant: 32),
-            likeButton.heightAnchor.constraint(equalTo: likeButton.widthAnchor),
-        ])
 
         stackView.spacing = 8
         stackView.axis = .vertical

@@ -37,7 +37,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private let followersSummaryView = CountSummaryView()
     private let followButton: ToggleButton = {
         let followButton = ToggleButton()
-        followButton.setTitle("フォロー", selected: false)
+        followButton.setTitle("フォローする", selected: false)
         followButton.setTitle("フォロー中", selected: true)
         return followButton
     }()
@@ -139,7 +139,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         followStackView.addArrangedSubview(followButton)
         NSLayoutConstraint.activate([
             followButton.heightAnchor.constraint(equalToConstant: 44),
-            followButton.widthAnchor.constraint(equalToConstant: 100),
+            followButton.widthAnchor.constraint(equalToConstant: 160),
         ])
         followStackView.addArrangedSubview(UIView()) // Spacer
 

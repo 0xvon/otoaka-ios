@@ -33,7 +33,7 @@ final class PostListViewController: UIViewController, Instantiable {
         
         switch input {
         case .followingPost:
-            self.title = "タイムライン"
+            self.title = "フォロー中"
         case .trendPost:
             self.title = "トレンド"
         case .groupPost(_):
@@ -163,7 +163,7 @@ final class PostListViewController: UIViewController, Instantiable {
         viewModel.inject(input)
         switch input {
         case .followingPost:
-            self.title = "タイムライン"
+            self.title = "フォロー中"
         case .trendPost:
             self.title = "トレンド"
         case .groupPost(_):
@@ -225,7 +225,7 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch viewModel.dataSource {
-        case .trendPost:
+        case .followingPost:
             return 192
         default: return 0
         }
@@ -233,7 +233,7 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         switch viewModel.dataSource {
-        case .trendPost:
+        case .followingPost:
             let view = header
             return view
         default: return nil
@@ -257,11 +257,11 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
         let emptyCollectionView: EmptyCollectionView = {
             switch viewModel.dataSource {
             case .followingPost:
-                let emptyCollectionView = EmptyCollectionView(emptyType: .post, actionButtonTitle: "ライブを探してレポートを書く")
+                let emptyCollectionView = EmptyCollectionView(emptyType: .post, actionButtonTitle: "友達を探す")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 emptyCollectionView.listen { [unowned self] in
-                    let vc = tabBarController?.viewControllers?[1]
-                    tabBarController?.selectedViewController = vc
+                    let vc = SearchUserViewController(dependencyProvider: dependencyProvider)
+                    self.navigationController?.pushViewController(vc, animated: true)
                 }
                 return emptyCollectionView
             case .livePost(let live):
@@ -281,7 +281,7 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
         postTableView.backgroundView = isDisplay ? emptyCollectionView : nil
         if let backgroundView = postTableView.backgroundView {
             NSLayoutConstraint.activate([
-                backgroundView.topAnchor.constraint(equalTo: postTableView.topAnchor, constant: 32),
+                backgroundView.topAnchor.constraint(equalTo: postTableView.topAnchor, constant: 200),
                 backgroundView.widthAnchor.constraint(equalTo: postTableView.widthAnchor, constant: -32),
                 backgroundView.centerXAnchor.constraint(equalTo: postTableView.centerXAnchor),
             ])

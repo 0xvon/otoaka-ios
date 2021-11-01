@@ -7,13 +7,13 @@
 
 import UIKit
 import ImagePipeline
-import DomainEntity
+import Endpoint
 
 public final class LiveCardCollectionView: UICollectionView {
-    public var lives: [Live] =  []
+    public var lives: [LiveFeed] =  []
     public var imagePipeline: ImagePipeline
     
-    public init(lives: [Live], imagePipeline: ImagePipeline) {
+    public init(lives: [LiveFeed], imagePipeline: ImagePipeline) {
         self.lives = lives
         self.imagePipeline = imagePipeline
         
@@ -31,7 +31,7 @@ public final class LiveCardCollectionView: UICollectionView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public func inject(lives: [Live]) {
+    public func inject(lives: [LiveFeed]) {
         self.lives = lives
         reloadData()
     }
@@ -39,7 +39,7 @@ public final class LiveCardCollectionView: UICollectionView {
     func setup() {
         backgroundColor = .clear
         
-        registerCellClass(LiveCardCell.self)
+        registerCellClass(LiveScheduleCardCell.self)
         delegate = self
         dataSource = self
         isPagingEnabled = false
@@ -58,12 +58,12 @@ extension LiveCardCollectionView: UICollectionViewDelegate, UICollectionViewData
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(LiveCardCell.self, input: (live: self.lives[indexPath.item], imagePipeline: imagePipeline), for: indexPath)
+        let cell = collectionView.dequeueReusableCell(LiveScheduleCardCell.self, input: (live: self.lives[indexPath.item], imagePipeline: imagePipeline), for: indexPath)
         return cell
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.listener(lives[indexPath.item])
+        self.listener(lives[indexPath.item].live)
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

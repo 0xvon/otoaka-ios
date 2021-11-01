@@ -19,7 +19,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
                 </imageView>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mcz-II-bDG">
-                    <rect key="frame" x="16" y="16" width="344" height="20.5"/>
+                    <rect key="frame" x="16" y="16" width="382" height="20.5"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
@@ -67,7 +67,7 @@
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="CUj-QU-1V3" secondAttribute="trailing" id="CwL-Vh-GvE"/>
                 <constraint firstItem="mcz-II-bDG" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="ERY-3t-lol"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="p68-VP-LFw" secondAttribute="bottom" constant="16" id="GjO-yI-wwC"/>
-                <constraint firstAttribute="trailing" secondItem="mcz-II-bDG" secondAttribute="trailing" constant="54" id="H0V-Zl-Wcz"/>
+                <constraint firstAttribute="trailing" secondItem="mcz-II-bDG" secondAttribute="trailing" constant="16" id="H0V-Zl-Wcz"/>
                 <constraint firstItem="CUj-QU-1V3" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="Hrr-JV-1UJ"/>
                 <constraint firstItem="CUj-QU-1V3" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="QVr-Ph-KTH"/>
                 <constraint firstItem="mcz-II-bDG" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="uA9-pQ-mF6"/>

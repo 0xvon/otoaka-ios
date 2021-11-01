@@ -72,7 +72,7 @@ class PostListViewModel {
         case reloadData
         case didDeletePost
         case didToggleLikePost
-        case getLatestLives([Live])
+        case getLatestLives([LiveFeed])
         case error(Error)
     }
     
@@ -96,7 +96,7 @@ class PostListViewModel {
         self.storage = DataSourceStorage(dataSource: input, apiClient: dependencyProvider.apiClient)
         subscribe(storage: storage)
         
-        getLatestLivesAction.elements.map { item in .getLatestLives(item.items.map { $0.live }.reversed()) }
+        getLatestLivesAction.elements.map { item in .getLatestLives(item.items.reversed()) }
             .eraseToAnyPublisher()
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
@@ -164,9 +164,9 @@ class PostListViewModel {
             pagination.refresh()
         case let .followingPost(pagination):
             pagination.refresh()
+            getLatestLives()
         case let .trendPost(pagination):
             pagination.refresh()
-            getLatestLives()
         case .none:
             break
         }

@@ -115,7 +115,7 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
         let type: GroupCellContent.GroupCellContentType
         switch viewModel.dataSource {
         case .allGroup:
-            type = .follow
+            type = .normal
         case .searchResultsToSelect(_):
             type = .select
         default:
