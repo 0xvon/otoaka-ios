@@ -12,6 +12,7 @@ import UIComponent
 import UIKit
 import KeyboardGuide
 import CropViewController
+import TagListView
 
 final class EditUserViewController: UIViewController, Instantiable {
     typealias Input = Void
@@ -35,11 +36,6 @@ final class EditUserViewController: UIViewController, Instantiable {
         let displayNameInputView = TextFieldView(input: (section: "表示名", text: nil, maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         return displayNameInputView
-    }()
-    private lazy var biographyInputView: InputTextView = {
-        let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)", text: nil, maxLength: 4000))
-        biographyInputView.translatesAutoresizingMaskIntoConstraints = false
-        return biographyInputView
     }()
     private lazy var sexInputView: TextFieldView = {
         let displayNameInputView = TextFieldView(input: (section: "性別(任意)", text: nil, maxLength: 20))
@@ -66,16 +62,9 @@ final class EditUserViewController: UIViewController, Instantiable {
         return picketView
     }()
     private lazy var liveStyleInputView: TextFieldView = {
-        let displayNameInputView = TextFieldView(input: (section: "ライブの楽しみ方(任意)", text: nil, maxLength: 20))
+        let displayNameInputView = TextFieldView(input: (section: "称号(任意)", text: nil, maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         return displayNameInputView
-    }()
-    private lazy var liveStylePickerView: UIPickerView = {
-        let picketView = UIPickerView()
-        picketView.translatesAutoresizingMaskIntoConstraints = false
-        picketView.dataSource = self
-        picketView.delegate = self
-        return picketView
     }()
     private lazy var residenceInputView: TextFieldView = {
         let displayNameInputView = TextFieldView(input: (section: "都道府県(任意)", text: nil, maxLength: 20))
@@ -150,6 +139,50 @@ final class EditUserViewController: UIViewController, Instantiable {
 //        registerButton.isEnabled = false
 //        return registerButton
 //    }()
+    private lazy var recentlyFollowingWrapper: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        
+        view.addSubview(recentlyFollowingTitle)
+        NSLayoutConstraint.activate([
+            recentlyFollowingTitle.heightAnchor.constraint(equalToConstant: 24),
+            recentlyFollowingTitle.leftAnchor.constraint(equalTo: view.leftAnchor),
+            recentlyFollowingTitle.topAnchor.constraint(equalTo: view.topAnchor),
+            recentlyFollowingTitle.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+        view.addSubview(recentlyFollowingListView)
+        NSLayoutConstraint.activate([
+            recentlyFollowingListView.topAnchor.constraint(equalTo: recentlyFollowingTitle.bottomAnchor, constant: 8),
+            recentlyFollowingListView.leftAnchor.constraint(equalTo: recentlyFollowingTitle.leftAnchor),
+            recentlyFollowingListView.rightAnchor.constraint(equalTo: recentlyFollowingTitle.rightAnchor),
+            recentlyFollowingListView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+        return view
+    }()
+    private lazy var recentlyFollowingTitle: UILabel = {
+        let section = UILabel()
+        section.translatesAutoresizingMaskIntoConstraints = false
+        section.text = "最近好きなアーティスト"
+        section.font = Brand.font(for: .medium)
+        section.textColor = Brand.color(for: .text(.toggle))
+        return section
+    }()
+    private lazy var recentlyFollowingListView: TagListView = {
+        let content = TagListView()
+        content.delegate = self
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.alignment = .left
+        content.cornerRadius = 16
+        content.paddingY = 8
+        content.paddingX = 12
+        content.marginX = 8
+        content.marginY = 8
+        content.removeIconLineColor = Brand.color(for: .text(.primary))
+        content.textFont = Brand.font(for: .medium)
+        content.tagBackgroundColor = Brand.color(for: .text(.toggle))
+        return content
+    }()
     private lazy var registerButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -206,7 +239,6 @@ final class EditUserViewController: UIViewController, Instantiable {
     
     func update(user: User) {
         displayNameInputView.setText(text: user.name)
-        biographyInputView.setText(text: user.biography ?? "")
         sexInputView.setText(text: user.sex ?? "")
         ageInputView.setText(text: user.age.map { String($0) } ?? "")
         liveStyleInputView.setText(text: user.liveStyle ?? "")
@@ -245,6 +277,10 @@ final class EditUserViewController: UIViewController, Instantiable {
 //                    partInputView.isHidden = false
 //                    partInputView.setText(text: artist.part)
 //                }
+            case .didGetRecentlyFollowing(let groups):
+                recentlyFollowingListView.removeAllTags()
+                recentlyFollowingListView.addTags(groups.map { $0.name + " ✗" })
+                recentlyFollowingListView.addTag("追加＋").tagBackgroundColor = Brand.color(for: .background(.secondary))
             case .updateSubmittableState(let state):
                 switch state {
                 case .editting(let submittable):
@@ -266,10 +302,6 @@ final class EditUserViewController: UIViewController, Instantiable {
             self.didInputValue()
         }
         
-        biographyInputView.listen { [unowned self] in
-            self.didInputValue()
-        }
-        
         sexInputView.listen { [unowned self] in
             sexInputView.setText(text: viewModel.state.socialInputs.sex[sexPickerView.selectedRow(inComponent: 0)])
             self.didInputValue()
@@ -281,7 +313,6 @@ final class EditUserViewController: UIViewController, Instantiable {
         }
         
         liveStyleInputView.listen { [unowned self] in
-            liveStyleInputView.setText(text: viewModel.state.socialInputs.howToEnjoyLives[liveStylePickerView.selectedRow(inComponent: 0)])
             self.didInputValue()
         }
         
@@ -368,11 +399,6 @@ final class EditUserViewController: UIViewController, Instantiable {
             displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
-        mainView.addArrangedSubview(biographyInputView)
-        NSLayoutConstraint.activate([
-            biographyInputView.heightAnchor.constraint(equalToConstant: 88),
-        ])
-        
         mainView.addArrangedSubview(sexInputView)
         sexInputView.selectInputView(inputView: sexPickerView)
         NSLayoutConstraint.activate([
@@ -386,7 +412,6 @@ final class EditUserViewController: UIViewController, Instantiable {
         ])
         
         mainView.addArrangedSubview(liveStyleInputView)
-        liveStyleInputView.selectInputView(inputView: liveStylePickerView)
         NSLayoutConstraint.activate([
             liveStyleInputView.heightAnchor.constraint(equalToConstant: 50),
         ])
@@ -396,6 +421,8 @@ final class EditUserViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             residenceInputView.heightAnchor.constraint(equalToConstant: 50),
         ])
+        
+        mainView.addArrangedSubview(recentlyFollowingWrapper)
         
 //        mainView.addArrangedSubview(twitterUrlTextFieldView)
 //        NSLayoutConstraint.activate([
@@ -428,8 +455,7 @@ final class EditUserViewController: UIViewController, Instantiable {
     }
 
     private func didInputValue() {
-        let displayName: String? = displayNameInputView.getText()
-        let biography = biographyInputView.getText()
+        let displayName = displayNameInputView.getText()
         let sex = sexInputView.getText()
         let age = ageInputView.getText()
         let liveStyle = liveStyleInputView.getText()
@@ -439,7 +465,6 @@ final class EditUserViewController: UIViewController, Instantiable {
         
         viewModel.didUpdateInputItems(
             displayName: displayName,
-            biography: biography,
             sex: sex,
             age: age,
             liveStyle: liveStyle,
@@ -455,6 +480,20 @@ final class EditUserViewController: UIViewController, Instantiable {
             picker.sourceType = .photoLibrary
             picker.delegate = self
             self.present(picker, animated: true, completion: nil)
+        }
+    }
+}
+
+extension EditUserViewController: TagListViewDelegate {
+    func tagPressed(_ title: String, tagView: TagView, sender: TagListView) {
+        if title == "追加＋" {
+            let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
+            self.navigationController?.pushViewController(vc, animated: true)
+            vc.listen { [unowned self] group in
+                viewModel.addGroup(group.group)
+            }
+        } else {
+            viewModel.removeGroup(title)
         }
     }
 }
@@ -499,8 +538,6 @@ extension EditUserViewController: UIPickerViewDelegate, UIPickerViewDataSource {
             return viewModel.state.socialInputs.sex.count
         case self.agePickerView:
             return viewModel.state.socialInputs.age.count
-        case self.liveStylePickerView:
-            return viewModel.state.socialInputs.howToEnjoyLives.count
         case self.residencePickerView:
             return viewModel.state.socialInputs.prefectures.count
         default: return 1
@@ -515,8 +552,6 @@ extension EditUserViewController: UIPickerViewDelegate, UIPickerViewDataSource {
             return viewModel.state.socialInputs.sex[row]
         case self.agePickerView:
             return viewModel.state.socialInputs.age[row]
-        case self.liveStylePickerView:
-            return viewModel.state.socialInputs.howToEnjoyLives[row]
         case self.residencePickerView:
             return viewModel.state.socialInputs.prefectures[row]
         default: return "yo"

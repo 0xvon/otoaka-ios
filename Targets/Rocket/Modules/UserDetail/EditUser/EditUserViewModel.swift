@@ -25,6 +25,7 @@ class EditUserViewModel {
         var instagramUrl: URL?
         var twitterUrl: URL?
         let socialInputs: SocialInputs
+        var recentlyFollowings: [Group] = []
     }
     
     enum PageState {
@@ -34,6 +35,7 @@ class EditUserViewModel {
     
     enum Output {
         case didEditUser(User)
+        case didGetRecentlyFollowing([Group])
         case didGetUserInfo(User)
         case updateSubmittableState(PageState)
 //        case didInjectRole(RoleProperties)
@@ -50,6 +52,8 @@ class EditUserViewModel {
     
     private lazy var getUserInfoAction = Action(GetUserInfo.self, httpClient: self.apiClient)
     private lazy var editUserAction = Action(EditUserInfo.self, httpClient: self.apiClient)
+    private lazy var getRecentlyFollowingAction = Action(RecentlyFollowingGroups.self, httpClient: self.apiClient)
+    private lazy var updateRecentlyFollowingAction = Action(UpdateRecentlyFollowing.self, httpClient: self.apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider
@@ -59,19 +63,24 @@ class EditUserViewModel {
         
         let errors = Publishers.MergeMany(
             getUserInfoAction.errors,
-            editUserAction.errors
+            editUserAction.errors,
+            getRecentlyFollowingAction.errors,
+            updateRecentlyFollowingAction.errors
         )
         
         Publishers.MergeMany(
             getUserInfoAction.elements.map(Output.didGetUserInfo).eraseToAnyPublisher(),
             editUserAction.elements.map(Output.didEditUser).eraseToAnyPublisher(),
+            getRecentlyFollowingAction.elements.map { Output.didGetRecentlyFollowing($0.map { $0.group }) }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
         editUserAction.elements
-            .sink(receiveValue: { [unowned self] _ in
+            .combineLatest(getRecentlyFollowingAction.elements)
+            .sink(receiveValue: { [unowned self] _, groups in
+                state.recentlyFollowings = groups.map { $0.group }
                 outputSubject.send(.updateSubmittableState(.editting(true)))
             })
             .store(in: &cancellables)
@@ -80,6 +89,7 @@ class EditUserViewModel {
     func viewDidLoad() {
 //        injectRole()
         getUserInfo()
+        getRecentlyFollowings()
     }
     
 //    func injectRole() {
@@ -90,9 +100,24 @@ class EditUserViewModel {
         getUserInfoAction.input((request: Empty(), uri: GetUserInfo.URI()))
     }
     
+    func getRecentlyFollowings() {
+        var uri = RecentlyFollowingGroups.URI()
+        uri.id = dependencyProvider.user.id
+        getRecentlyFollowingAction.input((request: Empty(), uri: uri))
+    }
+    
+    func addGroup(_ group: Group) {
+        state.recentlyFollowings.append(group)
+        outputSubject.send(.didGetRecentlyFollowing(state.recentlyFollowings))
+    }
+    
+    func removeGroup(_ groupName: String) {
+        state.recentlyFollowings = state.recentlyFollowings.filter { $0.name != groupName.prefix(groupName.count - 2) }
+        outputSubject.send(.didGetRecentlyFollowing(state.recentlyFollowings))
+    }
+    
     func didUpdateInputItems(
         displayName: String?,
-        biography: String?,
         sex: String?,
         age: String?,
         liveStyle: String?,
@@ -101,7 +126,7 @@ class EditUserViewModel {
         instagramUrl: String?
     ) {
         state.displayName = displayName
-        state.biography = biography
+        state.biography = nil
         state.sex = sex
         state.age = age.map { Int($0) ?? 0 }
         state.liveStyle = liveStyle
@@ -154,5 +179,12 @@ class EditUserViewModel {
             instagramUrl: state.instagramUrl
         )
         editUserAction.input((request: req, uri: EditUserInfo.URI()))
+        updateRecentlyFollowing()
+    }
+    
+    private func updateRecentlyFollowing() {
+        let request = UpdateRecentlyFollowing.Request(groups: state.recentlyFollowings.map { $0.id })
+        let uri = UpdateRecentlyFollowing.URI()
+        updateRecentlyFollowingAction.input((request: request, uri: uri))
     }
 }
