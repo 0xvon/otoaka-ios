@@ -18,6 +18,9 @@ public enum Brand {
         case .text(.button):               return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
         case .text(.link):                 return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
         case .text(.toggle):               return #colorLiteral(red: 0.2862745098, green: 0.631372549, blue: 0.9725490196, alpha: 1) // #49A1F8
+        case .ranking(.first):             return #colorLiteral(red: 1, green: 0.7485026717, blue: 0.1293900013, alpha: 1) // #FFC24B
+        case .ranking(.second):            return #colorLiteral(red: 0.7960784314, green: 0.7960784314, blue: 0.7960784314, alpha: 1) // #CBCBCB
+        case .ranking(.other):             return #colorLiteral(red: 1, green: 0.4117647059, blue: 0.1568627451, alpha: 1) // #FF6928
         }
     }
 
@@ -26,6 +29,7 @@ public enum Brand {
         case brand(BrandColor)
         case background(BackgroundColor)
         case text(TextColor)
+        case ranking(RankingColor)
         
         public enum BrandColor: CaseIterable {
             case primary
@@ -37,6 +41,10 @@ public enum Brand {
         }
         public enum TextColor: CaseIterable {
             case primary, link, button, toggle
+        }
+        
+        public enum RankingColor: CaseIterable {
+            case first, second, other
         }
     }
     

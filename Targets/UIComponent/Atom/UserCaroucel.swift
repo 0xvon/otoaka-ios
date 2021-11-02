@@ -27,7 +27,6 @@ final class UserCaroucel: UICollectionViewCell, ReusableCell {
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
         ])
-        
     }
     
     required init?(coder: NSCoder) {

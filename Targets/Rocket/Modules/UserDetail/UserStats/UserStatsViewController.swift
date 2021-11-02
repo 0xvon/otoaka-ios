@@ -61,11 +61,41 @@ final class UserStatsViewController: UIViewController, Instantiable {
         return chart
     }()
     private lazy var watchingChartViewWrapper: UIView = Self.addPadding(to: self.watchingChartView)
-    
-    private lazy var watchingCountStaciView: UIStackView = {
+    private lazy var watchingCountStackView: UIStackView = {
         let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 24
+        stackView.distribution = .fillEqually
+        stackView.addArrangedSubview(watchingCountSummaryView)
+        stackView.addArrangedSubview(ticketPriceSummaryView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            stackView.heightAnchor.constraint(equalToConstant: 72)
+        ])
+        return stackView
     }()
+    private lazy var watchingCountStackViewWrapper: UIView = Self.addPadding(to: self.watchingCountStackView)
+    private lazy var watchingCountSummaryView: StatsSummaryView = {
+        let view = StatsSummaryView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private lazy var ticketPriceSummaryView: StatsSummaryView = {
+        let view = StatsSummaryView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let frequentlyWatchingGroupSectionHeader = SummarySectionHeader(title: "よく参戦するアーティスト")
+    private lazy var frequentlyWatchingGroupContent: WatchRankingCollectionView = {
+        let content = WatchRankingCollectionView(groups: [], imagePipeline: dependencyProvider.imagePipeline)
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 200)
+        ])
+        return content
+    }()
+    private lazy var frequentlyWatchingGroupContentWrapper: UIView = Self.addPadding(to: self.frequentlyWatchingGroupContent)
     
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
@@ -113,6 +143,16 @@ final class UserStatsViewController: UIViewController, Instantiable {
         ])
         watchingChartViewWrapper.isHidden = true
         scrollStackView.addArrangedSubview(watchingChartViewWrapper)
+        watchingCountStackViewWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(watchingCountStackViewWrapper)
+        
+        scrollStackView.addArrangedSubview(frequentlyWatchingGroupSectionHeader)
+        NSLayoutConstraint.activate([
+            frequentlyWatchingGroupSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+            frequentlyWatchingGroupSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        frequentlyWatchingGroupContentWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(frequentlyWatchingGroupContentWrapper)
         
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -153,7 +193,22 @@ final class UserStatsViewController: UIViewController, Instantiable {
                 watchingChartView.leftAxis.axisMaximum = Double(transition.liveParticipatingCount.max() ?? 5) + 10
                 watchingChartView.leftAxis.axisMinimum = 0
                 watchingChartView.setNeedsDisplay()
-            case .didGetFrequentlyWathingGroups(let groups): break
+                
+                let watchingCount: Int = transition.liveParticipatingCount.reduce(0, +)
+                watchingCountStackViewWrapper.isHidden = false
+                watchingCountSummaryView.update(input: (
+                    title: "総ライブ参戦数",
+                    count: watchingCount,
+                    unit: "回"
+                ))
+                ticketPriceSummaryView.update(input: (
+                    title: "推定チケット総額",
+                    count: watchingCount * 5000,
+                    unit: "円"
+                ))
+            case .didGetFrequentlyWathingGroups(let groups):
+                frequentlyWatchingGroupContentWrapper.isHidden = false
+                frequentlyWatchingGroupContent.inject(group: groups)
             case .reportError(let err):
                 print(String(describing: err))
                 showAlert()
@@ -163,6 +218,16 @@ final class UserStatsViewController: UIViewController, Instantiable {
         
         watchingCountSectionHeader.listen { [unowned self] in
             let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: .likedLive(viewModel.state.user.id))
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        frequentlyWatchingGroupSectionHeader.listen { [unowned self] in
+            let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .frequenlyWatchingGroups(viewModel.state.user.id))
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        frequentlyWatchingGroupContent.listen { [unowned self] group in
+            let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

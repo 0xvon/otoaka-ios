@@ -24,6 +24,7 @@ class GroupListViewModel {
         case searchResultsToSelect(String)
         case allGroup
         case group([GroupFeed])
+        case frequenlyWatchingGroups(User.ID)
         case none
     }
 
@@ -33,6 +34,7 @@ class GroupListViewModel {
         case searchResultsToSelect(String, PaginationRequest<SearchGroup>)
         case allGroup(PaginationRequest<GetAllGroups>)
         case group([GroupFeed])
+        case frequenlyWatchingGroups(PaginationRequest<FrequentlyWatchingGroups>)
         case none
 
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -57,6 +59,11 @@ class GroupListViewModel {
                 self = .allGroup(request)
             case .group(let groups):
                 self = .group(groups)
+            case .frequenlyWatchingGroups(let userId):
+                var uri = FrequentlyWatchingGroups.URI()
+                uri.userId = userId
+                let request = PaginationRequest<FrequentlyWatchingGroups>(apiClient: apiClient, uri: uri)
+                self = .frequenlyWatchingGroups(request)
             case .none:
                 self = .none
             }
@@ -122,6 +129,10 @@ class GroupListViewModel {
             }
         case let .group(groups):
             state.groups = groups
+        case let .frequenlyWatchingGroups(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case .none: break
         }
     }
@@ -158,6 +169,8 @@ class GroupListViewModel {
             pagination.refresh()
         case .group(_):
             outputSubject.send(.reloadTableView)
+        case let .frequenlyWatchingGroups(pagination):
+            pagination.refresh()
         case .none: break
         }
     }
@@ -172,6 +185,8 @@ class GroupListViewModel {
         case let .searchResultsToSelect(_, pagination):
             pagination.next()
         case let .allGroup(pagination):
+            pagination.refresh()
+        case let .frequenlyWatchingGroups(pagination):
             pagination.refresh()
         case .group(_), .none: break
         }
