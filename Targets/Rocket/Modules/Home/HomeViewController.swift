@@ -37,7 +37,7 @@ final class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "ライブレポート"
+        self.title = "ホーム"
         navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createPostButton)

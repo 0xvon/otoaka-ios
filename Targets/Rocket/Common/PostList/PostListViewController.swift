@@ -17,6 +17,7 @@ final class PostListViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider
     private var postTableView: UITableView!
     let viewModel: PostListViewModel
+    let openMessageViewModel: OpenMessageRoomViewModel
     let postActionViewModel: PostActionViewModel
     var cancellables: Set<AnyCancellable> = []
     private lazy var header: LiveCardCollectionView = {
@@ -28,6 +29,7 @@ final class PostListViewController: UIViewController, Instantiable {
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = PostListViewModel(dependencyProvider: dependencyProvider, input: input)
+        self.openMessageViewModel = OpenMessageRoomViewModel(dependencyProvider: dependencyProvider)
         self.postActionViewModel = PostActionViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
         
@@ -116,6 +118,8 @@ final class PostListViewController: UIViewController, Instantiable {
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToDM(let author):
+                openMessageViewModel.createMessageRoom(partner: author)
             case .pushToPlayTrack(let input):
                 let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -127,6 +131,18 @@ final class PostListViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToLiveDetail(let live):
                 let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+                showAlert()
+            }
+        }
+        .store(in: &cancellables)
+        
+        openMessageViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didCreateMessageRoom(let room):
+                let vc = MessageRoomViewController(dependencyProvider: dependencyProvider, input: room)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(String(describing: err))

@@ -20,6 +20,7 @@ class PostActionViewModel {
         case pushToLiveDetail(Live)
         case pushToPlayTrack(PlayTrackViewController.Input)
         case pushToCommentList(CommentListViewController.Input)
+        case pushToDM(User)
         case didToggleLikePost
         case didSettingTapped(PostSummary)
         case reportError(Error)
@@ -71,7 +72,10 @@ class PostActionViewModel {
                 outputSubject.send(.pushToPlayTrack(.track(track)))
             }
         case .commentTapped:
-            outputSubject.send(.pushToCommentList(.postComment(post)))
+//            outputSubject.send(.pushToCommentList(.postComment(post)))
+            if post.post.author.id != dependencyProvider.user.id {
+                outputSubject.send(.pushToDM(post.author))
+            }
         case .likeTapped:
             post.isLiked ? unlikePost(post: post) : likePost(post: post)
         case .settingTapped:

@@ -94,7 +94,6 @@ class UserListViewModel {
     var apiClient: APIClient { dependencyProvider.apiClient }
     private var storage: DataSourceStorage
     private(set) var state: State
-    private lazy var createMessageRoomAction = Action(CreateMessageRoom.self, httpClient: apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var cancellables: Set<AnyCancellable> = []
@@ -108,13 +107,6 @@ class UserListViewModel {
         self.state = State()
                 
         subscribe(storage: storage)
-        
-        createMessageRoomAction.elements
-            .map { .jumpToMessageRoom($0) }.eraseToAnyPublisher()
-            .merge(with: createMessageRoomAction.errors.map(Output.error)).eraseToAnyPublisher()
-            .sink(receiveValue: outputSubject.send)
-            .store(in: &cancellables)
-        
     }
     
     deinit {
@@ -217,11 +209,5 @@ class UserListViewModel {
             pagination.next()
         case .users, .none: break
         }
-    }
-    
-    func createMessageRoom(partner: User) {
-        let request = CreateMessageRoom.Request(members: [partner.id], name: partner.name)
-        let uri = CreateMessageRoom.URI()
-        createMessageRoomAction.input((request: request, uri: uri))
     }
 }

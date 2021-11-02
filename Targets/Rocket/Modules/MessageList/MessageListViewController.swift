@@ -29,7 +29,7 @@ final class MessageListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "メッセージ"
+        title = "DM"
         
         navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
         view.backgroundColor = Brand.color(for: .background(.primary))

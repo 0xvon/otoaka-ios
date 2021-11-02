@@ -27,6 +27,16 @@ class UserInformationView: UIView {
         label.font = Brand.font(for: .largeStrong)
         return label
     }()
+    private lazy var sendMessageButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 16
+        button.setImage(
+            UIImage(systemName: "envelope")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(sendMessageButtonTapped), for: .touchUpInside)
+        button.isHidden = true
+        return button
+    }()
     private lazy var followButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -117,13 +127,15 @@ class UserInformationView: UIView {
         if input.userDetail.user.id == input.selfUser.id {
             editProfileButton.isHidden = false
             followButton.isHidden = true
+            sendMessageButton.isHidden = true
         } else {
             editProfileButton.isHidden = true
             followButton.isHidden = false
             followButton.isEnabled = true
+            sendMessageButton.isHidden = false
+            sendMessageButton.isEnabled = true
             followButton.isSelected = input.userDetail.isFollowing
         }
-        
     }
     
     private func setup() {
@@ -141,7 +153,7 @@ class UserInformationView: UIView {
         NSLayoutConstraint.activate([
             displayNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
             displayNameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8),
-            displayNameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -54),
+            displayNameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -104),
         ])
         
         addSubview(followButton)
@@ -150,6 +162,13 @@ class UserInformationView: UIView {
             followButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
             followButton.widthAnchor.constraint(equalToConstant: 32),
             followButton.heightAnchor.constraint(equalTo: followButton.widthAnchor),
+        ])
+        addSubview(sendMessageButton)
+        NSLayoutConstraint.activate([
+            sendMessageButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            sendMessageButton.rightAnchor.constraint(equalTo: followButton.leftAnchor, constant: -8),
+            sendMessageButton.widthAnchor.constraint(equalToConstant: 32),
+            sendMessageButton.heightAnchor.constraint(equalTo: sendMessageButton.widthAnchor),
         ])
         addSubview(editProfileButton)
         NSLayoutConstraint.activate([
@@ -190,6 +209,7 @@ class UserInformationView: UIView {
         case followerCountButtonTapped
         case followingUserCountButtonTapped
         case likedPostButtonTapped
+        case sendMessageButtonTapped
         case arrowButtonTapped
         case followButtonTapped
         case editButtonTapped
@@ -201,6 +221,10 @@ class UserInformationView: UIView {
     
     @objc private func followersSummaryViewTapped() {
         listener(.followerCountButtonTapped)
+    }
+    
+    @objc private func sendMessageButtonTapped() {
+        listener(.sendMessageButtonTapped)
     }
     
     @objc private func followingUserSummaryViewTapped() {

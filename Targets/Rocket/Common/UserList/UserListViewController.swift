@@ -116,8 +116,7 @@ extension UserListViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(FanCell.self, input: (user: user, isMe: user.id == dependencyProvider.user.id, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
-            case .openMessageButtonTapped:
-                viewModel.createMessageRoom(partner: user)
+            case .openMessageButtonTapped: break
             case .userTapped:
                 let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
                 let nav = self.navigationController ?? presentingViewController?.navigationController

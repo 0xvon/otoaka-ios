@@ -240,12 +240,14 @@ final class PostDetailViewController: UIViewController, Instantiable {
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: PostDetailViewModel
     let postActionViewModel: PostActionViewModel
+    let openMessageViewModel: OpenMessageRoomViewModel
     var cancellables: Set<AnyCancellable> = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = PostDetailViewModel(dependencyProvider: dependencyProvider, input: input)
         self.postActionViewModel = PostActionViewModel(dependencyProvider: dependencyProvider)
+        self.openMessageViewModel = OpenMessageRoomViewModel(dependencyProvider: dependencyProvider)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -319,6 +321,8 @@ final class PostDetailViewController: UIViewController, Instantiable {
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToDM(let author):
+                openMessageViewModel.createMessageRoom(partner: author)
             case .pushToPlayTrack(let input):
                 let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -330,6 +334,18 @@ final class PostDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToLiveDetail(let live):
                 let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+                showAlert()
+            }
+        }
+        .store(in: &cancellables)
+        
+        openMessageViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didCreateMessageRoom(let room):
+                let vc = MessageRoomViewController(dependencyProvider: dependencyProvider, input: room)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(String(describing: err))

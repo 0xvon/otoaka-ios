@@ -101,15 +101,15 @@ final class RootViewController: UITabBarController, Instantiable {
     func instantiateTabs(with user: User) -> [UIViewController] {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let homeVC = BrandNavigationController(rootViewController: HomeViewController(dependencyProvider: loggedInProvider))
-        homeVC.tabBarItem = UITabBarItem(title: "ライブレポート", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
+        homeVC.tabBarItem = UITabBarItem(title: "ホーム", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         let searchVC = BrandNavigationController(rootViewController: SearchViewController(dependencyProvider: loggedInProvider))
         searchVC.tabBarItem = UITabBarItem(title: "探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
-//        let messageVC = BrandNavigationController(rootViewController: MessageListViewController(dependencyProvider: loggedInProvider, input: ()))
-//        messageVC.tabBarItem = UITabBarItem(
-//            title: "メッセージ",
-//            image: UIImage(named: "mailIcon"),
-//            selectedImage: UIImage(named: "selectedMailIcon")
-//        )
+        let messageVC = BrandNavigationController(rootViewController: MessageListViewController(dependencyProvider: loggedInProvider, input: ()))
+        messageVC.tabBarItem = UITabBarItem(
+            title: "DM",
+            image: UIImage(named: "mailIcon"),
+            selectedImage: UIImage(named: "selectedMailIcon")
+        )
         let userNotificationVC = BrandNavigationController(rootViewController: UserNotificationViewControlelr(dependencyProvider: loggedInProvider))
         userNotificationVC.tabBarItem = UITabBarItem(
             title: "通知",
@@ -128,7 +128,7 @@ final class RootViewController: UITabBarController, Instantiable {
         accountVC.listen { [unowned self] in
             checkSignupStatus()
         }
-        return [homeVC, searchVC, userNotificationVC, accountNav]
+        return [homeVC, searchVC, messageVC, userNotificationVC, accountNav]
     }
     
     private func promptVersioningViewController(versionData: RequiredVersion) {

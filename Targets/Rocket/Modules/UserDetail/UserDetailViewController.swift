@@ -20,6 +20,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     var dependencyProvider: LoggedInDependencyProvider
     let viewModel: UserDetailViewModel
     let userFollowingViewModel: UserFollowingViewModel
+    let openMessageRoomViewModel: OpenMessageRoomViewModel
     var cancellables: Set<AnyCancellable> = []
     
     private lazy var headerView: UserDetailHeaderView = {
@@ -39,6 +40,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         self.dependencyProvider = dependencyProvider
         self.viewModel = UserDetailViewModel(dependencyProvider: dependencyProvider, user: input)
         self.userFollowingViewModel = UserFollowingViewModel(dependencyProvider: dependencyProvider, user: input)
+        self.openMessageRoomViewModel = OpenMessageRoomViewModel(dependencyProvider: dependencyProvider)
         self.pageViewController = PageViewController()
         
         super.init(nibName: nil, bundle: nil)
@@ -102,6 +104,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     navigationItem.setRightBarButton(nil, animated: true)
                 }
                 refreshControl.endRefreshing()
+            case .sendMessageButonTapped:
+                openMessageRoomViewModel.createMessageRoom(partner: viewModel.state.user)
             case .pushToMessageRoom(let room):
                 let vc = MessageRoomViewController(dependencyProvider: dependencyProvider, input: room)
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -128,6 +132,18 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     self.listener()
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+        .store(in: &cancellables)
+        
+        openMessageRoomViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didCreateMessageRoom(let room):
+                let vc = MessageRoomViewController(dependencyProvider: dependencyProvider, input: room)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+                showAlert()
             }
         }
         .store(in: &cancellables)
