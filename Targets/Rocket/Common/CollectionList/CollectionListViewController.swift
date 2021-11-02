@@ -61,12 +61,13 @@ final class CollectionListViewController: UIViewController, Instantiable {
         view.backgroundColor = .clear
         
         let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
         layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
+        layout.minimumInteritemSpacing = 16
+        layout.minimumLineSpacing = 16
         
         collectionView = UICollectionView(
-            frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: UIScreen.main.bounds.size.height),
+            frame: CGRect(x: 16, y: 16, width: UIScreen.main.bounds.size.width - 32, height: UIScreen.main.bounds.size.height - 32),
             collectionViewLayout: layout
         )
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -104,7 +105,7 @@ extension CollectionListViewController: UICollectionViewDelegate, UICollectionVi
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let post = viewModel.state.posts[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(CollectionListCell.self, input: (imageUrl: post.live?.artworkURL?.absoluteString, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let cell = collectionView.dequeueReusableCell(CollectionListCell.self, input: (post: post, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
     
@@ -122,8 +123,8 @@ extension CollectionListViewController: UICollectionViewDelegate, UICollectionVi
 
 extension CollectionListViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let screenSize = UIScreen.main.bounds
-        return CGSize(width: screenSize.width / 3.0, height: screenSize.width / 3.0)
+        let screenSize = UIScreen.main.bounds.width - 64
+        return CGSize(width: screenSize / 3.0, height: screenSize * 16/27)
       }
 }
 

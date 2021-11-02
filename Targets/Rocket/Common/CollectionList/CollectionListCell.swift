@@ -5,7 +5,7 @@
 //  Created by Masato TSUTSUMI on 2021/08/22.
 //
 
-import DomainEntity
+import Endpoint
 import UIKit
 import ImagePipeline
 import UIComponent
@@ -50,7 +50,7 @@ final class CollectionListCell: UICollectionViewCell, ReusableCell {
 
 class CollectionListCellContent: UIButton {
     typealias Input = (
-        imageUrl: String?,
+        post: PostSummary,
         imagePipeline: ImagePipeline
     )
     enum Output {
@@ -59,9 +59,48 @@ class CollectionListCellContent: UIButton {
     private lazy var thumbnailView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.layer.cornerRadius = 16
         imageView.clipsToBounds = true
+        imageView.alpha = 0.7
         imageView.contentMode = .scaleAspectFill
         return imageView
+    }()
+    
+    private lazy var heartView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(systemName: "heart")!
+            .withTintColor(.white, renderingMode: .alwaysOriginal)
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    private lazy var likeCountLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
+        label.font = Brand.font(for: .xsmallStrong)
+        label.lineBreakMode = .byTruncatingTail
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var liveTitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
+        label.font = Brand.font(for: .xxsmall)
+        label.lineBreakMode = .byTruncatingTail
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var groupNameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
+        label.font = Brand.font(for: .xxsmall)
+        label.lineBreakMode = .byTruncatingTail
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
     }()
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.5 : 1.0 }
@@ -78,7 +117,19 @@ class CollectionListCellContent: UIButton {
     }
     
     func inject(input: Input) {
-        if let thumbnail = input.imageUrl, let url = URL(string: thumbnail) {
+        liveTitleLabel.text = input.post.live?.title
+        switch input.post.live?.style {
+        case .oneman(let group):
+            self.groupNameLabel.text = group.name
+        case .battle(let groups):
+            self.groupNameLabel.text = groups[0].name + "..."
+        case .festival(let groups):
+            self.groupNameLabel.text = groups[0].name + "..."
+        case .none:
+            self.groupNameLabel.text = nil
+        }
+        likeCountLabel.text = String(input.post.likeCount)
+        if let url = input.post.live?.artworkURL ?? input.post.live?.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
             thumbnailView.image = Brand.color(for: .background(.secondary)).image
@@ -86,6 +137,9 @@ class CollectionListCellContent: UIButton {
     }
     
     func prepare() {
+        liveTitleLabel.text = nil
+        groupNameLabel.text = nil
+        likeCountLabel.text = nil
         thumbnailView.image = nil
     }
     
@@ -97,7 +151,38 @@ class CollectionListCellContent: UIButton {
             thumbnailView.rightAnchor.constraint(equalTo: rightAnchor),
             thumbnailView.leftAnchor.constraint(equalTo: leftAnchor),
             thumbnailView.topAnchor.constraint(equalTo: topAnchor),
-            thumbnailView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+        
+        addSubview(liveTitleLabel)
+        NSLayoutConstraint.activate([
+            liveTitleLabel.topAnchor.constraint(equalTo: thumbnailView.bottomAnchor, constant: 4),
+            liveTitleLabel.leftAnchor.constraint(equalTo: leftAnchor),
+            liveTitleLabel.rightAnchor.constraint(equalTo: rightAnchor),
+            liveTitleLabel.heightAnchor.constraint(equalToConstant: 14.4)
+        ])
+        
+        addSubview(groupNameLabel)
+        NSLayoutConstraint.activate([
+            groupNameLabel.topAnchor.constraint(equalTo: liveTitleLabel.bottomAnchor),
+            groupNameLabel.leftAnchor.constraint(equalTo: leftAnchor),
+            groupNameLabel.rightAnchor.constraint(equalTo: rightAnchor),
+            groupNameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+            groupNameLabel.heightAnchor.constraint(equalToConstant: 13.4)
+        ])
+        
+        addSubview(heartView)
+        NSLayoutConstraint.activate([
+            heartView.widthAnchor.constraint(equalToConstant: 20),
+            heartView.heightAnchor.constraint(equalTo: heartView.widthAnchor),
+            heartView.bottomAnchor.constraint(equalTo: thumbnailView.bottomAnchor, constant: -8),
+            heartView.leftAnchor.constraint(equalTo: thumbnailView.leftAnchor, constant: 8),
+        ])
+
+        addSubview(likeCountLabel)
+        NSLayoutConstraint.activate([
+            likeCountLabel.centerYAnchor.constraint(equalTo: heartView.centerYAnchor),
+            likeCountLabel.leftAnchor.constraint(equalTo: heartView.rightAnchor, constant: 4),
+            likeCountLabel.rightAnchor.constraint(equalTo: thumbnailView.rightAnchor, constant: -8)
         ])
     }
 }
