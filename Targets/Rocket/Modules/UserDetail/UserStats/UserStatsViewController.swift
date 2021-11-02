@@ -42,7 +42,6 @@ final class UserStatsViewController: UIViewController, Instantiable {
         chart.dragEnabled = false
         chart.setScaleEnabled(true)
         chart.pinchZoomEnabled = false
-        chart.maxHighlightDistance = 300
         chart.legend.enabled = false
         chart.rightAxis.enabled = false
         
@@ -56,7 +55,7 @@ final class UserStatsViewController: UIViewController, Instantiable {
         chart.leftAxis.enabled = false
         
         NSLayoutConstraint.activate([
-            chart.heightAnchor.constraint(equalToConstant: 300),
+            chart.heightAnchor.constraint(equalToConstant: 224),
         ])
         return chart
     }()
@@ -171,7 +170,15 @@ final class UserStatsViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink(receiveValue: { [unowned self] output in
             switch output {
             case .didGetLiveTransition(let transition):
-                let entries = zip(transition.yearLabel, transition.liveParticipatingCount).map { ChartDataEntry(x: Double($0.0)!, y: Double($0.1)) }
+                var entries = [ChartDataEntry]()
+                print(transition)
+                zip(transition.yearLabel, transition.liveParticipatingCount).forEach {
+                    guard let year = Double($0.0) else { return }
+                    if !transition.yearLabel.contains(String(Int(year - 1))) {
+                        entries.append(ChartDataEntry(x: year - 1, y: 0))
+                    }
+                    entries.append(ChartDataEntry(x: year, y: Double($0.1)))
+                }
                 let data = LineChartDataSet(entries: entries)
                 data.mode = .cubicBezier
                 data.drawCirclesEnabled = true
@@ -189,9 +196,9 @@ final class UserStatsViewController: UIViewController, Instantiable {
                 
                 watchingChartViewWrapper.isHidden = false
                 watchingChartView.data = LineChartData(dataSet: data)
-                watchingChartView.xAxis.setLabelCount(transition.yearLabel.count, force: true)
-                watchingChartView.leftAxis.axisMaximum = Double(transition.liveParticipatingCount.max() ?? 5) + 10
-                watchingChartView.leftAxis.axisMinimum = 0
+                watchingChartView.xAxis.setLabelCount(entries.count, force: true)
+                watchingChartView.leftAxis.axisMaximum = Double(transition.liveParticipatingCount.max() ?? 5) * 1.5
+                watchingChartView.leftAxis.axisMinimum = -1
                 watchingChartView.setNeedsDisplay()
                 
                 let watchingCount: Int = transition.liveParticipatingCount.reduce(0, +)

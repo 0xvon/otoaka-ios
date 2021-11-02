@@ -335,6 +335,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                     likeButton.setTitle("参戦予定", for: .selected)
                 } else {
                     liveActionButton.isHidden = true
+                    likeButton.setTitle("行く", for: .normal)
+                    likeButton.setTitle("参戦予定", for: .selected)
                 }
                 
                 participatingFriendSectionHeader.isHidden = false

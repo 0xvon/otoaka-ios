@@ -34,6 +34,7 @@ public final class LiveScheduleTableView: UITableView {
         backgroundColor = .clear
         
         registerCellClass(LiveScheduleCell.self)
+        separatorStyle = .none
         delegate = self
         dataSource = self
         showsHorizontalScrollIndicator = false

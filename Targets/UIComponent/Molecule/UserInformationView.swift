@@ -118,7 +118,7 @@ class UserInformationView: UIView {
     func update(input: Input) {
         displayNameLabel.text = input.userDetail.user.name
         profileSummaryLabel.text = [input.userDetail.user.age.map {String($0)}, input.userDetail.user.sex, input.userDetail.user.residence].compactMap {$0}.joined(separator: "・")
-        liveStyleLabel.text = input.userDetail.user.liveStyle.map { "  \($0)  "}
+        liveStyleLabel.text = input.userDetail.user.liveStyle.map { "    \($0)    "}
         followerCountSumamryView.update(input: (title: "フォロワー", count: input.userDetail.followersCount))
         followingUserCountSummaryView.update(input: (title: "フォロー", count: input.userDetail.followingUsersCount))
         if let thumbnail = input.userDetail.thumbnailURL, let url = URL(string: thumbnail) {
@@ -190,7 +190,7 @@ class UserInformationView: UIView {
             liveStyleLabel.topAnchor.constraint(equalTo: profileSummaryLabel.bottomAnchor, constant: 4),
             liveStyleLabel.leftAnchor.constraint(equalTo: displayNameLabel.leftAnchor),
             liveStyleLabel.heightAnchor.constraint(equalToConstant: 24),
-            liveStyleLabel.rightAnchor.constraint(lessThanOrEqualTo: displayNameLabel.rightAnchor),
+            liveStyleLabel.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -16),
         ])
         
         addSubview(countSummaryStackView)
