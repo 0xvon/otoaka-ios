@@ -12,10 +12,6 @@ import InternalDomain
 import UIComponent
 
 class UserProfileViewModel {
-    enum SumamryRow {
-        case following, recentlyFollowing, liveSchedule
-    }
-    
     struct State {
         let user: User
         var followingGroups: [GroupFeed] = []

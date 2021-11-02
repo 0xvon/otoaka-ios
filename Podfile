@@ -28,6 +28,7 @@ target 'Rocket' do
   pod 'Parchment', '~> 3.0.1'
   pod 'FSCalendar'
   pod 'CalculateCalendarLogic'
+  pod 'Charts'
 
   target 'RocketTests' do
     inherit! :search_paths

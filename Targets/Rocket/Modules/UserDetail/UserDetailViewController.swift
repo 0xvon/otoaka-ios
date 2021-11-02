@@ -159,7 +159,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
 
         let vc1 = UserProfileViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
         vc1.view.backgroundColor = .clear
-        let vc2 = LiveListViewController(dependencyProvider: dependencyProvider, input: .likedLive(viewModel.state.user.id))
+        let vc2 = UserStatsViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
         vc2.view.backgroundColor = .clear
         let vc3 = CollectionListViewController(dependencyProvider: dependencyProvider, input: .userPost(viewModel.state.user))
         vc3.view.backgroundColor = .clear
