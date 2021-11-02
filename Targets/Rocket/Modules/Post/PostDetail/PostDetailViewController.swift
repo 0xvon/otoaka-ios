@@ -205,7 +205,7 @@ final class PostDetailViewController: UIViewController, Instantiable {
         let commentButton = ReactionIndicatorButton()
         commentButton.translatesAutoresizingMaskIntoConstraints = false
         commentButton.setImage(
-            UIImage(systemName: "bubble.right")!
+            UIImage(systemName: "message")!
                 .withTintColor(.white, renderingMode: .alwaysOriginal),
             for: .normal
         )
@@ -368,7 +368,7 @@ final class PostDetailViewController: UIViewController, Instantiable {
                 imageGalleryView.inject(images: .url(post.imageUrls.compactMap { URL(string: $0) }))
                 imageGalleryView.isHidden = post.imageUrls.isEmpty
                 
-                commentButtonView.setTitle("\(post.commentCount)", for: .normal)
+                commentButtonView.setTitle("DM", for: .normal)
                 commentButtonView.isEnabled = true
                 likeButtonView.setTitle("\(post.likeCount)", for: .normal)
                 likeButtonView.isSelected = post.isLiked
