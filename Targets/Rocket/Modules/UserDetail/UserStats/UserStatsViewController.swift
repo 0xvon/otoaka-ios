@@ -171,7 +171,6 @@ final class UserStatsViewController: UIViewController, Instantiable {
             switch output {
             case .didGetLiveTransition(let transition):
                 var entries = [ChartDataEntry]()
-                print(transition)
                 zip(transition.yearLabel, transition.liveParticipatingCount).forEach {
                     guard let year = Double($0.0) else { return }
                     if !transition.yearLabel.contains(String(Int(year - 1))) {

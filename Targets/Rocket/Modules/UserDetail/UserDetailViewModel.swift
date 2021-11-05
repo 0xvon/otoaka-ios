@@ -26,6 +26,7 @@ class UserDetailViewModel {
         var user: User
         var selfUser: User
         var userDetail: UserDetail?
+        var username: String?
         
         var displayType: DisplayType {
             return _displayType(isMe: user.id == selfUser.id)
@@ -129,6 +130,7 @@ class UserDetailViewModel {
     }
     
     func registerUsername(username: String) {
+        state.username = username
         let request = RegisterUsername.Request(username: username)
         let uri = RegisterUsername.URI()
         registerUsernameAction.input((request: request, uri: uri))

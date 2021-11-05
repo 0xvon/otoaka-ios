@@ -211,13 +211,21 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }
     
     func showSuccess() {
-//        let alertView = SCLAlertView()
+        guard let username = viewModel.state.username else { return }
+        let alertView = SCLAlertView()
+        let link = "https://rocketfor.band/\(username)"
+        alertView.addButton("リンクをコピー", action: {
+            UIPasteboard.general.string = link
+        })
+        alertView.showSuccess("リンク生成完了", subTitle: "\(link)にアクセスするとweb上であなたのプロフィールを確認することができます！みんなに共有してみましょう！")
     }
     
     func showUsernameAlert() {
         let alertView = SCLAlertView()
-//        var responder: SCLAlertViewResponder
+        alertView.customSubview?.backgroundColor = .black
         let textField = alertView.addTextField()
+        textField.backgroundColor = .white
+        textField.textColor = .black
         
         alertView.addButton("OK", action: { [unowned self] in
             if let username = textField.text?.lowercased(), username.isValidUsername() {
@@ -227,7 +235,13 @@ final class UserDetailViewController: UIViewController, Instantiable {
             }
         })
         
-        alertView.showEdit("ユーザーネーム設定", subTitle: "プロフィールリンクを共有するためにユーザーネームを12文字以内で設定してください。\n文字は半角英数字と._のみ使えます。入力ミスがあったりユーザーネームが既に使用されている場合もう一度やり直しになります。\n以前設定したユーザーネームは使えなくなります。", closeButtonTitle: "キャンセル", timeout: .none)
+        alertView.showEdit(
+            "ユーザーネーム設定",
+            subTitle: "プロフィールリンクを共有するためにユーザーネームを12文字以内で設定してください。\n文字は半角英数字と._のみ使えます。入力ミスがあったりユーザーネームが既に使用されている場合もう一度やり直しになります。\n以前設定したユーザーネームは使えなくなります。",
+            closeButtonTitle: "キャンセル",
+            timeout: .none,
+            colorStyle: 0xE4472A
+        )
     }
     
     @objc private func settingButtonTapped(_ sender: UIBarButtonItem) {
