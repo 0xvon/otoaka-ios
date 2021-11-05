@@ -49,7 +49,7 @@ final class InputTextView: UIView {
         section = UILabel()
         section.translatesAutoresizingMaskIntoConstraints = false
         section.text = input.section
-        section.textColor = Brand.color(for: .text(.toggle))
+        section.textColor = Brand.color(for: .brand(.primary))
         section.font = Brand.font(for: .medium)
         contentView.addSubview(section)
 
@@ -96,7 +96,7 @@ final class InputTextView: UIView {
         if text.isEmpty {
             underLine.backgroundColor = Brand.color(for: .text(.primary))
         } else {
-            underLine.backgroundColor = Brand.color(for: .text(.toggle))
+            underLine.backgroundColor = Brand.color(for: .brand(.primary))
         }
     }
     

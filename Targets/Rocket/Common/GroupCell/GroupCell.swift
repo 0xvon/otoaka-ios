@@ -27,7 +27,7 @@ final class GroupCell: UITableViewCell, ReusableCell {
             _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
-            _contentView.heightAnchor.constraint(equalToConstant: 350),
+            _contentView.heightAnchor.constraint(equalToConstant: 300),
         ])
         selectionStyle = .none
     }

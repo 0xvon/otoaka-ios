@@ -33,9 +33,9 @@ public final class PrimaryButton: UIButton {
     public func changeButtonStyle(_ style: Style) {
         switch style {
         case .normal:
-            setTitleColor(Brand.color(for: .text(.button)), for: .normal)
+            setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
         case .delete:
-            setTitleColor(Brand.color(for: .text(.link)), for: .normal)
+            setTitleColor(Brand.color(for: .brand(.secondary)), for: .normal)
         }
     }
 
@@ -48,8 +48,8 @@ public final class PrimaryButton: UIButton {
 
         setBackgroundImage(Brand.color(for: .background(.button)).image(), for: .normal)
         setBackgroundImage(Brand.color(for: .background(.cellSelected)).image(), for: .highlighted)
-        setTitleColor(Brand.color(for: .text(.button)), for: .normal)
-        setTitleColor(Brand.color(for: .text(.button)).pressed(), for: .highlighted)
+        setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        setTitleColor(Brand.color(for: .text(.primary)).pressed(), for: .highlighted)
         imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
     }
 

@@ -146,6 +146,12 @@ extension UIViewController {
         shareViewWithInstagram(cell: cell)
     }
     
+    func shareUserWithInstagram(user: User, views: [UIView]) {
+        if let view = views.first {
+            shareViewWithInstagram(cell: view)
+        }
+    }
+    
     func shareViewWithInstagram(cell: UIView) {
         guard let image = cell.getSnapShot() else { return }
         let url = URL(string: "instagram-stories://share")

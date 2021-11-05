@@ -77,10 +77,14 @@ class EditUserViewModel {
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
-        editUserAction.elements
-            .combineLatest(getRecentlyFollowingAction.elements)
-            .sink(receiveValue: { [unowned self] _, groups in
+        getRecentlyFollowingAction.elements
+            .sink(receiveValue: { [unowned self] groups in
                 state.recentlyFollowings = groups.map { $0.group }
+            })
+            .store(in: &cancellables)
+        
+        editUserAction.elements
+            .sink(receiveValue: { [unowned self] _ in
                 outputSubject.send(.updateSubmittableState(.editting(true)))
             })
             .store(in: &cancellables)

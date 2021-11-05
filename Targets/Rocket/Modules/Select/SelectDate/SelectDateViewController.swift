@@ -20,10 +20,10 @@ final class SelectDateViewController: UIViewController {
         calendar.delegate = self
         calendar.allowsMultipleSelection = true
         
-        calendar.appearance.weekdayTextColor = Brand.color(for: .text(.toggle))
-        calendar.appearance.headerTitleColor = Brand.color(for: .text(.toggle))
+        calendar.appearance.weekdayTextColor = Brand.color(for: .brand(.primary))
+        calendar.appearance.headerTitleColor = Brand.color(for: .brand(.primary))
         calendar.appearance.todayColor = .clear
-        calendar.appearance.borderSelectionColor = Brand.color(for: .text(.toggle))
+        calendar.appearance.borderSelectionColor = Brand.color(for: .brand(.primary))
         calendar.appearance.selectionColor = .clear
         
         calendar.appearance.headerDateFormat = "YYYY年MM月"

@@ -138,7 +138,7 @@ class LiveScheduleCellContent: UIButton {
     }
     private lazy var dateView: UIView = {
         let view = UIView()
-        view.backgroundColor = Brand.color(for: .text(.toggle))
+        view.backgroundColor = Brand.color(for: .brand(.primary))
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 26
         view.clipsToBounds = true
@@ -191,7 +191,7 @@ class LiveScheduleCellContent: UIButton {
     private lazy var topDirection: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = Brand.color(for: .text(.toggle))
+        view.backgroundColor = Brand.color(for: .brand(.primary))
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 8),
         ])
@@ -201,7 +201,7 @@ class LiveScheduleCellContent: UIButton {
     private lazy var bottomDirection: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = Brand.color(for: .text(.toggle))
+        view.backgroundColor = Brand.color(for: .brand(.primary))
         NSLayoutConstraint.activate([
             view.widthAnchor.constraint(equalToConstant: 8),
         ])

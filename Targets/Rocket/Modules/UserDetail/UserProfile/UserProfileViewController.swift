@@ -25,7 +25,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
-    private lazy var scrollStackView: UIStackView = {
+    public lazy var scrollStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -103,7 +103,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
     
     override func loadView() {
         view = verticalScrollView
-        view.backgroundColor = Brand.color(for: .background(.primary))
+        view.backgroundColor = .clear
         view.addSubview(scrollStackView)
         NSLayoutConstraint.activate([
             view.topAnchor.constraint(equalTo: scrollStackView.topAnchor),
@@ -157,20 +157,32 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 followingContent.removeAllTags()
                 if groupFeeds.isEmpty {
                     followingContent.addTag("いません")
-                    followingContent.tagBackgroundColor = Brand.color(for: .background(.cellSelected))
+                    followingContent.tagBackgroundColor = .clear
+                    followingContent.borderColor = Brand.color(for: .background(.cellSelected))
+                    followingContent.borderWidth = 1
+                    followingContent.textColor = Brand.color(for: .background(.cellSelected))
                 } else {
                     followingContent.addTags(groupFeeds.map { $0.group.name })
-                    followingContent.tagBackgroundColor = Brand.color(for: .text(.link))
+                    followingContent.tagBackgroundColor = .clear
+                    followingContent.borderColor = Brand.color(for: .brand(.secondary))
+                    followingContent.borderWidth = 1
+                    followingContent.textColor = Brand.color(for: .brand(.secondary))
                 }
             case .didGetRecentlyFollowing(let groupFeeds):
                 recentlyFollowingWrapper.isHidden = false
                 recentlyFollowingContent.removeAllTags()
                 if groupFeeds.isEmpty {
                     recentlyFollowingContent.addTag("いません")
-                    recentlyFollowingContent.tagBackgroundColor = Brand.color(for: .background(.cellSelected))
+                    recentlyFollowingContent.tagBackgroundColor = .clear
+                    recentlyFollowingContent.borderColor = Brand.color(for: .background(.cellSelected))
+                    recentlyFollowingContent.borderWidth = 1
+                    recentlyFollowingContent.textColor = Brand.color(for: .background(.cellSelected))
                 } else {
                     recentlyFollowingContent.addTags(groupFeeds.map { $0.group.name })
-                    recentlyFollowingContent.tagBackgroundColor = Brand.color(for: .text(.toggle))
+                    recentlyFollowingContent.tagBackgroundColor = .clear
+                    recentlyFollowingContent.borderColor = Brand.color(for: .brand(.primary))
+                    recentlyFollowingContent.borderWidth = 1
+                    recentlyFollowingContent.textColor = Brand.color(for: .brand(.primary))
                 }
             case .didGetLiveSchedule(let liveFeeds):
                 liveScheduleTableView.isHidden = false

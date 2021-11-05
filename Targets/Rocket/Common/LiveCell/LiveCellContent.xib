@@ -33,23 +33,16 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Rh7-uL-vJd">
-                    <rect key="frame" x="16" y="73" width="382" height="211"/>
-                </stackView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="f6c-SZ-Ivn" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="5iD-d8-18S"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="Rh7-uL-vJd" secondAttribute="trailing" constant="16" id="7xd-w9-ljk"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="f6c-SZ-Ivn" secondAttribute="bottom" id="9oR-Mo-T5i"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="Rh7-uL-vJd" secondAttribute="bottom" constant="16" id="CuK-xE-XCe"/>
-                <constraint firstItem="Rh7-uL-vJd" firstAttribute="top" secondItem="1oR-E1-o2n" secondAttribute="bottom" constant="8" id="Ipn-kY-z6Y"/>
                 <constraint firstAttribute="trailing" secondItem="FL4-ux-5xf" secondAttribute="trailing" constant="54" id="Jz5-EM-1Yb"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="1oR-E1-o2n" secondAttribute="trailing" constant="16" id="KDG-CR-7dy"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="f6c-SZ-Ivn" secondAttribute="trailing" id="Mh7-dX-h5A"/>
                 <constraint firstItem="f6c-SZ-Ivn" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="dWs-zX-jsp"/>
-                <constraint firstItem="Rh7-uL-vJd" firstAttribute="leading" secondItem="FL4-ux-5xf" secondAttribute="leading" id="e6V-hS-Z7X"/>
                 <constraint firstItem="FL4-ux-5xf" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="16" id="nJF-ki-H5S"/>
                 <constraint firstItem="1oR-E1-o2n" firstAttribute="top" secondItem="FL4-ux-5xf" secondAttribute="bottom" constant="8" id="oIF-HO-4UN"/>
                 <constraint firstItem="FL4-ux-5xf" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="oPC-LG-3c6"/>
@@ -59,7 +52,6 @@
             <connections>
                 <outlet property="bandsLabel" destination="1oR-E1-o2n" id="CWf-lM-ndV"/>
                 <outlet property="liveTitleLabel" destination="FL4-ux-5xf" id="Mlt-pZ-412"/>
-                <outlet property="stackView" destination="Rh7-uL-vJd" id="2iN-XA-Vqq"/>
                 <outlet property="thumbnailView" destination="f6c-SZ-Ivn" id="PRM-T6-9C0"/>
             </connections>
             <point key="canvasLocation" x="-197.10144927536234" y="-152.67857142857142"/>

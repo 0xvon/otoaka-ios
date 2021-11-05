@@ -250,6 +250,14 @@ body:
                    …
 version: 1.2.12
 
+name: SCLAlertView, nameSpecified: 
+body: Copyright (c) 2013-2…
+version: 0.8
+
+name: SCLAlertView, nameSpecified: 
+body: Copyright (c) 2013-2…
+version: 0.8
+
 name: SwiftGen, nameSpecified: 
 body: MIT Licence
 

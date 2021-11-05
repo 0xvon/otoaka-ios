@@ -76,7 +76,7 @@ final class InvitationViewController: UIViewController, Instantiable {
         case .artist(_):
             orLabel.font = Brand.font(for: .small)
             orLabel.textColor = Brand.color(for: .text(.primary))
-            createBandButton.setTitleColor(Brand.color(for: .text(.toggle)), for: .normal)
+            createBandButton.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
             createBandButton.addTarget(self, action: #selector(createBand(_:)), for: .touchUpInside)
         }
 

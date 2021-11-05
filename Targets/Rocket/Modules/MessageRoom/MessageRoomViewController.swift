@@ -55,7 +55,7 @@ final class MessageRoomViewController: MessagesViewController {
         messageInputBar.inputTextView.textColor = Brand.color(for: .text(.primary))
         messageInputBar.backgroundView.backgroundColor = Brand.color(for: .background(.primary))
         messageInputBar.sendButton.setTitle("送信", for: .normal)
-        messageInputBar.sendButton.setTitleColor(Brand.color(for: .background(.link)), for: .normal)
+        messageInputBar.sendButton.setTitleColor(Brand.color(for: .brand(.secondary)), for: .normal)
         
         messagesCollectionView.backgroundColor = Brand.color(for: .background(.primary))
         messagesCollectionView.messagesDataSource = self

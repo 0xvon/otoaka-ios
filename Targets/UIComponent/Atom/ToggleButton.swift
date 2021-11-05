@@ -35,9 +35,9 @@ public final class ToggleButton: UIButton {
 
     func update() {
         backgroundColor = isSelected ?
-            Brand.color(for: .background(.toggleSelected)) : .clear
+            Brand.color(for: .brand(.primary)) : .clear
         let titleColor = isSelected ? Brand.color(for: .text(.primary)) :
-            Brand.color(for: .text(.toggle))
+            Brand.color(for: .brand(.primary))
         setTitleColor(titleColor, for: .normal)
         setTitleColor(titleColor.pressed(), for: .highlighted)
         setTitle(titlesByIsSelected[isSelected], for: .normal)
@@ -47,7 +47,7 @@ public final class ToggleButton: UIButton {
         clipsToBounds = true
         layer.masksToBounds = true
         layer.borderWidth = 1
-        layer.borderColor = Brand.color(for: .background(.toggleSelected)).cgColor
+        layer.borderColor = Brand.color(for: .brand(.primary)).cgColor
         titleLabel?.font = Brand.font(for: .mediumStrong)
         
         update()

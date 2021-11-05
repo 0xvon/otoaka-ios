@@ -46,7 +46,7 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("はじめる", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
-        button.titleLabel?.textColor = Brand.color(for: .text(.toggle))
+        button.titleLabel?.textColor = Brand.color(for: .brand(.primary))
         button.addTarget(self, action: #selector(_closeButtonTapped), for: .touchUpInside)
         
         return button

@@ -201,7 +201,7 @@ class PostCellContent: UIButton {
         button.backgroundColor = Brand.color(for: .background(.primary))
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("続きを読む", for: .normal)
-        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .normal)
+        button.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
         button.contentHorizontalAlignment = .left
         button.titleLabel?.font = Brand.font(for: .medium)
         button.addTarget(self, action: #selector(selfTapped), for: .touchUpInside)

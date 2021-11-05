@@ -165,7 +165,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         section.translatesAutoresizingMaskIntoConstraints = false
         section.text = "最近好きなアーティスト"
         section.font = Brand.font(for: .medium)
-        section.textColor = Brand.color(for: .text(.toggle))
+        section.textColor = Brand.color(for: .brand(.primary))
         return section
     }()
     private lazy var recentlyFollowingListView: TagListView = {
@@ -180,15 +180,18 @@ final class EditUserViewController: UIViewController, Instantiable {
         content.marginY = 8
         content.removeIconLineColor = Brand.color(for: .text(.primary))
         content.textFont = Brand.font(for: .medium)
-        content.tagBackgroundColor = Brand.color(for: .text(.toggle))
+        content.tagBackgroundColor = .clear
+        content.borderColor = Brand.color(for: .brand(.primary))
+        content.borderWidth = 1
+        content.textColor = Brand.color(for: .brand(.primary))
         return content
     }()
     private lazy var registerButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .normal)
+        button.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
         button.setTitleColor(Brand.color(for: .background(.secondary)), for: .disabled)
-        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
+        button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("更新", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
         button.isEnabled = true
@@ -280,7 +283,12 @@ final class EditUserViewController: UIViewController, Instantiable {
             case .didGetRecentlyFollowing(let groups):
                 recentlyFollowingListView.removeAllTags()
                 recentlyFollowingListView.addTags(groups.map { $0.name + " ✗" })
-                recentlyFollowingListView.addTag("追加＋").tagBackgroundColor = Brand.color(for: .background(.secondary))
+                
+                let plusTag = recentlyFollowingListView.addTag("追加＋")
+                plusTag.borderColor = Brand.color(for: .background(.secondary))
+                plusTag.textColor = Brand.color(for: .background(.secondary))
+                plusTag.borderWidth = 1
+                plusTag.tagBackgroundColor = .clear
             case .updateSubmittableState(let state):
                 switch state {
                 case .editting(let submittable):

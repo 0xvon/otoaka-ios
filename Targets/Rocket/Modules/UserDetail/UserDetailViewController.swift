@@ -12,6 +12,7 @@ import UIComponent
 import Foundation
 import TagListView
 import ImageViewer
+import SCLAlertView
 
 final class UserDetailViewController: UIViewController, Instantiable {
     typealias Input = User
@@ -22,6 +23,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
     let userFollowingViewModel: UserFollowingViewModel
     let openMessageRoomViewModel: OpenMessageRoomViewModel
     var cancellables: Set<AnyCancellable> = []
+    
+    let vc1: UserProfileViewController
+    let vc2: UserStatsViewController
+    let vc3: CollectionListViewController
     
     private lazy var headerView: UserDetailHeaderView = {
         let headerView = UserDetailHeaderView()
@@ -43,6 +48,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
         self.openMessageRoomViewModel = OpenMessageRoomViewModel(dependencyProvider: dependencyProvider)
         self.pageViewController = PageViewController()
         
+        vc1 = UserProfileViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
+        vc2 = UserStatsViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
+        vc3 = CollectionListViewController(dependencyProvider: dependencyProvider, input: .userPost(viewModel.state.user))
+                
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -89,14 +98,18 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 case .account:
                     dependencyProvider.user = userDetail.user
                     self.title = "マイページ"
-                    let item = UIBarButtonItem(
+                    let settingItem = UIBarButtonItem(
                         image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
                         style: .plain,
                         target: self,
                         action: #selector(settingButtonTapped(_:))
                     )
-                    navigationItem.setRightBarButton(
-                        item,
+                    let linkItem = UIBarButtonItem(
+                        image: UIImage(systemName: "link")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(linkButtonTapped(_:))
+                    )
+                    
+                    navigationItem.setRightBarButtonItems(
+                        [settingItem, linkItem],
                         animated: false
                     )
                 case .user:
@@ -132,6 +145,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     self.listener()
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
+            case .didUsernameRegistered:
+                showSuccess()
+            case .usernameAlreadyExists(_):
+                showUsernameAlert()
             }
         }
         .store(in: &cancellables)
@@ -172,14 +189,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
             view.rightAnchor.constraint(equalTo:  pageViewController.view.rightAnchor),
         ])
         pageViewController.didMove(toParent: self)
-
-        let vc1 = UserProfileViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
-        vc1.view.backgroundColor = .clear
-        let vc2 = UserStatsViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
-        vc2.view.backgroundColor = .clear
-        let vc3 = CollectionListViewController(dependencyProvider: dependencyProvider, input: .userPost(viewModel.state.user))
-        vc3.view.backgroundColor = .clear
-
+        
         pageViewController.embed((
             header: headerView,
             tab: tab,
@@ -196,6 +206,30 @@ final class UserDetailViewController: UIViewController, Instantiable {
         viewModel.createMessageRoom(partner: viewModel.state.user)
     }
     
+    @objc private func linkButtonTapped(_ sender: UIBarButtonItem) {
+        showUsernameAlert()
+    }
+    
+    func showSuccess() {
+//        let alertView = SCLAlertView()
+    }
+    
+    func showUsernameAlert() {
+        let alertView = SCLAlertView()
+//        var responder: SCLAlertViewResponder
+        let textField = alertView.addTextField()
+        
+        alertView.addButton("OK", action: { [unowned self] in
+            if let username = textField.text?.lowercased(), username.isValidUsername() {
+                viewModel.registerUsername(username: username)
+            } else {
+                showUsernameAlert()
+            }
+        })
+        
+        alertView.showEdit("ユーザーネーム設定", subTitle: "プロフィールリンクを共有するためにユーザーネームを12文字以内で設定してください。\n文字は半角英数字と._のみ使えます。入力ミスがあったりユーザーネームが既に使用されている場合もう一度やり直しになります。\n以前設定したユーザーネームは使えなくなります。", closeButtonTitle: "キャンセル", timeout: .none)
+    }
+    
     @objc private func settingButtonTapped(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(
             title: "設定", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
@@ -203,18 +237,21 @@ final class UserDetailViewController: UIViewController, Instantiable {
         var actions: [UIAlertAction] = []
         switch viewModel.state.displayType {
         case .account:
-            let requestLiveAction = UIAlertAction(title: "ライブ掲載申請", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
+            let shareProfileAction = UIAlertAction(title: "ライブ参戦数をインスタでシェア", style: .default, handler: { [unowned self] _ in
+                shareUserWithInstagram(user: viewModel.state.user, views: [vc2.scrollStackView])
+            })
+            let requestLiveAction = UIAlertAction(title: "ライブ掲載申請", style: .default, handler: { [unowned self] _ in
                 if let url = URL(string: "https://forms.gle/epoBeqdaGeMUcv8o9") {
                     openUrlInBrowser(url: url)
                 }
             })
-            let logoutAction = UIAlertAction(title: "ログアウト", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
+            let logoutAction = UIAlertAction(title: "ログアウト", style: .default, handler: { [unowned self] _ in
                     logout()
             })
             let cancelAction = UIAlertAction(
                 title: "キャンセル", style: UIAlertAction.Style.cancel,
                 handler: { _ in })
-            actions = [requestLiveAction, logoutAction, cancelAction]
+            actions = [shareProfileAction, requestLiveAction, logoutAction, cancelAction]
         case .user:
             let blockAction = UIAlertAction(title: "ブロック", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
                     block()
@@ -253,5 +290,14 @@ final class UserDetailViewController: UIViewController, Instantiable {
     private var listener: () -> Void = {}
     func listen(_ listener: @escaping () -> Void) {
         self.listener = listener
+    }
+}
+
+extension String {
+    func isValidUsername() -> Bool {
+        let pattern = "^[a-zA-Z0-9_\\-.]{1,12}$"
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return false }
+        let checkingResults = regex.matches(in: self, range: NSRange(location: 0, length: self.count))
+        return checkingResults.count > 0
     }
 }

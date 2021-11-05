@@ -38,7 +38,7 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
         let imagePipeline = input.imagePipeline
         let input = input.request
 
-        if let liveArtworkURL = input.live.artworkURL {
+        if let liveArtworkURL = input.live.artworkURL ?? input.live.hostGroup.artworkURL {
             imagePipeline.loadImage(liveArtworkURL, into: liveArtworkImageView)
         }
         if let hostGroupArtworkURL = input.live.hostGroup.artworkURL {

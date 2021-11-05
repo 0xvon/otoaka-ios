@@ -104,7 +104,7 @@ public final class LiveScheduleCardCellContent: UIButton {
     }
     
     public func inject(input: Input) {
-        if let url = input.live.live.artworkURL {
+        if let url = input.live.live.artworkURL ?? input.live.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
             thumbnailView.image = Brand.color(for: .background(.secondary)).image

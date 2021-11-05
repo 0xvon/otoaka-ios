@@ -59,7 +59,7 @@ class LiveBannerCellContent: UIButton {
     }
     
     func inject(input: Input) {
-        if let url = input.live.artworkURL {
+        if let url = input.live.artworkURL ?? input.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
             thumbnailView.image = Brand.color(for: .background(.secondary)).image

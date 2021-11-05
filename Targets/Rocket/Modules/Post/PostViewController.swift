@@ -178,7 +178,7 @@ final class PostViewController: UIViewController, Instantiable {
         let postButton = UIButton()
         postButton.translatesAutoresizingMaskIntoConstraints = false
         postButton.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-        postButton.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
+        postButton.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         postButton.setTitle("post", for: .normal)
         postButton.titleLabel?.font = Brand.font(for: .largeStrong)
         return postButton

@@ -29,6 +29,7 @@ target 'Rocket' do
   pod 'FSCalendar'
   pod 'CalculateCalendarLogic'
   pod 'Charts'
+  pod 'SCLAlertView'
 
   target 'RocketTests' do
     inherit! :search_paths

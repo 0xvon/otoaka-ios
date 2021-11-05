@@ -285,7 +285,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         let label = UILabel()
         label.text = "00:00"
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Brand.color(for: .text(.toggle))
+        label.textColor = Brand.color(for: .brand(.primary))
         label.font = Brand.font(for: .small)
         return label
     }()
@@ -574,7 +574,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
+        button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("歌詞検索", for: .normal)
         button.titleLabel?.font = Brand.font(for: .largeStrong)
         return button
@@ -863,7 +863,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             if viewModel.state.playingThermalIndicators[i] != 0 {
                 for _ in 0..<viewModel.state.playingThermalIndicators[i] {
                     let dot = UIView()
-                    dot.backgroundColor = Brand.color(for: .background(.toggleSelected))
+                    dot.backgroundColor = Brand.color(for: .brand(.primary))
                     dot.translatesAutoresizingMaskIntoConstraints = false
                     dot.layer.cornerRadius = 4
                     

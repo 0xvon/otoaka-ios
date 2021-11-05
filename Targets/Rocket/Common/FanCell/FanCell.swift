@@ -170,7 +170,7 @@ class FanCellContent: UIButton {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("", selected: false)
         button.setImage(
-            UIImage(systemName: "message")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal),
+            UIImage(systemName: "message")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal),
             for: .normal
         )
         button.isUserInteractionEnabled = true

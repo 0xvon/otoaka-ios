@@ -32,7 +32,7 @@ class UserInformationView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
         button.setImage(
-            UIImage(systemName: "envelope")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+            UIImage(systemName: "envelope")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .normal)
         button.addTarget(self, action: #selector(sendMessageButtonTapped), for: .touchUpInside)
         button.isHidden = true
         return button
@@ -42,7 +42,7 @@ class UserInformationView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
         button.setImage(
-            UIImage(systemName: "person.badge.plus")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+            UIImage(systemName: "person.badge.plus")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .normal)
         button.setImage(UIImage(systemName: "person.fill.checkmark.rtl")!.withTintColor(.black, renderingMode: .alwaysOriginal), for: .selected)
         button.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
         button.isHidden = true
@@ -51,7 +51,7 @@ class UserInformationView: UIView {
     private let editProfileButton: ToggleButton = {
         let button = ToggleButton()
         button.setImage(
-            UIImage(systemName: "gearshape")!.withTintColor(Brand.color(for: .text(.toggle)), renderingMode: .alwaysOriginal), for: .normal)
+            UIImage(systemName: "gearshape")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
         button.isHidden = true
@@ -67,11 +67,13 @@ class UserInformationView: UIView {
     }()
     private lazy var liveStyleLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = Brand.color(for: .text(.toggle))
+        label.backgroundColor = .clear
+        label.textColor = Brand.color(for: .brand(.primary))
+        label.layer.borderWidth = 1
+        label.layer.borderColor = Brand.color(for: .brand(.primary)).cgColor
         label.layer.cornerRadius = 10
         label.clipsToBounds = true
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Brand.color(for: .text(.primary))
         label.font = Brand.font(for: .xsmallStrong)
         return label
     }()

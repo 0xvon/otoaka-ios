@@ -21,7 +21,7 @@ final class HomeViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-        button.setTitleColor(Brand.color(for: .text(.toggle)), for: .highlighted)
+        button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("＋", for: .normal)
         button.titleLabel?.font = Brand.font(for: .largeStrong)
         button.addTarget(self, action: #selector(createPostButtonTapped), for: .touchUpInside)
@@ -67,8 +67,8 @@ final class HomeViewController: UIViewController {
         pagingViewController.didMove(toParent: self)
         pagingViewController.menuBackgroundColor = Brand.color(for: .background(.primary))
         pagingViewController.borderColor = .clear
-        pagingViewController.selectedTextColor = Brand.color(for: .text(.toggle))
-        pagingViewController.indicatorColor = Brand.color(for: .text(.toggle))
+        pagingViewController.selectedTextColor = Brand.color(for: .brand(.primary))
+        pagingViewController.indicatorColor = Brand.color(for: .brand(.primary))
         pagingViewController.textColor = Brand.color(for: .text(.primary))
         pagingViewController.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

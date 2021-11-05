@@ -13,7 +13,7 @@ public final class DateInputView: UIView {
         section.translatesAutoresizingMaskIntoConstraints = false
         section.text = ""
         section.font = Brand.font(for: .medium)
-        section.textColor = Brand.color(for: .text(.toggle))
+        section.textColor = Brand.color(for: .brand(.primary))
         return section
     }()
     private lazy var datePicker: UIDatePicker = {
@@ -101,7 +101,7 @@ public final class DateInputView: UIView {
     }
     
     func underLineColor() {
-        underLine.backgroundColor = Brand.color(for: .text(.toggle))
+        underLine.backgroundColor = Brand.color(for: .brand(.primary))
     }
 }
 

@@ -24,7 +24,7 @@ final class UserStatsViewController: UIViewController, Instantiable {
         scrollView.showsVerticalScrollIndicator = false
         return scrollView
     }()
-    private lazy var scrollStackView: UIStackView = {
+    public lazy var scrollStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -37,11 +37,11 @@ final class UserStatsViewController: UIViewController, Instantiable {
         chart.translatesAutoresizingMaskIntoConstraints = false
         chart.setViewPortOffsets(left: 24, top: 24, right: 24, bottom: 24)
         chart.setYAxisMinWidth(.left, width: 20)
-        chart.backgroundColor = Brand.color(for: .background(.primary))
+        chart.backgroundColor = .clear
         chart.chartDescription?.enabled = false
         chart.dragEnabled = false
-        chart.setScaleEnabled(true)
-        chart.pinchZoomEnabled = false
+        chart.setScaleEnabled(false)
+        chart.pinchZoomEnabled = true
         chart.legend.enabled = false
         chart.rightAxis.enabled = false
         
@@ -126,7 +126,7 @@ final class UserStatsViewController: UIViewController, Instantiable {
     
     override func loadView() {
         view = verticalScrollView
-        view.backgroundColor = Brand.color(for: .background(.primary))
+        view.backgroundColor = .clear
         view.addSubview(scrollStackView)
         NSLayoutConstraint.activate([
             view.topAnchor.constraint(equalTo: scrollStackView.topAnchor),
@@ -185,10 +185,10 @@ final class UserStatsViewController: UIViewController, Instantiable {
                 data.lineWidth = 5
                 data.circleRadius = 5
                 data.circleHoleRadius = 2.5
-                data.setColor(Brand.color(for: .text(.toggle)))
-                data.setCircleColor(Brand.color(for: .text(.toggle)))
-                data.circleHoleColor = Brand.color(for: .text(.toggle))
-                data.highlightColor = Brand.color(for: .text(.toggle))
+                data.setColor(Brand.color(for: .brand(.primary)))
+                data.setCircleColor(Brand.color(for: .brand(.primary)))
+                data.circleHoleColor = Brand.color(for: .brand(.primary))
+                data.highlightColor = Brand.color(for: .brand(.primary))
                 data.drawValuesEnabled = true
                 data.valueTextColor = Brand.color(for: .text(.primary))
                 data.valueFont = Brand.font(for: .smallStrong)
@@ -241,9 +241,8 @@ final class UserStatsViewController: UIViewController, Instantiable {
     
     class XAxisFormatter: NSObject, IAxisValueFormatter {
         func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-            return "\(Int(value))年"
+            return "'\(String(Int(value)).suffix(2))"
         }
-
     }
     
     class ValueFormatter: NSObject, IValueFormatter {

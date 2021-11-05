@@ -46,7 +46,7 @@ final class RegistrationViewController: UIViewController, Instantiable {
         let button = UIButton()
         button.setTitle("利用規約", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
-        button.setTitleColor(Brand.color(for: .text(.link)), for: .normal)
+        button.setTitleColor(Brand.color(for: .brand(.secondary)), for: .normal)
         button.addTarget(self, action: #selector(tosDidTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button

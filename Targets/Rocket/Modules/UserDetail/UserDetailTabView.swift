@@ -27,21 +27,21 @@ public final class UserDetailTabView: UIView {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "person")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "person")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
+        button.setImage(UIImage(systemName: "person")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
         return button
     }()
     private lazy var statsButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "chart.bar")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "chart.bar")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
+        button.setImage(UIImage(systemName: "chart.bar")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
         return button
     }()
     private lazy var myPostButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "doc.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "doc.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .selected)
+        button.setImage(UIImage(systemName: "doc.text")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
         return button
     }()
     

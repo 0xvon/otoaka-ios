@@ -63,7 +63,7 @@ public final class LiveDetailHeaderView: UIView {
     
     public func update(input: Input) {
         liveInformationView.update(input: input.live)
-        if let artworkURL = input.live.artworkURL {
+        if let artworkURL = input.live.artworkURL ?? input.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: liveThumbnailView)
         }
     }

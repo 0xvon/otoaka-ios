@@ -106,7 +106,7 @@ class TrackCellContent: UIView {
         trackTitleLabel.textColor = Brand.color(for: .text(.primary))
         
         bandNameLabel.font = Brand.font(for: .xsmall)
-        bandNameLabel.textColor = Brand.color(for: .text(.link))
+        bandNameLabel.textColor = Brand.color(for: .brand(.secondary))
        
         playButton.setImage(UIImage(systemName: "play")!
                                 .withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)

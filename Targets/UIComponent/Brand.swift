@@ -4,20 +4,16 @@ public enum Brand {
     // FIXME: Use `UIColor(dynamicProvider:)`
     public static func color(for color: Color) -> UIColor {
         switch color {
-        case .brand(.primary):             return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
+        case .brand(.primary):             return #colorLiteral(red: 0.8941176471, green: 0.2784313725, blue: 0.1647058824, alpha: 1) // #E4472A
+        case .brand(.secondary):           return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
         case .background(.primary):        return #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1) // #000000
         case .background(.secondary):      return #colorLiteral(red: 0.5647058824, green: 0.5647058824, blue: 0.5647058824, alpha: 1) // #909090
         case .background(.button):         return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
         case .background(.cell):           return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
         case .background(.cellSelected):   return #colorLiteral(red: 0.2549019608, green: 0.2509803922, blue: 0.2705882353, alpha: 1) // #414045
-        case .background(.link):           return #colorLiteral(red: 0.1058823529, green: 0.6196078431, blue: 0.4, alpha: 1) // #1B9E66
         case .background(.navigationBar):  return #colorLiteral(red: 0.1568627451, green: 0.1568627451, blue: 0.1607843137, alpha: 1) // #282829
         case .background(.searchBar):      return #colorLiteral(red: 0.07058823529, green: 0.07058823529, blue: 0.07058823529, alpha: 1) // #121212
-        case .background(.toggleSelected): return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
         case .text(.primary):              return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
-        case .text(.button):               return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
-        case .text(.link):                 return #colorLiteral(red: 0.1058823529, green: 0.6196078431, blue: 0.4, alpha: 1) // #1B9E66
-        case .text(.toggle):               return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
         case .ranking(.first):             return #colorLiteral(red: 0.8235294118, green: 0.2156862745, blue: 0.1019607843, alpha: 1) // #D2371A
         case .ranking(.second):            return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
         case .ranking(.other):             return #colorLiteral(red: 0.9529411765, green: 0.6862745098, blue: 0.6352941176, alpha: 1) // #F3AFA2
@@ -32,15 +28,15 @@ public enum Brand {
         case ranking(RankingColor)
         
         public enum BrandColor: CaseIterable {
-            case primary
+            case primary, secondary
         }
 
         public enum BackgroundColor: CaseIterable {
             case primary, secondary, button, cell, cellSelected,
-                 navigationBar, searchBar, toggleSelected, link
+                 navigationBar, searchBar
         }
         public enum TextColor: CaseIterable {
-            case primary, link, button, toggle
+            case primary
         }
         
         public enum RankingColor: CaseIterable {

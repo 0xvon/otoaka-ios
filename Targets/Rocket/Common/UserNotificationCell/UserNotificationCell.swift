@@ -79,7 +79,7 @@ class UserNotificationCellContent: UIView {
     }
     
     func inject(input: Input) {
-        titleLabel.textColor = input.notification.isRead ? Brand.color(for: .text(.primary)) : Brand.color(for: .text(.link))
+        titleLabel.textColor = input.notification.isRead ? Brand.color(for: .text(.primary)) : Brand.color(for: .brand(.secondary))
         createdAtLabel.text = dateFormatter.string(from: input.notification.createdAt)
         switch input.notification.notificationType {
         case .like(let like):

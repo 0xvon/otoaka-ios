@@ -59,7 +59,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 350),
+            content.heightAnchor.constraint(equalToConstant: 300),
         ])
         return content
     }()
