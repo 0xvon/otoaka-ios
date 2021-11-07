@@ -275,10 +275,15 @@ final class UserDetailViewController: UIViewController, Instantiable {
             let blockAction = UIAlertAction(title: userDetail.isBlocking ? "ブロック解除" : "ブロックする", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
                 userFollowingViewModel.didBlockButtonTapped(isBlocking: userDetail.isBlocking)
             })
+            let reportAction = UIAlertAction(title: "報告する", style: .default, handler: { [unowned self] _ in
+                if let url = URL(string: "https://forms.gle/kcoJZ5qSrBGSaamP6") {
+                    openUrlInBrowser(url: url)
+                }
+            })
             let cancelAction = UIAlertAction(
                 title: "キャンセル", style: UIAlertAction.Style.cancel,
                 handler: { _ in })
-            actions = [blockAction, cancelAction]
+            actions = [blockAction, reportAction, cancelAction]
         }
         actions.forEach { alertController.addAction($0) }
         alertController.popoverPresentationController?.sourceView = self.view
