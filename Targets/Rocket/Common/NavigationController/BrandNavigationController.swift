@@ -26,6 +26,7 @@ class BrandNavigationController: UINavigationController {
             .foregroundColor: Brand.color(for: .text(.primary))
         ]
         navigationItem.largeTitleDisplayMode = .never
+        navigationBar.backgroundColor = Brand.color(for: .background(.primary))
         navigationBar.barTintColor = Brand.color(for: .background(.primary))
         navigationBar.tintColor = Brand.color(for: .text(.primary))
         navigationBar.titleTextAttributes = [

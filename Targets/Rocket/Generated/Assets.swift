@@ -65,6 +65,8 @@ internal enum Asset {
   internal static let ssMypage = ImageAsset(name: "ss_mypage")
   internal static let ssPost = ImageAsset(name: "ss_post")
   internal static let ssSearch = ImageAsset(name: "ss_search")
+  internal static let ssStats = ImageAsset(name: "ss_stats")
+  internal static let ssUsername = ImageAsset(name: "ss_username")
   internal static let stopButton = ImageAsset(name: "stopButton")
   internal static let ticket = ImageAsset(name: "ticket")
   internal static let ticketIcon = ImageAsset(name: "ticketIcon")

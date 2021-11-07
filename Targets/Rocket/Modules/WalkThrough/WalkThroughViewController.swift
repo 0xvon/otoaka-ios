@@ -53,9 +53,9 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
     }()
     let titles = [
         "アーティストをフォローしよう",
-        "行ったライブを検索していいね♡しておこう",
-        "暇な時にいいねしたライブの感想を書こう",
-        "自分だけの参戦履歴をつくろう",
+        "参戦する/したライブを探してチェックしよう",
+        "プロフィール完成",
+        "プロフィールを友達にシェアしよう",
     ]
         
     override func viewDidLoad() {
@@ -73,8 +73,8 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
         
         let vc1 = GroupListViewController(dependencyProvider: dependencyProvider, input: .allGroup)
         let vc2 = SearchLiveViewController(dependencyProvider: dependencyProvider)
-        let vc3 = AppDescriptionViewController(input: (description: "いいねしたライブはマイページに保存されます。行きたいライブを保存しておくと便利！\n「このライブのレポートを書く」を押して感想を書くと参戦履歴になるよ！", imageName: "ss_post"))
-        let vc4 = AppDescriptionViewController(input: (description: "参戦履歴はマイページでひと目で分かるよ！\nさあOTOAKAでライブ参戦履歴を管理しよう！", imageName: "ss_mypage"))
+        let vc3 = AppDescriptionViewController(input: (description: "あとはプロフィールを設定すれば完成です！", imageName: "ss_stats"))
+        let vc4 = AppDescriptionViewController(input: (description: "ユーザーネームを設定するとあなたのプロフィールリンクが作成されて友達にシェアできるよ！ライブ友達への名刺代わりに使ってね！\nさあOTOAKAを始めよう！", imageName: "ss_username"))
         
         let vcs = [vc1, vc2, vc3, vc4]
         vcs.forEach { add(viewController: $0) }
