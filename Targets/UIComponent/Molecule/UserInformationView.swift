@@ -132,9 +132,9 @@ class UserInformationView: UIView {
             sendMessageButton.isHidden = true
         } else {
             editProfileButton.isHidden = true
-            followButton.isHidden = false
+            followButton.isHidden = input.userDetail.isBlocked || input.userDetail.isBlocking
             followButton.isEnabled = true
-            sendMessageButton.isHidden = false
+            sendMessageButton.isHidden = input.userDetail.isBlocked || input.userDetail.isBlocking
             sendMessageButton.isEnabled = true
             followButton.isSelected = input.userDetail.isFollowing
         }

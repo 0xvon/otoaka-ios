@@ -69,4 +69,10 @@ final class MessageListViewModel {
         guard indexPath.row + 25 > state.messageRooms.count else { return }
         pagination.next()
     }
+    
+    func deleteRoom(at index: Int) {
+        let room = state.messageRooms[index]
+        let request = DeleteMessageRoom.Request(roomId: room.id)
+        deleteRoomRequest.input((request: request, uri: DeleteMessageRoom.URI()))
+    }
 }

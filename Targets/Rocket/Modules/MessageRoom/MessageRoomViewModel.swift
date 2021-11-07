@@ -15,6 +15,7 @@ class MessageRoomViewModel {
     
     enum Output {
         case userTapped
+        case didGetUserDetail(UserDetail)
         case sentMessage
         case openMessage
         case reportError(Error)
@@ -22,6 +23,7 @@ class MessageRoomViewModel {
     
     struct State {
         var room: MessageRoom
+//        var userDetail: UserDetail? = nil
         var messages: [Message] = []
     }
     
@@ -39,6 +41,7 @@ class MessageRoomViewModel {
         return uri
     }())
     private lazy var sendMessageAction = Action(SendMessage.self, httpClient: apiClient)
+    private lazy var getUserDetailAction = Action(GetUserDetail.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, input: Input
@@ -50,6 +53,7 @@ class MessageRoomViewModel {
         
         sendMessageAction.elements.map { _ in .sentMessage }.eraseToAnyPublisher()
             .merge(with: sendMessageAction.errors.map(Output.reportError)).eraseToAnyPublisher()
+            .merge(with: getUserDetailAction.elements.map(Output.didGetUserDetail).eraseToAnyPublisher())
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
             
@@ -74,10 +78,19 @@ class MessageRoomViewModel {
     
     func refresh() {
         pagination.refresh()
+        getUserDetail()
     }
     
     func next() {
         pagination.next()
+    }
+    
+    func getUserDetail() {
+        var uri = GetUserDetail.URI()
+        guard let partner = ([state.room.owner] + state.room.members).filter({ $0.id != dependencyProvider.user.id }).first else { return }
+        uri.userId = partner.id
+        getUserDetailAction.input((request: Empty(), uri: uri))
+        
     }
     
     func sendMessage(

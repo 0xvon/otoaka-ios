@@ -83,6 +83,13 @@ final class MessageRoomViewController: MessagesViewController {
                 if viewModel.state.messages.count <= per {
                     messagesCollectionView.scrollToLastItem()
                 }
+            case .didGetUserDetail(let userDetail):
+                let isAvailable = !userDetail.isBlocked && !userDetail.isBlocking
+                messageInputBar.inputTextView.isEditable = isAvailable
+                messageInputBar.sendButton.isEnabled = isAvailable
+                if !isAvailable {
+                    messageInputBar.inputTextView.placeholderLabel.text = "メッセージは送れません"
+                }
             case .sentMessage:
                 messageInputBar.sendButton.stopAnimating()
                 viewModel.refresh()

@@ -111,6 +111,16 @@ extension MessageListViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            viewModel.deleteRoom(at: indexPath.row)
+        }
+    }
+    
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
             let emptyCollectionView = EmptyCollectionView(emptyType: .messageList, actionButtonTitle: nil)

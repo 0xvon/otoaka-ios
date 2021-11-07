@@ -82,6 +82,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
             switch output {
             case .updateFollowing:
                 viewModel.refresh()
+            case .updateBlocking:
+                viewModel.refresh()
             case .reportError(let error):
                 print(error)
                 self.showAlert()
@@ -94,28 +96,30 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .didRefreshUserDetail(let userDetail):
                 headerView.update(input: (selfUser: dependencyProvider.user, userDetail: userDetail, imagePipeline: dependencyProvider.imagePipeline))
                 tab.update(userDetail: userDetail)
+                var barButonItems: [UIBarButtonItem] = []
+                let settingItem = UIBarButtonItem(
+                    image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+                    style: .plain,
+                    target: self,
+                    action: #selector(settingButtonTapped(_:))
+                )
+                barButonItems.append(settingItem)
                 switch viewModel.state.displayType {
                 case .account:
                     dependencyProvider.user = userDetail.user
                     self.title = "マイページ"
-                    let settingItem = UIBarButtonItem(
-                        image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
-                        style: .plain,
-                        target: self,
-                        action: #selector(settingButtonTapped(_:))
-                    )
                     let linkItem = UIBarButtonItem(
                         image: UIImage(systemName: "link")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(linkButtonTapped(_:))
                     )
-                    
-                    navigationItem.setRightBarButtonItems(
-                        [settingItem, linkItem],
-                        animated: false
-                    )
+                    barButonItems.append(linkItem)
                 case .user:
                     self.title = userDetail.name
                     navigationItem.setRightBarButton(nil, animated: true)
                 }
+                navigationItem.setRightBarButtonItems(
+                    barButonItems,
+                    animated: false
+                )
                 refreshControl.endRefreshing()
             case .sendMessageButonTapped:
                 openMessageRoomViewModel.createMessageRoom(partner: viewModel.state.user)
@@ -267,8 +271,9 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 handler: { _ in })
             actions = [shareProfileAction, requestLiveAction, logoutAction, cancelAction]
         case .user:
-            let blockAction = UIAlertAction(title: "ブロック", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
-                    block()
+            guard let userDetail = viewModel.state.userDetail else { return }
+            let blockAction = UIAlertAction(title: userDetail.isBlocking ? "ブロック解除" : "ブロックする", style: UIAlertAction.Style.default, handler: { [unowned self] _ in
+                userFollowingViewModel.didBlockButtonTapped(isBlocking: userDetail.isBlocking)
             })
             let cancelAction = UIAlertAction(
                 title: "キャンセル", style: UIAlertAction.Style.cancel,
