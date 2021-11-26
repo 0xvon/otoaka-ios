@@ -62,6 +62,7 @@ internal enum Asset {
   internal static let selectedTicketIcon = ImageAsset(name: "selectedTicketIcon")
   internal static let share = ImageAsset(name: "share")
   internal static let spotify = ImageAsset(name: "spotify")
+  internal static let ssHome = ImageAsset(name: "ss_home")
   internal static let ssMypage = ImageAsset(name: "ss_mypage")
   internal static let ssPost = ImageAsset(name: "ss_post")
   internal static let ssSearch = ImageAsset(name: "ss_search")
