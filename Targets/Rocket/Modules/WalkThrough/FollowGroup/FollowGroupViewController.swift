@@ -70,6 +70,7 @@ final class FollowGroupViewController: UITableViewController {
                 self.refreshControl?.endRefreshing()
                 self.setTableViewBackgroundView(isDisplay: viewModel.state.groups.isEmpty)
                 self.tableView.reloadData()
+            case .updateFollowing: break
             case .isRefreshing(let value):
                 if value {
                     self.setTableViewBackgroundView(isDisplay: false)

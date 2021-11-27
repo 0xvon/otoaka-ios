@@ -102,6 +102,7 @@ final class PostListViewController: UIViewController, Instantiable {
                     })
                     let deletePostAction = UIAlertAction(title: "削除", style: .destructive, handler: { [unowned self] action in
                         postActionViewModel.deletePost(post: post)
+                        viewModel.deletePost(post: post)
                     })
                     alertController.addAction(editPostAction)
                     alertController.addAction(deletePostAction)
@@ -110,10 +111,8 @@ final class PostListViewController: UIViewController, Instantiable {
                 alertController.popoverPresentationController?.sourceView = self.view
                 alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
                 self.present(alertController, animated: true, completion: nil)
-            case .didDeletePost:
-                viewModel.refresh()
-            case .didToggleLikePost:
-                viewModel.refresh()
+            case .didDeletePost: break
+            case .didToggleLikePost: break
             case .pushToCommentList(let input):
                 let vc = CommentListViewController(
                     dependencyProvider: dependencyProvider, input: input)
@@ -156,10 +155,6 @@ final class PostListViewController: UIViewController, Instantiable {
             case .reloadData:
                 postTableView.reloadData()
                 setTableViewBackgroundView(isDisplay: viewModel.state.posts.isEmpty)
-            case .didDeletePost:
-                viewModel.refresh()
-            case .didToggleLikePost:
-                viewModel.refresh()
             case .getLatestLives(let lives):
                 header.inject(lives: lives)
             case .error(let err):
@@ -257,10 +252,14 @@ extension PostListViewController: UITableViewDelegate, UITableViewDataSource {
     }
         
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let post = viewModel.state.posts[indexPath.row]
+        var post = viewModel.state.posts[indexPath.row]
         let cell = tableView.dequeueReusableCell(PostCell.self, input: (post: post, user: dependencyProvider.user, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         cell.listen { [unowned self] output in
             postActionViewModel.postCellEvent(post, event: output)
+            if output == .likeTapped {
+                post.isLiked.toggle()
+                viewModel.updatePost(post: post)
+            }
         }
         return cell
     }

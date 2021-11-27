@@ -169,7 +169,8 @@ class GroupCellContent: UIButton {
     }
     
     @objc private func likeButtonTapped() {
-        bigLikeButton.isEnabled = false
+//        bigLikeButton.isEnabled = false
+        bigLikeButton.isSelected.toggle()
         self.listener(.likeButtonTapped)
     }
     

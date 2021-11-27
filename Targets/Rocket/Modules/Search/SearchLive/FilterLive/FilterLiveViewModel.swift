@@ -103,6 +103,12 @@ final class FilterLiveViewModel {
         liveFeed.isLiked ? unlikeLive(live: liveFeed.live) : likeLive(live: liveFeed.live)
     }
     
+    func updateLive(live: LiveFeed) {
+        if let idx = state.lives.firstIndex(where: { $0.live.id == live.live.id }) {
+            state.lives[idx] = live
+        }
+    }
+    
     func likeLive(live: Live) {
         let request = LikeLive.Request(liveId: live.id)
         let uri = LikeLive.URI()

@@ -201,4 +201,10 @@ class GroupListViewModel {
             followGroupAction.input((request: req, uri: FollowGroup.URI()))
         }
     }
+    
+    func updateGroup(group: GroupFeed) {
+        if let idx = state.groups.firstIndex(where: { $0.group.id == group.group.id }) {
+            state.groups[idx] = group
+        }
+    }
 }

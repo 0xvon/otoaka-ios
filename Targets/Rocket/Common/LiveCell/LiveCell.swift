@@ -263,19 +263,28 @@ class LiveCellContent: UIButton {
                 self.series = .future
                 buyTicketButtonView.isEnabled = input.live.live.piaEventUrl != nil
                 buyTicketButtonView.setTitle("チケット申込", for: .normal)
-                likeButton.setTitle("行く", for: .normal)
-                likeButton.setTitle("参戦予定", for: .selected)
             } else {
                 self.series = .past
                 buyTicketButtonView.isEnabled = true
                 buyTicketButtonView.setTitle("感想を書く", for: .normal)
-                likeButton.setTitle("行った", for: .normal)
-                likeButton.setTitle("参戦済", for: .selected)
             }
+            likeButtonStyle()
         case .review:
             buyTicketStackView.isHidden = true
         }
         
+    }
+    
+    func likeButtonStyle() {
+        switch self.series {
+        case .future:
+            likeButton.setTitle("行く", for: .normal)
+            likeButton.setTitle("参戦予定", for: .selected)
+        case .past:
+            likeButton.setTitle("行った", for: .normal)
+            likeButton.setTitle("参戦済", for: .selected)
+        case .all: break
+        }
     }
 
     func setup() {
@@ -321,7 +330,8 @@ class LiveCellContent: UIButton {
     }
     
     @objc private func likeButtonTapped() {
-        likeButton.isEnabled = false
+        likeButton.isSelected.toggle()
+        likeButtonStyle()
         self.listener(.likeButtonTapped)
     }
     

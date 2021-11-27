@@ -81,10 +81,9 @@ final class FilterLiveViewController: UITableViewController {
                 } else {
                     self.refreshControl?.endRefreshing()
                 }
-            case .didToggleLikeLive:
-                viewModel.refresh()
+            case .didToggleLikeLive: break
             case .reportError(let err):
-                print(err)
+                print(String(describing: err))
                 showAlert()
             }
         }.store(in: &cancellables)
@@ -113,7 +112,7 @@ extension FilterLiveViewController: UISearchResultsUpdating {
 
 extension FilterLiveViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = viewModel.state.lives[indexPath.row]
+        var live = viewModel.state.lives[indexPath.row]
         let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
@@ -125,6 +124,8 @@ extension FilterLiveViewController {
                 present(safari, animated: true, completion: nil)
             case .likeButtonTapped:
                 viewModel.likeLiveButtonTapped(liveFeed: live)
+                live.isLiked.toggle()
+                viewModel.updateLive(live: live)
             case .numOfLikeTapped:
                 let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
                 self.navigationController?.pushViewController(vc, animated: true)

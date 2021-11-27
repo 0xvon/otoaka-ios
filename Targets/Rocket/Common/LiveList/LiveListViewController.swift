@@ -51,10 +51,9 @@ final class LiveListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.setTableViewBackgroundView(tableView: liveTableView)
                 self.liveTableView.reloadData()
-            case .didToggleLikeLive:
-                self.viewModel.refresh()
+            case .didToggleLikeLive: break
             case .error(let error):
-                print(error)
+                print(String(describing: error))
                 self.showAlert()
             }
         }
@@ -107,9 +106,13 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.state.lives.count
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 332
+    }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let live = self.viewModel.state.lives[indexPath.row]
+        var live = self.viewModel.state.lives[indexPath.row]
         var cellType: LiveCellContent.LiveCellContentType
         switch viewModel.dataSource {
         case .searchResultToSelect(_):
@@ -129,6 +132,8 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
                 present(safari, animated: true, completion: nil)
             case .likeButtonTapped:
                 viewModel.likeLiveButtonTapped(liveFeed: live)
+                live.isLiked.toggle()
+                viewModel.updateLive(live: live)
             case .numOfLikeTapped:
                 let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
                 let nav = self.navigationController ?? presentingViewController?.navigationController

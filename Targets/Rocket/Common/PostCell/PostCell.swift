@@ -360,7 +360,7 @@ class PostCellContent: UIButton {
     }
     
     @objc private func likeButtonTapped() {
-        likeButtonView.isEnabled = false
+        likeButtonView.isSelected.toggle()
         self.listener(.likeTapped)
     }
     

@@ -17,6 +17,7 @@ final class FollowGroupViewModel {
     enum Output {
         case updateSearchResult(SearchResultViewController.Input)
         case reloadData
+        case updateFollowing
         case isRefreshing(Bool)
         case error(Error)
     }
@@ -33,6 +34,7 @@ final class FollowGroupViewModel {
     let dependencyProvider: LoggedInDependencyProvider
     lazy var getAllPagination = PaginationRequest<Endpoint.GetAllGroups>(apiClient: dependencyProvider.apiClient)
     lazy var followGroupAction = Action(FollowGroup.self, httpClient: dependencyProvider.apiClient)
+    lazy var unfollowGroupAction = Action(UnfollowGroup.self, httpClient: dependencyProvider.apiClient)
 
     private var cancellables: [AnyCancellable] = []
 
@@ -43,9 +45,13 @@ final class FollowGroupViewModel {
         self.subscribe()
         
         followGroupAction.elements.map {
-            _ in .reloadData
+            _ in .updateFollowing
         }.eraseToAnyPublisher()
         .merge(with: followGroupAction.errors.map(Output.error).eraseToAnyPublisher())
+        .merge(with: unfollowGroupAction.elements.map {
+            _ in .updateFollowing
+        }.eraseToAnyPublisher())
+        .merge(with: unfollowGroupAction.errors.map(Output.error).eraseToAnyPublisher())
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
     }
@@ -74,11 +80,23 @@ final class FollowGroupViewModel {
     }
     
     func followGroup(index: Int) {
-        let group = state.groups[index]
-        let request = FollowGroup.Request(groupId: group.group.id)
-        let uri = FollowGroup.URI()
-        followGroupAction.input((request: request, uri: uri))
-        state.groups = state.groups.filter { $0.group.id != group.group.id }
+        var group = state.groups[index]
+        if group.isFollowing {
+            let req = UnfollowGroup.Request(groupId: group.group.id)
+            unfollowGroupAction.input((request: req, uri: UnfollowGroup.URI()))
+        } else {
+            let req = FollowGroup.Request(groupId: group.group.id)
+            followGroupAction.input((request: req, uri: FollowGroup.URI()))
+        }
+        
+        group.isFollowing.toggle()
+        updateGroup(group: group)
+    }
+    
+    func updateGroup(group: GroupFeed) {
+        if let idx = state.groups.firstIndex(where: { $0.group.id == group.group.id }) {
+            state.groups[idx] = group
+        }
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {

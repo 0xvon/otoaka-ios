@@ -70,8 +70,6 @@ class PostListViewModel {
     
     enum Output {
         case reloadData
-        case didDeletePost
-        case didToggleLikePost
         case getLatestLives([LiveFeed])
         case error(Error)
     }
@@ -210,5 +208,16 @@ class PostListViewModel {
     
     deinit {
         print("PostListVM.deinit")
+    }
+    
+    func updatePost(post: PostSummary) {
+        if let idx = state.posts.firstIndex(where: { $0.post.id == post.post.id }) {
+            state.posts[idx] = post
+        }
+    }
+    
+    func deletePost(post: PostSummary) {
+        state.posts = state.posts.filter { $0.post.id != post.post.id }
+        outputSubject.send(.reloadData)
     }
 }

@@ -157,7 +157,7 @@ extension SearchFriendsViewController {
             }
             return cell
         case .live:
-            let live = viewModel.state.lives[indexPath.row]
+            var live = viewModel.state.lives[indexPath.row]
             let cell = tableView.dequeueReusableCell(LiveCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
             cell.listen { [unowned self] output in
                 switch output {
@@ -169,6 +169,8 @@ extension SearchFriendsViewController {
                     present(safari, animated: true, completion: nil)
                 case .likeButtonTapped:
                     viewModel.likeLiveButtonTapped(liveFeed: live)
+                    live.isLiked.toggle()
+                    viewModel.updateLive(live: live)
                 case .numOfLikeTapped:
                     let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
                     self.navigationController?.pushViewController(vc, animated: true)
@@ -185,7 +187,7 @@ extension SearchFriendsViewController {
             }
             return cell
         case .group:
-            let group = viewModel.state.groups[indexPath.row]
+            var group = viewModel.state.groups[indexPath.row]
             let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
             cell.listen { [unowned self] output in
                 switch output {
@@ -196,6 +198,8 @@ extension SearchFriendsViewController {
                     nav?.pushViewController(vc, animated: true)
                 case .likeButtonTapped:
                     viewModel.followButtonTapped(group: group)
+                    group.isFollowing.toggle()
+                    viewModel.updateGroup(group: group)
                 case .listenButtonTapped: break
                 }
             }

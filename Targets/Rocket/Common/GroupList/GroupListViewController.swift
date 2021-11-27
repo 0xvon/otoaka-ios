@@ -50,8 +50,7 @@ final class GroupListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.setTableViewBackgroundView(tableView: self.tableView)
                 self.tableView.reloadData()
-            case .updateFollowing:
-                viewModel.refresh()
+            case .updateFollowing: break
             case .error(let error):
                 print(String(describing: error))
                 self.showAlert()
@@ -111,7 +110,7 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let group = self.viewModel.state.groups[indexPath.row]
+        var group = self.viewModel.state.groups[indexPath.row]
         let type: GroupCellContent.GroupCellContentType
         switch viewModel.dataSource {
         case .allGroup:
@@ -138,6 +137,8 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             case .likeButtonTapped:
                 viewModel.followButtonTapped(group: group)
+                group.isFollowing.toggle()
+                viewModel.updateGroup(group: group)
             case .listenButtonTapped: break
             }
         }

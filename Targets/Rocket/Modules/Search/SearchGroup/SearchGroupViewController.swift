@@ -76,8 +76,7 @@ final class SearchGroupViewController: UITableViewController {
                 } else {
                     self.refreshControl?.endRefreshing()
                 }
-            case .didToggleFollowGroup:
-                viewModel.refresh()
+            case .didToggleFollowGroup: break
             case .reportError(let err):
                 print(err)
                 showAlert()
@@ -127,7 +126,7 @@ extension SearchGroupViewController: UISearchResultsUpdating {
 
 extension SearchGroupViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let group = viewModel.state.groups[indexPath.row]
+        var group = viewModel.state.groups[indexPath.row]
         let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
@@ -138,6 +137,8 @@ extension SearchGroupViewController {
                 nav?.pushViewController(vc, animated: true)
             case .likeButtonTapped:
                 viewModel.followButtonTapped(group: group)
+                group.isFollowing.toggle()
+                viewModel.updateGroup(group: group)
             case .listenButtonTapped: break
             }
         }
