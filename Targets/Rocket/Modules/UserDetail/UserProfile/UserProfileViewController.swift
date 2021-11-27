@@ -35,6 +35,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
     private let recentlyFollowingSectionHeader = SummarySectionHeader(title: "最近好きなアーティスト")
     private lazy var recentlyFollowingContent: TagListView = {
         let content = TagListView()
+        content.delegate = self
         content.translatesAutoresizingMaskIntoConstraints = false
         content.alignment = .left
         content.cornerRadius = 16
@@ -50,6 +51,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
     private let followingSectionHeader = SummarySectionHeader(title: "好きなアーティスト")
     private lazy var followingContent: TagListView = {
         let content = TagListView()
+        content.delegate = self
         content.translatesAutoresizingMaskIntoConstraints = false
         content.alignment = .left
         content.cornerRadius = 16
@@ -212,6 +214,24 @@ final class UserProfileViewController: UIViewController, Instantiable {
         liveScheduleTableView.listen { [unowned self] live in
             let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live.live)
             self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+}
+
+extension UserProfileViewController: TagListViewDelegate {
+    func tagPressed(_ title: String, tagView: TagView, sender: TagListView) {
+        switch sender {
+        case recentlyFollowingContent:
+            if let group = viewModel.state.recentlyFollowingGroups.filter({ $0.group.name == title }).first {
+                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+        case followingContent:
+            if let group = viewModel.state.followingGroups.filter({ $0.group.name == title }).first {
+                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+        default: break
         }
     }
 }
