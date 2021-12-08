@@ -13,12 +13,6 @@ import Combine
 final class SearchLiveViewController: UIViewController {
     let dependencyProvider: LoggedInDependencyProvider
     
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd"
-        return dateFormatter
-    }()
-    
     lazy var searchResultController: SearchResultViewController = {
         SearchResultViewController(dependencyProvider: self.dependencyProvider)
     }()
@@ -181,7 +175,7 @@ final class SearchLiveViewController: UIViewController {
                 }
                 
                 if let fromDate = viewModel.state.fromDate, let toDate = viewModel.state.toDate {
-                    dateCategoryButton.setTitle("\(dateFormatter.string(from: fromDate)) ~ \(dateFormatter.string(from: toDate))", for: .normal)
+                    dateCategoryButton.setTitle("\(fromDate.toFormatString(format: "yyyy/MM/dd")) ~ \(toDate.toFormatString(format: "yyyy/MM/dd"))", for: .normal)
                 } else {
                     dateCategoryButton.setTitle("開催日を選択 ~ 開催日を選択", for: .normal)
                 }

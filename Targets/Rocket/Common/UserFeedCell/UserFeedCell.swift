@@ -69,12 +69,6 @@ class UserFeedCellContent: UIView {
         case instagramButtonTapped
         case userTapped
     }
-    
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd"
-        return dateFormatter
-    }()
 
     @IBOutlet weak var feedTitleLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
@@ -133,7 +127,7 @@ class UserFeedCellContent: UIView {
         }
         feedTitleLabel.text = input.feed.title
         textView.text = input.feed.text
-        dateLabel.text = dateFormatter.string(from: input.feed.createdAt)
+        dateLabel.text = input.feed.createdAt.toFormatString(format: "yyyy/MM/dd")
         artistNameLabel.text = input.feed.author.name
         commentButton.setTitle("\(input.feed.commentCount)", for: .normal)
         likeButton.isSelected = input.feed.isLiked

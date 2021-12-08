@@ -18,12 +18,6 @@ final class DetailFilterViewController: UIViewController, Instantiable {
         case band
     }
 
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy年MM月dd日"
-        return dateFormatter
-    }()
-
     var choice: Choice
     let socialInputs: SocialInputs
     private var prefecturePicker: UIPickerView!

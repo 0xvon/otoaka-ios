@@ -55,16 +55,11 @@ class LiveListViewModel {
                 let request = PaginationRequest<GetLikedFutureLive>(apiClient: apiClient, uri: uri)
                 self = .likedFutureLive(request)
             case .searchResult(let query, let groupId, let fromDate, let toDate):
-                let dateFormatter: DateFormatter = {
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "YYYYMMdd"
-                    return dateFormatter
-                }()
                 var uri = SearchLive.URI()
                 uri.term = query
                 uri.groupId = groupId
-                uri.fromDate = fromDate.map { dateFormatter.string(from: $0) }
-                uri.toDate = toDate.map { dateFormatter.string(from: $0) }
+                uri.fromDate = fromDate?.toFormatString(format: "yyyyMMdd")
+                uri.toDate = toDate?.toFormatString(format: "yyyyMMdd")
                 let request = PaginationRequest<SearchLive>(apiClient: apiClient, uri: uri)
                 self = .searchResult(request)
             case .searchResultToSelect(let query):

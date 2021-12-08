@@ -13,11 +13,6 @@ class PerformanceRequestCell: UITableViewCell, ReusableCell {
     static var reusableIdentifier: String { "PerformanceRequestCell" }
 
     typealias Input = (request: PerformanceRequest, imagePipeline: ImagePipeline)
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM月dd日 HH:mm"
-        return dateFormatter
-    }()
 
     @IBOutlet weak var liveArtworkImageView: UIImageView!
     @IBOutlet weak var bandImageView: UIImageView!

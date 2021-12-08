@@ -10,12 +10,6 @@ import Combine
 import Endpoint
 
 final class FilterLiveViewModel {
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYYMMdd"
-        return dateFormatter
-    }()
-    
     enum Input {
         case updateSearchQuery(String?)
     }
@@ -42,8 +36,8 @@ final class FilterLiveViewModel {
     private lazy var searchLivePagination: PaginationRequest<SearchLive> = PaginationRequest<SearchLive>(apiClient: apiClient, uri: {
         var uri = SearchLive.URI()
         uri.groupId = state.groupId
-        uri.fromDate = state.fromDate.map { dateFormatter.string(from: $0) }
-        uri.toDate = state.toDate.map { dateFormatter.string(from: $0) }
+        uri.fromDate = state.fromDate?.toFormatString(format: "yyyyMMdd")
+        uri.toDate = state.toDate?.toFormatString(format: "yyyyMMdd")
         return uri
     }())
     

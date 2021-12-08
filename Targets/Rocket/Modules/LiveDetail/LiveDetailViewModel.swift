@@ -118,14 +118,9 @@ class LiveDetailViewModel {
     }
     
     func isLivePast() -> Bool {
-        let dateFormatter: DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "YYYYMMdd"
-            return dateFormatter
-        }()
         let today = Date()
         guard let date = state.live.date else { return false }
-        return date < dateFormatter.string(from: today)
+        return date < today.toFormatString(format: "yyyyMMdd")
     }
     
     func getLivePostSummary() {

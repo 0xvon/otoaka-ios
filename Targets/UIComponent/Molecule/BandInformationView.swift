@@ -21,12 +21,6 @@ class BandInformationView: UIView {
         setup()
     }
 
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY年"
-        return dateFormatter
-    }()
-
     private lazy var bandNameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false

@@ -61,11 +61,6 @@ class MessageListCellContent: UIButton {
         case roomTapped
         
     }
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd HH:mm"
-        return dateFormatter
-    }()
     
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
@@ -132,7 +127,7 @@ class MessageListCellContent: UIButton {
         if let latestMessage = input.room.latestMessage {
             latestMessageTextView.text = latestMessage.text
             unreadBadge.isHidden = latestMessage.readingUsers.contains(input.user)
-            dateLabel.text = dateFormatter.string(from: latestMessage.sentAt)
+            dateLabel.text = latestMessage.sentAt.toFormatString(format: "YYYY/MM/dd HH:mm")
         }
     }
     

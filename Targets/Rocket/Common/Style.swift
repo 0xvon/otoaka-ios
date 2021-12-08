@@ -41,6 +41,26 @@ extension UIColor {
     }
 }
 
+extension String {
+    func toFormatString(from: String, to: String) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = from
+        dateFormatter.locale = Locale(identifier: "ja_JP")
+        let _date = dateFormatter.date(from: self) // format to date
+        dateFormatter.dateFormat = to
+        return _date.map(dateFormatter.string(from:)) // format to string again
+    }
+}
+
+extension Date {
+    func toFormatString(format: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        dateFormatter.locale = Locale(identifier: "ja_JP")
+        return dateFormatter.string(from: self)
+    }
+}
+
 extension UIImage {
     public convenience init(url: String) {
         let url = URL(string: url)

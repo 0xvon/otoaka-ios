@@ -206,3 +206,15 @@ extension UIColor {
         return image
     }
 }
+
+extension String {
+    func toFormatString(from: String, to: String) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = from
+        dateFormatter.locale = Locale(identifier: "ja_JP")
+        dateFormatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        let _date = dateFormatter.date(from: self) // format to date
+        dateFormatter.dateFormat = to
+        return _date.map(dateFormatter.string(from:)) // format to string again
+    }
+}

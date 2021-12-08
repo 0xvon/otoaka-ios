@@ -20,16 +20,6 @@ class LiveInformationView: UIView {
         super.init(coder: coder)
         setup()
     }
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYYMMdd"
-        return dateFormatter
-    }()
-    let displayDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd"
-        return dateFormatter
-    }()
 
     private lazy var liveTitleLabel: UILabel = {
         let label = UILabel()
@@ -75,13 +65,9 @@ class LiveInformationView: UIView {
 */
 
     func update(input: Input) {
-        if let date = input.date
-            .map(dateFormatter.date(from:))?
-            .map(displayDateFormatter.string(from:)),
+        if let date = input.date?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd"),
            let openAt = input.openAt {
-            if let endDate = input.endDate
-                .map(dateFormatter.date(from:))?
-                .map(displayDateFormatter.string(from:)) {
+            if let endDate = input.endDate?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd") {
                 dateBadgeView.title = "\(date) ~ \(endDate)"
             } else {
                 dateBadgeView.title = "\(date) \(openAt)"

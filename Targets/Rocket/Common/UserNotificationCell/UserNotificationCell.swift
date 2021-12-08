@@ -56,11 +56,6 @@ class UserNotificationCellContent: UIView {
     )
     enum Output {
     }
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd"
-        return dateFormatter
-    }()
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var createdAtLabel: UILabel!
@@ -80,7 +75,7 @@ class UserNotificationCellContent: UIView {
     
     func inject(input: Input) {
         titleLabel.textColor = input.notification.isRead ? Brand.color(for: .text(.primary)) : Brand.color(for: .brand(.secondary))
-        createdAtLabel.text = dateFormatter.string(from: input.notification.createdAt)
+        createdAtLabel.text = input.notification.createdAt.toFormatString(format: "yyyy/MM/dd")
         switch input.notification.notificationType {
         case .like(let like):
             titleLabel.text = "\(like.likedBy.name)がフィードにいいね"

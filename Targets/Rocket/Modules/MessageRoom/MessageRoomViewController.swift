@@ -23,12 +23,6 @@ final class MessageRoomViewController: MessagesViewController {
     
     private let refreshControl = BrandRefreshControl()
     
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd HH:mm"
-        return dateFormatter
-    }()
-    
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = MessageRoomViewModel(dependencyProvider: dependencyProvider, input: input)
@@ -124,7 +118,7 @@ extension MessageRoomViewController: MessagesDataSource {
     }
     
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        let date = dateFormatter.string(from: message.sentDate)
+        let date = message.sentDate.toFormatString(format: "yyyy/MM/dd HH:mm")
         return NSAttributedString(string: date, attributes: [.font: UIFont.preferredFont(forTextStyle: .caption2), .foregroundColor: Brand.color(for: .text(.primary))])
     }
     

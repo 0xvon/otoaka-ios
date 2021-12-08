@@ -171,17 +171,12 @@ class PostListViewModel {
     }
     
     func getLatestLives() {
-        let dateFormatter: DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "YYYYMMdd"
-            return dateFormatter
-        }()
         let date = Date()
         let monthLater = date.addingTimeInterval(60 * 60 * 24 * 30)
         let threeDaysAgo = date.addingTimeInterval(-60 * 60 * 24 * 3)
         var uri = SearchLive.URI()
-        uri.fromDate = dateFormatter.string(from: threeDaysAgo)
-        uri.toDate = dateFormatter.string(from: monthLater)
+        uri.fromDate = threeDaysAgo.toFormatString(format: "yyyyMMdd")
+        uri.toDate = monthLater.toFormatString(format: "yyyyMMdd")
         uri.per = 50
         uri.page = 1
         getLatestLivesAction.input((request: Empty(), uri: uri))

@@ -74,16 +74,6 @@ class LiveCellContent: UIButton {
         case buyTicketButtonTapped
         case selfTapped
     }
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYYMMdd"
-        return dateFormatter
-    }()
-    let displayDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd"
-        return dateFormatter
-    }()
 
     @IBOutlet weak var liveTitleLabel: UILabel!
     @IBOutlet weak var bandsLabel: UILabel!
@@ -233,13 +223,9 @@ class LiveCellContent: UIButton {
             self.bandsLabel.text = groupNames.joined(separator: ", ") + "..."
         }
         
-        if let date = input.live.live.date
-            .map(dateFormatter.date(from:))?
-            .map(displayDateFormatter.string(from:)),
+        if let date = input.live.live.date?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd"),
            let openAt = input.live.live.openAt {
-            if let endDate = input.live.live.endDate
-                .map(dateFormatter.date(from:))?
-                .map(displayDateFormatter.string(from:)) {
+            if let endDate = input.live.live.endDate?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd") {
                 dateView.title = "\(date) ~ \(endDate)"
             } else {
                 dateView.title = "\(date) \(openAt)"
@@ -259,7 +245,7 @@ class LiveCellContent: UIButton {
             likeButton.isSelected = input.live.isLiked
             likeButton.isEnabled = true
             
-            if let date = input.live.live.date, date >= dateFormatter.string(from: Date()) {
+            if let date = input.live.live.date, date >= Date().toFormatString(format: "yyyyMMdd") {
                 self.series = .future
                 buyTicketButtonView.isEnabled = input.live.live.piaEventUrl != nil
                 buyTicketButtonView.setTitle("チケット申込", for: .normal)

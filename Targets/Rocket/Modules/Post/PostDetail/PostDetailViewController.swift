@@ -15,11 +15,6 @@ import ImageViewer
 final class PostDetailViewController: UIViewController, Instantiable {
     typealias Input = Post
     
-    let postDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd"
-        return dateFormatter
-    }()
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -373,7 +368,7 @@ final class PostDetailViewController: UIViewController, Instantiable {
                 likeButtonView.setTitle("\(post.likeCount)", for: .normal)
                 likeButtonView.isSelected = post.isLiked
                 likeButtonView.isEnabled = true
-                dateLabel.text = postDateFormatter.string(from: post.createdAt)
+                dateLabel.text = post.createdAt.toFormatString(format: "yyyy/MM/dd")
             case .error(let err):
                 refreshControl.endRefreshing()
                 print(String(describing: err))

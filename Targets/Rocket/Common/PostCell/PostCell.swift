@@ -71,21 +71,6 @@ class PostCellContent: UIButton {
         case likeTapped
         case settingTapped
     }
-    let postDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd"
-        return dateFormatter
-    }()
-    let liveDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYYMMdd"
-        return dateFormatter
-    }()
-    let liveDisplayDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY/MM/dd"
-        return dateFormatter
-    }()
     
     private lazy var postView: UIStackView = {
         let postView = UIStackView()
@@ -316,7 +301,7 @@ class PostCellContent: UIButton {
             input.imagePipeline.loadImage(avatarUrl, into: avatarImageView)
         }
         usernameLabel.text = input.post.author.name
-        dateLabel.text = postDateFormatter.string(from: input.post.createdAt)
+        dateLabel.text = input.post.createdAt.toFormatString(format: "yyyy/MM/dd")
         textView.text = input.post.text
         trackNameLabel.setTitle(input.post.tracks.first?.trackName, for: .normal)
         commentButtonView.setTitle("DM", for: .normal)
