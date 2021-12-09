@@ -124,7 +124,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     var cancellables: Set<AnyCancellable> = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
-        print(input.id)
         self.dependencyProvider = dependencyProvider
         self.viewModel = LiveDetailViewModel(
             dependencyProvider: dependencyProvider,

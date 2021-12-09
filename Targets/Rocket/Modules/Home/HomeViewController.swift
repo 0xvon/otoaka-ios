@@ -14,8 +14,8 @@ import AppTrackingTransparency
 
 final class HomeViewController: UIViewController {
     let dependencyProvider: LoggedInDependencyProvider
-    
     private var cancellables: [AnyCancellable] = []
+    private let urlSchemeActionViewModel: UrlSchemeActionViewModel
     
     private lazy var createPostButton: UIButton = {
         let button = UIButton()
@@ -29,10 +29,34 @@ final class HomeViewController: UIViewController {
     }()
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
+        self.urlSchemeActionViewModel = UrlSchemeActionViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func bind() {
+        urlSchemeActionViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .pushToUserDetail(let input):
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToGroupDetail(let input):
+                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToLiveDetail(let input):
+                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostDetail(let input):
+                let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+                showAlert(title: "見つかりませんでした", message: "URLが正しいかお確かめの上再度お試しください")
+            }
+        }
+        .store(in: &cancellables)
     }
     
     override func viewDidLoad() {
@@ -48,6 +72,9 @@ final class HomeViewController: UIViewController {
         if #available(iOS 14, *) {
             checkTrackingAuthorizationStatus()
         }
+        actForUrlScheme()
+        
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -147,6 +174,12 @@ final class HomeViewController: UIViewController {
             present(nav, animated: true, completion: nil)
             userDefaults.setValue(true, forKey: key)
             userDefaults.synchronize()
+        }
+    }
+    
+    private func actForUrlScheme() {
+        if let url = dependencyProvider.urlScheme {
+            urlSchemeActionViewModel.action(url: url)
         }
     }
     

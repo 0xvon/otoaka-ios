@@ -24,25 +24,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // 起動時はこっちが呼ばれる
         // Override point for customization after application launch.
         KeyboardGuide.shared.activate()
         
+        let url: URL? = launchOptions?[.url] as? URL
         window = UIWindow(frame: UIScreen.main.bounds)
-        dependencyProvider = .make(windowScene: window!.windowScene!)
+        dependencyProvider = .make(windowScene: window!.windowScene!, urlScheme: url)
         let viewController = RootViewController(dependencyProvider: dependencyProvider, input: ())
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()
         
         return true
     }
-    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-        // TODO: Deep Link for custom URL schemes
-        return true
-    }
 
     func application(
         _ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
+        // バックグラウンド動作中はこっちが呼ばれる
+        if window != nil && dependencyProvider != nil {
+            dependencyProvider.urlScheme = url
+            let viewController = RootViewController(dependencyProvider: dependencyProvider, input: ())
+            window?.rootViewController = viewController
+            window?.makeKeyAndVisible()
+        }
+        
         return dependencyProvider.auth.application(app, open: url, options: options)
     }
     
