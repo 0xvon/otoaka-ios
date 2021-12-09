@@ -15,6 +15,7 @@ import UIKit
 class EditUserViewModel {
     struct State {
         var displayName: String?
+        var username: String?
         var biography: String?
         var sex: String?
         var age: Int?
@@ -36,6 +37,9 @@ class EditUserViewModel {
     enum Output {
         case didEditUser(User)
         case didGetRecentlyFollowing([Group])
+        case didUpdateUsername
+        case usernameAlreadyExists
+        case invalidUsername
         case didGetUserInfo(User)
         case updateSubmittableState(PageState)
 //        case didInjectRole(RoleProperties)
@@ -54,6 +58,7 @@ class EditUserViewModel {
     private lazy var editUserAction = Action(EditUserInfo.self, httpClient: self.apiClient)
     private lazy var getRecentlyFollowingAction = Action(RecentlyFollowingGroups.self, httpClient: self.apiClient)
     private lazy var updateRecentlyFollowingAction = Action(UpdateRecentlyFollowing.self, httpClient: self.apiClient)
+    private lazy var registerUsernameAction = Action(RegisterUsername.self, httpClient: apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider
@@ -72,6 +77,8 @@ class EditUserViewModel {
             getUserInfoAction.elements.map(Output.didGetUserInfo).eraseToAnyPublisher(),
             editUserAction.elements.map(Output.didEditUser).eraseToAnyPublisher(),
             getRecentlyFollowingAction.elements.map { Output.didGetRecentlyFollowing($0.map { $0.group }) }.eraseToAnyPublisher(),
+            registerUsernameAction.elements.map { _ in Output.didUpdateUsername }.eraseToAnyPublisher(),
+            registerUsernameAction.errors.map { _ in Output.usernameAlreadyExists }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -122,6 +129,7 @@ class EditUserViewModel {
     
     func didUpdateInputItems(
         displayName: String?,
+        username: String?,
         sex: String?,
         age: String?,
         liveStyle: String?,
@@ -130,6 +138,7 @@ class EditUserViewModel {
         instagramUrl: String?
     ) {
         state.displayName = displayName
+        state.username = username?.lowercased()
         state.biography = nil
         state.sex = sex
         state.age = age.map { Int($0) ?? 0 }
@@ -153,6 +162,10 @@ class EditUserViewModel {
     
     func didEditButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
+        updateUsername()
+    }
+    
+    func uploadProfileImage() {
         if let prifileImage = state.profileImage {
             self.dependencyProvider.s3Client.uploadImage(image: prifileImage) { [weak self] result in
                 switch result {
@@ -190,5 +203,19 @@ class EditUserViewModel {
         let request = UpdateRecentlyFollowing.Request(groups: state.recentlyFollowings.map { $0.id })
         let uri = UpdateRecentlyFollowing.URI()
         updateRecentlyFollowingAction.input((request: request, uri: uri))
+    }
+    
+    private func updateUsername() {
+        if let username = state.username, dependencyProvider.user.username != username {
+            if username.isValidUsername() {
+                let request = RegisterUsername.Request(username: username)
+                let uri = RegisterUsername.URI()
+                registerUsernameAction.input((request: request, uri: uri))
+            } else {
+                outputSubject.send(.invalidUsername)
+            }
+        } else {
+            uploadProfileImage()
+        }
     }
 }

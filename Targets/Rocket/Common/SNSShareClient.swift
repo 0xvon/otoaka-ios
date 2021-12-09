@@ -13,6 +13,7 @@ func getSNSShareContent(type: ShareType) -> UIActivityViewController {
     let ogp = "https://rocket-auth-storage.s3-ap-northeast-1.amazonaws.com/assets/public/ogp.png"
     let activityItems: [Any] = {
         switch type {
+        case .user(let user): return []
         case .post(let post):
             let shareText: String = "\(post.text)\n\n \(hashTags.joined(separator: " "))"
             guard let live = post.live else { return [shareText] }

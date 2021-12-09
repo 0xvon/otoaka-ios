@@ -37,6 +37,11 @@ final class EditUserViewController: UIViewController, Instantiable {
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         return displayNameInputView
     }()
+    private lazy var usernameInputView: TextFieldView = {
+        let inputView = TextFieldView(input: (section: "ユーザーネーム", text: nil, maxLength: 12))
+        inputView.translatesAutoresizingMaskIntoConstraints = false
+        return inputView
+    }()
     private lazy var sexInputView: TextFieldView = {
         let displayNameInputView = TextFieldView(input: (section: "性別(任意)", text: nil, maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -242,6 +247,7 @@ final class EditUserViewController: UIViewController, Instantiable {
     
     func update(user: User) {
         displayNameInputView.setText(text: user.name)
+        usernameInputView.setText(text: user.username ?? "")
         sexInputView.setText(text: user.sex ?? "")
         ageInputView.setText(text: user.age.map { String($0) } ?? "")
         liveStyleInputView.setText(text: user.liveStyle ?? "")
@@ -289,6 +295,18 @@ final class EditUserViewController: UIViewController, Instantiable {
                 plusTag.textColor = Brand.color(for: .background(.secondary))
                 plusTag.borderWidth = 1
                 plusTag.tagBackgroundColor = .clear
+            case .didUpdateUsername:
+                viewModel.uploadProfileImage()
+            case .usernameAlreadyExists:
+                showAlert(title: "ユーザーネームは使えません", message: "ユーザーネームが既に使われています")
+                self.registerButton.isEnabled = true
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
+                self.activityIndicator.stopAnimating()
+            case .invalidUsername:
+                showAlert(title: "ユーザーネームは使えません", message: "ユーザーネームに使用できない文字(0-9, a-z, A-Z, ._以外の文字)が含まれています")
+                self.registerButton.isEnabled = true
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
+                self.activityIndicator.stopAnimating()
             case .updateSubmittableState(let state):
                 switch state {
                 case .editting(let submittable):
@@ -307,6 +325,10 @@ final class EditUserViewController: UIViewController, Instantiable {
         .store(in: &cancellables)
         
         displayNameInputView.listen { [unowned self] in
+            self.didInputValue()
+        }
+        
+        usernameInputView.listen { [ unowned self] in
             self.didInputValue()
         }
         
@@ -407,6 +429,11 @@ final class EditUserViewController: UIViewController, Instantiable {
             displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
+        mainView.addArrangedSubview(usernameInputView)
+        NSLayoutConstraint.activate([
+            usernameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
         mainView.addArrangedSubview(sexInputView)
         sexInputView.selectInputView(inputView: sexPickerView)
         NSLayoutConstraint.activate([
@@ -464,6 +491,7 @@ final class EditUserViewController: UIViewController, Instantiable {
 
     private func didInputValue() {
         let displayName = displayNameInputView.getText()
+        let username = usernameInputView.getText()
         let sex = sexInputView.getText()
         let age = ageInputView.getText()
         let liveStyle = liveStyleInputView.getText()
@@ -473,6 +501,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         
         viewModel.didUpdateInputItems(
             displayName: displayName,
+            username: username,
             sex: sex,
             age: age,
             liveStyle: liveStyle,

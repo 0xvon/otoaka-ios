@@ -261,6 +261,11 @@ final class PostDetailViewController: UIViewController, Instantiable {
         setup()
         bind()
         
+        navigationItem.setRightBarButton(
+            UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare)),
+            animated: false
+        )
+        
         viewModel.refresh()
     }
     
@@ -434,5 +439,10 @@ final class PostDetailViewController: UIViewController, Instantiable {
     @objc private func userTapped() {
         guard let post = viewModel.state.post else { return }
         postActionViewModel.postCellEvent(post, event: .userTapped)
+    }
+    
+    @objc private func createShare() {
+        guard let post = viewModel.state.post?.post else { return }
+        shareWithTwitter(type: .post(post))
     }
 }

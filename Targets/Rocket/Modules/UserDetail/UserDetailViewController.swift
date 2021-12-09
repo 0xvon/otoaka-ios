@@ -108,10 +108,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 case .account:
                     dependencyProvider.user = userDetail.user
                     self.title = "マイページ"
-                    let linkItem = UIBarButtonItem(
-                        image: UIImage(systemName: "link")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), style: .plain, target: self, action: #selector(linkButtonTapped(_:))
-                    )
-                    barButonItems.append(linkItem)
+                    let shareItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didShareButtonTapped))
+                    barButonItems.append(shareItem)
                 case .user:
                     self.title = userDetail.name
                     navigationItem.setRightBarButton(nil, animated: true)
@@ -149,10 +147,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     self.listener()
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
-            case .didUsernameRegistered:
-                showSuccess()
-            case .usernameAlreadyExists(_):
-                showUsernameAlert()
             }
         }
         .store(in: &cancellables)
@@ -206,47 +200,23 @@ final class UserDetailViewController: UIViewController, Instantiable {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    @objc private func didShareButtonTapped() {
+        shareWithTwitter(type: .user(viewModel.state.user))
+    }
+    
     func didSendMessageButtonTapped() {
         viewModel.createMessageRoom(partner: viewModel.state.user)
     }
     
-    @objc private func linkButtonTapped(_ sender: UIBarButtonItem) {
-        showUsernameAlert()
-    }
-    
-    func showSuccess() {
-        guard let username = viewModel.state.username else { return }
-        let alertView = SCLAlertView()
-        let link = "https://rocketfor.band/\(username)"
-        alertView.addButton("リンクをコピー", action: {
-            UIPasteboard.general.string = link
-        })
-        alertView.showSuccess("リンク生成完了", subTitle: "\(link)にアクセスするとweb上であなたのプロフィールを確認することができます！みんなに共有してみましょう！")
-    }
-    
-    func showUsernameAlert() {
-        let alertView = SCLAlertView()
-        alertView.customSubview?.backgroundColor = .black
-        let textField = alertView.addTextField()
-        textField.backgroundColor = .white
-        textField.textColor = .black
-        
-        alertView.addButton("OK", action: { [unowned self] in
-            if let username = textField.text?.lowercased(), username.isValidUsername() {
-                viewModel.registerUsername(username: username)
-            } else {
-                showUsernameAlert()
-            }
-        })
-        
-        alertView.showEdit(
-            "ユーザーネーム設定",
-            subTitle: "プロフィールリンクを共有するためにユーザーネームを12文字以内で設定してください。\n文字は半角英数字と._のみ使えます。入力ミスがあったりユーザーネームが既に使用されている場合もう一度やり直しになります。\n以前設定したユーザーネームは使えなくなります。",
-            closeButtonTitle: "キャンセル",
-            timeout: .none,
-            colorStyle: 0xE4472A
-        )
-    }
+//    func showSuccess() {
+//        guard let username = dependencyProvider.user.username else { return }
+//        let alertView = SCLAlertView()
+//        let link = "https://rocketfor.band/users/\(username)"
+//        alertView.addButton("リンクをコピー", action: {
+//            UIPasteboard.general.string = link
+//        })
+//        alertView.showSuccess("リンク生成完了", subTitle: "\(link)にアクセスするとweb上であなたのプロフィールを確認することができます！みんなに共有してみましょう！")
+//    }
     
     @objc private func settingButtonTapped(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(

@@ -21,6 +21,7 @@ let hashTags = [
 ]
 
 enum ShareType {
+    case user(User)
     case post(Post)
     case group(Group)
     case live(Live)
@@ -137,23 +138,30 @@ extension UIViewController {
     
     func shareWithTwitter(type: ShareType) {
         let ogp = "https://rocket-auth-storage.s3-ap-northeast-1.amazonaws.com/assets/public/ogp.png"
+        var shareText: String
+        var ogpUrl: String
+        
         switch type {
+        case .user(let user):
+            let redirectUrl = "band.rocketfor://ios/users/\(user.username ?? "masatojames")"
+            shareText = "\(user.name)をOTOAKAでフォローしてね！"
+            ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: user.thumbnailURL ?? ogp, title: user.name, redirectUrl: redirectUrl)
         case .post(let post):
-            let shareText: String = post.text
-            let ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: post.live?.artworkURL?.absoluteString ?? ogp, title: post.live?.title ?? "OTOAKA")
-            guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
-            UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
+            let redirectUrl = "band.rocketfor://ios/posts/\(post.id)"
+            shareText = post.text
+            ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: post.live?.artworkURL?.absoluteString ?? ogp, title: post.live?.title ?? "OTOAKA", redirectUrl: redirectUrl)
         case .group(let group):
-            let shareText: String = "\(group.name)"
-            let ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name)
-            guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
-            UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
+            let redirectUrl = "band.rocketfor://ios/groups/\(group.id)"
+            shareText = group.name
+            ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name, redirectUrl: redirectUrl)
         case .live(let live):
-            let shareText: String = "\(live.title)"
-            let ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title)
-            guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
-            UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
+            let redirectUrl = "band.rocketfor://ios/lives/\(live.id)"
+            shareText = live.title
+            ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title, redirectUrl: redirectUrl)
         }
+        
+        guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
+        UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
     }
     
     func sharePostWithInstagram(post: Post) {

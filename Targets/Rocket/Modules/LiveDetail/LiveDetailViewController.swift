@@ -208,10 +208,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        navigationItem.setRightBarButton(
-//            UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare)),
-//            animated: false
-//        )
+        navigationItem.setRightBarButton(
+            UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare)),
+            animated: false
+        )
         bind()
         
     }
@@ -459,6 +459,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     @objc private func likeButtonTapped() {
         likeButton.isEnabled = false
         viewModel.likeButtonTapped()
+    }
+    
+    @objc private func createShare() {
+        shareWithTwitter(type: .live(viewModel.state.live))
     }
     
     private func openUrl(url: URL) {

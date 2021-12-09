@@ -455,8 +455,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     @objc func createShare(_ sender: UIBarButtonItem) {
-        let group = viewModel.state.group
-        shareWithTwitter(type: .group(group))
+        shareWithTwitter(type: .group(viewModel.state.group))
     }
     
     private func downloadButtonTapped(feed: UserFeedSummary) {

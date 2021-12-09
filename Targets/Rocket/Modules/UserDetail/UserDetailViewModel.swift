@@ -42,7 +42,6 @@ class UserDetailViewModel {
         case followButtontapped
         case editProfileButtonTapped
         case sendMessageButonTapped
-        case didUsernameRegistered
         
         case openImage(GalleryItemsDataSource)
         case pushToUserList(UserListViewController.Input)
@@ -51,7 +50,6 @@ class UserDetailViewModel {
         case pushToMessageRoom(MessageRoom)
         
         case reportError(Error)
-        case usernameAlreadyExists(Error)
     }
     
     var dependencyProvider: LoggedInDependencyProvider
@@ -64,7 +62,6 @@ class UserDetailViewModel {
     
     private lazy var getUserDetailAction = Action(GetUserDetail.self, httpClient: apiClient)
     private lazy var createMessageRoomAction = Action(CreateMessageRoom.self, httpClient: apiClient)
-    private lazy var registerUsernameAction = Action(RegisterUsername.self, httpClient: apiClient)
     
     init(dependencyProvider: LoggedInDependencyProvider, user: User) {
         self.dependencyProvider = dependencyProvider
@@ -78,8 +75,6 @@ class UserDetailViewModel {
         Publishers.MergeMany(
             getUserDetailAction.elements.map(Output.didRefreshUserDetail).eraseToAnyPublisher(),
             createMessageRoomAction.elements.map(Output.pushToMessageRoom).eraseToAnyPublisher(),
-            registerUsernameAction.elements.map { _ in Output.didUsernameRegistered }.eraseToAnyPublisher(),
-            registerUsernameAction.errors.map(Output.usernameAlreadyExists).eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -127,13 +122,6 @@ class UserDetailViewModel {
         let request = CreateMessageRoom.Request(members: [partner.id], name: partner.name)
         let uri = CreateMessageRoom.URI()
         createMessageRoomAction.input((request: request, uri: uri))
-    }
-    
-    func registerUsername(username: String) {
-        state.username = username
-        let request = RegisterUsername.Request(username: username)
-        let uri = RegisterUsername.URI()
-        registerUsernameAction.input((request: request, uri: uri))
     }
     
     deinit {
