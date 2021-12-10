@@ -148,15 +148,15 @@ extension UIViewController {
             ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: user.thumbnailURL ?? ogp, title: user.name, redirectUrl: redirectUrl)
         case .post(let post):
             let redirectUrl = "band.rocketfor://ios/posts/\(post.id)"
-            shareText = post.text
+            shareText = "\(post.text)"
             ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: post.live?.artworkURL?.absoluteString ?? ogp, title: post.live?.title ?? "OTOAKA", redirectUrl: redirectUrl)
         case .group(let group):
             let redirectUrl = "band.rocketfor://ios/groups/\(group.id)"
-            shareText = group.name
+            shareText = "\(group.name)好きな人はOTOAKAに集まれ！！！"
             ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name, redirectUrl: redirectUrl)
         case .live(let live):
             let redirectUrl = "band.rocketfor://ios/lives/\(live.id)"
-            shareText = live.title
+            shareText = "\(live.title)行く人はOTOAKAに集まれ！！！"
             ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title, redirectUrl: redirectUrl)
         }
         

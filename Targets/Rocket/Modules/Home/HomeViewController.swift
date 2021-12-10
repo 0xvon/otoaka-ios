@@ -167,7 +167,7 @@ final class HomeViewController: UIViewController {
     
     private func showWalkThrough() {
         let userDefaults = UserDefaults.standard
-        let key = "walkThroughPresented_v3.1.1.r"
+        let key = "walkThroughPresented_v3.1.4.r"
         if !userDefaults.bool(forKey: key) {
             let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
             let nav = BrandNavigationController(rootViewController: vc)
