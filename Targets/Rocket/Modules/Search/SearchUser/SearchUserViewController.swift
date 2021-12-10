@@ -70,7 +70,9 @@ final class SearchUserViewController: UITableViewController {
         
         view.backgroundColor = Brand.color(for: .background(.primary))
         tableView.tableFooterView = UIView(frame: .zero)
-        tableView.separatorStyle = .none
+        tableView.separatorStyle = .singleLine
+        tableView.separatorColor = Brand.color(for: .background(.secondary))
+        tableView.separatorInset = .zero
         tableView.showsVerticalScrollIndicator = false
         tableView.registerCellClass(FanCell.self)
         refreshControl = BrandRefreshControl()
