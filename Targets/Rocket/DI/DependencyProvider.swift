@@ -5,7 +5,6 @@
 //  Created by Masato TSUTSUMI on 2020/10/18.
 //
 
-//import AWSCognitoAuth
 import AWSCore
 import Auth0
 import Firebase
@@ -46,30 +45,14 @@ extension DependencyProvider {
     }
 
     static func make(config: Config.Type, windowScene: UIWindowScene, urlScheme: URL?) -> DependencyProvider {
-
-//        let cognitoConfiguration = AWSCognitoAuthConfiguration(
-//            appClientId: config.cognitoAppClientId,
-//            appClientSecret: config.cognitoAppClientSecret,
-//            scopes: config.cognitoScopes,
-//            signInRedirectUri: config.cognitoSignInRedirectUri,
-//            signOutRedirectUri: config.cognitoSignOutRedirectUri,
-//            webDomain: config.cognitoWebDomain,
-//            identityProvider: nil,
-//            idpIdentifier: nil,
-//            userPoolIdForEnablingASF: nil
-//        )
-//        let cognitoAuthKey = Bundle.main.bundleIdentifier.map { "\($0).cognito-auth" } ?? "band.rocketfor.cognito-auth"
-//        AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: cognitoAuthKey)
+        
         FirebaseApp.configure()
-//        let auth = AWSCognitoAuth(forKey: cognitoAuthKey)
         
         let auth = Auth0.webAuth()
             .scope("openid profile")
             .audience("\(config.auth0ClientUrl)/userinfo")
             .useEphemeralSession()
-        
         let credentialsManager = Auth0.CredentialsManager(authentication: Auth0.authentication())
-            
         let wrapper = Auth0Wrapper(credentialsManager: credentialsManager)
         
         let credentialProvider = AWSCognitoCredentialsProvider(
