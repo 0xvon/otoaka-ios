@@ -52,6 +52,11 @@ public final class PrimaryButton: UIButton {
         setTitleColor(Brand.color(for: .text(.primary)).pressed(), for: .highlighted)
         imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
     }
+    
+    public func background(_ color: UIColor) {
+        setBackgroundImage(color.image(), for: .normal)
+        setBackgroundImage(color.pressed().image(), for: .highlighted)
+    }
 
     @objc private func touchUpInside() {
         self.listener()

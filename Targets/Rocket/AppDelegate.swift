@@ -7,8 +7,10 @@
 
 import AWSCognitoAuth
 import AWSCore
-import Endpoint
+import Auth0
+
 import UIKit
+import Endpoint
 import UserNotifications
 import KeyboardGuide
 import Combine
@@ -49,7 +51,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.makeKeyAndVisible()
         }
         
-        return dependencyProvider.auth.application(app, open: url, options: options)
+//        return dependencyProvider.auth.application(app, open: url, options: options)
+        return true
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {

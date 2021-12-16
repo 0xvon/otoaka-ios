@@ -5,7 +5,7 @@
 //  Created by Masato TSUTSUMI on 2020/10/17.
 //
 
-import AWSCognitoAuth
+import Auth0
 import SafariServices
 import UIKit
 import Combine
@@ -37,25 +37,81 @@ final class RegistrationViewController: UIViewController, Instantiable {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.textColor = Brand.color(for: .text(.primary))
         textView.font = Brand.font(for: .mediumStrong)
-        textView.text = "友達とライブ予定を共有するSNS"
+        textView.text = "あなたのライブ体験を広げるSNS"
         textView.backgroundColor = .clear
         textView.textAlignment = .center
         return textView
     }()
-    private lazy var TermsOfServiceButton: UIButton = {
+    private lazy var buttonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        
+        stackView.addArrangedSubview(googleButtonView)
+        NSLayoutConstraint.activate([
+            googleButtonView.heightAnchor.constraint(equalToConstant: 54),
+        ])
+        stackView.addArrangedSubview(fbButtonView)
+        NSLayoutConstraint.activate([
+            fbButtonView.heightAnchor.constraint(equalToConstant: 54),
+        ])
+        stackView.addArrangedSubview(twitterButtonView)
+        NSLayoutConstraint.activate([
+            twitterButtonView.heightAnchor.constraint(equalToConstant: 54),
+        ])
+        stackView.addArrangedSubview(appleButtonView)
+        NSLayoutConstraint.activate([
+            appleButtonView.heightAnchor.constraint(equalToConstant: 54),
+        ])
+        stackView.addArrangedSubview(termsOfServiceButton)
+        NSLayoutConstraint.activate([
+            termsOfServiceButton.heightAnchor.constraint(equalToConstant: 20),
+        ])
+        return stackView
+    }()
+    private lazy var googleButtonView: Button = {
+        let button = Button(text: "")
+        button.layer.cornerRadius = 27
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Googleでログイン", for: .normal)
+        button.background(Brand.color(for: .brand(.google)))
+        return button
+    }()
+    private lazy var fbButtonView: Button = {
+        let button = Button(text: "")
+        button.layer.cornerRadius = 27
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Facebookでログイン", for: .normal)
+        button.background(Brand.color(for: .brand(.facebook)))
+        return button
+    }()
+    private lazy var twitterButtonView: Button = {
+        let button = Button(text: "")
+        button.layer.cornerRadius = 27
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Twitterでログイン", for: .normal)
+        button.background(Brand.color(for: .brand(.twitter)))
+        return button
+    }()
+    private lazy var appleButtonView: Button = {
+        let button = Button(text: "")
+        button.layer.cornerRadius = 27
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Appleでログイン", for: .normal)
+        button.setTitleColor(Brand.color(for: .brand(.apple)), for: .normal)
+        button.setImage(UIImage(systemName: "applelogo")?.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        return button
+    }()
+    private lazy var termsOfServiceButton: UIButton = {
         let button = UIButton()
         button.setTitle("利用規約", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
         button.setTitleColor(Brand.color(for: .brand(.secondary)), for: .normal)
-        button.addTarget(self, action: #selector(tosDidTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(tosTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    @IBOutlet weak var signInButtonView: Button! {
-        didSet {
-            signInButtonView.setTitle("利用規約に同意してログイン", for: .normal)
-        }
-    }
 
     var dependencyProvider: DependencyProvider
     var signedUpHandler: SignedUpHandler
@@ -80,7 +136,6 @@ final class RegistrationViewController: UIViewController, Instantiable {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.dependencyProvider.auth.delegate = self
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         
         self.navigationController?.navigationBar.isTranslucent = true
@@ -88,18 +143,27 @@ final class RegistrationViewController: UIViewController, Instantiable {
         self.navigationController?.navigationBar.backgroundColor = .clear
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
-//        self.navigationItem.backBarButtonItem = UIBarButtonItem(title: " ", style: .plain, target: nil, action: nil)
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        navigationController?.presentationController?.delegate = self
     }
     
     func bind() {
-        signInButtonView.listen { [unowned self] in
-            viewModel.getSignupStatus()
+        googleButtonView.listen { [unowned self] in
+            loginButtonTapped("google-oauth2")
+        }
+        
+        fbButtonView.listen { [unowned self] in
+            loginButtonTapped("facebook")
+        }
+        
+        twitterButtonView.listen { [unowned self] in
+            loginButtonTapped("twitter")
+        }
+        
+        appleButtonView.listen { [unowned self] in
+            loginButtonTapped("apple")
         }
 
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
@@ -139,61 +203,33 @@ final class RegistrationViewController: UIViewController, Instantiable {
             descriptionTextView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
         ])
         
-        view.addSubview(TermsOfServiceButton)
+        view.addSubview(buttonStackView)
         NSLayoutConstraint.activate([
-            TermsOfServiceButton.heightAnchor.constraint(equalToConstant: 20),
-            TermsOfServiceButton.topAnchor.constraint(equalTo: signInButtonView.bottomAnchor, constant: 8),
-            TermsOfServiceButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            buttonStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -64),
+            buttonStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+            buttonStackView.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
         ])
     }
-
-    private var awsCognitoAuthSaferiViewControllerWorkaround: AWSCognitoAuthSaferiViewControllerWorkaround?
-    class AWSCognitoAuthSaferiViewControllerWorkaround: NSObject, UIAdaptivePresentationControllerDelegate {
-        weak var controller: SFSafariViewController?
-        weak var originalDelegate: SFSafariViewControllerDelegate?
-        init(controller: SFSafariViewController, originalDelegate: SFSafariViewControllerDelegate?) {
-            self.controller = controller
-            self.originalDelegate = originalDelegate
-        }
-        func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-            originalDelegate?.safariViewControllerDidFinish?(controller!)
-        }
-        func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
-            return .formSheet
-        }
-    }
-
-    // Workaround: AWSCognitoAuth doesn't handle presentationControllerShouldDismiss for SFSafariViewController,
-    // so callback function passed to getSession will not be called when a user dismissed SFSafariVC with drag gesture.
-    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-        var flag = flag
-        if let safariVC = viewControllerToPresent as? SFSafariViewController {
-            awsCognitoAuthSaferiViewControllerWorkaround = AWSCognitoAuthSaferiViewControllerWorkaround(
-                controller: safariVC, originalDelegate: safariVC.delegate
-            )
-            safariVC.presentationController?.delegate = awsCognitoAuthSaferiViewControllerWorkaround
-            // AWSCognitoAuth passes `animated` option as always false 😡
-            flag = true
-        }
-        super.present(viewControllerToPresent, animated: flag, completion: completion)
+    
+    @objc private func loginButtonTapped(_ connection: String) {
+        dependencyProvider.auth
+            // allowed values: apple, twitter, facebook, google-oauth2
+            .connection(connection)
+            .start { [unowned self] result in
+                switch result {
+                case .success(let credentials):
+                    _ = dependencyProvider.credentialsManager.store(credentials: credentials)
+                    viewModel.getSignupStatus()
+                case .failure(let error):
+                    print(String(describing: error))
+                }
+            }
     }
     
-    @objc private func tosDidTapped() {
+    @objc private func tosTapped() {
         guard let url = URL(string: "https://www.notion.so/masatojames/57b1f47c538443249baf1db83abdc462") else { return }
         let safari = SFSafariViewController(url: url)
         safari.dismissButtonStyle = .close
         present(safari, animated: true, completion: nil)
-    }
-}
-
-extension RegistrationViewController: AWSCognitoAuthDelegate {
-    func getViewController() -> UIViewController {
-        return self
-    }
-}
-
-extension RegistrationViewController: UIAdaptivePresentationControllerDelegate {
-    func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool {
-        return false
     }
 }

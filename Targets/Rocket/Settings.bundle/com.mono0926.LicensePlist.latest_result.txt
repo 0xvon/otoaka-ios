@@ -1,3 +1,11 @@
+name: Auth0, nameSpecified: 
+body: The MIT License (MIT…
+version: 1.38.0
+
+name: Auth0, nameSpecified: 
+body: The MIT License (MIT…
+version: 1.38.0
+
 name: AWSCognitoAuth, nameSpecified: 
 body: The AWS Mobile SDK f…
 version: 2.21.1
@@ -176,6 +184,14 @@ body:
 The MIT License (MI…
 version: 5.4.0
 
+name: JWTDecode, nameSpecified: 
+body: The MIT License (MIT…
+version: 2.6.3
+
+name: JWTDecode, nameSpecified: 
+body: The MIT License (MIT…
+version: 2.6.3
+
 name: KeyboardGuide, nameSpecified: 
 body: Copyright (c) 2020 Y…
 version: 0.2.0
@@ -196,13 +212,13 @@ name: LicensePlist, nameSpecified:
 body: MIT License
 
 Copyrig…
-version: 3.14.4
+version: 3.15.0
 
 name: LicensePlist, nameSpecified: 
 body: MIT License
 
 Copyrig…
-version: 3.14.4
+version: 3.15.0
 
 name: MessageKit, nameSpecified: 
 body: MIT License
@@ -257,6 +273,14 @@ version: 0.8
 name: SCLAlertView, nameSpecified: 
 body: Copyright (c) 2013-2…
 version: 0.8
+
+name: SimpleKeychain, nameSpecified: 
+body: The MIT License (MIT…
+version: 0.12.5
+
+name: SimpleKeychain, nameSpecified: 
+body: The MIT License (MIT…
+version: 0.12.5
 
 name: SwiftGen, nameSpecified: 
 body: MIT Licence
@@ -300,4 +324,4 @@ name: StubKit, nameSpecified: StubKit, owner: kateinoigakukun, version: 0.1.7
 
 add-version-numbers: false
 
-LicensePlist Version: 3.14.4
+LicensePlist Version: 3.15.0

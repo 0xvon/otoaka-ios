@@ -9,15 +9,28 @@ target 'Rocket' do
   current_target_definition.swift_version = '5.0'
 
   # Pods for Rocket
+
+  # AWS
   pod 'AWSCognitoAuth', '~> 2.21.1'
   pod 'AWSS3'
-  pod 'KeychainAccess'
-  pod 'LicensePlist'
+
+  # Firebase
   pod 'Firebase/Crashlytics'
   pod 'Firebase/Analytics', '7.3-M1'
+
+  # Auth0
+  pod 'Auth0', '~> 1.38'
+
+  # Dev Tools
   pod 'SwiftGen', '~> 6.0'
-  pod 'KeyboardGuide', :podspec => './KeyboardGuide.podspec'
+  pod 'KeychainAccess'
+  pod 'LicensePlist'
+
+  # Network Library
   pod 'Nuke', '~> 9.0'
+  
+  # UI Library
+  pod 'KeyboardGuide', :podspec => './KeyboardGuide.podspec'
   pod 'UITextView+Placeholder'
   pod "YoutubePlayer-in-WKWebView", "~> 0.3.0"
   pod 'TagListView', '~> 1.0'

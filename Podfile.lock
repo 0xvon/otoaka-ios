@@ -1,4 +1,7 @@
 PODS:
+  - Auth0 (1.38.0):
+    - JWTDecode (~> 2.0)
+    - SimpleKeychain
   - AWSCognitoAuth (2.21.1):
     - AWSCognitoIdentityProviderASF (= 2.21.1)
     - AWSCore (= 2.21.1)
@@ -83,9 +86,10 @@ PODS:
   - InputBarAccessoryView (5.4.0):
     - InputBarAccessoryView/Core (= 5.4.0)
   - InputBarAccessoryView/Core (5.4.0)
+  - JWTDecode (2.6.3)
   - KeyboardGuide (0.2.0)
   - KeychainAccess (4.2.2)
-  - LicensePlist (3.14.4)
+  - LicensePlist (3.15.0)
   - MessageKit (3.7.0):
     - InputBarAccessoryView (~> 5.4.0)
   - nanopb (2.30906.0):
@@ -97,12 +101,14 @@ PODS:
   - Parchment (3.0.1)
   - PromisesObjC (1.2.12)
   - SCLAlertView (0.8)
+  - SimpleKeychain (0.12.5)
   - SwiftGen (6.5.1)
   - TagListView (1.4.1)
   - "UITextView+Placeholder (1.4.0)"
   - YoutubePlayer-in-WKWebView (0.3.8)
 
 DEPENDENCIES:
+  - Auth0 (~> 1.38)
   - AWSCognitoAuth (~> 2.21.1)
   - AWSS3
   - BWWalkthrough
@@ -127,6 +133,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Auth0
     - AWSCognitoAuth
     - AWSCognitoIdentityProviderASF
     - AWSCore
@@ -147,6 +154,7 @@ SPEC REPOS:
     - GoogleUtilities
     - ImageViewer
     - InputBarAccessoryView
+    - JWTDecode
     - KeychainAccess
     - LicensePlist
     - MessageKit
@@ -155,6 +163,7 @@ SPEC REPOS:
     - Parchment
     - PromisesObjC
     - SCLAlertView
+    - SimpleKeychain
     - SwiftGen
     - TagListView
     - "UITextView+Placeholder"
@@ -165,6 +174,7 @@ EXTERNAL SOURCES:
     :podspec: "./KeyboardGuide.podspec"
 
 SPEC CHECKSUMS:
+  Auth0: 56b4b681712d10bcfddae89d4a73158abebdf5a6
   AWSCognitoAuth: 4d34e1cbb6629f5f333f341d9086cd2037416fd4
   AWSCognitoIdentityProviderASF: 318df44cc620dc401a04a94e57107b2af316c50e
   AWSCore: a855a41cb2d43c8b538d3a80f8e855ed947f3d3c
@@ -185,20 +195,22 @@ SPEC CHECKSUMS:
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
   ImageViewer: cb88ef1c0ba19161bc10702adfdcebc116a7a59d
   InputBarAccessoryView: 74d471ab1fa1736806be50328df79257e52865a9
+  JWTDecode: 33e5e26e5ddbd21b2065820894c08fef0cad9509
   KeyboardGuide: 24db03df5ae874e6ece4a01ae3e8ca7648c4cd1a
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
-  LicensePlist: 7cf61d222446422aacd4e3526989e8394dd4bea0
+  LicensePlist: bd3175ce3a27978e7b98c0c16a034b71cc14a7fc
   MessageKit: 8e76dd8d65ad44b49e1651c673497146416461e9
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   Nuke: 6f400a4ea957e09149ec335a3c6acdcc814d89e4
   Parchment: 466a1cfb6151780db8acb4bbedc2d9c6bfa1e2ff
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
+  SimpleKeychain: 8193a9e40967eccac933c1fde82de46c07a5ae26
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
 
-PODFILE CHECKSUM: a001e5d05cba05ca78b5d3301c8c086483fd8aef
+PODFILE CHECKSUM: a278b2f8f407afd74c9508e4ed47c43c7486971d
 
 COCOAPODS: 1.10.1

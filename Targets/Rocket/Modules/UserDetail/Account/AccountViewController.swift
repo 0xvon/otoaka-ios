@@ -98,7 +98,6 @@ final class AccountViewController: UIViewController, Instantiable {
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        dependencyProvider.auth.delegate = self
         
         title = "アカウント設定"
         setAccountSetting()
@@ -172,14 +171,14 @@ final class AccountViewController: UIViewController, Instantiable {
 
     private func logout() {
         
-        dependencyProvider.auth.signOut(self) { [unowned self] error in
-            if let error = error {
-                print(error)
-                showAlert()
-            } else {
-                self.listener()
-            }
-        }
+//        dependencyProvider.auth.signOut(self) { [unowned self] error in
+//            if let error = error {
+//                print(error)
+//                showAlert()
+//            } else {
+//                self.listener()
+//            }
+//        }
     }
     
     private var listener: () -> Void = {}

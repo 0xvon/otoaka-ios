@@ -5,8 +5,9 @@
 //  Created by Masato TSUTSUMI on 2020/10/18.
 //
 
-import AWSCognitoAuth
+//import AWSCognitoAuth
 import AWSCore
+import Auth0
 import Firebase
 import Endpoint
 import Foundation
@@ -24,7 +25,8 @@ struct LoggedInDependencyProvider {
 }
 
 struct DependencyProvider {
-    var auth: AWSCognitoAuth
+    var auth: WebAuth
+    var credentialsManager: CredentialsManager
     var apiClient: APIClient
     var youTubeDataApiClient: YouTubeDataAPIClient
     var appleMusicApiClient: AppleMusicAPIClient
@@ -45,22 +47,30 @@ extension DependencyProvider {
 
     static func make(config: Config.Type, windowScene: UIWindowScene, urlScheme: URL?) -> DependencyProvider {
 
-        let cognitoConfiguration = AWSCognitoAuthConfiguration(
-            appClientId: config.cognitoAppClientId,
-            appClientSecret: config.cognitoAppClientSecret,
-            scopes: config.cognitoScopes,
-            signInRedirectUri: config.cognitoSignInRedirectUri,
-            signOutRedirectUri: config.cognitoSignOutRedirectUri,
-            webDomain: config.cognitoWebDomain,
-            identityProvider: nil,
-            idpIdentifier: nil,
-            userPoolIdForEnablingASF: nil
-        )
-        let cognitoAuthKey = Bundle.main.bundleIdentifier.map { "\($0).cognito-auth" } ?? "band.rocketfor.cognito-auth"
-        AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: cognitoAuthKey)
+//        let cognitoConfiguration = AWSCognitoAuthConfiguration(
+//            appClientId: config.cognitoAppClientId,
+//            appClientSecret: config.cognitoAppClientSecret,
+//            scopes: config.cognitoScopes,
+//            signInRedirectUri: config.cognitoSignInRedirectUri,
+//            signOutRedirectUri: config.cognitoSignOutRedirectUri,
+//            webDomain: config.cognitoWebDomain,
+//            identityProvider: nil,
+//            idpIdentifier: nil,
+//            userPoolIdForEnablingASF: nil
+//        )
+//        let cognitoAuthKey = Bundle.main.bundleIdentifier.map { "\($0).cognito-auth" } ?? "band.rocketfor.cognito-auth"
+//        AWSCognitoAuth.registerCognitoAuth(with: cognitoConfiguration, forKey: cognitoAuthKey)
         FirebaseApp.configure()
-        let auth = AWSCognitoAuth(forKey: cognitoAuthKey)
-        let wrapper = CognitoAuthWrapper(awsCognitoAuth: auth)
+//        let auth = AWSCognitoAuth(forKey: cognitoAuthKey)
+        
+        let auth = Auth0.webAuth()
+            .scope("openid profile")
+            .audience("\(config.auth0ClientUrl)/userinfo")
+            .useEphemeralSession()
+        
+        let credentialsManager = Auth0.CredentialsManager(authentication: Auth0.authentication())
+            
+        let wrapper = Auth0Wrapper(credentialsManager: credentialsManager)
         
         let credentialProvider = AWSCognitoCredentialsProvider(
             regionType: .APNortheast1,
@@ -108,7 +118,9 @@ extension DependencyProvider {
         let versionServiceClient = HTTPClient<WebAPIAdapter>(baseUrl: URL(string: "https://\(s3Client.s3Bucket).s3-ap-northeast-1.amazonaws.com/items/RequiredVersion.json")!, adapter: WebAPIAdapter())
         
         return DependencyProvider(
-            auth: auth, apiClient: apiClient,
+            auth: auth,
+            credentialsManager: credentialsManager,
+            apiClient: apiClient,
             youTubeDataApiClient: youTubeDataApiClient,
             appleMusicApiClient: appleMusicApiClient,
             musixApiClient: musixApiClient,
@@ -122,30 +134,25 @@ extension DependencyProvider {
     }
 }
 
-class CognitoAuthWrapper: APITokenProvider {
+class Auth0Wrapper: APITokenProvider {
     enum Error: Swift.Error {
         case unexpectedGetSessionResult
     }
-    let auth: AWSCognitoAuth
-    let queue = DispatchQueue(label: Bundle.main.bundleIdentifier.map { "\($0).cognito-id-provider" } ?? "band.rocketfor.cognito-id-provider")
-    init(awsCognitoAuth: AWSCognitoAuth) {
-        self.auth = awsCognitoAuth
+    let credentialsManager: CredentialsManager
+    init(credentialsManager: CredentialsManager) {
+        self.credentialsManager = credentialsManager
     }
-
-    func provideIdToken(_ callback: @escaping (Result<String, Swift.Error>) -> Void) {
-        queue.async { [auth] in
-            let semaphore = DispatchSemaphore(value: 0)
-            auth.getSession { (session, error) in
-                if let session = session, let idToken = session.idToken {
-                    callback(.success(idToken.tokenString))
-                } else if let error = error {
-                    callback(.failure(error))
-                } else {
-                    callback(.failure(Error.unexpectedGetSessionResult))
-                }
-                semaphore.signal()
+    
+    func provideIdToken(_ callback: @escaping (Swift.Result<String, Swift.Error>) -> Void) {
+        credentialsManager
+            .credentials(callback: { (error, credential) in
+            if let error = error {
+                callback(.failure(error))
+            } else if let idToken = credential?.idToken {
+                callback(.success(idToken))
+            } else {
+                callback(.failure(Error.unexpectedGetSessionResult))
             }
-            semaphore.wait()
-        }
+        })
     }
 }

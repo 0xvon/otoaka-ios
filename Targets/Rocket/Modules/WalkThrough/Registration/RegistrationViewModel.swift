@@ -5,7 +5,7 @@
 //  Created by Masato TSUTSUMI on 2020/10/17.
 //
 
-import AWSCognitoAuth
+import Auth0
 import Endpoint
 import Foundation
 import Combine
@@ -17,7 +17,7 @@ class RegistrationViewModel {
         case error(Error)
     }
 
-    let auth: AWSCognitoAuth
+    let auth: WebAuth
     let apiClient: APIClient
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -26,17 +26,17 @@ class RegistrationViewModel {
     private lazy var signupStatus = Action(SignupStatus.self, httpClient: self.apiClient)
     private lazy var createUserAction = Action(Signup.self, httpClient: self.apiClient)
     
-    init(auth: AWSCognitoAuth, apiClient: APIClient) {
+    init(auth: WebAuth, apiClient: APIClient) {
         self.auth = auth
         self.apiClient = apiClient
 
         let errors = signupStatus.errors
-            .filter { error in
-                guard case .underlyingError(let error as NSError) = error else { return true }
-                let isCognitoCancellError = error.domain == AWSCognitoAuthErrorDomain
-                    && error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue
-                return !isCognitoCancellError
-            }
+//            .filter { error in
+//                guard case .underlyingError(let error as NSError) = error else { return true }
+//                let isCognitoCancellError = error.domain == AWSCognitoAuthErrorDomain
+//                    && error.code == AWSCognitoAuthClientErrorType.errorUserCanceledOperation.rawValue
+//                return !isCognitoCancellError
+//            }
             .merge(with: createUserAction.errors)
         Publishers.MergeMany(
             signupStatus.elements.map {

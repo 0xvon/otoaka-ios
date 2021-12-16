@@ -5,7 +5,8 @@
 //  Created by Masato TSUTSUMI on 2020/10/18.
 //
 
-import AWSCognitoAuth
+//import AWSCognitoAuth
+import Auth0
 import Endpoint
 import UIKit
 import Combine
@@ -56,7 +57,7 @@ final class RootViewController: UITabBarController, Instantiable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        dependencyProvider.auth.delegate = self
+//        dependencyProvider.auth.delegate = self
         if isFirstViewDidAppear {
             isFirstViewDidAppear = false
             checkSignupStatus()
@@ -66,7 +67,11 @@ final class RootViewController: UITabBarController, Instantiable {
     }
     
     func checkSignupStatus() {
-        dependencyProvider.auth.isSignedIn ? viewModel.getSignupStatus() : presentRegistrationScreen()
+//        dependencyProvider.credentialsManager.hasValid()
+//            ? viewModel.getSignupStatus()
+//            : presentRegistrationScreen()
+        
+        presentRegistrationScreen()
     }
     
     private func presentRegistrationScreen() {
@@ -146,9 +151,9 @@ final class RootViewController: UITabBarController, Instantiable {
         self.present(alertController, animated: true)
     }
 }
-
-extension RootViewController: AWSCognitoAuthDelegate {
-    func getViewController() -> UIViewController {
-        return self
-    }
-}
+//
+//extension RootViewController: AWSCognitoAuthDelegate {
+//    func getViewController() -> UIViewController {
+//        return self
+//    }
+//}

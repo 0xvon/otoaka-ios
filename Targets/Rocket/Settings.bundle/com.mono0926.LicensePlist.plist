@@ -12,6 +12,14 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/Auth0</string>
+			<key>Title</key>
+			<string>Auth0</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/AWSCognitoAuth</string>
 			<key>Title</key>
 			<string>AWSCognitoAuth</string>
@@ -172,6 +180,14 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/JWTDecode</string>
+			<key>Title</key>
+			<string>JWTDecode</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/KeyboardGuide</string>
 			<key>Title</key>
 			<string>KeyboardGuide</string>
@@ -239,6 +255,14 @@
 			<string>com.mono0926.LicensePlist/SCLAlertView</string>
 			<key>Title</key>
 			<string>SCLAlertView</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist/SimpleKeychain</string>
+			<key>Title</key>
+			<string>SimpleKeychain</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
 		</dict>
