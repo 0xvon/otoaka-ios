@@ -56,10 +56,10 @@ final class RegistrationViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             fbButtonView.heightAnchor.constraint(equalToConstant: 54),
         ])
-        stackView.addArrangedSubview(twitterButtonView)
-        NSLayoutConstraint.activate([
-            twitterButtonView.heightAnchor.constraint(equalToConstant: 54),
-        ])
+//        stackView.addArrangedSubview(twitterButtonView)
+//        NSLayoutConstraint.activate([
+//            twitterButtonView.heightAnchor.constraint(equalToConstant: 54),
+//        ])
         stackView.addArrangedSubview(appleButtonView)
         NSLayoutConstraint.activate([
             appleButtonView.heightAnchor.constraint(equalToConstant: 54),
