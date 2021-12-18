@@ -49,7 +49,7 @@ extension DependencyProvider {
         FirebaseApp.configure()
         
         let auth = Auth0.webAuth()
-            .scope("openid profile")
+            .scope("openid profile email")
             .audience("\(config.auth0ClientUrl)/userinfo")
             .useEphemeralSession()
         let credentialsManager = Auth0.CredentialsManager(authentication: Auth0.authentication())

@@ -67,11 +67,9 @@ final class RootViewController: UITabBarController, Instantiable {
     }
     
     func checkSignupStatus() {
-//        dependencyProvider.credentialsManager.hasValid()
-//            ? viewModel.getSignupStatus()
-//            : presentRegistrationScreen()
-        
-        presentRegistrationScreen()
+        dependencyProvider.credentialsManager.hasValid()
+            ? viewModel.getSignupStatus()
+            : presentRegistrationScreen()
     }
     
     private func presentRegistrationScreen() {

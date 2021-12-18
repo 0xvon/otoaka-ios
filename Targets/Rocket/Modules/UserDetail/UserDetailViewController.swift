@@ -268,13 +268,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }
     
     private func logout() {
-        dependencyProvider.auth.clearSession(federated: false, callback: { [unowned self] isCleaed in
-            if isCleaed {
-                self.listener()
-            } else {
-                showAlert()
-            }
-        })
+        _ = dependencyProvider.credentialsManager.clear()
+        self.listener()
     }
     
     private func block() {
