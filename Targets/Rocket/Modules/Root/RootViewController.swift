@@ -57,7 +57,6 @@ final class RootViewController: UITabBarController, Instantiable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-//        dependencyProvider.auth.delegate = self
         if isFirstViewDidAppear {
             isFirstViewDidAppear = false
             checkSignupStatus()

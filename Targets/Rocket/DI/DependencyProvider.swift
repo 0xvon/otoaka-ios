@@ -49,7 +49,7 @@ extension DependencyProvider {
         FirebaseApp.configure()
         
         let auth = Auth0.webAuth()
-            .scope("openid profile email")
+            .scope("openid profile email offline_access")
             .audience("\(config.auth0ClientUrl)/userinfo")
             .useEphemeralSession()
         let credentialsManager = Auth0.CredentialsManager(authentication: Auth0.authentication())
@@ -127,15 +127,17 @@ class Auth0Wrapper: APITokenProvider {
     }
     
     func provideIdToken(_ callback: @escaping (Swift.Result<String, Swift.Error>) -> Void) {
+        // to retrieve the user session, see: https://auth0.com/docs/quickstart/native/ios-swift/03-user-sessions#credentials-manager
         credentialsManager
-            .credentials(callback: { (error, credential) in
-            if let error = error {
-                callback(.failure(error))
-            } else if let idToken = credential?.idToken {
-                callback(.success(idToken))
-            } else {
-                callback(.failure(Error.unexpectedGetSessionResult))
+            .credentials { [unowned self] (error, credential) in
+                if let error = error {
+                    callback(.failure(error))
+                } else if let credential = credential, let idToken = credential.idToken {
+                    _ = credentialsManager.store(credentials: credential)
+                    callback(.success(idToken))
+                } else {
+                    callback(.failure(Error.unexpectedGetSessionResult))
+                }
             }
-        })
     }
 }
