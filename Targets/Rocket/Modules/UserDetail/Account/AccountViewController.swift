@@ -8,7 +8,6 @@
 import UIKit
 import DomainEntity
 import Combine
-import AWSCognitoAuth
 import UIComponent
 
 final class AccountViewController: UIViewController, Instantiable {
@@ -209,12 +208,6 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
         let item = items[indexPath.row]
         item.action()
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
-extension AccountViewController: AWSCognitoAuthDelegate {
-    func getViewController() -> UIViewController {
-        return self
     }
 }
 

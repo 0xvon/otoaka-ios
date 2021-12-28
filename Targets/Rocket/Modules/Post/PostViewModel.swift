@@ -7,7 +7,6 @@
 
 import UIKit
 import Endpoint
-import AWSCognitoAuth
 import Photos
 import PhotosUI
 import AVKit

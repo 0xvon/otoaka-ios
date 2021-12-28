@@ -5,7 +5,6 @@
 //  Created by Masato TSUTSUMI on 2020/10/18.
 //
 
-//import AWSCognitoAuth
 import Auth0
 import Endpoint
 import UIKit
@@ -148,9 +147,3 @@ final class RootViewController: UITabBarController, Instantiable {
         self.present(alertController, animated: true)
     }
 }
-//
-//extension RootViewController: AWSCognitoAuthDelegate {
-//    func getViewController() -> UIViewController {
-//        return self
-//    }
-//}

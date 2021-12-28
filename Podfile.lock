@@ -2,13 +2,9 @@ PODS:
   - Auth0 (1.38.0):
     - JWTDecode (~> 2.0)
     - SimpleKeychain
-  - AWSCognitoAuth (2.21.1):
-    - AWSCognitoIdentityProviderASF (= 2.21.1)
-    - AWSCore (= 2.21.1)
-  - AWSCognitoIdentityProviderASF (2.21.1)
-  - AWSCore (2.21.1)
-  - AWSS3 (2.21.1):
-    - AWSCore (= 2.21.1)
+  - AWSCore (2.26.6)
+  - AWSS3 (2.26.6):
+    - AWSCore (= 2.26.6)
   - BWWalkthrough (4.0.0)
   - CalculateCalendarLogic (0.5.0)
   - Charts (3.6.0):
@@ -89,7 +85,7 @@ PODS:
   - JWTDecode (2.6.3)
   - KeyboardGuide (0.2.0)
   - KeychainAccess (4.2.2)
-  - LicensePlist (3.15.0)
+  - LicensePlist (3.16.0)
   - MessageKit (3.7.0):
     - InputBarAccessoryView (~> 5.4.0)
   - nanopb (2.30906.0):
@@ -109,7 +105,6 @@ PODS:
 
 DEPENDENCIES:
   - Auth0 (~> 1.38)
-  - AWSCognitoAuth (~> 2.21.1)
   - AWSS3
   - BWWalkthrough
   - CalculateCalendarLogic
@@ -134,8 +129,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Auth0
-    - AWSCognitoAuth
-    - AWSCognitoIdentityProviderASF
     - AWSCore
     - AWSS3
     - BWWalkthrough
@@ -175,10 +168,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Auth0: 56b4b681712d10bcfddae89d4a73158abebdf5a6
-  AWSCognitoAuth: 4d34e1cbb6629f5f333f341d9086cd2037416fd4
-  AWSCognitoIdentityProviderASF: 318df44cc620dc401a04a94e57107b2af316c50e
-  AWSCore: a855a41cb2d43c8b538d3a80f8e855ed947f3d3c
-  AWSS3: b0e108589398295e84648f3403001a409d6b9761
+  AWSCore: c60f9d6bd085bf9186d8629ca7ee7df54db1f494
+  AWSS3: 3325e94bc9330580e4f3adb4450add2f18611899
   BWWalkthrough: 9f46edbd1a145c74f3e5287b01cb4a884c840bf2
   CalculateCalendarLogic: d14189787cd47766e64281b2686608afea07ae4d
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
@@ -198,7 +189,7 @@ SPEC CHECKSUMS:
   JWTDecode: 33e5e26e5ddbd21b2065820894c08fef0cad9509
   KeyboardGuide: 24db03df5ae874e6ece4a01ae3e8ca7648c4cd1a
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
-  LicensePlist: bd3175ce3a27978e7b98c0c16a034b71cc14a7fc
+  LicensePlist: f91b2c4bd3379379cdfc0541693c3af031b9bcb3
   MessageKit: 8e76dd8d65ad44b49e1651c673497146416461e9
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   Nuke: 6f400a4ea957e09149ec335a3c6acdcc814d89e4
@@ -211,6 +202,6 @@ SPEC CHECKSUMS:
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
 
-PODFILE CHECKSUM: a278b2f8f407afd74c9508e4ed47c43c7486971d
+PODFILE CHECKSUM: 5b66b9285ffbed7e279660a58e99aecf679eddc0
 
 COCOAPODS: 1.10.1

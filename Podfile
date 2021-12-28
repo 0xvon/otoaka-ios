@@ -11,7 +11,6 @@ target 'Rocket' do
   # Pods for Rocket
 
   # AWS
-  pod 'AWSCognitoAuth', '~> 2.21.1'
   pod 'AWSS3'
 
   # Firebase

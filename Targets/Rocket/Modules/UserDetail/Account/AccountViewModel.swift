@@ -5,7 +5,6 @@
 //  Created by Masato TSUTSUMI on 2020/10/29.
 //
 
-import AWSCognitoAuth
 import Endpoint
 import UIKit
 import Combine

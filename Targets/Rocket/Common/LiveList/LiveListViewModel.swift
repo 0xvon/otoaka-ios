@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import AWSCognitoAuth
 import Endpoint
 import Combine
 

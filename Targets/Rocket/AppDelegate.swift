@@ -5,7 +5,6 @@
 //  Created by kateinoigakukun on 2020/10/16.
 //
 
-import AWSCognitoAuth
 import AWSCore
 import Auth0
 
@@ -51,7 +50,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.makeKeyAndVisible()
         }
         
-//        return dependencyProvider.auth.application(app, open: url, options: options)
         return true
     }
     
