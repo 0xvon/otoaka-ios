@@ -96,6 +96,17 @@ final class UserStatsViewController: UIViewController, Instantiable {
     }()
     private lazy var frequentlyWatchingGroupContentWrapper: UIView = Self.addPadding(to: self.frequentlyWatchingGroupContent)
     
+    private let groupTipSectionHeader = SummarySectionHeader(title: "応援してるアーティスト")
+    private lazy var groupTipContent: GroupTipRankingCollectionView = {
+        let content = GroupTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 200)
+        ])
+        return content
+    }()
+    private lazy var groupTipContentWrapper: UIView = Self.addPadding(to: self.groupTipContent)
+    
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
         paddingView.addSubview(view)
@@ -137,7 +148,7 @@ final class UserStatsViewController: UIViewController, Instantiable {
         
         scrollStackView.addArrangedSubview(watchingCountSectionHeader)
         NSLayoutConstraint.activate([
-            watchingCountSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+            watchingCountSectionHeader.heightAnchor.constraint(equalToConstant: 52),
             watchingCountSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
         watchingChartViewWrapper.isHidden = true
@@ -147,11 +158,26 @@ final class UserStatsViewController: UIViewController, Instantiable {
         
         scrollStackView.addArrangedSubview(frequentlyWatchingGroupSectionHeader)
         NSLayoutConstraint.activate([
-            frequentlyWatchingGroupSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+            frequentlyWatchingGroupSectionHeader.heightAnchor.constraint(equalToConstant: 52),
             frequentlyWatchingGroupSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
         frequentlyWatchingGroupContentWrapper.isHidden = true
         scrollStackView.addArrangedSubview(frequentlyWatchingGroupContentWrapper)
+        
+        let middleSpacer = UIView()
+        middleSpacer.translatesAutoresizingMaskIntoConstraints = false
+        scrollStackView.addArrangedSubview(middleSpacer) // Spacer
+        NSLayoutConstraint.activate([
+            middleSpacer.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        
+        scrollStackView.addArrangedSubview(groupTipSectionHeader)
+        NSLayoutConstraint.activate([
+            groupTipSectionHeader.heightAnchor.constraint(equalToConstant: 52),
+            groupTipSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        groupTipContentWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(groupTipContentWrapper)
         
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -215,6 +241,9 @@ final class UserStatsViewController: UIViewController, Instantiable {
             case .didGetFrequentlyWathingGroups(let groups):
                 frequentlyWatchingGroupContentWrapper.isHidden = false
                 frequentlyWatchingGroupContent.inject(group: groups)
+            case .didGetUserTip(let tip):
+                groupTipContentWrapper.isHidden = false
+                groupTipContent.inject(tip: tip)
             case .reportError(let err):
                 print(String(describing: err))
                 showAlert()
@@ -234,6 +263,11 @@ final class UserStatsViewController: UIViewController, Instantiable {
         
         frequentlyWatchingGroupContent.listen { [unowned self] group in
             let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        groupTipContent.listen { [unowned self] group in
+            let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

@@ -16,11 +16,13 @@ class UserStatsViewModel {
         let user: User
         var liveTransition: LiveTransition? = nil
         var frequentlyWatchingGroups: [GroupFeed] = []
+        var groupTip: [GroupTip] = []
     }
     
     enum Output {
         case didGetLiveTransition(LiveTransition)
         case didGetFrequentlyWathingGroups([GroupFeed])
+        case didGetUserTip([GroupTip])
         case reportError(Error)
     }
     
@@ -30,6 +32,7 @@ class UserStatsViewModel {
     
     private lazy var getLiveTransitionAction = Action(GetLikedLiveTransition.self, httpClient: self.apiClient)
     private lazy var getFrequentlyWathingGroupsAction = Action(FrequentlyWatchingGroups.self, httpClient: self.apiClient)
+    private lazy var getUserTipAction = Action(GetUserTipToGroupRanking.self, httpClient: apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -41,7 +44,8 @@ class UserStatsViewModel {
         
         let errors = Publishers.MergeMany(
             getLiveTransitionAction.errors,
-            getFrequentlyWathingGroupsAction.errors
+            getFrequentlyWathingGroupsAction.errors,
+            getUserTipAction.errors
         )
         .map(Output.reportError)
         .eraseToAnyPublisher()
@@ -49,16 +53,18 @@ class UserStatsViewModel {
         Publishers.MergeMany(
             getLiveTransitionAction.elements.map(Output.didGetLiveTransition).eraseToAnyPublisher(),
             getFrequentlyWathingGroupsAction.elements.map { Output.didGetFrequentlyWathingGroups($0.items) }.eraseToAnyPublisher(),
+            getUserTipAction.elements.map(Output.didGetUserTip).eraseToAnyPublisher(),
             errors
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
         getLiveTransitionAction.elements
-            .combineLatest(getFrequentlyWathingGroupsAction.elements)
-            .sink(receiveValue: { [unowned self] liveTransition, groups in
+            .combineLatest(getFrequentlyWathingGroupsAction.elements, getUserTipAction.elements)
+            .sink(receiveValue: { [unowned self] liveTransition, groups, groupTip in
                 state.liveTransition = liveTransition
                 state.frequentlyWatchingGroups = groups.items
+                state.groupTip = groupTip
             })
             .store(in: &cancellables)
     }
@@ -70,6 +76,7 @@ class UserStatsViewModel {
     func refresh() {
         getLiveTransition()
         getFrequentlyWatchingGroups()
+        getUserTip()
     }
     
     func getLiveTransition() {
@@ -84,5 +91,11 @@ class UserStatsViewModel {
         uri.per = 3
         uri.userId = state.user.id
         getFrequentlyWathingGroupsAction.input((request: Empty(), uri: uri))
+    }
+    
+    func getUserTip() {
+        var uri = GetUserTipToGroupRanking.URI()
+        uri.userId = state.user.id
+        getUserTipAction.input((request: Empty(), uri: uri))
     }
 }

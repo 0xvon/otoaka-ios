@@ -41,12 +41,20 @@ final class BandDetailViewController: UIViewController, Instantiable {
         followButton.setTitle("フォロー中", selected: true)
         return followButton
     }()
+    private let socialTipButton: PrimaryButton = {
+        let button = PrimaryButton(text: "")
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("チップ", for: .normal)
+        button.layer.cornerRadius = 24
+        button.isHidden = true
+        return button
+    }()
     private lazy var followStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.distribution = .fill
-        stackView.spacing = 16.0
+        stackView.spacing = 8
         stackView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         stackView.isLayoutMarginsRelativeArrangement = true
         return stackView
@@ -138,10 +146,16 @@ final class BandDetailViewController: UIViewController, Instantiable {
         ])
 
         followStackView.addArrangedSubview(followersSummaryView)
+        
+        followStackView.addArrangedSubview(socialTipButton)
+        NSLayoutConstraint.activate([
+            socialTipButton.heightAnchor.constraint(equalToConstant: 48),
+            socialTipButton.widthAnchor.constraint(equalToConstant: 136),
+        ])
         followStackView.addArrangedSubview(followButton)
         NSLayoutConstraint.activate([
-            followButton.heightAnchor.constraint(equalToConstant: 44),
-            followButton.widthAnchor.constraint(equalToConstant: 160),
+            followButton.heightAnchor.constraint(equalToConstant: 48),
+            followButton.widthAnchor.constraint(equalToConstant: 120),
         ])
         followStackView.addArrangedSubview(UIView()) // Spacer
 
@@ -285,6 +299,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
         followButton.controlEventPublisher(for: .touchUpInside)
             .sink(receiveValue: followingViewModel.didButtonTapped)
             .store(in: &cancellables)
+        
+        socialTipButton.listen { [unowned self] in
+            viewModel.sendSocialTip()
+        }
 
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
@@ -294,6 +312,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     isFollowing: response.isFollowing,
                     followersCount: response.followersCount
                 )
+                socialTipButton.isHidden = !response.group.isEntried
                 self.setupFloatingItems(displayType: displayType)
                 refreshControl.endRefreshing()
             case let .didGetChart(group, item):
@@ -352,6 +371,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .didToggleLikeLive:
                 viewModel.refresh()
+            case .didSendSocialTip(let tip):
+                showAlert(title: "チップを送りました！", message: "\(tip.tip)円でアーティストを応援しました！")
             case .openImage(let content):
                 let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
                 self.present(galleryController, animated: true, completion: nil)

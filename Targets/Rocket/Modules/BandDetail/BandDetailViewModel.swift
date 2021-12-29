@@ -60,6 +60,7 @@ class BandDetailViewModel {
         case pushToGroupDetail(Group)
         case pushToPlayTrack(PlayTrackViewController.Input)
         case openURLInBrowser(URL)
+        case didSendSocialTip(SocialTip)
         
         case didToggleLikeLive
         case reportError(Error)
@@ -75,6 +76,7 @@ class BandDetailViewModel {
     private lazy var getGroupLives = Action(GetGroupLives.self, httpClient: self.apiClient)
     private lazy var getGroupPost = Action(GetGroupPosts.self, httpClient: self.apiClient)
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
+    private lazy var sendTipAction = Action(SendSocialTip.self, httpClient: apiClient)
     
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
     private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
@@ -95,6 +97,7 @@ class BandDetailViewModel {
             getGroupLives.errors,
             getGroupPost.errors,
 //            listChannel.errors,
+            sendTipAction.errors,
             likeLiveAction.errors,
             unlikeLiveAction.errors
         )
@@ -109,6 +112,7 @@ class BandDetailViewModel {
             listChannel.elements.map { [unowned self] in
                 .didGetChart(self.state.group, $0.items.first)
             }.eraseToAnyPublisher(),
+            sendTipAction.elements.map(Output.didSendSocialTip).eraseToAnyPublisher(),
             likeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
             unlikeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
@@ -255,6 +259,12 @@ class BandDetailViewModel {
         uri.order = "viewCount"
         
         listChannel.input((request: request, uri: uri))
+    }
+    
+    func sendSocialTip() {
+        let request = SendSocialTip.Request(tip: 2000, type: .group(state.group))
+        let uri = SendSocialTip.URI()
+        sendTipAction.input((request: request, uri: uri))
     }
     
     func likeLive(live: Live) {

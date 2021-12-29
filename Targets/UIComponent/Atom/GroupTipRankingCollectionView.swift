@@ -1,30 +1,30 @@
 //
-//  WatchRankingCollectionView.swift
+//  GroupTipRankingCollectionView.swift
 //  Rocket
 //
-//  Created by Masato TSUTSUMI on 2021/11/02.
+//  Created by Masato TSUTSUMI on 2021/12/29.
 //
 
 import UIKit
 import ImagePipeline
 import Endpoint
 
-public final class WatchRankingCollectionView: UIStackView {
-    public var groups: [GroupFeed]
+public final class GroupTipRankingCollectionView: UIStackView {
+    public var tip: [GroupTip]
     public var imagePipeline: ImagePipeline
     
-    private lazy var firstRankingContent: WatchRankingCellContent = {
-        let content = WatchRankingCellContent()
+    private lazy var firstRankingContent: GroupTipRankingCellContent = {
+        let content = GroupTipRankingCellContent()
         content.translatesAutoresizingMaskIntoConstraints = false
         return content
     }()
-    private lazy var secondRankingContent: WatchRankingCellContent = {
-        let content = WatchRankingCellContent()
+    private lazy var secondRankingContent: GroupTipRankingCellContent = {
+        let content = GroupTipRankingCellContent()
         content.translatesAutoresizingMaskIntoConstraints = false
         return content
     }()
-    private lazy var otherRankingContent: WatchRankingCellContent = {
-        let content = WatchRankingCellContent()
+    private lazy var otherRankingContent: GroupTipRankingCellContent = {
+        let content = GroupTipRankingCellContent()
         content.translatesAutoresizingMaskIntoConstraints = false
         return content
     }()
@@ -42,8 +42,8 @@ public final class WatchRankingCollectionView: UIStackView {
         return textView
     }()
     
-    public init(groups: [GroupFeed], imagePipeline: ImagePipeline) {
-        self.groups = groups
+    public init(tip: [GroupTip], imagePipeline: ImagePipeline) {
+        self.tip = tip
         self.imagePipeline = imagePipeline
         
         super.init(frame: .zero)
@@ -52,9 +52,9 @@ public final class WatchRankingCollectionView: UIStackView {
     public required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    public func inject(group: [GroupFeed]) {
-        self.groups = group
-        switch group.count {
+    public func inject(tip: [GroupTip]) {
+        self.tip = tip
+        switch tip.count {
         case 0:
             firstRankingContent.isHidden = true
             secondRankingContent.isHidden = true
@@ -62,24 +62,24 @@ public final class WatchRankingCollectionView: UIStackView {
             emptyView.text = "（’・_・｀）\n\nライブ参戦履歴がありません。"
         case 1:
             firstRankingContent.isHidden = false
-            firstRankingContent.inject(input: (group: group[0], imagePipeline: imagePipeline, ranking: .first))
+            firstRankingContent.inject(input: (tip: tip[0], imagePipeline: imagePipeline, ranking: .first))
             secondRankingContent.isHidden = true
             otherRankingContent.isHidden = true
             emptyView.isHidden = true
         case 2:
             firstRankingContent.isHidden = false
-            firstRankingContent.inject(input: (group: group[0], imagePipeline: imagePipeline, ranking: .first))
+            firstRankingContent.inject(input: (tip: tip[0], imagePipeline: imagePipeline, ranking: .first))
             secondRankingContent.isHidden = false
-            secondRankingContent.inject(input: (group: group[1], imagePipeline: imagePipeline, ranking: .second))
+            secondRankingContent.inject(input: (tip: tip[1], imagePipeline: imagePipeline, ranking: .second))
             otherRankingContent.isHidden = true
             emptyView.isHidden = true
         case 3:
             firstRankingContent.isHidden = false
-            firstRankingContent.inject(input: (group: group[0], imagePipeline: imagePipeline, ranking: .first))
+            firstRankingContent.inject(input: (tip: tip[0], imagePipeline: imagePipeline, ranking: .first))
             secondRankingContent.isHidden = false
-            secondRankingContent.inject(input: (group: group[1], imagePipeline: imagePipeline, ranking: .second))
+            secondRankingContent.inject(input: (tip: tip[1], imagePipeline: imagePipeline, ranking: .second))
             otherRankingContent.isHidden = false
-            otherRankingContent.inject(input: (group: group[2], imagePipeline: imagePipeline, ranking: .other))
+            otherRankingContent.inject(input: (tip: tip[2], imagePipeline: imagePipeline, ranking: .other))
             emptyView.isHidden = true
         default: break
         }
@@ -104,26 +104,26 @@ public final class WatchRankingCollectionView: UIStackView {
     }
     
     @objc private func firstGroupTapped() {
-        self.listener(groups[0])
+        self.listener(tip[0].group)
     }
     
     @objc private func secondGroupTapped() {
-        self.listener(groups[1])
+        self.listener(tip[1].group)
     }
     
     @objc private func otherGroupTapped() {
-        self.listener(groups[2])
+        self.listener(tip[2].group)
     }
     
-    private var listener: (GroupFeed) -> Void = { _ in }
-    public func listen(_ listener: @escaping (GroupFeed) -> Void) {
+    private var listener: (Group) -> Void = { _ in }
+    public func listen(_ listener: @escaping (Group) -> Void) {
         self.listener = listener
     }
 }
 
-public final class WatchRankingCellContent: UIButton {
+public final class GroupTipRankingCellContent: UIButton {
     public typealias Input = (
-        group: GroupFeed,
+        tip: GroupTip,
         imagePipeline: ImagePipeline,
         ranking: Ranking
     )
@@ -132,7 +132,6 @@ public final class WatchRankingCellContent: UIButton {
     }
     enum Output {
     }
-    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.isUserInteractionEnabled = false
@@ -147,12 +146,12 @@ public final class WatchRankingCellContent: UIButton {
             spacer.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
-        stackView.addArrangedSubview(watchCountLabel)
+        stackView.addArrangedSubview(tipLabel)
         stackView.addArrangedSubview(thumbnailImageView)
         stackView.addArrangedSubview(groupNameLabel)
         return stackView
     }()
-    private lazy var watchCountLabel: UILabel = {
+    private lazy var tipLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -201,9 +200,9 @@ public final class WatchRankingCellContent: UIButton {
     }
     
     public func inject(input: Input) {
-        watchCountLabel.text = "\(input.group.watchingCount)回"
-        groupNameLabel.text = input.group.group.name
-        if let url = input.group.group.artworkURL {
+        tipLabel.text = "\(input.tip.tip)円"
+        groupNameLabel.text = input.tip.group.name
+        if let url = input.tip.group.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailImageView)
         } else {
             thumbnailImageView.image = Brand.color(for: .background(.secondary)).image
@@ -211,22 +210,22 @@ public final class WatchRankingCellContent: UIButton {
         
         switch input.ranking {
         case .first:
-            watchCountLabel.textColor = Brand.color(for: .ranking(.first))
+            tipLabel.textColor = Brand.color(for: .ranking(.first))
             thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.first)).cgColor
             thumbnailImageViewHeightConstraint.constant = 144
         case .second:
-            watchCountLabel.textColor = Brand.color(for: .ranking(.second))
+            tipLabel.textColor = Brand.color(for: .ranking(.second))
             thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.second)).cgColor
             thumbnailImageViewHeightConstraint.constant = 124
         case .other:
-            watchCountLabel.textColor = Brand.color(for: .ranking(.other))
+            tipLabel.textColor = Brand.color(for: .ranking(.other))
             thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.other)).cgColor
             thumbnailImageViewHeightConstraint.constant = 100
         }
     }
     
     func prepare() {
-        watchCountLabel.text = nil
+        tipLabel.text = nil
         thumbnailImageView.image = nil
         groupNameLabel.text = nil
     }
