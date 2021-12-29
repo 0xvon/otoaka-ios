@@ -82,6 +82,17 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
+    private let userTipSectionHeader = SummarySectionHeader(title: "応援されたファン")
+    private lazy var userTipContent: UserTipRankingCollectionView = {
+        let content = UserTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
+        content.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            content.heightAnchor.constraint(equalToConstant: 200)
+        ])
+        return content
+    }()
+    private lazy var userTipContentWrapper: UIView = Self.addPadding(to: self.userTipContent)
+    
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
         paddingView.addSubview(view)
@@ -174,6 +185,21 @@ final class BandDetailViewController: UIViewController, Instantiable {
         ])
         postCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(postCellWrapper)
+        
+        let middleSpacer = UIView()
+        middleSpacer.translatesAutoresizingMaskIntoConstraints = false
+        scrollStackView.addArrangedSubview(middleSpacer) // Spacer
+        NSLayoutConstraint.activate([
+            middleSpacer.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        
+        scrollStackView.addArrangedSubview(userTipSectionHeader)
+        NSLayoutConstraint.activate([
+            userTipSectionHeader.heightAnchor.constraint(equalToConstant: 52),
+            userTipSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        userTipContentWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(userTipContentWrapper)
 
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -315,6 +341,11 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 socialTipButton.isHidden = !response.group.isEntried
                 self.setupFloatingItems(displayType: displayType)
                 refreshControl.endRefreshing()
+            case .didGetUserTip(let tips):
+                let isHidden = !viewModel.state.group.isEntried
+                userTipSectionHeader.isHidden = isHidden
+                userTipContentWrapper.isHidden = isHidden
+                userTipContent.inject(tip: tips)
             case let .didGetChart(group, item):
                 headerView.update(input: (group: group, groupItem: item, imagePipeline: dependencyProvider.imagePipeline))
             case .updateLiveSummary(let liveFeed):
@@ -409,6 +440,17 @@ final class BandDetailViewController: UIViewController, Instantiable {
         followersSummaryView.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(followerSummaryTapped))
         )
+        
+        userTipSectionHeader.listen { [unowned self] in
+            let vc = UserRankingListViewController(dependencyProvider: dependencyProvider, input: .groupTip(viewModel.state.group.id))
+            navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        userTipContent.listen { [unowned self] user in
+            let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+            navigationController?.pushViewController(vc
+                                                     , animated: true)
+        }
     }
 
     func setupViews() {

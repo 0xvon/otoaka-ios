@@ -45,6 +45,7 @@ class BandDetailViewModel {
     
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
+        case didGetUserTip([UserTip])
         case updateLiveSummary(LiveFeed?)
         case updatePostSummary(PostSummary?)
         case didGetChart(Group, InternalDomain.YouTubeVideo?)
@@ -74,6 +75,7 @@ class BandDetailViewModel {
     private lazy var inviteGroup = Action(InviteGroup.self, httpClient: self.apiClient)
     private lazy var getGroup = Action(GetGroup.self, httpClient: self.apiClient)
     private lazy var getGroupLives = Action(GetGroupLives.self, httpClient: self.apiClient)
+    private lazy var getGroupTipAction = Action(GetGroupTipFromUserRanking.self, httpClient: apiClient)
     private lazy var getGroupPost = Action(GetGroupPosts.self, httpClient: self.apiClient)
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
     private lazy var sendTipAction = Action(SendSocialTip.self, httpClient: apiClient)
@@ -94,6 +96,7 @@ class BandDetailViewModel {
         let errors = Publishers.MergeMany(
             inviteGroup.errors,
             getGroup.errors,
+            getGroupTipAction.errors,
             getGroupLives.errors,
             getGroupPost.errors,
 //            listChannel.errors,
@@ -108,6 +111,9 @@ class BandDetailViewModel {
                 .didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))
             }.eraseToAnyPublisher(),
             getGroupLives.elements.map { .updateLiveSummary($0.items.first) }.eraseToAnyPublisher(),
+            getGroupTipAction.elements.map {
+                Output.didGetUserTip($0.items)
+            }.eraseToAnyPublisher(),
             getGroupPost.elements.map { .updatePostSummary($0.items.first) }.eraseToAnyPublisher(),
             listChannel.elements.map { [unowned self] in
                 .didGetChart(self.state.group, $0.items.first)
@@ -160,6 +166,7 @@ class BandDetailViewModel {
     
     func refresh() {
         getGroupDetail()
+        getGroupTip()
         getChartSummary()
         getGroupLiveSummary()
         getGroupPostSummary()
@@ -238,6 +245,14 @@ class BandDetailViewModel {
         uri.per = 1
         uri.groupId = state.group.id
         getGroupLives.input((request: request, uri: uri))
+    }
+    
+    private func getGroupTip() {
+        var uri = GetGroupTipFromUserRanking.URI()
+        uri.groupId = state.group.id
+        uri.page = 1
+        uri.per = 3
+        getGroupTipAction.input((request: Empty(), uri: uri))
     }
     
     private func getGroupPostSummary() {
