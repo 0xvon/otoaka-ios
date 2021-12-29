@@ -127,7 +127,7 @@ class MessageListCellContent: UIButton {
         if let latestMessage = input.room.latestMessage {
             latestMessageTextView.text = latestMessage.text
             unreadBadge.isHidden = latestMessage.readingUsers.contains(input.user)
-            dateLabel.text = latestMessage.sentAt.toFormatString(format: "YYYY/MM/dd HH:mm")
+            dateLabel.text = latestMessage.sentAt.toFormatString(format: "yyyy/MM/dd HH:mm")
         }
     }
     

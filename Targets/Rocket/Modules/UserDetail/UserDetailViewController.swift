@@ -233,13 +233,17 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     openUrlInBrowser(url: url)
                 }
             })
+            let myTipAction = UIAlertAction(title: "チップ履歴", style: .default, handler: { [unowned self] _ in
+                let vc = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .myTip(dependencyProvider.user.id))
+                navigationController?.pushViewController(vc, animated: true)
+            })
             let logoutAction = UIAlertAction(title: "ログアウト", style: .default, handler: { [unowned self] _ in
                     logout()
             })
             let cancelAction = UIAlertAction(
                 title: "キャンセル", style: UIAlertAction.Style.cancel,
                 handler: { _ in })
-            actions = [shareProfileAction, requestLiveAction, logoutAction, cancelAction]
+            actions = [shareProfileAction, requestLiveAction, myTipAction, logoutAction, cancelAction]
         case .user:
             guard let userDetail = viewModel.state.userDetail else { return }
             let blockAction = UIAlertAction(title: userDetail.isBlocking ? "ブロック解除" : "ブロックする", style: UIAlertAction.Style.default, handler: { [unowned self] _ in

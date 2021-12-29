@@ -26,7 +26,7 @@ final class SelectDateViewController: UIViewController {
         calendar.appearance.borderSelectionColor = Brand.color(for: .brand(.primary))
         calendar.appearance.selectionColor = .clear
         
-        calendar.appearance.headerDateFormat = "YYYY年MM月"
+        calendar.appearance.headerDateFormat = "yyyy年MM月"
         calendar.calendarWeekdayView.weekdayLabels[0].text = "日"
         calendar.calendarWeekdayView.weekdayLabels[1].text = "月"
         calendar.calendarWeekdayView.weekdayLabels[2].text = "火"

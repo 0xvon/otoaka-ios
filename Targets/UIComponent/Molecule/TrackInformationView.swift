@@ -19,7 +19,7 @@ public final class TrackInformationView: UIView {
     // FIXME
     private let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY年"
+        dateFormatter.dateFormat = "yyyy年"
         return dateFormatter
     }()
 

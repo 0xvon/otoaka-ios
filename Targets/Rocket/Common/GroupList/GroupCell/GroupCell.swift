@@ -79,7 +79,7 @@ class GroupCellContent: UIButton {
     }
     let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY年"
+        dateFormatter.dateFormat = "yyyy年"
         return dateFormatter
     }()
     
