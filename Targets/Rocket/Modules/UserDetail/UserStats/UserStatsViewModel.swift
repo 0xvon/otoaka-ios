@@ -52,7 +52,7 @@ class UserStatsViewModel {
         
         Publishers.MergeMany(
             getLiveTransitionAction.elements.map(Output.didGetLiveTransition).eraseToAnyPublisher(),
-            getFrequentlyWathingGroupsAction.elements.map { Output.didGetFrequentlyWathingGroups($0.items) }.eraseToAnyPublisher(),
+            getFrequentlyWathingGroupsAction.elements.map { Output.didGFrequentlyWathingGroups($0.items) }.eraseToAnyPublisher(),
             getUserTipAction.elements.map(Output.didGetUserTip).eraseToAnyPublisher(),
             errors
         )

@@ -93,12 +93,6 @@ class FanCellContent: UIButton {
         stackView.addArrangedSubview(usernameLabel)
         stackView.addArrangedSubview(profileLabel)
         stackView.addArrangedSubview(liveStyleLabel)
-        
-//        stackView.addArrangedSubview(biographyTextView)
-//        NSLayoutConstraint.activate([
-//            biographyTextView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-//        ])
-        
         let spacer = UIView()
         spacer.backgroundColor = .clear
         stackView.addArrangedSubview(spacer)
@@ -237,7 +231,7 @@ class FanCellContent: UIButton {
         self.listener = listener
     }
     
-    deinit {
-        print("FanCellContent.deinit")
-    }
+//    deinit {
+//        print("FanCellContent.deinit")
+//    }
 }
