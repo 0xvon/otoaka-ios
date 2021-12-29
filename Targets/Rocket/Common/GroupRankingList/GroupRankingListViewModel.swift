@@ -21,6 +21,18 @@ class GroupRankingListViewModel {
         case none
     }
     
+    struct GroupRanking {
+        let group: Group
+        let count: Int
+        let unit: String
+        
+        init(group: Group, count: Int, unit: String) {
+            self.group = group
+            self.count = count
+            self.unit = unit
+        }
+    }
+    
     enum DataSourceStorage {
         case frequentlyWatching(PaginationRequest<FrequentlyWatchingGroups>)
         case socialTip(PaginationRequest<GetUserTipToGroupRanking>)
@@ -45,8 +57,7 @@ class GroupRankingListViewModel {
     }
     
     struct State {
-        var frequentlyWatchingGroups: [GroupFeed] = []
-        var tips: [GroupTip] = []
+        var groups: [GroupRanking] = []
     }
     
     private var storage: DataSourceStorage
@@ -86,10 +97,20 @@ class GroupRankingListViewModel {
     private func updateState(with result: PaginationEvent<Page<GroupFeed>>) {
         switch result {
         case .initial(let res):
-            state.frequentlyWatchingGroups = res.items
+            state.groups = res.items.map {
+                GroupRanking(
+                    group: $0.group,
+                    count: $0.watchingCount,
+                    unit: "回")
+            }
             self.outputSubject.send(.reloadTableView)
         case .next(let res):
-            state.frequentlyWatchingGroups += res.items
+            state.groups += res.items.map {
+                GroupRanking(
+                    group: $0.group,
+                    count: $0.watchingCount,
+                    unit: "回")
+            }
             self.outputSubject.send(.reloadTableView)
         case .error(let err):
             self.outputSubject.send(.error(err))
@@ -99,10 +120,20 @@ class GroupRankingListViewModel {
     private func updateState(with result: PaginationEvent<Page<GroupTip>>) {
         switch result {
         case .initial(let res):
-            state.tips = res.items
+            state.groups = res.items.map {
+                GroupRanking(
+                    group: $0.group,
+                    count: $0.tip,
+                    unit: "円")
+            }
             self.outputSubject.send(.reloadTableView)
         case .next(let res):
-            state.tips += res.items
+            state.groups += res.items.map {
+                GroupRanking(
+                    group: $0.group,
+                    count: $0.tip,
+                    unit: "円")
+            }
             self.outputSubject.send(.reloadTableView)
         case .error(let err):
             self.outputSubject.send(.error(err))
@@ -127,7 +158,7 @@ class GroupRankingListViewModel {
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {
-        guard indexPath.row + 25 > state.frequentlyWatchingGroups.count || indexPath.row + 25 > state.tips.count else { return }
+        guard indexPath.row + 25 > state.groups.count else { return }
         switch storage {
         case let .frequentlyWatching(pagination):
             pagination.next()

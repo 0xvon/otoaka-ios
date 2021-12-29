@@ -257,12 +257,17 @@ final class UserStatsViewController: UIViewController, Instantiable {
         }
         
         frequentlyWatchingGroupSectionHeader.listen { [unowned self] in
-            let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .frequenlyWatchingGroups(viewModel.state.user.id))
+            let vc = GroupRankingListViewController(dependencyProvider: dependencyProvider, input: .frequentlyWatching(viewModel.state.user.id))
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
         frequentlyWatchingGroupContent.listen { [unowned self] group in
             let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        groupTipSectionHeader.listen { [unowned self] in
+            let vc = GroupRankingListViewController(dependencyProvider: dependencyProvider, input: .socialTip(viewModel.state.user.id))
             self.navigationController?.pushViewController(vc, animated: true)
         }
         

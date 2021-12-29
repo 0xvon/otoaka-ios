@@ -52,8 +52,10 @@ class UserStatsViewModel {
         
         Publishers.MergeMany(
             getLiveTransitionAction.elements.map(Output.didGetLiveTransition).eraseToAnyPublisher(),
-            getFrequentlyWathingGroupsAction.elements.map { Output.didGFrequentlyWathingGroups($0.items) }.eraseToAnyPublisher(),
-            getUserTipAction.elements.map(Output.didGetUserTip).eraseToAnyPublisher(),
+            getFrequentlyWathingGroupsAction.elements.map { Output.didGetFrequentlyWathingGroups($0.items) }.eraseToAnyPublisher(),
+            getUserTipAction.elements.map{
+                Output.didGetUserTip($0.items)
+            }.eraseToAnyPublisher(),
             errors
         )
         .sink(receiveValue: outputSubject.send)
@@ -64,7 +66,7 @@ class UserStatsViewModel {
             .sink(receiveValue: { [unowned self] liveTransition, groups, groupTip in
                 state.liveTransition = liveTransition
                 state.frequentlyWatchingGroups = groups.items
-                state.groupTip = groupTip
+                state.groupTip = groupTip.items
             })
             .store(in: &cancellables)
     }
@@ -96,6 +98,8 @@ class UserStatsViewModel {
     func getUserTip() {
         var uri = GetUserTipToGroupRanking.URI()
         uri.userId = state.user.id
+        uri.page = 1
+        uri.per = 3
         getUserTipAction.input((request: Empty(), uri: uri))
     }
 }
