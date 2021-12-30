@@ -113,6 +113,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     let postActionViewModel: PostActionViewModel
     let openMessageViewModel: OpenMessageRoomViewModel
     let followingViewModel: FollowingViewModel
+    let pointViewModel: PointViewModel
     var cancellables: Set<AnyCancellable> = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -123,6 +124,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         )
         self.postActionViewModel = PostActionViewModel(dependencyProvider: dependencyProvider)
         self.openMessageViewModel = OpenMessageRoomViewModel(dependencyProvider: dependencyProvider)
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
         self.followingViewModel = FollowingViewModel(
             group: input.id, apiClient: dependencyProvider.apiClient
         )
@@ -518,7 +520,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
 
     @objc func createShare(_ sender: UIBarButtonItem) {
-        shareWithTwitter(type: .group(viewModel.state.group))
+        shareWithTwitter(type: .group(viewModel.state.group)) { [unowned self] isOK in
+            if isOK {
+                pointViewModel.addPoint(point: 100)
+            } else {
+                showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
+            }
+        }
     }
     
     private func downloadButtonTapped(feed: UserFeedSummary) {

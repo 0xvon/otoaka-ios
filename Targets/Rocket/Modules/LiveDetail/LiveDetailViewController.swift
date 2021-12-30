@@ -121,6 +121,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     let viewModel: LiveDetailViewModel
     let postActionViewModel: PostActionViewModel
     let openMessageViewModel: OpenMessageRoomViewModel
+    let pointViewModel: PointViewModel
     var cancellables: Set<AnyCancellable> = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -131,6 +132,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         )
         self.postActionViewModel = PostActionViewModel(dependencyProvider: dependencyProvider)
         self.openMessageViewModel = OpenMessageRoomViewModel(dependencyProvider: dependencyProvider)
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -462,7 +464,13 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func createShare() {
-        shareWithTwitter(type: .live(viewModel.state.live))
+        shareWithTwitter(type: .live(viewModel.state.live)) { [unowned self] isOK in
+            if isOK {
+                pointViewModel.addPoint(point: 100)
+            } else {
+                showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
+            }
+        }
     }
     
     private func openUrl(url: URL) {

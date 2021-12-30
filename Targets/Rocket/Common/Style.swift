@@ -136,7 +136,7 @@ extension UIViewController {
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.showResultOfSaveImage(_:didFinishSavingWithError:contextInfo:)), nil)
     }
     
-    func shareWithTwitter(type: ShareType) {
+    func shareWithTwitter(type: ShareType, callback: ((Bool) -> Void)? = nil) {
         let ogp = "https://rocket-auth-storage.s3-ap-northeast-1.amazonaws.com/assets/public/ogp.png"
         var shareText: String
         var ogpUrl: String
@@ -161,7 +161,7 @@ extension UIViewController {
         }
         
         guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
-        UIApplication.shared.open(scheme, options: [:], completionHandler: nil)
+        UIApplication.shared.open(scheme, options: [:], completionHandler: callback)
     }
     
     func sharePostWithInstagram(post: Post) {

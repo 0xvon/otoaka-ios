@@ -22,6 +22,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     let viewModel: UserDetailViewModel
     let userFollowingViewModel: UserFollowingViewModel
     let openMessageRoomViewModel: OpenMessageRoomViewModel
+    let pointViewModel: PointViewModel
     var cancellables: Set<AnyCancellable> = []
     
     let vc1: UserProfileViewController
@@ -46,6 +47,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         self.viewModel = UserDetailViewModel(dependencyProvider: dependencyProvider, user: input)
         self.userFollowingViewModel = UserFollowingViewModel(dependencyProvider: dependencyProvider, user: input)
         self.openMessageRoomViewModel = OpenMessageRoomViewModel(dependencyProvider: dependencyProvider)
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
         self.pageViewController = PageViewController()
         
         vc1 = UserProfileViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
@@ -162,6 +164,17 @@ final class UserDetailViewController: UIViewController, Instantiable {
             }
         }
         .store(in: &cancellables)
+        
+//        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+//            switch output {
+//            case .addPoint(let point):
+//                showAlert(title: "ポイント獲得！", message: "\(point.value)ポイント獲得しました！ポイントはアーティストの応援に使えるよ！")
+//            case .usePoint(let point): break
+//            case .reportError(let err):
+//                print(String(describing: err))
+//                showAlert()
+//            }
+//        }
 
         headerView.listen { [viewModel] output in
             viewModel.headerEvent(output: output)
@@ -201,7 +214,13 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func didShareButtonTapped() {
-        shareWithTwitter(type: .user(viewModel.state.user))
+        shareWithTwitter(type: .user(viewModel.state.user)) { [unowned self] isOK in
+            if isOK {
+                pointViewModel.addPoint(point: 100)
+            } else {
+                showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
+            }
+        }
     }
     
     func didSendMessageButtonTapped() {
@@ -227,6 +246,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         case .account:
             let shareProfileAction = UIAlertAction(title: "ライブ参戦数をインスタでシェア", style: .default, handler: { [unowned self] _ in
                 shareUserWithInstagram(user: viewModel.state.user, views: [vc2.scrollStackView])
+                pointViewModel.addPoint(point: 100)
             })
             let requestLiveAction = UIAlertAction(title: "ライブ掲載申請", style: .default, handler: { [unowned self] _ in
                 if let url = URL(string: "https://forms.gle/epoBeqdaGeMUcv8o9") {
