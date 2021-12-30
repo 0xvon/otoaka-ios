@@ -17,6 +17,7 @@ class UserRankingListViewModel {
     }
     enum DataSource {
         case groupTip(Group.ID)
+        case userTipFeed
         case none
     }
     
@@ -34,6 +35,7 @@ class UserRankingListViewModel {
     
     enum DataSourceStorage {
         case groupTip(PaginationRequest<GetGroupTipFromUserRanking>)
+        case userTipFeed(PaginationRequest<GetUserTipFeed>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -43,6 +45,10 @@ class UserRankingListViewModel {
                 uri.groupId = groupId
                 let request = PaginationRequest<GetGroupTipFromUserRanking>(apiClient: apiClient, uri: uri)
                 self = .groupTip(request)
+            case .userTipFeed:
+                let uri = GetUserTipFeed.URI()
+                let request = PaginationRequest<GetUserTipFeed>(apiClient: apiClient, uri: uri)
+                self = .userTipFeed(request)
             case .none:
                 self = .none
             }
@@ -76,6 +82,10 @@ class UserRankingListViewModel {
     private func subscribe(storage: DataSourceStorage) {
         switch storage {
         case let .groupTip(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .userTipFeed(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
@@ -117,6 +127,8 @@ class UserRankingListViewModel {
         switch storage {
         case let .groupTip(pagination):
             pagination.refresh()
+        case let .userTipFeed(pagination):
+            pagination.refresh()
         case .none: break
         }
     }
@@ -125,6 +137,8 @@ class UserRankingListViewModel {
         guard indexPath.row + 25 > state.users.count else { return }
         switch storage {
         case let .groupTip(pagination):
+            pagination.next()
+        case let .userTipFeed(pagination):
             pagination.next()
         case .none: break
         }

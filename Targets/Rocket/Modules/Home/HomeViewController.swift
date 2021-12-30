@@ -17,16 +17,18 @@ final class HomeViewController: UIViewController {
     private var cancellables: [AnyCancellable] = []
     private let urlSchemeActionViewModel: UrlSchemeActionViewModel
     
-    private lazy var createPostButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-        button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
-        button.setTitle("＋", for: .normal)
-        button.titleLabel?.font = Brand.font(for: .largeStrong)
-        button.addTarget(self, action: #selector(createPostButtonTapped), for: .touchUpInside)
-        return button
-    }()
+    private lazy var searchButton: UIBarButtonItem = UIBarButtonItem(
+        image: UIImage(systemName: "magnifyingglass"),
+        style: .plain,
+        target: self,
+        action: #selector(searchButtonTapped)
+    )
+    private lazy var postButton: UIBarButtonItem = UIBarButtonItem(
+        image: UIImage(systemName: "plus"),
+        style: .plain,
+        target: self,
+        action: #selector(createPostButtonTapped)
+    )
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.urlSchemeActionViewModel = UrlSchemeActionViewModel(dependencyProvider: dependencyProvider)
@@ -64,7 +66,11 @@ final class HomeViewController: UIViewController {
         self.title = "ホーム"
         navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createPostButton)
+        
+        navigationItem.setRightBarButtonItems([
+            searchButton,
+            postButton,
+        ], animated: false)
         
         setPagingViewController()
         requestNotification()
@@ -185,6 +191,11 @@ final class HomeViewController: UIViewController {
     
     @objc private func createPostButtonTapped() {
         let vc = SearchLiveViewController(dependencyProvider: dependencyProvider)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func searchButtonTapped() {
+        let vc = SearchViewController(dependencyProvider: dependencyProvider)
         navigationController?.pushViewController(vc, animated: true)
     }
 }

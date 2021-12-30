@@ -277,7 +277,12 @@ class BandDetailViewModel {
     }
     
     func sendSocialTip() {
-        let request = SendSocialTip.Request(tip: 2000, type: .group(state.group))
+        let request = SendSocialTip.Request(
+            tip: 2000,
+            type: .group(state.group),
+            message: "hello",
+            isRealMoney: false
+        )
         let uri = SendSocialTip.URI()
         sendTipAction.input((request: request, uri: uri))
     }

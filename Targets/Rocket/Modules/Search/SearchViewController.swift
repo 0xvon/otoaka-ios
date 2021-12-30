@@ -114,6 +114,7 @@ final class SearchViewController: UIViewController {
         super.viewDidLoad()
 
         title = "探す"
+        view.backgroundColor = Brand.color(for: .background(.primary))
         navigationItem.searchController = searchController
         searchController.searchBar.scopeButtonTitles = viewModel.scopeButtonTitles
         

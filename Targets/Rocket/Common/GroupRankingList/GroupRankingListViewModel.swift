@@ -18,6 +18,7 @@ class GroupRankingListViewModel {
     enum DataSource {
         case frequentlyWatching(User.ID)
         case socialTip(User.ID)
+        case entriedGroup
         case none
     }
     
@@ -36,6 +37,7 @@ class GroupRankingListViewModel {
     enum DataSourceStorage {
         case frequentlyWatching(PaginationRequest<FrequentlyWatchingGroups>)
         case socialTip(PaginationRequest<GetUserTipToGroupRanking>)
+        case entriedGroup(PaginationRequest<GetEntriedGroups>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -50,6 +52,10 @@ class GroupRankingListViewModel {
                 uri.userId = userId
                 let request = PaginationRequest<GetUserTipToGroupRanking>(apiClient: apiClient, uri: uri)
                 self = .socialTip(request)
+            case .entriedGroup:
+                let uri = GetEntriedGroups.URI()
+                let request = PaginationRequest<GetEntriedGroups>(apiClient: apiClient, uri: uri)
+                self = .entriedGroup(request)
             case .none:
                 self = .none
             }
@@ -87,6 +93,10 @@ class GroupRankingListViewModel {
                 self?.updateState(with: $0)
             }
         case let .socialTip(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .entriedGroup(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
@@ -153,6 +163,8 @@ class GroupRankingListViewModel {
             pagination.refresh()
         case let .socialTip(pagination):
             pagination.refresh()
+        case let .entriedGroup(pagination):
+            pagination.refresh()
         case .none: break
         }
     }
@@ -163,6 +175,8 @@ class GroupRankingListViewModel {
         case let .frequentlyWatching(pagination):
             pagination.next()
         case let .socialTip(pagination):
+            pagination.next()
+        case let .entriedGroup(pagination):
             pagination.next()
         case .none: break
         }

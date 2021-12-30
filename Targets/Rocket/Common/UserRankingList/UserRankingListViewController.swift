@@ -24,8 +24,8 @@ final class UserRankingListViewController: UIViewController, Instantiable {
             dependencyProvider: dependencyProvider,
             input: input
         )
-
         super.init(nibName: nil, bundle: nil)
+        self.title = "ユーザー"
     }
     
     required init?(coder: NSCoder) {
@@ -60,6 +60,7 @@ final class UserRankingListViewController: UIViewController, Instantiable {
     
     private func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
+        navigationItem.largeTitleDisplayMode = .never
         
         tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
