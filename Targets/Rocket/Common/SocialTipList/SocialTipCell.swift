@@ -142,7 +142,7 @@ class SocialTipCellContent: UIButton {
             }
             userNameLabel.text = live.title
         }
-        countLabel.text = "\(input.tip.tip)円"
+        countLabel.text = "\(input.tip.tip)pt"
         dateLabel.text = input.tip.thrownAt.toFormatString(format: "yyyy/MM/dd")
     }
     

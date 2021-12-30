@@ -200,7 +200,7 @@ public final class GroupTipRankingCellContent: UIButton {
     }
     
     public func inject(input: Input) {
-        tipLabel.text = "\(input.tip.tip)円"
+        tipLabel.text = "\(input.tip.tip)pt"
         groupNameLabel.text = input.tip.group.name
         if let url = input.tip.group.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailImageView)

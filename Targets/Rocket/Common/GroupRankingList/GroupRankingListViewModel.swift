@@ -134,7 +134,7 @@ class GroupRankingListViewModel {
                 GroupRanking(
                     group: $0.group,
                     count: $0.tip,
-                    unit: "円")
+                    unit: "pt")
             }
             self.outputSubject.send(.reloadTableView)
         case .next(let res):
@@ -142,7 +142,7 @@ class GroupRankingListViewModel {
                 GroupRanking(
                     group: $0.group,
                     count: $0.tip,
-                    unit: "円")
+                    unit: "pt")
             }
             self.outputSubject.send(.reloadTableView)
         case .error(let err):

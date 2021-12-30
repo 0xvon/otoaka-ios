@@ -403,7 +403,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
             case .didToggleLikeLive:
                 viewModel.refresh()
             case .didSendSocialTip(let tip):
-                showAlert(title: "チップを送りました！", message: "\(tip.tip)円でアーティストを応援しました！")
+                showAlert(title: "チップを送りました！", message: "\(tip.tip)ptでアーティストを応援しました！")
             case .openImage(let content):
                 let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
                 self.present(galleryController, animated: true, completion: nil)

@@ -200,7 +200,7 @@ public final class UserTipRankingCellContent: UIButton {
     }
     
     public func inject(input: Input) {
-        tipLabel.text = "\(input.tip.tip)円"
+        tipLabel.text = "\(input.tip.tip)pt"
         userNameLabel.text = input.tip.user.name
         if let url = input.tip.user.thumbnailURL.flatMap(URL.init(string:)) {
             input.imagePipeline.loadImage(url, into: thumbnailImageView)

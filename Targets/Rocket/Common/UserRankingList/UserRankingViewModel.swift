@@ -100,7 +100,7 @@ class UserRankingListViewModel {
                 UserRanking(
                     user: $0.user,
                     count: $0.tip,
-                    unit: "円")
+                    unit: "pt")
             }
             self.outputSubject.send(.reloadTableView)
         case .next(let res):
@@ -108,7 +108,7 @@ class UserRankingListViewModel {
                 UserRanking(
                     user: $0.user,
                     count: $0.tip,
-                    unit: "円")
+                    unit: "pt")
             }
             self.outputSubject.send(.reloadTableView)
         case .error(let err):
