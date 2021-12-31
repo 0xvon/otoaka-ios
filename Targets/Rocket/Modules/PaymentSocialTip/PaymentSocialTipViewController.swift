@@ -205,6 +205,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         super.viewDidLoad()
         setup()
         bind()
+        viewModel.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -230,6 +231,8 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
+            case .didGetMyPoint(let point):
+                pointLabel.text = "ポイントを使う(\(point)pt)"
             case .updateSubmittableState(let state):
                 switch state {
                 case .loading:
@@ -316,7 +319,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
                 imagePipeline: dependencyProvider.imagePipeline
             ))
         }
-        pointLabel.text = "ポイントを使う(\(dependencyProvider.user.point)pt)"
+//        pointLabel.text = "ポイントを使う(\(dependencyProvider.user.point)pt)"
     }
     
     @objc private func switchButtonTapped() {

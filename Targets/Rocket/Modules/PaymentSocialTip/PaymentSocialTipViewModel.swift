@@ -24,6 +24,7 @@ class PaymentSocialTipViewModel {
     }
     
     enum Output {
+        case didGetMyPoint(Int)
         case didSendSocialTip(SocialTip)
         case updateSubmittableState(PageState)
         case reportError(Error)
@@ -38,6 +39,7 @@ class PaymentSocialTipViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
     private lazy var sendTipAction = Action(SendSocialTip.self, httpClient: apiClient)
+    private lazy var getMyPointAction = Action(GetMyPoint.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, input: Input
@@ -47,10 +49,17 @@ class PaymentSocialTipViewModel {
         
         Publishers.MergeMany(
             sendTipAction.elements.map(Output.didSendSocialTip).eraseToAnyPublisher(),
-            sendTipAction.errors.map(Output.reportError).eraseToAnyPublisher()
+            getMyPointAction.elements.map(Output.didGetMyPoint).eraseToAnyPublisher(),
+            sendTipAction.errors.map(Output.reportError).eraseToAnyPublisher(),
+            getMyPointAction.errors.map(Output.reportError)
+                .eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
+    }
+    
+    func viewDidLoad() {
+        getMyPoint()
     }
     
     func didUpdateMessage(message: String?) {
@@ -83,5 +92,10 @@ class PaymentSocialTipViewModel {
         )
         let uri = SendSocialTip.URI()
         sendTipAction.input((request: request, uri: uri))
+    }
+    
+    func getMyPoint() {
+        let uri = GetMyPoint.URI()
+        getMyPointAction.input((request: Empty(), uri: uri))
     }
 }
