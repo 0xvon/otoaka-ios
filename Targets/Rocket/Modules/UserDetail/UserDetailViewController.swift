@@ -12,7 +12,6 @@ import UIComponent
 import Foundation
 import TagListView
 import ImageViewer
-import SCLAlertView
 
 final class UserDetailViewController: UIViewController, Instantiable {
     typealias Input = User
@@ -226,16 +225,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
     func didSendMessageButtonTapped() {
         viewModel.createMessageRoom(partner: viewModel.state.user)
     }
-    
-//    func showSuccess() {
-//        guard let username = dependencyProvider.user.username else { return }
-//        let alertView = SCLAlertView()
-//        let link = "https://rocketfor.band/users/\(username)"
-//        alertView.addButton("リンクをコピー", action: {
-//            UIPasteboard.general.string = link
-//        })
-//        alertView.showSuccess("リンク生成完了", subTitle: "\(link)にアクセスするとweb上であなたのプロフィールを確認することができます！みんなに共有してみましょう！")
-//    }
     
     @objc private func settingButtonTapped(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(

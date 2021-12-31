@@ -98,6 +98,7 @@ final class TextFieldView: UIView {
     
     func keyboardType(_ type: UIKeyboardType = .default) {
         textField.keyboardType = type
+        underLineColor()
     }
 
     func underLineColor() {
@@ -106,6 +107,14 @@ final class TextFieldView: UIView {
             underLine.backgroundColor = Brand.color(for: .text(.primary))
         } else {
             underLine.backgroundColor = Brand.color(for: .brand(.primary))
+        }
+        
+        if textField.keyboardType == .numberPad {
+            textField.rightViewMode = .always
+            let unitLabel = UILabel()
+            unitLabel.textColor = Brand.color(for: .background(.cellSelected))
+            unitLabel.text = "円"
+            textField.rightView = unitLabel
         }
     }
     

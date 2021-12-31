@@ -329,7 +329,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
             .store(in: &cancellables)
         
         socialTipButton.listen { [unowned self] in
-            viewModel.sendSocialTip()
+            let vc = PaymentSocialTipViewController(dependencyProvider: dependencyProvider, input: .group(viewModel.state.group))
+            navigationController?.pushViewController(vc, animated: true)
         }
 
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
@@ -340,7 +341,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     isFollowing: response.isFollowing,
                     followersCount: response.followersCount
                 )
-                socialTipButton.isHidden = !response.group.isEntried
+                socialTipButton.isHidden = false
                 self.setupFloatingItems(displayType: displayType)
                 refreshControl.endRefreshing()
             case .didGetUserTip(let tips):
@@ -404,8 +405,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .didToggleLikeLive:
                 viewModel.refresh()
-            case .didSendSocialTip(let tip):
-                showAlert(title: "チップを送りました！", message: "\(tip.tip)ptでアーティストを応援しました！")
             case .openImage(let content):
                 let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
                 self.present(galleryController, animated: true, completion: nil)

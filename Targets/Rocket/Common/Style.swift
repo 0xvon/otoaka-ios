@@ -25,6 +25,7 @@ enum ShareType {
     case post(Post)
     case group(Group)
     case live(Live)
+    case tip(SocialTip)
 }
 
 extension UIColor {
@@ -158,6 +159,17 @@ extension UIViewController {
             let redirectUrl = "band.rocketfor://ios/lives/\(live.id)"
             shareText = "\(live.title)行く人はOTOAKAに集まれ！！！"
             ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title, redirectUrl: redirectUrl)
+        case .tip(let tip):
+            switch tip.type {
+            case .group(let group):
+                let redirectUrl = "band.rocketfor://ios/groups/\(group.id)"
+                shareText = "\(group.name)に応援したよ！！！"
+                ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name, redirectUrl: redirectUrl)
+            case .live(let live):
+                let redirectUrl = "band.rocketfor://ios/lives/\(live.id)"
+                shareText = "\(live.title)に応援したよ！！！"
+                ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title, redirectUrl: redirectUrl)
+            }
         }
         
         guard let scheme = URL(string: "twitter://post?message=" + "\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n".addingPercentEncoding(withAllowedCharacters: .alphanumerics)!) else { return }
@@ -287,5 +299,16 @@ extension Track {
             artwork: thumbnail,
             trackType: postTrack.type
         )
+    }
+}
+
+extension Int {
+    var toLocale: String? {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = ","
+        formatter.groupingSize = 3
+        formatter.locale = Locale(identifier: "ja_JP")
+        return formatter.string(from: NSNumber(value: self))
     }
 }

@@ -14,6 +14,7 @@ func getSNSShareContent(type: ShareType) -> UIActivityViewController {
     let activityItems: [Any] = {
         switch type {
         case .user(let user): return []
+        case .tip(_): return []
         case .post(let post):
             let shareText: String = "\(post.text)\n\n \(hashTags.joined(separator: " "))"
             guard let live = post.live else { return [shareText] }
