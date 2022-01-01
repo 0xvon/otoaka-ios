@@ -11,11 +11,13 @@ import Endpoint
 import ImageViewer
 import Parchment
 import AppTrackingTransparency
+import SCLAlertView
 
 final class HomeViewController: UIViewController {
     let dependencyProvider: LoggedInDependencyProvider
     private var cancellables: [AnyCancellable] = []
     private let urlSchemeActionViewModel: UrlSchemeActionViewModel
+    private let pointViewModel: PointViewModel
     
     private lazy var searchButton: UIBarButtonItem = UIBarButtonItem(
         image: UIImage(systemName: "magnifyingglass"),
@@ -32,6 +34,7 @@ final class HomeViewController: UIViewController {
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.urlSchemeActionViewModel = UrlSchemeActionViewModel(dependencyProvider: dependencyProvider)
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
         super.init(nibName: nil, bundle: nil)
     }
     required init?(coder: NSCoder) {
@@ -56,6 +59,15 @@ final class HomeViewController: UIViewController {
             case .reportError(let err):
                 print(String(describing: err))
                 showAlert(title: "見つかりませんでした", message: "URLが正しいかお確かめの上再度お試しください")
+            }
+        }
+        .store(in: &cancellables)
+        
+        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .addPoint(_):
+                showSuccess()
+            default: break
             }
         }
         .store(in: &cancellables)
@@ -173,14 +185,32 @@ final class HomeViewController: UIViewController {
     
     private func showWalkThrough() {
         let userDefaults = UserDefaults.standard
-        let key = "walkThroughPresented_v3.1.4.xx"
+        let key = "walkThroughPresented_v3.2.0.\(UUID.init().uuidString)"
         if !userDefaults.bool(forKey: key) {
             let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
-            let nav = BrandNavigationController(rootViewController: vc)
+            let nav = DismissionSubscribableNavigationController(rootViewController: vc)
             present(nav, animated: true, completion: nil)
             userDefaults.setValue(true, forKey: key)
             userDefaults.synchronize()
+            nav.subscribeDismission { [unowned self] in
+                presentPoint()
+            }
         }
+    }
+    
+    private func presentPoint() {
+        let userDefaults = UserDefaults.standard
+        let key = "pointPresented_v3.2.0.\(UUID.init().uuidString)"
+        if !userDefaults.bool(forKey: key) {
+            pointViewModel.addPoint(point: 2000)
+            userDefaults.setValue(true, forKey: key)
+            userDefaults.synchronize()
+        }
+    }
+    
+    private func showSuccess() {
+        let alertView = SCLAlertView()
+        alertView.showSuccess("ポイントプレゼント", subTitle: "1,000ポイント受り取ました！お気に入りのアーティストにチップを投げてみよう！ポイントはアプリ内のシェアボタンからTwitterにシェアすると増えるよ！")
     }
     
     private func actForUrlScheme() {
