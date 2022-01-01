@@ -8,14 +8,17 @@
 import UIKit
 import Endpoint
 import Combine
+import SwiftyStoreKit
+import StoreKit
 
 class PaymentSocialTipViewModel {
     typealias Input = SocialTipType
     struct State {
         var type: SocialTipType
-        var tip: Int = 1000
+        var tip: Int = 0
         var message: String? = "いつも素敵な音楽をありがとう！"
         var isRealMoney: Bool = true
+        var products: [SKProduct] = []
     }
     
     enum PageState {
@@ -24,10 +27,12 @@ class PaymentSocialTipViewModel {
     }
     
     enum Output {
+        case didGetProducts([SKProduct])
         case didGetMyPoint(Int)
         case didSendSocialTip(SocialTip)
         case updateSubmittableState(PageState)
         case reportError(Error)
+        case failedToPay(Error)
     }
     
     let dependencyProvider: LoggedInDependencyProvider
@@ -60,6 +65,7 @@ class PaymentSocialTipViewModel {
     
     func viewDidLoad() {
         getMyPoint()
+        getProducts()
     }
     
     func didUpdateMessage(message: String?) {
@@ -97,5 +103,32 @@ class PaymentSocialTipViewModel {
     func getMyPoint() {
         let uri = GetMyPoint.URI()
         getMyPointAction.input((request: Empty(), uri: uri))
+    }
+    
+    func getProducts() {
+        SwiftyStoreKit.retrieveProductsInfo([
+            "1000_yen",
+            "2000_yen",
+        ]) { [unowned self] result in
+            if let error = result.error {
+                outputSubject.send(.reportError(error))
+            } else {
+                let products = Array(result.retrievedProducts)
+                state.products = products
+                outputSubject.send(.didGetProducts(products))
+            }
+        }
+    }
+    
+    func purchase(_ product: SKProduct) {
+        SwiftyStoreKit.purchaseProduct(product, quantity: 1, atomically: true) { [unowned self] result in
+            switch result {
+            case .success(_):
+                sendTipButtonTapped()
+            case .error(let error):
+                outputSubject.send(.failedToPay(error))
+            }
+        }
+        
     }
 }

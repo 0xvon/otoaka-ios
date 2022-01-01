@@ -99,6 +99,7 @@ PODS:
   - SCLAlertView (0.8)
   - SimpleKeychain (0.12.5)
   - SwiftGen (6.5.1)
+  - SwiftyStoreKit (0.16.1)
   - TagListView (1.4.1)
   - "UITextView+Placeholder (1.4.0)"
   - YoutubePlayer-in-WKWebView (0.3.8)
@@ -122,6 +123,7 @@ DEPENDENCIES:
   - Parchment (~> 3.0.1)
   - SCLAlertView
   - SwiftGen (~> 6.0)
+  - SwiftyStoreKit
   - TagListView (~> 1.0)
   - "UITextView+Placeholder"
   - YoutubePlayer-in-WKWebView (~> 0.3.0)
@@ -158,6 +160,7 @@ SPEC REPOS:
     - SCLAlertView
     - SimpleKeychain
     - SwiftGen
+    - SwiftyStoreKit
     - TagListView
     - "UITextView+Placeholder"
     - YoutubePlayer-in-WKWebView
@@ -198,10 +201,11 @@ SPEC CHECKSUMS:
   SCLAlertView: 6a77bb2edfc65e04dbe57725546cb4107a506b85
   SimpleKeychain: 8193a9e40967eccac933c1fde82de46c07a5ae26
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
+  SwiftyStoreKit: 6b9c08810269f030586dac1fae8e75871a82e84a
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
 
-PODFILE CHECKSUM: 5b66b9285ffbed7e279660a58e99aecf679eddc0
+PODFILE CHECKSUM: b2434a82f89eb5238e683093554f82f3c9ea486a
 
 COCOAPODS: 1.10.1

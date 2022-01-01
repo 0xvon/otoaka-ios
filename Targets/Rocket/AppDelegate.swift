@@ -13,6 +13,7 @@ import Endpoint
 import UserNotifications
 import KeyboardGuide
 import Combine
+import SwiftyStoreKit
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // 起動時はこっちが呼ばれる
         // Override point for customization after application launch.
         KeyboardGuide.shared.activate()
+        setupIAP()
         
         let url: URL? = launchOptions?[.url] as? URL
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -73,6 +75,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .store(in: &cancellables)
         
         registerDeviceToken.input((request: req, uri: RegisterDeviceToken.URI()))
+    }
+    
+    func setupIAP() {
+        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+            for purchase in purchases {
+                switch purchase.transaction.transactionState {
+                case .purchased, .restored:
+                    let downloads = purchase.transaction.downloads
+                    if !downloads.isEmpty {
+                        SwiftyStoreKit.start(downloads)
+                    } else if purchase.needsFinishTransaction {
+                        // Deliver content from server, then:
+                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+                    }
+                    print("\(purchase.transaction.transactionState.debugDescription): \(purchase.productId)")
+                case .failed, .purchasing, .deferred:
+                    break
+                @unknown default:
+                    break
+                }
+            }
+        }
+        
+        SwiftyStoreKit.updatedDownloadsHandler = { downloads in
+            // contentURL is not nil if downloadState == .finished
+            let contentURLs = downloads.compactMap { $0.contentURL }
+            if contentURLs.count == downloads.count {
+                print("Saving: \(contentURLs)")
+                SwiftyStoreKit.finishTransaction(downloads[0].transaction)
+            }
+        }
     }
 
     //    // MARK: UISceneSession Lifecycle

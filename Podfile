@@ -42,6 +42,7 @@ target 'Rocket' do
   pod 'CalculateCalendarLogic'
   pod 'Charts'
   pod 'SCLAlertView'
+  pod 'SwiftyStoreKit'
 
   target 'RocketTests' do
     inherit! :search_paths

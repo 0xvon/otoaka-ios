@@ -1,0 +1,60 @@
+{
+  "identifier" : "4336F7AA",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "1100",
+      "familyShareable" : false,
+      "internalID" : "3E396612",
+      "localizations" : [
+        {
+          "description" : "You can send message to artist",
+          "displayName" : "1000 yen tip",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "アーティストに直接応援メッセージを送信することができます",
+          "displayName" : "1000円チップ",
+          "locale" : "ja"
+        }
+      ],
+      "productID" : "1000_yen",
+      "referenceName" : "1000円",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2200",
+      "familyShareable" : false,
+      "internalID" : "7A3D59C9",
+      "localizations" : [
+        {
+          "description" : "You can send message to artist",
+          "displayName" : "2000 yen tip",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "アーティストに直接応援メッセージを送信することができます",
+          "displayName" : "2000円チップ",
+          "locale" : "ja"
+        }
+      ],
+      "productID" : "2000_yen",
+      "referenceName" : "2000円",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_locale" : "ja",
+    "_storefront" : "JPN"
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 1,
+    "minor" : 1
+  }
+}

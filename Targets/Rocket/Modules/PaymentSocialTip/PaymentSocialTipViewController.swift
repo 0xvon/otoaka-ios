@@ -13,6 +13,7 @@ import KeyboardGuide
 import UITextView_Placeholder
 import TagListView
 import SCLAlertView
+import StoreKit
 
 final class PaymentSocialTipViewController: UIViewController, Instantiable {
     typealias Input = PaymentSocialTipViewModel.Input
@@ -117,9 +118,10 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     private lazy var tipLabel: TextFieldView = {
         let view = TextFieldView(input: (
             section: "金額",
-            text: "1000",
+            text: "0",
             maxLength: 5
         ))
+        view.isUserInteractionEnabled = false
         view.keyboardType(.numberPad)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -231,6 +233,11 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
+            case .didGetProducts(let products):
+                guard let defaultTip = products.first?.price.intValue else { return }
+                templateTipList.addTags(products.map { String($0.price.intValue) })
+                tipLabel.setText(text: String(defaultTip))
+                viewModel.didUpdateTip(tip: defaultTip)
             case .didGetMyPoint(let point):
                 pointLabel.text = "ポイントを使う(\(point)pt)"
             case .updateSubmittableState(let state):
@@ -247,6 +254,9 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
             case .reportError(let err):
                 print(String(describing: err))
                 showAlert()
+            case .failedToPay(let err):
+                print(String(describing: err))
+                showAlert(title: "決済失敗", message: "支払いに失敗しました")
             }
         }
         .store(in: &cancellables)
@@ -298,12 +308,12 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
             "大好きです！",
         ])
         
-        templateTipList.addTags([
-            "1000",
-            "2000",
-            "5000",
-            "10000",
-        ])
+//        templateTipList.addTags([
+//            "1000",
+//            "2000",
+//            "5000",
+//            "10000",
+//        ])
         
         switch viewModel.state.type {
         case .group(let group):
@@ -319,7 +329,6 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
                 imagePipeline: dependencyProvider.imagePipeline
             ))
         }
-//        pointLabel.text = "ポイントを使う(\(dependencyProvider.user.point)pt)"
     }
     
     @objc private func switchButtonTapped() {
@@ -343,7 +352,8 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     
     private func pay() {
         // TODO
-        viewModel.sendTipButtonTapped()
+        guard let product = viewModel.state.products.filter { $0.price.intValue == viewModel.state.tip }.first else { return }
+        viewModel.purchase(product)
     }
     
     private func showSuccessPopup(tip: SocialTip) {
