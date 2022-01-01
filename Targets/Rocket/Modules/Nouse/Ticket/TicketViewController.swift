@@ -142,7 +142,7 @@ extension TicketViewController: UITableViewDelegate, UITableViewDataSource {
         let emptyCollectionView: EmptyCollectionView = {
             let emptyCollectionView = EmptyCollectionView(emptyType: .ticket, actionButtonTitle: "バンドを探す")
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-            emptyCollectionView.listen {
+            emptyCollectionView.listen { [unowned self] in
                 self.didSearchButtonTapped()
             }
             return emptyCollectionView

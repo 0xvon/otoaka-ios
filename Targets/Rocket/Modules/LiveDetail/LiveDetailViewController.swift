@@ -483,4 +483,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         let group = viewModel.state.live.performers[cellIndex]
         viewModel.didSelectRow(at: .performers(group))
     }
+    
+    deinit {
+        print("LiveDetailVC.deinit")
+    }
 }

@@ -113,7 +113,7 @@ public final class EmptyCollectionView: UIStackView {
         let bottomSpacer = UIView()
         addArrangedSubview(bottomSpacer)
         
-        button.listen {
+        button.listen { [unowned self] in
             self.listener()
         }
     }

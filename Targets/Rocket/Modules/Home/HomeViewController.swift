@@ -210,7 +210,7 @@ final class HomeViewController: UIViewController {
     
     private func showSuccess() {
         let alertView = SCLAlertView()
-        alertView.showSuccess("ポイントプレゼント", subTitle: "1,000ポイント受り取ました！お気に入りのアーティストにチップを投げてみよう！ポイントはアプリ内のシェアボタンからTwitterにシェアすると増えるよ！")
+        alertView.showSuccess("ポイントプレゼント", subTitle: "2,000ポイント受り取ました！お気に入りのアーティストにチップを投げてみよう！ポイントはアプリ内のシェアボタンからTwitterにシェアすると増えるよ！")
     }
     
     private func actForUrlScheme() {

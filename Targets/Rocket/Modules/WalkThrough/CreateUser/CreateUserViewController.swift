@@ -324,7 +324,7 @@ final class CreateUserViewController: UIViewController, Instantiable {
         }
         .store(in: &cancellables)
         
-        displayNameInputView.listen {
+        displayNameInputView.listen { [unowned self] in
             self.didInputValue()
         }
         

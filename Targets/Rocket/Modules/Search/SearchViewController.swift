@@ -129,10 +129,10 @@ final class SearchViewController: UIViewController {
     }
 
     func bind() {
-        viewModel.output.receive(on: DispatchQueue.main).sink { [weak self] output in
+        viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .updateSearchResult(let input):
-                self?.searchResultController.inject(input)
+                self.searchResultController.inject(input)
             }
         }.store(in: &cancellables)
     }
@@ -150,6 +150,10 @@ final class SearchViewController: UIViewController {
     @objc private func userCategoryTapped() {
         let vc = SearchUserViewController(dependencyProvider: dependencyProvider)
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    deinit {
+        print("SearchVC.deinit")
     }
 }
 

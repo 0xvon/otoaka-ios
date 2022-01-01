@@ -109,7 +109,7 @@ extension PerformanceRequestViewController: UITableViewDelegate, UITableViewData
         let emptyCollectionView: EmptyCollectionView = {
             let emptyCollectionView = EmptyCollectionView(emptyType: .request, actionButtonTitle: "バンドを探す")
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
-            emptyCollectionView.listen {
+            emptyCollectionView.listen { [unowned self] in
                 self.didSearchButtonTapped()
             }
             return emptyCollectionView

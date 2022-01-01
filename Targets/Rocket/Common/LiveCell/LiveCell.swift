@@ -51,6 +51,10 @@ class LiveCell: UITableViewCell, ReusableCell {
         alpha = highlighted ? 0.6 : 1.0
         _contentView.alpha = highlighted ? 0.6 : 1.0
     }
+    
+    deinit {
+        print("LiveCell.deinit")
+    }
 }
 
 class LiveCellContent: UIButton {

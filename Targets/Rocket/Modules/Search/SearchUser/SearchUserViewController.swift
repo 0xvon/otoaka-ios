@@ -91,6 +91,10 @@ final class SearchUserViewController: UITableViewController {
         self.refreshControl?.beginRefreshing()
         viewModel.refresh()
     }
+    
+    deinit {
+        print("SearchUserViewController.deinit")
+    }
 }
 
 extension SearchUserViewController: UISearchBarDelegate {

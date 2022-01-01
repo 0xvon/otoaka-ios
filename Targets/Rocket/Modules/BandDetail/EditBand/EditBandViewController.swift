@@ -196,33 +196,33 @@ final class EditBandViewController: UIViewController, Instantiable {
         }
         .store(in: &cancellables)
         
-        displayNameInputView.listen {
+        displayNameInputView.listen { [unowned self] in
             self.didInputValue()
         }
         
-        englishNameInputView.listen {
+        englishNameInputView.listen { [unowned self] in
             self.didInputValue()
         }
         
-        biographyInputView.listen {
+        biographyInputView.listen { [unowned self] in
             self.didInputValue()
         }
         
-        sinceInputView.listen {
+        sinceInputView.listen { [unowned self] in
             self.sinceInputView.setText(text: self.viewModel.state.socialInputs.years[self.sincePickerView.selectedRow(inComponent: 0)])
             self.didInputValue()
         }
         
-        hometownInputView.listen {
+        hometownInputView.listen { [unowned self] in
             self.hometownInputView.setText(text: self.viewModel.state.socialInputs.prefectures[self.hometownPickerView.selectedRow(inComponent: 0)])
             self.didInputValue()
         }
         
-        youTubeIdInputView.listen {
+        youTubeIdInputView.listen { [unowned self] in
             self.didInputValue()
         }
         
-        twitterIdInputView.listen {
+        twitterIdInputView.listen { [unowned self] in
             self.didInputValue()
         }
     }

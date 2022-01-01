@@ -546,6 +546,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
         vc.title = "フォロワー"
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
+    deinit {
+        print("BandDetailVC.deinit")
+    }
 }
 
 extension BandDetailViewController: UITextFieldDelegate {
