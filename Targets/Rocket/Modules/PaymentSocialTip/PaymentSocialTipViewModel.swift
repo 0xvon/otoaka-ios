@@ -107,13 +107,17 @@ class PaymentSocialTipViewModel {
     
     func getProducts() {
         SwiftyStoreKit.retrieveProductsInfo([
+            "600_yen",
             "1000_yen",
             "2000_yen",
+            "10000_yen",
         ]) { [unowned self] result in
             if let error = result.error {
                 outputSubject.send(.reportError(error))
             } else {
-                let products = Array(result.retrievedProducts)
+                let products = Array(result.retrievedProducts).sorted {
+                    $0.price.intValue < $1.price.intValue
+                }
                 state.products = products
                 outputSubject.send(.didGetProducts(products))
             }

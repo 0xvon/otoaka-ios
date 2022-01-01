@@ -11,17 +11,17 @@
       "localizations" : [
         {
           "description" : "You can send message to artist",
-          "displayName" : "1000 yen tip",
+          "displayName" : "1100 yen tip",
           "locale" : "en_US"
         },
         {
           "description" : "アーティストに直接応援メッセージを送信することができます",
-          "displayName" : "1000円チップ",
+          "displayName" : "1100円チップ",
           "locale" : "ja"
         }
       ],
       "productID" : "1000_yen",
-      "referenceName" : "1000円",
+      "referenceName" : "1100円",
       "type" : "Consumable"
     },
     {
@@ -31,17 +31,57 @@
       "localizations" : [
         {
           "description" : "You can send message to artist",
-          "displayName" : "2000 yen tip",
+          "displayName" : "2200 yen tip",
           "locale" : "en_US"
         },
         {
           "description" : "アーティストに直接応援メッセージを送信することができます",
-          "displayName" : "2000円チップ",
+          "displayName" : "2200円チップ",
           "locale" : "ja"
         }
       ],
       "productID" : "2000_yen",
-      "referenceName" : "2000円",
+      "referenceName" : "2200円",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "610",
+      "familyShareable" : false,
+      "internalID" : "13163FD4",
+      "localizations" : [
+        {
+          "description" : "You can send message to artist",
+          "displayName" : "610 yen tip",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "アーティストに直接応援メッセージを送信することができます",
+          "displayName" : "610円チップ",
+          "locale" : "ja"
+        }
+      ],
+      "productID" : "600_yen",
+      "referenceName" : "610円",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "10000",
+      "familyShareable" : false,
+      "internalID" : "147E97A3",
+      "localizations" : [
+        {
+          "description" : "You can send message to artist",
+          "displayName" : "11000 yen tip",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "アーティストに直接応援メッセージを送信することができます",
+          "displayName" : "10000円チップ",
+          "locale" : "ja"
+        }
+      ],
+      "productID" : "10000_yen",
+      "referenceName" : "10000円",
       "type" : "Consumable"
     }
   ],
