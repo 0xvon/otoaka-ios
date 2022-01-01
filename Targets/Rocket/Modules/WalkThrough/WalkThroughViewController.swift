@@ -54,9 +54,10 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
     let titles = [
         "好きなアーティストをフォロー",
         "参戦する/したライブを探してチェック",
-        "プロフィール完成",
+        "プロフィールを作成",
         "ライブ予定を友達にシェア",
-        "ライブプロフィールを活用"
+        "アーティストを応援",
+        "ポイントを増やす",
     ]
         
     override func viewDidLoad() {
@@ -76,9 +77,10 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
         let vc2 = SearchLiveViewController(dependencyProvider: dependencyProvider)
         let vc3 = AppDescriptionViewController(input: (description: "あとはプロフィールを設定すれば完成！", imageName: "ss_stats"))
         let vc4 = AppDescriptionViewController(input: (description: "ホームに直近のライブが表示され、参戦予定の友達がひと目で分かるよ！！！友達をOTOAKAに誘って繋がってみてね！！！！", imageName: "ss_home"))
-        let vc5 = AppDescriptionViewController(input: (description: "ユーザーネームを設定するとあなたのプロフィールリンクが作成されて友達にシェアできるよ！名刺代わりに使ってみてね！\nさあOTOAKAを始めよう！", imageName: "ss_username"))
+        let vc5 = AppDescriptionViewController(input: (description: "アーティストに応援メッセージと共に直接チップを投げることができるよ！チップはApple Payかポイントから送れるよ！！", imageName: "ss_tip"))
+        let vc6 = AppDescriptionViewController(input: (description: "ポイントは色んなページの右上にあるシェアボタンからツイッターでシェアすると増えるよ！", imageName: "ss_share"))
         
-        let vcs = [vc1, vc2, vc3, vc4, vc5]
+        let vcs = [vc1, vc2, vc3, vc4, vc5, vc6]
         vcs.forEach { add(viewController: $0) }
         
         self.view.addSubview(_prevButton)
@@ -116,8 +118,8 @@ final class WalkThroughViewController: BWWalkthroughViewController, BWWalkthroug
     
     func walkthroughPageDidChange(_ pageNumber: Int) {
         _prevButton.isHidden = pageNumber == 0
-        _nextButton.isHidden = pageNumber == 4
-        navigationItem.rightBarButtonItem = pageNumber == 4 ? UIBarButtonItem(customView: _closeButton) : nil
+        _nextButton.isHidden = pageNumber == 5
+        navigationItem.rightBarButtonItem = pageNumber == 5 ? UIBarButtonItem(customView: _closeButton) : nil
         
         title = titles[pageNumber]
     }
