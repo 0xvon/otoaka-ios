@@ -351,9 +351,10 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     }
     
     private func pay() {
-        // TODO
         guard let product = viewModel.state.products.filter { $0.price.intValue == viewModel.state.tip }.first else { return }
-        viewModel.purchase(product)
+        showAlert(title: "購入確認", message: "\(viewModel.state.tip)円でチップを購入しますか？") { [unowned self] in
+            viewModel.purchase(product)
+        }
     }
     
     private func showSuccessPopup(tip: SocialTip) {

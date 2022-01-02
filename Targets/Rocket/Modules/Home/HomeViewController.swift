@@ -185,7 +185,7 @@ final class HomeViewController: UIViewController {
     
     private func showWalkThrough() {
         let userDefaults = UserDefaults.standard
-        let key = "walkThroughPresented_v3.2.0.\(UUID.init().uuidString)"
+        let key = "walkThroughPresented_v3.2.0.r"
         if !userDefaults.bool(forKey: key) {
             let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
             let nav = DismissionSubscribableNavigationController(rootViewController: vc)
@@ -200,7 +200,7 @@ final class HomeViewController: UIViewController {
     
     private func presentPoint() {
         let userDefaults = UserDefaults.standard
-        let key = "pointPresented_v3.2.0.\(UUID.init().uuidString)"
+        let key = "pointPresented_v3.2.0.r"
         if !userDefaults.bool(forKey: key) {
             pointViewModel.addPoint(point: 2000)
             userDefaults.setValue(true, forKey: key)

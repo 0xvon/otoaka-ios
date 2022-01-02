@@ -121,13 +121,17 @@ extension UIImage {
 }
 
 extension UIViewController {
-    func showAlert(title: String = "（’・_・｀）", message: String = "ネットワークエラーが発生しました。時間をおいて再度お試しください。") {
+    func showAlert(title: String = "（’・_・｀）", message: String = "ネットワークエラーが発生しました。時間をおいて再度お試しください。", callback: (() -> Void)? = nil) {
         let alertController = UIAlertController(
             title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         
         let cancelAction = UIAlertAction(
             title: "OK", style: UIAlertAction.Style.cancel,
-            handler: { action in })
+            handler: { action in
+                if let callback = callback {
+                    callback()
+                }
+            })
         alertController.addAction(cancelAction)
         alertController.popoverPresentationController?.sourceView = self.view
         alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
