@@ -66,7 +66,7 @@ final class HomeViewController: UIViewController {
         pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .addPoint(_):
-                showSuccess()
+                self.showSuccessToGetPoint(2000)
             default: break
             }
         }
@@ -206,11 +206,6 @@ final class HomeViewController: UIViewController {
             userDefaults.setValue(true, forKey: key)
             userDefaults.synchronize()
         }
-    }
-    
-    private func showSuccess() {
-        let alertView = SCLAlertView()
-        alertView.showSuccess("ポイントプレゼント", subTitle: "2,000ポイント受り取ました！お気に入りのアーティストにチップを投げてみよう！ポイントはアプリ内のシェアボタンからTwitterにシェアすると増えるよ！")
     }
     
     private func actForUrlScheme() {

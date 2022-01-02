@@ -385,6 +385,14 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         }
         .store(in: &cancellables)
         
+        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .addPoint(_): self.showSuccessToGetPoint(500)
+            default: break
+            }
+        }
+        .store(in: &cancellables)
+        
         refreshControl.controlEventPublisher(for: .valueChanged)
             .sink { [viewModel] _ in
                 viewModel.refresh()
@@ -459,6 +467,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func likeButtonTapped() {
+        guard let isLiked = viewModel.state.liveDetail?.isLiked else { return }
+        isLiked
+            ? pointViewModel.usePoint(point: 500)
+            : pointViewModel.addPoint(point: 500)
         likeButton.isEnabled = false
         viewModel.likeButtonTapped()
     }

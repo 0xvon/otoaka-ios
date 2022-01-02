@@ -9,6 +9,7 @@ import UIKit
 import InternalDomain
 import Endpoint
 import Foundation
+import SCLAlertView
 
 let per = 20
 let textFieldHeight: CGFloat = 60
@@ -131,6 +132,11 @@ extension UIViewController {
         alertController.popoverPresentationController?.sourceView = self.view
         alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func showSuccessToGetPoint(_ point: Int) {
+        let alertView = SCLAlertView()
+        alertView.showSuccess("ポイントGET", subTitle: "\(point)ポイント受り取ました！お気に入りのアーティストにチップを投げてみよう！")
     }
     
     func downloadImage(image: UIImage) {

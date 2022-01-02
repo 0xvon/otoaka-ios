@@ -39,6 +39,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         let followButton = ToggleButton()
         followButton.setTitle("フォローする", selected: false)
         followButton.setTitle("フォロー中", selected: true)
+        followButton.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
         return followButton
     }()
     private let socialTipButton: PrimaryButton = {
@@ -323,10 +324,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
             }
         }
         .store(in: &cancellables)
-
-        followButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: followingViewModel.didButtonTapped)
-            .store(in: &cancellables)
+        
+        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .addPoint(_): self.showSuccessToGetPoint(500)
+            default: break
+            }
+        }
+        .store(in: &cancellables)
         
         socialTipButton.listen { [unowned self] in
             let vc = PaymentSocialTipViewController(dependencyProvider: dependencyProvider, input: .group(viewModel.state.group))
@@ -495,6 +500,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
         })
 
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    @objc func followButtonTapped() {
+        guard let isFollowing = followingViewModel.state.isFollowing else { return }
+         isFollowing
+            ? pointViewModel.usePoint(point: 500)
+            : pointViewModel.addPoint(point: 500)
+        followingViewModel.didButtonTapped()
     }
 
     @objc func editGroup() {

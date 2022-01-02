@@ -195,11 +195,13 @@ final class PostViewController: UIViewController, Instantiable {
     
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: PostViewModel
+    let pointViewModel: PointViewModel
     var cancellables: Set<AnyCancellable> = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = PostViewModel(dependencyProvider: dependencyProvider, input: input)
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -229,7 +231,7 @@ final class PostViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didPost(_):
-                navigationController?.popToRootViewController(animated: true)
+                pointViewModel.addPoint(point: 1000)
             case .updateSubmittableState(let pageState):
                 switch pageState {
                 case .editting(let submittable):
@@ -257,6 +259,16 @@ final class PostViewController: UIViewController, Instantiable {
                 imageGalleryView.isHidden = viewModel.state.images.isEmpty
             }
         }.store(in: &cancellables)
+        
+        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .addPoint(_):
+                self.showSuccessToGetPoint(1000)
+                navigationController?.popToRootViewController(animated: true)
+            default: break
+            }
+        }
+        .store(in: &cancellables)
         
         imageGalleryView.listen { [unowned self] index in
             uploadedImageTapped(at: index)
