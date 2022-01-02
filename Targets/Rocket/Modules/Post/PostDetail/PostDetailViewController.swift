@@ -314,7 +314,7 @@ final class PostDetailViewController: UIViewController, Instantiable {
                 alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
                 self.present(alertController, animated: true, completion: nil)
             case .didDeletePost:
-                viewModel.refresh()
+                navigationController?.popViewController(animated: true)
             case .didToggleLikePost:
                 viewModel.refresh()
             case .pushToCommentList(let input):
