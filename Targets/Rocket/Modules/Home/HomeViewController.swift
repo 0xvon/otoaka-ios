@@ -12,6 +12,7 @@ import ImageViewer
 import Parchment
 import AppTrackingTransparency
 import SCLAlertView
+import Instructions
 
 final class HomeViewController: UIViewController {
     let dependencyProvider: LoggedInDependencyProvider
@@ -25,12 +26,18 @@ final class HomeViewController: UIViewController {
         target: self,
         action: #selector(searchButtonTapped)
     )
-    private lazy var postButton: UIBarButtonItem = UIBarButtonItem(
-        image: UIImage(systemName: "plus"),
-        style: .plain,
-        target: self,
-        action: #selector(createPostButtonTapped)
-    )
+//    private lazy var postButton: UIBarButtonItem = UIBarButtonItem(
+//        image: UIImage(systemName: "plus"),
+//        style: .plain,
+//        target: self,
+//        action: #selector(createPostButtonTapped)
+//    )
+    
+    private let coachMarksController = CoachMarksController()
+    private lazy var coachSteps: [CoachStep] = [
+        CoachStep(view: searchButton.value(forKey: "view") as! UIView, hint: "このページにはみんなのsnack(差し入れ)が表示されるよ！\nsnackをすると自分のファン度が高まったりライブでかけがえのない体験に変わるよ！\n試しにアーティストを探してsnackしてみよう！", next: "ok"),
+    ]
+    
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.urlSchemeActionViewModel = UrlSchemeActionViewModel(dependencyProvider: dependencyProvider)
@@ -78,15 +85,18 @@ final class HomeViewController: UIViewController {
         self.title = "ホーム"
         navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
+        coachMarksController.dataSource = self
+        coachMarksController.delegate = self
         
         navigationItem.setRightBarButtonItems([
             searchButton,
-            postButton,
+//            postButton,
         ], animated: false)
         
         setPagingViewController()
         requestNotification()
-        showWalkThrough()
+//        showWalkThrough()
+        presentPoint()
         if #available(iOS 14, *) {
             checkTrackingAuthorizationStatus()
         }
@@ -100,12 +110,30 @@ final class HomeViewController: UIViewController {
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        #if PRODUCTION
+        let userDefaults = UserDefaults.standard
+        let key = "HomeVCPresented_v3.2.0.r"
+        if !userDefaults.bool(forKey: key) {
+            coachMarksController.start(in: .currentWindow(of: self))
+            userDefaults.setValue(true, forKey: key)
+            userDefaults.synchronize()
+        }
+        #else
+        coachMarksController.start(in: .currentWindow(of: self))
+        #endif
+    }
+    
     private func setPagingViewController() {
+        let vc0 = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .allTip)
         let vc1 = PostListViewController(dependencyProvider: dependencyProvider, input: .followingPost)
-        let vc2 = PostListViewController(dependencyProvider: dependencyProvider, input: .trendPost)
+//        let vc2 = PostListViewController(dependencyProvider: dependencyProvider, input: .trendPost)
         let pagingViewController = PagingViewController(viewControllers: [
+            vc0,
             vc1,
-            vc2,
+//            vc2,
         ])
         self.addChild(pagingViewController)
         self.view.addSubview(pagingViewController.view)
@@ -183,22 +211,23 @@ final class HomeViewController: UIViewController {
     func updateTrackingAuthorizationStatus(_ b: Bool) {
     }
     
-    private func showWalkThrough() {
-        let userDefaults = UserDefaults.standard
-        let key = "walkThroughPresented_v3.2.0.r"
-        if !userDefaults.bool(forKey: key) {
-            let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
-            let nav = DismissionSubscribableNavigationController(rootViewController: vc)
-            present(nav, animated: true, completion: nil)
-            userDefaults.setValue(true, forKey: key)
-            userDefaults.synchronize()
-            nav.subscribeDismission { [unowned self] in
-                presentPoint()
-            }
-        }
-    }
+//    private func showWalkThrough() {
+//        let userDefaults = UserDefaults.standard
+//        let key = "walkThroughPresented_v3.2.0.r\(UUID.init().uuidString)"
+//        if !userDefaults.bool(forKey: key) {
+//            let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
+//            let nav = DismissionSubscribableNavigationController(rootViewController: vc)
+//            present(nav, animated: true, completion: nil)
+//            userDefaults.setValue(true, forKey: key)
+//            userDefaults.synchronize()
+//            nav.subscribeDismission { [unowned self] in
+//                presentPoint()
+//            }
+//        }
+//    }
     
     private func presentPoint() {
+        #if PRODUCTION
         let userDefaults = UserDefaults.standard
         let key = "pointPresented_v3.2.0.r"
         if !userDefaults.bool(forKey: key) {
@@ -206,6 +235,9 @@ final class HomeViewController: UIViewController {
             userDefaults.setValue(true, forKey: key)
             userDefaults.synchronize()
         }
+        #else
+        pointViewModel.addPoint(point: 2000)
+        #endif
     }
     
     private func actForUrlScheme() {
@@ -214,10 +246,10 @@ final class HomeViewController: UIViewController {
         }
     }
     
-    @objc private func createPostButtonTapped() {
-        let vc = SearchLiveViewController(dependencyProvider: dependencyProvider)
-        navigationController?.pushViewController(vc, animated: true)
-    }
+//    @objc private func createPostButtonTapped() {
+//        let vc = SearchLiveViewController(dependencyProvider: dependencyProvider)
+//        navigationController?.pushViewController(vc, animated: true)
+//    }
     
     @objc private func searchButtonTapped() {
         let vc = SearchViewController(dependencyProvider: dependencyProvider)
@@ -232,5 +264,25 @@ extension HomeViewController: UNUserNotificationCenterDelegate {
         } else {
             completionHandler([.alert, .sound, .badge])
         }
+    }
+}
+
+extension HomeViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return coachSteps.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachStep = self.coachSteps[index]
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
+        
+        coachViews.bodyView.hintLabel.text = coachStep.hint
+        coachViews.bodyView.nextLabel.text = coachStep.next
+        
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
 }

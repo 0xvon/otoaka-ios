@@ -9,6 +9,7 @@ import UIKit
 import DomainEntity
 import UIComponent
 import Combine
+import Instructions
 
 final class SearchLiveViewController: UIViewController {
     let dependencyProvider: LoggedInDependencyProvider
@@ -124,6 +125,12 @@ final class SearchLiveViewController: UIViewController {
         return button
     }()
     
+    private let coachMarksController = CoachMarksController()
+    private lazy var coachSteps: [CoachStep] = [
+        CoachStep(view: dateCategoryButton, hint: "日付を指定して検索できるよ！", next: "ok"),
+        CoachStep(view: artistCategoryButton, hint: "アーティストを指定して検索できるよ！", next: "ok"),
+    ]
+    
     let viewModel: SearchLiveViewModel
     private var cancellables: [AnyCancellable] = []
 
@@ -153,6 +160,9 @@ final class SearchLiveViewController: UIViewController {
             filterStackView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 44),
         ])
         
+        coachMarksController.delegate = self
+        coachMarksController.dataSource = self
+        
         bind()
     }
     
@@ -160,6 +170,22 @@ final class SearchLiveViewController: UIViewController {
         super.viewWillAppear(animated)
         searchController.searchBar.showsScopeBar = true
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        #if PRODUCTION
+        let userDefaults = UserDefaults.standard
+        let key = "SearchLiveVCPresented_v3.2.0.r"
+        if !userDefaults.bool(forKey: key) {
+            coachMarksController.start(in: .currentWindow(of: self))
+            userDefaults.setValue(true, forKey: key)
+            userDefaults.synchronize()
+        }
+        #else
+        coachMarksController.start(in: .currentWindow(of: self))
+        #endif
     }
     
     func bind() {
@@ -223,5 +249,25 @@ extension SearchLiveViewController: UISearchControllerDelegate {
     }
     
     func willDismissSearchController(_ searchController: UISearchController) {
+    }
+}
+
+extension SearchLiveViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return coachSteps.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachStep = self.coachSteps[index]
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
+        
+        coachViews.bodyView.hintLabel.text = coachStep.hint
+        coachViews.bodyView.nextLabel.text = coachStep.next
+        
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
 }

@@ -11,6 +11,7 @@ import SafariServices
 import UIComponent
 import InternalDomain
 import ImageViewer
+import Instructions
 
 final class BandDetailViewController: UIViewController, Instantiable {
     typealias Input = Group
@@ -45,7 +46,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private let socialTipButton: PrimaryButton = {
         let button = PrimaryButton(text: "")
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("チップ", for: .normal)
+        button.setTitle("snack", for: .normal)
         button.layer.cornerRadius = 24
         button.isHidden = true
         return button
@@ -83,7 +84,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
-    private let userTipSectionHeader = SummarySectionHeader(title: "応援されたファン")
+    private let userTipSectionHeader = SummarySectionHeader(title: "snackしたファン")
     private lazy var userTipContent: UserTipRankingCollectionView = {
         let content = UserTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
         content.translatesAutoresizingMaskIntoConstraints = false
@@ -106,7 +107,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
         ])
         return paddingView
     }
-
+    private let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare))
+    private let coachMarksController = CoachMarksController()
+    private lazy var coachSteps: [CoachStep] = [
+        CoachStep(view: followButton, hint: "好きなアーティストをフォローしましょう！フォローするといいことがたくさんあります！", next: "ok"),
+        CoachStep(view: shareButton.value(forKey: "view") as! UIView, hint: "オススメのアーティストをTwitterで宣伝しよう！", next: "ok"),
+        CoachStep(view: socialTipButton, hint: "アーティストに直接snack(差し入れ)できます！試しにsnackしてみよう！", next: "ok"),
+    ]
+    
     private let refreshControl = BrandRefreshControl()
 
     let dependencyProvider: LoggedInDependencyProvider
@@ -140,6 +148,22 @@ final class BandDetailViewController: UIViewController, Instantiable {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         viewModel.viewDidLoad()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        #if PRODUCTION
+        let userDefaults = UserDefaults.standard
+        let key = "BandDetailVCPresented_v3.2.0.r"
+        if !userDefaults.bool(forKey: key) {
+            coachMarksController.start(in: .currentWindow(of: self))
+            userDefaults.setValue(true, forKey: key)
+            userDefaults.synchronize()
+        }
+        #else
+        coachMarksController.start(in: .currentWindow(of: self))
+        #endif
     }
 
     override func loadView() {
@@ -216,13 +240,15 @@ final class BandDetailViewController: UIViewController, Instantiable {
         super.viewDidLoad()
 
         navigationItem.setRightBarButton(
-            UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare)),
+            shareButton,
             animated: false
         )
         setupViews()
         bind()
 
         followingViewModel.viewDidLoad()
+        coachMarksController.dataSource = self
+        coachMarksController.delegate = self
     }
 
     func bind() {
@@ -571,5 +597,25 @@ extension BandDetailViewController: UITextFieldDelegate {
         replacementString string: String
     ) -> Bool {
         return false
+    }
+}
+
+extension BandDetailViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return coachSteps.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachStep = self.coachSteps[index]
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
+        
+        coachViews.bodyView.hintLabel.text = coachStep.hint
+        coachViews.bodyView.nextLabel.text = coachStep.next
+        
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
 }

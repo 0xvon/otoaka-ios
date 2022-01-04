@@ -11,6 +11,7 @@ import SafariServices
 import UIComponent
 import UIKit
 import ImageViewer
+import Instructions
 
 final class LiveDetailViewController: UIViewController, Instantiable {
     typealias Input = Live
@@ -115,6 +116,10 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         return paddingView
     }
     
+    private let coachMarksController = CoachMarksController()
+    private lazy var coachSteps: [CoachStep] = [
+        CoachStep(view: likeButton, hint: "行く/行ったライブをチェックしよう！チェックしたライブはプロフィールに記録されます！", next: "ok"),
+    ]
     private let refreshControl = BrandRefreshControl()
     
     let dependencyProvider: LoggedInDependencyProvider
@@ -144,6 +149,22 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
         viewModel.viewDidLoad()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        #if PRODUCTION
+        let userDefaults = UserDefaults.standard
+        let key = "LiveDetailVCPresented_v3.2.0.r"
+        if !userDefaults.bool(forKey: key) {
+            coachMarksController.start(in: .currentWindow(of: self))
+            userDefaults.setValue(true, forKey: key)
+            userDefaults.synchronize()
+        }
+        #else
+        coachMarksController.start(in: .currentWindow(of: self))
+        #endif
     }
     
     override func loadView() {
@@ -216,6 +237,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         )
         bind()
         
+        coachMarksController.dataSource = self
+        coachMarksController.delegate = self
     }
     
     func bind() {
@@ -498,5 +521,25 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     deinit {
         print("LiveDetailVC.deinit")
+    }
+}
+
+extension LiveDetailViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return coachSteps.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachStep = self.coachSteps[index]
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
+        
+        coachViews.bodyView.hintLabel.text = coachStep.hint
+        coachViews.bodyView.nextLabel.text = coachStep.next
+        
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
 }

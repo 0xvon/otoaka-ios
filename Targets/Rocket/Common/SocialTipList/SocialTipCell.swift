@@ -86,6 +86,7 @@ class SocialTipCellContent: UIButton {
         stackView.addArrangedSubview(userNameLabel)
         stackView.addArrangedSubview(countLabel)
         stackView.addArrangedSubview(dateLabel)
+        stackView.addArrangedSubview(textView)
         let spacer = UIView()
         spacer.backgroundColor = .clear
         stackView.addArrangedSubview(spacer)
@@ -117,6 +118,19 @@ class SocialTipCellContent: UIButton {
         label.textColor = Brand.color(for: .background(.secondary))
         return label
     }()
+    private lazy var textView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.isUserInteractionEnabled = false
+        textView.isScrollEnabled = false
+        textView.font = Brand.font(for: .medium)
+        textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        textView.textContainer.lineFragmentPadding = 0
+        textView.textAlignment = .left
+        textView.backgroundColor = Brand.color(for: .background(.primary))
+        textView.textColor = Brand.color(for: .text(.primary))
+        return textView
+    }()
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
     }
@@ -142,8 +156,9 @@ class SocialTipCellContent: UIButton {
             }
             userNameLabel.text = live.title
         }
-        countLabel.text = "\(input.tip.tip)pt"
+        countLabel.text = "\(input.tip.tip)snacks"
         dateLabel.text = input.tip.thrownAt.toFormatString(format: "yyyy/MM/dd")
+        textView.text = input.tip.message
     }
     
     func setup() {

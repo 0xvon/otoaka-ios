@@ -82,6 +82,7 @@ PODS:
   - InputBarAccessoryView (5.4.0):
     - InputBarAccessoryView/Core (= 5.4.0)
   - InputBarAccessoryView/Core (5.4.0)
+  - Instructions (2.1.1)
   - JWTDecode (2.6.3)
   - KeyboardGuide (0.2.0)
   - KeychainAccess (4.2.2)
@@ -115,6 +116,7 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - FSCalendar
   - ImageViewer
+  - Instructions (~> 2.1.1)
   - KeyboardGuide (from `./KeyboardGuide.podspec`)
   - KeychainAccess
   - LicensePlist
@@ -149,6 +151,7 @@ SPEC REPOS:
     - GoogleUtilities
     - ImageViewer
     - InputBarAccessoryView
+    - Instructions
     - JWTDecode
     - KeychainAccess
     - LicensePlist
@@ -189,6 +192,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
   ImageViewer: cb88ef1c0ba19161bc10702adfdcebc116a7a59d
   InputBarAccessoryView: 74d471ab1fa1736806be50328df79257e52865a9
+  Instructions: bde4a699f27e8e43d20efa3508e5bc53215d0879
   JWTDecode: 33e5e26e5ddbd21b2065820894c08fef0cad9509
   KeyboardGuide: 24db03df5ae874e6ece4a01ae3e8ca7648c4cd1a
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
@@ -206,6 +210,6 @@ SPEC CHECKSUMS:
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
 
-PODFILE CHECKSUM: b2434a82f89eb5238e683093554f82f3c9ea486a
+PODFILE CHECKSUM: 30b85ca12abe5e67f684e86cb49aba53e3bbf132
 
 COCOAPODS: 1.10.1

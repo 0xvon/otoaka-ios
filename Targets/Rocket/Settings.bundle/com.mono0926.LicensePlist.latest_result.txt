@@ -168,6 +168,14 @@ body:
 The MIT License (MI…
 version: 5.4.0
 
+name: Instructions, nameSpecified: 
+body: The MIT License (MIT…
+version: 2.1.1
+
+name: Instructions, nameSpecified: 
+body: The MIT License (MIT…
+version: 2.1.1
+
 name: JWTDecode, nameSpecified: 
 body: The MIT License (MIT…
 version: 2.6.3

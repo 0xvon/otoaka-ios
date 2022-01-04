@@ -8,6 +8,7 @@
 import UIKit
 import UIComponent
 import Combine
+import Instructions
 
 final class SearchViewController: UIViewController {
 
@@ -96,6 +97,11 @@ final class SearchViewController: UIViewController {
         )
         return button
     }()
+    
+    private let coachMarksController = CoachMarksController()
+    private lazy var coachSteps: [CoachStep] = [
+        CoachStep(view: groupCategoryButton, hint: "このページではライブ、アーティスト、ファンを探すことができるよ！\n試しに好きなアーティストを探してみよう！", next: "ok"),
+    ]
 
     let viewModel: SearchViewModel
     private var cancellables: [AnyCancellable] = []
@@ -124,9 +130,34 @@ final class SearchViewController: UIViewController {
             categoryStackView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
             categoryStackView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 16),
         ])
+        
+        coachMarksController.dataSource = self
+        coachMarksController.delegate = self
 
         bind()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        #if PRODUCTION
+        let userDefaults = UserDefaults.standard
+        let key = "SearchVCPresented_v3.2.0.r"
+        if !userDefaults.bool(forKey: key) {
+            coachMarksController.start(in: .currentWindow(of: self))
+            userDefaults.setValue(true, forKey: key)
+            userDefaults.synchronize()
+        }
+        #else
+        coachMarksController.start(in: .currentWindow(of: self))
+        #endif
+    }
+    
 
     func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
@@ -186,3 +217,22 @@ extension SearchViewController: UISearchResultsUpdating {
     }
 }
 
+extension SearchViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return coachSteps.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachStep = self.coachSteps[index]
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
+        
+        coachViews.bodyView.hintLabel.text = coachStep.hint
+        coachViews.bodyView.nextLabel.text = coachStep.next
+        
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
+    }
+}

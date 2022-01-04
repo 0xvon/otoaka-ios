@@ -37,6 +37,7 @@ target 'Rocket' do
   pod 'ImageViewer'
   pod 'MessageKit'
   pod 'BWWalkthrough'
+  pod 'Instructions', '~> 2.1.1'
   pod 'Parchment', '~> 3.0.1'
   pod 'FSCalendar'
   pod 'CalculateCalendarLogic'

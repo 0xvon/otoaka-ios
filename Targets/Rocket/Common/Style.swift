@@ -322,3 +322,9 @@ extension Int {
         return formatter.string(from: NSNumber(value: self))
     }
 }
+
+public struct CoachStep {
+    public let view: UIView
+    public let hint: String
+    public let next: String
+}

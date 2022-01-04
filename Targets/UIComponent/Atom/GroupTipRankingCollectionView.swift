@@ -59,7 +59,7 @@ public final class GroupTipRankingCollectionView: UIStackView {
             firstRankingContent.isHidden = true
             secondRankingContent.isHidden = true
             otherRankingContent.isHidden = true
-            emptyView.text = "（’・_・｀）\n\nライブ参戦履歴がありません。"
+            emptyView.text = "（’・_・｀）\n\nsnackはまだしていません"
         case 1:
             firstRankingContent.isHidden = false
             firstRankingContent.inject(input: (tip: tip[0], imagePipeline: imagePipeline, ranking: .first))

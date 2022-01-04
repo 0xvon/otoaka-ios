@@ -35,7 +35,7 @@ final class PostListViewController: UIViewController, Instantiable {
         
         switch input {
         case .followingPost:
-            self.title = "フォロー中"
+            self.title = "live"
         case .trendPost:
             self.title = "トレンド"
         case .groupPost(_):
@@ -174,7 +174,7 @@ final class PostListViewController: UIViewController, Instantiable {
         viewModel.inject(input)
         switch input {
         case .followingPost:
-            self.title = "フォロー中"
+            self.title = "live"
         case .trendPost:
             self.title = "トレンド"
         case .groupPost(_):

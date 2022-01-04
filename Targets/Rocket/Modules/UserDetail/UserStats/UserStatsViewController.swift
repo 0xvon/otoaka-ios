@@ -96,7 +96,7 @@ final class UserStatsViewController: UIViewController, Instantiable {
     }()
     private lazy var frequentlyWatchingGroupContentWrapper: UIView = Self.addPadding(to: self.frequentlyWatchingGroupContent)
     
-    private let groupTipSectionHeader = SummarySectionHeader(title: "応援してるアーティスト")
+    private let groupTipSectionHeader = SummarySectionHeader(title: "snackしたアーティスト")
     private lazy var groupTipContent: GroupTipRankingCollectionView = {
         let content = GroupTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
         content.translatesAutoresizingMaskIntoConstraints = false

@@ -16,16 +16,22 @@ class SocialTipListViewModel {
         case error(Error)
     }
     enum DataSource {
+        case allTip
         case myTip(User.ID)
         case none
     }
     
     enum DataSourceStorage {
+        case allTip(PaginationRequest<GetAllTips>)
         case myTip(PaginationRequest<GetUserTips>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
             switch dataSource {
+            case .allTip:
+                let uri = GetAllTips.URI()
+                let request = PaginationRequest<GetAllTips>(apiClient: apiClient, uri: uri)
+                self = .allTip(request)
             case .myTip(let userId):
                 var uri = GetUserTips.URI()
                 uri.userId = userId
@@ -63,6 +69,10 @@ class SocialTipListViewModel {
     
     private func subscribe(storage: DataSourceStorage) {
         switch storage {
+        case let .allTip(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case let .myTip(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
@@ -93,6 +103,8 @@ class SocialTipListViewModel {
     
     func refresh() {
         switch storage {
+        case let .allTip(pagination):
+            pagination.refresh()
         case let .myTip(pagination):
             pagination.refresh()
         case .none: break
@@ -102,6 +114,8 @@ class SocialTipListViewModel {
     func willDisplay(rowAt indexPath: IndexPath) {
         guard indexPath.row + 25 > state.tips.count else { return }
         switch storage {
+        case let .allTip(pagination):
+            pagination.next()
         case let .myTip(pagination):
             pagination.next()
         case .none: break

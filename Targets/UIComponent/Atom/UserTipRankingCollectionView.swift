@@ -59,7 +59,7 @@ public final class UserTipRankingCollectionView: UIStackView {
             firstRankingContent.isHidden = true
             secondRankingContent.isHidden = true
             otherRankingContent.isHidden = true
-            emptyView.text = "（’・_・｀）\n\nライブ参戦履歴がありません。"
+            emptyView.text = "（’・_・｀）\n\nsnackがまだありません"
         case 1:
             firstRankingContent.isHidden = false
             firstRankingContent.inject(input: (tip: tip[0], imagePipeline: imagePipeline, ranking: .first))

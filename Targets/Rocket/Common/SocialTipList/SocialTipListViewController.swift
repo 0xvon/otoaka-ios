@@ -26,6 +26,8 @@ final class SocialTipListViewController: UIViewController, Instantiable {
         )
 
         super.init(nibName: nil, bundle: nil)
+        
+        title = "snack"
     }
     
     required init?(coder: NSCoder) {

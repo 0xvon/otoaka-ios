@@ -14,6 +14,7 @@ import UITextView_Placeholder
 import TagListView
 import SCLAlertView
 import StoreKit
+import Instructions
 
 final class PaymentSocialTipViewController: UIViewController, Instantiable {
     typealias Input = PaymentSocialTipViewModel.Input
@@ -187,6 +188,14 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         return activityIndicator
     }()
     
+    private let coachMarksController = CoachMarksController()
+    private lazy var coachSteps: [CoachStep] = [
+        CoachStep(view: textView, hint: "snackするときにcardも送ることができるよ！", next: "ok"),
+        CoachStep(view: templateTipList, hint: "snackの金額はここから選択してね！", next: "ok"),
+        CoachStep(view: switchButton, hint: "snackは自分のポイントかApple Payから送ることができるよ！ポイントはアプリの色んなところで貯められるよ！", next: "ok"),
+        CoachStep(view: registerButton, hint: "snackとcardを設定したら送ろう！", next: "ok"),
+    ]
+    
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: PaymentSocialTipViewModel
     let pointViewModel: PointViewModel
@@ -213,6 +222,22 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        #if PRODUCTION
+        let userDefaults = UserDefaults.standard
+        let key = "PaymentSocialTipVCPresented_v3.2.0.r"
+        if !userDefaults.bool(forKey: key) {
+            coachMarksController.start(in: .currentWindow(of: self))
+            userDefaults.setValue(true, forKey: key)
+            userDefaults.synchronize()
+        }
+        #else
+        coachMarksController.start(in: .currentWindow(of: self))
+        #endif
     }
     
     private func bind() {
@@ -274,6 +299,8 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     private func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
         self.title = "チップを送る"
+        coachMarksController.dataSource = self
+        coachMarksController.delegate = self
         
         self.view.addSubview(scrollView)
         NSLayoutConstraint.activate([
@@ -399,3 +426,24 @@ extension PaymentSocialTipViewController: TagListViewDelegate {
         }
     }
 }
+
+extension PaymentSocialTipViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return coachSteps.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachStep = self.coachSteps[index]
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
+        
+        coachViews.bodyView.hintLabel.text = coachStep.hint
+        coachViews.bodyView.nextLabel.text = coachStep.next
+        
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
+    }
+}
+

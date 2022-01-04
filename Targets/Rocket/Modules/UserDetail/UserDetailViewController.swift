@@ -12,6 +12,7 @@ import UIComponent
 import Foundation
 import TagListView
 import ImageViewer
+import Instructions
 
 final class UserDetailViewController: UIViewController, Instantiable {
     typealias Input = User
@@ -38,6 +39,12 @@ final class UserDetailViewController: UIViewController, Instantiable {
     }()
     
     let pageViewController: PageViewController
+    private let coachMarksController = CoachMarksController()
+    private lazy var coachSteps: [CoachStep] = [
+        CoachStep(view: headerView, hint: "ここにユーザー情報が表示されます！試しにプロフィールを作成してみよう！", next: "ok"),
+        CoachStep(view: pageViewController.view, hint: "フォローしたアーティストやライブ参戦はここに記録されます", next: "ok"),
+        CoachStep(view: tab, hint: "タブを切り替えると色んな記録を見ることができます", next: "ok"),
+    ]
     
     init(
         dependencyProvider: LoggedInDependencyProvider, input: Input
@@ -71,11 +78,31 @@ final class UserDetailViewController: UIViewController, Instantiable {
         viewModel.viewDidLoad()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if dependencyProvider.user.id == viewModel.state.user.id {
+            #if PRODUCTION
+            let userDefaults = UserDefaults.standard
+            let key = "UserDetailVCPresented_v3.2.0.r"
+            if !userDefaults.bool(forKey: key) {
+                coachMarksController.start(in: .currentWindow(of: self))
+                userDefaults.setValue(true, forKey: key)
+                userDefaults.synchronize()
+            }
+            #else
+            coachMarksController.start(in: .currentWindow(of: self))
+            #endif
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViews()
         bind()
+        coachMarksController.dataSource = self
+        coachMarksController.delegate = self
     }
     
     func bind() {
@@ -301,5 +328,25 @@ extension String {
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return false }
         let checkingResults = regex.matches(in: self, range: NSRange(location: 0, length: self.count))
         return checkingResults.count > 0
+    }
+}
+
+extension UserDetailViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return coachSteps.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachStep = self.coachSteps[index]
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
+        
+        coachViews.bodyView.hintLabel.text = coachStep.hint
+        coachViews.bodyView.nextLabel.text = coachStep.next
+        
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
 }
