@@ -15,7 +15,7 @@ public enum Brand {
         case .background(.secondary):      return #colorLiteral(red: 0.5647058824, green: 0.5647058824, blue: 0.5647058824, alpha: 1) // #909090
         case .background(.button):         return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
         case .background(.cell):           return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
-        case .background(.cellSelected):   return #colorLiteral(red: 0.2549019608, green: 0.2509803922, blue: 0.2705882353, alpha: 1) // #414045
+        case .background(.cellSelected):   return #colorLiteral(red: 0.3137254902, green: 0.3137254902, blue: 0.3137254902, alpha: 1) // #414045
         case .background(.navigationBar):  return #colorLiteral(red: 0.1568627451, green: 0.1568627451, blue: 0.1607843137, alpha: 1) // #282829
         case .background(.searchBar):      return #colorLiteral(red: 0.07058823529, green: 0.07058823529, blue: 0.07058823529, alpha: 1) // #121212
         

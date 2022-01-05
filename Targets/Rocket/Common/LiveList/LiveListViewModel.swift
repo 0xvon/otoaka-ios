@@ -13,6 +13,7 @@ class LiveListViewModel {
     typealias Input = DataSource
     enum Output {
         case reloadTableView
+        case getEvents([SocialTipEvent])
         case didToggleLikeLive
         case error(Error)
     }
@@ -24,6 +25,7 @@ class LiveListViewModel {
         case searchResult(String?, Group.ID?, Date?, Date?)
         case searchResultToSelect(String)
         case upcoming(User)
+        case followingGroupsLives
         case none
     }
 
@@ -34,6 +36,7 @@ class LiveListViewModel {
         case likedLive(PaginationRequest<GetLikedLive>)
         case likedFutureLive(PaginationRequest<GetLikedFutureLive>)
         case upcoming(PaginationRequest<GetUpcomingLives>)
+        case followingGroupsLives(PaginationRequest<GetFollowingGroupsLives>)
         case none
 
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -71,6 +74,10 @@ class LiveListViewModel {
                 uri.userId = user.id
                 let request = PaginationRequest<GetUpcomingLives>(apiClient: apiClient, uri: uri)
                 self = .upcoming(request)
+            case .followingGroupsLives:
+                let uri = GetFollowingGroupsLives.URI()
+                let request = PaginationRequest<GetFollowingGroupsLives>(apiClient: apiClient, uri: uri)
+                self = .followingGroupsLives(request)
             case .none:
                 self = .none
             }
@@ -92,6 +99,7 @@ class LiveListViewModel {
     
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
     private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
+    private lazy var getSocialTipEventsAction = Action(GetSocialTipEvent.self, httpClient: apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
@@ -105,8 +113,10 @@ class LiveListViewModel {
         
         likeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher()
             .merge(with: unlikeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher())
+            .merge(with: getSocialTipEventsAction.elements.map { .getEvents($0.items) }).eraseToAnyPublisher()
             .merge(with: likeLiveAction.errors.map(Output.error)).eraseToAnyPublisher()
             .merge(with: unlikeLiveAction.errors.map(Output.error)).eraseToAnyPublisher()
+            .merge(with: getSocialTipEventsAction.errors.map(Output.error)).eraseToAnyPublisher()
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
     }
@@ -134,6 +144,10 @@ class LiveListViewModel {
                 self?.updateState(with: $0)
             }
         case let .upcoming(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .followingGroupsLives(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
@@ -175,6 +189,9 @@ class LiveListViewModel {
             pagination.refresh()
         case let .upcoming(pagination):
             pagination.refresh()
+        case let .followingGroupsLives(pagination):
+            pagination.refresh()
+            getEvents()
         case .none: break
         }
     }
@@ -194,6 +211,8 @@ class LiveListViewModel {
             pagination.next()
         case let .upcoming(pagination):
             pagination.next()
+        case let .followingGroupsLives(pagination):
+            pagination.next()
         case .none: break
         }
     }
@@ -206,6 +225,13 @@ class LiveListViewModel {
         if let idx = state.lives.firstIndex(where: { $0.live.id == live.live.id }) {
             state.lives[idx] = live
         }
+    }
+    
+    func getEvents() {
+        var uri = GetSocialTipEvent.URI()
+        uri.page = 1
+        uri.per = 10
+        getSocialTipEventsAction.input((request: Empty(), uri: uri))
     }
     
     func likeLive(live: Live) {

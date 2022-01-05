@@ -9,6 +9,7 @@ import UIKit
 import Endpoint
 import Combine
 import SafariServices
+import UIComponent
 
 final class LiveListViewController: UIViewController, Instantiable {
     typealias Input = LiveListViewModel.Input
@@ -18,6 +19,12 @@ final class LiveListViewController: UIViewController, Instantiable {
 
     let viewModel: LiveListViewModel
     private var cancellables: [AnyCancellable] = []
+    
+    private lazy var header: SocialTipEventCardCollectionView = {
+        let view = SocialTipEventCardCollectionView(socialTipEvents: [], imagePipeline: dependencyProvider.imagePipeline)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -51,6 +58,8 @@ final class LiveListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.setTableViewBackgroundView(tableView: liveTableView)
                 self.liveTableView.reloadData()
+            case .getEvents(let events):
+                header.inject(socialTipEvents: events)
             case .didToggleLikeLive: break
             case .error(let error):
                 print(String(describing: error))
@@ -58,13 +67,18 @@ final class LiveListViewController: UIViewController, Instantiable {
             }
         }
         .store(in: &cancellables)
+        
+        header.listen { [unowned self] socialTipEvent in
+            let vc = SocialTipEventDetailViewController(dependencyProvider: dependencyProvider, input: socialTipEvent)
+            navigationController?.pushViewController(vc, animated: true)
+        }
     }
 
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
         navigationItem.largeTitleDisplayMode = .never
         
-        liveTableView = UITableView()
+        liveTableView = UITableView(frame: .zero, style: .grouped)
         liveTableView.translatesAutoresizingMaskIntoConstraints = false
         liveTableView.showsVerticalScrollIndicator = false
         liveTableView.tableFooterView = UIView(frame: .zero)
@@ -109,6 +123,21 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 332
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        switch viewModel.dataSource {
+        case .followingGroupsLives: return 192
+        default: return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        switch viewModel.dataSource {
+        case .followingGroupsLives:
+            return header
+        default: return nil
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

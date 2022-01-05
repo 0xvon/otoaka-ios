@@ -32,6 +32,7 @@ public final class EmptyCollectionView: UIStackView {
         case friend = ""
         case liveSchedule = "ライブ予定はありません。"
         case notification = "通知はありません。"
+        case event = "イベントはまだありません。"
     }
     
     private let titleLabel: UILabel = {

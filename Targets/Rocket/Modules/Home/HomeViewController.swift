@@ -9,7 +9,7 @@ import UIKit
 import Combine
 import Endpoint
 import ImageViewer
-import Parchment
+//import Parchment
 import AppTrackingTransparency
 import SCLAlertView
 import Instructions
@@ -20,22 +20,22 @@ final class HomeViewController: UIViewController {
     private let urlSchemeActionViewModel: UrlSchemeActionViewModel
     private let pointViewModel: PointViewModel
     
-    private lazy var searchButton: UIBarButtonItem = UIBarButtonItem(
-        image: UIImage(systemName: "magnifyingglass"),
+    private lazy var notificationButton: UIBarButtonItem = UIBarButtonItem(
+        image: UIImage(systemName: "bell"),
         style: .plain,
         target: self,
-        action: #selector(searchButtonTapped)
+        action: #selector(notificationButtonTapped)
     )
-//    private lazy var postButton: UIBarButtonItem = UIBarButtonItem(
-//        image: UIImage(systemName: "plus"),
-//        style: .plain,
-//        target: self,
-//        action: #selector(createPostButtonTapped)
-//    )
+    private lazy var messageButton: UIBarButtonItem = UIBarButtonItem(
+        image: UIImage(systemName: "envelope"),
+        style: .plain,
+        target: self,
+        action: #selector(messageButtonTapped)
+    )
     
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
-        CoachStep(view: searchButton.value(forKey: "view") as! UIView, hint: "このページにはみんなのsnack(差し入れ)が表示されるよ！\nsnackをすると自分のファン度が高まったりライブでかけがえのない体験に変わるよ！\n試しにアーティストを探してsnackしてみよう！", next: "ok"),
+//        CoachStep(view: searchButton.value(forKey: "view") as! UIView, hint: "このページにはみんなのsnack(差し入れ)が表示されるよ！\nsnackをすると自分のファン度が高まったりライブでかけがえのない体験に変わるよ！\n試しにアーティストを探してsnackしてみよう！", next: "ok"),
     ]
     
     init(dependencyProvider: LoggedInDependencyProvider) {
@@ -89,8 +89,8 @@ final class HomeViewController: UIViewController {
         coachMarksController.delegate = self
         
         navigationItem.setRightBarButtonItems([
-            searchButton,
-//            postButton,
+            messageButton,
+            notificationButton,
         ], animated: false)
         
         setPagingViewController()
@@ -127,29 +127,33 @@ final class HomeViewController: UIViewController {
     }
     
     private func setPagingViewController() {
-        let vc0 = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .allTip)
-        let vc1 = PostListViewController(dependencyProvider: dependencyProvider, input: .followingPost)
+        let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: .followingGroupsLives)
+        self.addChild(vc)
+        self.view.addSubview(vc.view)
+        vc.didMove(toParent: self)
+        
+//        let vc1 = PostListViewController(dependencyProvider: dependencyProvider, input: .followingPost)
 //        let vc2 = PostListViewController(dependencyProvider: dependencyProvider, input: .trendPost)
-        let pagingViewController = PagingViewController(viewControllers: [
-            vc0,
-            vc1,
+//        let pagingViewController = PagingViewController(viewControllers: [
+//            vc0,
+//            vc1,
 //            vc2,
-        ])
-        self.addChild(pagingViewController)
-        self.view.addSubview(pagingViewController.view)
-        pagingViewController.didMove(toParent: self)
-        pagingViewController.menuBackgroundColor = Brand.color(for: .background(.primary))
-        pagingViewController.borderColor = .clear
-        pagingViewController.selectedTextColor = Brand.color(for: .brand(.primary))
-        pagingViewController.indicatorColor = Brand.color(for: .brand(.primary))
-        pagingViewController.textColor = Brand.color(for: .text(.primary))
-        pagingViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            pagingViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
-            pagingViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
-            pagingViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            pagingViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
-        ])
+//        ])
+//        self.addChild(pagingViewController)
+//        self.view.addSubview(pagingViewController.view)
+//        pagingViewController.didMove(toParent: self)
+//        pagingViewController.menuBackgroundColor = Brand.color(for: .background(.primary))
+//        pagingViewController.borderColor = .clear
+//        pagingViewController.selectedTextColor = Brand.color(for: .brand(.primary))
+//        pagingViewController.indicatorColor = Brand.color(for: .brand(.primary))
+//        pagingViewController.textColor = Brand.color(for: .text(.primary))
+//        pagingViewController.view.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            pagingViewController.view.leftAnchor.constraint(equalTo: view.leftAnchor),
+//            pagingViewController.view.rightAnchor.constraint(equalTo: view.rightAnchor),
+//            pagingViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+//            pagingViewController.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor)
+//        ])
     }
     
     private func requestNotification() {
@@ -246,13 +250,13 @@ final class HomeViewController: UIViewController {
         }
     }
     
-//    @objc private func createPostButtonTapped() {
-//        let vc = SearchLiveViewController(dependencyProvider: dependencyProvider)
-//        navigationController?.pushViewController(vc, animated: true)
-//    }
+    @objc private func messageButtonTapped() {
+        let vc = MessageListViewController(dependencyProvider: dependencyProvider, input: ())
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
-    @objc private func searchButtonTapped() {
-        let vc = SearchViewController(dependencyProvider: dependencyProvider)
+    @objc private func notificationButtonTapped() {
+        let vc = UserNotificationViewControlelr(dependencyProvider: dependencyProvider)
         navigationController?.pushViewController(vc, animated: true)
     }
 }
