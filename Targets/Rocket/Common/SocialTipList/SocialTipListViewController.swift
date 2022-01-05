@@ -112,13 +112,13 @@ extension SocialTipListViewController: UITableViewDelegate, UITableViewDataSourc
             input: (tip: tip, imagePipeline: dependencyProvider.imagePipeline),
             for: indexPath
         )
-//        cell.listen { [unowned self] output in
-//            switch output {
-//            case .cellTapped: break
-////                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: item.user)
-////                navigationController?.pushViewController(vc, animated: true)
-//            }
-//        }
+        cell.listen { [unowned self] output in
+            switch output {
+            case .cellTapped:
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: tip.user)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+        }
         return cell
     }
     

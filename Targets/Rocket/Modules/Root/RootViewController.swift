@@ -107,7 +107,7 @@ final class RootViewController: UITabBarController, Instantiable {
             image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill")
         )
-        let rankingVC = BrandNavigationController(rootViewController: SocialTipRankingViewController(dependencyProvider: loggedInProvider))
+        let rankingVC = BrandNavigationController(rootViewController: GroupRankingListViewController(dependencyProvider: loggedInProvider, input: .entriedGroup))
         rankingVC.tabBarItem = UITabBarItem(
             title: "ランキング",
             image: UIImage(systemName: "chart.bar"),

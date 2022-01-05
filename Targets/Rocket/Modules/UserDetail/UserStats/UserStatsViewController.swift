@@ -101,7 +101,7 @@ final class UserStatsViewController: UIViewController, Instantiable {
         let content = GroupTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 200)
+            content.heightAnchor.constraint(equalToConstant: 210)
         ])
         return content
     }()

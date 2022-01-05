@@ -34,7 +34,6 @@ public final class SocialTipEventCardCollectionView: UICollectionView {
     public func inject(socialTipEvents: [SocialTipEvent]) {
         self.socialTipEvents = socialTipEvents
         reloadData()
-//        setBackgroundView()
     }
     
     func setup() {
@@ -67,19 +66,6 @@ extension SocialTipEventCardCollectionView: UICollectionViewDelegate, UICollecti
         self.listener(self.socialTipEvents[indexPath.item])
         collectionView.deselectItem(at: indexPath, animated: true)
     }
-    
-//    func setBackgroundView() {
-//        let emptyCollectionView = EmptyCollectionView(emptyType: .event, actionButtonTitle: nil)
-//        backgroundView = self.socialTipEvents.isEmpty ? emptyCollectionView : nil
-//        if let backgroundView = self.backgroundView {
-//            NSLayoutConstraint.activate([
-//                backgroundView.topAnchor.constraint(equalTo: topAnchor, constant: 32),
-//                backgroundView.widthAnchor.constraint(equalTo: widthAnchor, constant: -32),
-//                backgroundView.centerXAnchor.constraint(equalTo: centerXAnchor),
-//                backgroundView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -32),
-//            ])
-//        }
-//    }
 }
 
 extension SocialTipEventCardCollectionView: UICollectionViewDelegateFlowLayout {

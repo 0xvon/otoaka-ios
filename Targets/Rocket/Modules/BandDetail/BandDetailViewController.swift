@@ -84,12 +84,23 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
-    private let userTipSectionHeader = SummarySectionHeader(title: "snackしたファン")
+    private let socialTipSectionHeader = SummarySectionHeader(title: "最近のsnack")
+    private lazy var socialTipContent: SocialTipCellContent = {
+        let content = SocialTipCellContent()
+        content.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            content.heightAnchor.constraint(equalToConstant: 200)
+//        ])
+        return content
+    }()
+    private lazy var socialTipContentWrapper: UIView = Self.addPadding(to: self.socialTipContent)
+    
+    private let userTipSectionHeader = SummarySectionHeader(title: "snackランキング")
     private lazy var userTipContent: UserTipRankingCollectionView = {
         let content = UserTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 200)
+            content.heightAnchor.constraint(equalToConstant: 210)
         ])
         return content
     }()
@@ -110,7 +121,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare))
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
-        CoachStep(view: followButton, hint: "好きなアーティストをフォローしましょう！フォローするといいことがたくさんあります！", next: "ok"),
+        CoachStep(view: followButton, hint: "好きなアーティストをフォローしよう！フォローするといいことがたくさんあります！", next: "ok"),
         CoachStep(view: shareButton.value(forKey: "view") as! UIView, hint: "オススメのアーティストをTwitterで宣伝しよう！", next: "ok"),
         CoachStep(view: socialTipButton, hint: "アーティストに直接snack(差し入れ)できます！試しにsnackしてみよう！", next: "ok"),
     ]
@@ -198,7 +209,30 @@ final class BandDetailViewController: UIViewController, Instantiable {
         followStackView.addArrangedSubview(UIView()) // Spacer
 
         scrollStackView.addArrangedSubview(followStackView)
-
+        
+        scrollStackView.addArrangedSubview(socialTipSectionHeader)
+        NSLayoutConstraint.activate([
+            socialTipSectionHeader.heightAnchor.constraint(equalToConstant: 52),
+            socialTipSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        socialTipContentWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(socialTipContentWrapper)
+        
+        scrollStackView.addArrangedSubview(userTipSectionHeader)
+        NSLayoutConstraint.activate([
+            userTipSectionHeader.heightAnchor.constraint(equalToConstant: 52),
+            userTipSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        userTipContentWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(userTipContentWrapper)
+        
+        let middleSpacer = UIView()
+        middleSpacer.translatesAutoresizingMaskIntoConstraints = false
+        scrollStackView.addArrangedSubview(middleSpacer) // Spacer
+        NSLayoutConstraint.activate([
+            middleSpacer.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        
         scrollStackView.addArrangedSubview(liveSectionHeader)
         NSLayoutConstraint.activate([
             liveSectionHeader.heightAnchor.constraint(equalToConstant: 64),
@@ -212,21 +246,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
         ])
         postCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(postCellWrapper)
-        
-        let middleSpacer = UIView()
-        middleSpacer.translatesAutoresizingMaskIntoConstraints = false
-        scrollStackView.addArrangedSubview(middleSpacer) // Spacer
-        NSLayoutConstraint.activate([
-            middleSpacer.heightAnchor.constraint(equalToConstant: 24),
-        ])
-        
-        scrollStackView.addArrangedSubview(userTipSectionHeader)
-        NSLayoutConstraint.activate([
-            userTipSectionHeader.heightAnchor.constraint(equalToConstant: 52),
-            userTipSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
-        ])
-        userTipContentWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(userTipContentWrapper)
 
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -375,6 +394,13 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 socialTipButton.isHidden = false
                 self.setupFloatingItems(displayType: displayType)
                 refreshControl.endRefreshing()
+            case .getGroupTip(let tip):
+                let isHidden = tip == nil
+                socialTipSectionHeader.isHidden = isHidden
+                socialTipContentWrapper.isHidden = isHidden
+                if let tip = tip {
+                    socialTipContent.inject(input: (tip: tip, imagePipeline: dependencyProvider.imagePipeline))
+                }
             case .didGetUserTip(let tips):
                 let isHidden = !viewModel.state.group.isEntried
                 userTipSectionHeader.isHidden = isHidden
@@ -451,6 +477,17 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 viewModel.refresh()
             }
             .store(in: &cancellables)
+        
+        socialTipSectionHeader.listen { [unowned self] in
+            let vc = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .groupTip(viewModel.state.group.id))
+            navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        socialTipContent.listen { [unowned self] _ in
+            guard let tip = viewModel.state.tip else { return }
+            let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: tip.user)
+            navigationController?.pushViewController(vc, animated: true)
+        }
 
         postCellContent.listen { [unowned self] output in
             guard let post = viewModel.state.posts.first else { return }

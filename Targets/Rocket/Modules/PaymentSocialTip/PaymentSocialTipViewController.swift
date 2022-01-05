@@ -298,7 +298,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     
     private func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        self.title = "チップを送る"
+        self.title = "snackする"
         coachMarksController.dataSource = self
         coachMarksController.delegate = self
         
@@ -379,7 +379,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     
     private func pay() {
         guard let product = viewModel.state.products.filter { $0.price.intValue == viewModel.state.tip }.first else { return }
-        showAlert(title: "購入確認", message: "\(viewModel.state.tip)円でチップを購入しますか？") { [unowned self] in
+        showAlert(title: "購入確認", message: "\(viewModel.state.tip)円でsnackを購入しますか？") { [unowned self] in
             viewModel.purchase(product)
         }
     }
@@ -393,7 +393,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
             action: { [unowned self] in
                 shareWithTwitter(type: .tip(tip))
         })
-        alertView.showSuccess("成功", subTitle: "チップを送りました！！！")
+        alertView.showSuccess("成功", subTitle: "snackしました！！！")
     }
 }
 

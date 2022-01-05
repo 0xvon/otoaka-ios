@@ -25,7 +25,7 @@ final class GroupRankingListViewController: UIViewController, Instantiable {
             input: input
         )
         super.init(nibName: nil, bundle: nil)
-        self.title = "アーティスト"
+        self.title = "ランキング"
     }
     
     required init?(coder: NSCoder) {

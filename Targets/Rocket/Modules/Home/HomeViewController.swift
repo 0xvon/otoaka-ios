@@ -33,11 +33,6 @@ final class HomeViewController: UIViewController {
         action: #selector(messageButtonTapped)
     )
     
-    private let coachMarksController = CoachMarksController()
-    private lazy var coachSteps: [CoachStep] = [
-//        CoachStep(view: searchButton.value(forKey: "view") as! UIView, hint: "このページにはみんなのsnack(差し入れ)が表示されるよ！\nsnackをすると自分のファン度が高まったりライブでかけがえのない体験に変わるよ！\n試しにアーティストを探してsnackしてみよう！", next: "ok"),
-    ]
-    
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.urlSchemeActionViewModel = UrlSchemeActionViewModel(dependencyProvider: dependencyProvider)
@@ -85,8 +80,6 @@ final class HomeViewController: UIViewController {
         self.title = "ホーム"
         navigationItem.largeTitleDisplayMode = .never
         view.backgroundColor = Brand.color(for: .background(.primary))
-        coachMarksController.dataSource = self
-        coachMarksController.delegate = self
         
         navigationItem.setRightBarButtonItems([
             messageButton,
@@ -95,7 +88,6 @@ final class HomeViewController: UIViewController {
         
         setPagingViewController()
         requestNotification()
-//        showWalkThrough()
         presentPoint()
         if #available(iOS 14, *) {
             checkTrackingAuthorizationStatus()
@@ -108,22 +100,6 @@ final class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        #if PRODUCTION
-        let userDefaults = UserDefaults.standard
-        let key = "HomeVCPresented_v3.2.0.r"
-        if !userDefaults.bool(forKey: key) {
-            coachMarksController.start(in: .currentWindow(of: self))
-            userDefaults.setValue(true, forKey: key)
-            userDefaults.synchronize()
-        }
-        #else
-        coachMarksController.start(in: .currentWindow(of: self))
-        #endif
     }
     
     private func setPagingViewController() {
@@ -215,21 +191,6 @@ final class HomeViewController: UIViewController {
     func updateTrackingAuthorizationStatus(_ b: Bool) {
     }
     
-//    private func showWalkThrough() {
-//        let userDefaults = UserDefaults.standard
-//        let key = "walkThroughPresented_v3.2.0.r\(UUID.init().uuidString)"
-//        if !userDefaults.bool(forKey: key) {
-//            let vc = WalkThroughViewController(dependencyProvider: dependencyProvider)
-//            let nav = DismissionSubscribableNavigationController(rootViewController: vc)
-//            present(nav, animated: true, completion: nil)
-//            userDefaults.setValue(true, forKey: key)
-//            userDefaults.synchronize()
-//            nav.subscribeDismission { [unowned self] in
-//                presentPoint()
-//            }
-//        }
-//    }
-    
     private func presentPoint() {
         #if PRODUCTION
         let userDefaults = UserDefaults.standard
@@ -268,25 +229,5 @@ extension HomeViewController: UNUserNotificationCenterDelegate {
         } else {
             completionHandler([.alert, .sound, .badge])
         }
-    }
-}
-
-extension HomeViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
-    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
-        return coachSteps.count
-    }
-    
-    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
-        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
-    }
-    
-    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
-        let coachStep = self.coachSteps[index]
-        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
-        
-        coachViews.bodyView.hintLabel.text = coachStep.hint
-        coachViews.bodyView.nextLabel.text = coachStep.next
-        
-        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
 }

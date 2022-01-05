@@ -42,8 +42,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
         CoachStep(view: headerView, hint: "ここにユーザー情報が表示されます！試しにプロフィールを作成してみよう！", next: "ok"),
-        CoachStep(view: pageViewController.view, hint: "フォローしたアーティストやライブ参戦はここに記録されます", next: "ok"),
         CoachStep(view: tab, hint: "タブを切り替えると色んな記録を見ることができます", next: "ok"),
+        CoachStep(view: vc1.followingSectionHeader, hint: "フォローしたアーティストやライブ参戦はここに記録されます", next: "ok"),
     ]
     
     init(
@@ -269,7 +269,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                     openUrlInBrowser(url: url)
                 }
             })
-            let myTipAction = UIAlertAction(title: "チップ履歴", style: .default, handler: { [unowned self] _ in
+            let myTipAction = UIAlertAction(title: "snack履歴", style: .default, handler: { [unowned self] _ in
                 let vc = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .myTip(dependencyProvider.user.id))
                 navigationController?.pushViewController(vc, animated: true)
             })

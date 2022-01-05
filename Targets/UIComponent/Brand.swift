@@ -224,3 +224,12 @@ extension String {
         return _date.map(dateFormatter.string(from:)) // format to string again
     }
 }
+
+extension Date {
+    func toFormatString(format: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        dateFormatter.locale = Locale(identifier: "ja_JP")
+        return dateFormatter.string(from: self)
+    }
+}

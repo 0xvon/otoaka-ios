@@ -18,12 +18,14 @@ class SocialTipListViewModel {
     enum DataSource {
         case allTip
         case myTip(User.ID)
+        case groupTip(Group.ID)
         case none
     }
     
     enum DataSourceStorage {
         case allTip(PaginationRequest<GetAllTips>)
         case myTip(PaginationRequest<GetUserTips>)
+        case groupTip(PaginationRequest<GetGroupTips>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -37,6 +39,11 @@ class SocialTipListViewModel {
                 uri.userId = userId
                 let request = PaginationRequest<GetUserTips>(apiClient: apiClient, uri: uri)
                 self = .myTip(request)
+            case .groupTip(let groupId):
+                var uri = GetGroupTips.URI()
+                uri.groupId = groupId
+                let request = PaginationRequest<GetGroupTips>(apiClient: apiClient, uri: uri)
+                self = .groupTip(request)
             case .none:
                 self = .none
             }
@@ -77,6 +84,10 @@ class SocialTipListViewModel {
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
+        case let .groupTip(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
         case .none: break
         }
     }
@@ -107,6 +118,8 @@ class SocialTipListViewModel {
             pagination.refresh()
         case let .myTip(pagination):
             pagination.refresh()
+        case let .groupTip(pagination):
+            pagination.refresh()
         case .none: break
         }
     }
@@ -117,6 +130,8 @@ class SocialTipListViewModel {
         case let .allTip(pagination):
             pagination.next()
         case let .myTip(pagination):
+            pagination.next()
+        case let .groupTip(pagination):
             pagination.next()
         case .none: break
         }

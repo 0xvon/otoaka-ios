@@ -23,8 +23,8 @@ final class SocialTipCell: UITableViewCell, ReusableCell {
         _contentView.isUserInteractionEnabled = true
         backgroundColor = .clear
         NSLayoutConstraint.activate([
-            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
             _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
         ])
@@ -67,7 +67,7 @@ class SocialTipCellContent: UIButton {
     private lazy var artworkImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 30
+        imageView.layer.cornerRadius = 25
         imageView.clipsToBounds = true
         imageView.image = nil
         imageView.contentMode = .scaleAspectFill
@@ -83,10 +83,12 @@ class SocialTipCellContent: UIButton {
         stackView.axis = .vertical
         stackView.spacing = 4
         
-        stackView.addArrangedSubview(userNameLabel)
+        stackView.addArrangedSubview(usernameLabel)
+        stackView.addArrangedSubview(toLabel)
         stackView.addArrangedSubview(countLabel)
-        stackView.addArrangedSubview(dateLabel)
         stackView.addArrangedSubview(textView)
+        stackView.addArrangedSubview(dateLabel)
+        
         let spacer = UIView()
         spacer.backgroundColor = .clear
         stackView.addArrangedSubview(spacer)
@@ -94,7 +96,7 @@ class SocialTipCellContent: UIButton {
         return stackView
     }()
     
-    private lazy var userNameLabel: UILabel = {
+    private lazy var usernameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
@@ -106,16 +108,16 @@ class SocialTipCellContent: UIButton {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
-        label.font = Brand.font(for: .small)
-        label.textColor = Brand.color(for: .background(.secondary))
+        label.font = Brand.font(for: .smallStrong)
+        label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
-        label.font = Brand.font(for: .small)
-        label.textColor = Brand.color(for: .background(.secondary))
+        label.font = Brand.font(for: .xxsmall)
+        label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
     private lazy var textView: UITextView = {
@@ -123,13 +125,21 @@ class SocialTipCellContent: UIButton {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isUserInteractionEnabled = false
         textView.isScrollEnabled = false
-        textView.font = Brand.font(for: .medium)
+        textView.font = Brand.font(for: .mediumStrong)
         textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         textView.textContainer.lineFragmentPadding = 0
         textView.textAlignment = .left
-        textView.backgroundColor = Brand.color(for: .background(.primary))
+        textView.backgroundColor = .clear
         textView.textColor = Brand.color(for: .text(.primary))
         return textView
+    }()
+    private lazy var toLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
+        label.font = Brand.font(for: .smallStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
     }()
     override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
@@ -144,41 +154,52 @@ class SocialTipCellContent: UIButton {
     }
     
     func inject(input: Input) {
+        usernameLabel.text = input.tip.user.name
+        if let url = input.tip.user.thumbnailURL.flatMap(URL.init(string:)) {
+            input.imagePipeline.loadImage(url, into: artworkImageView)
+        }
+        
         switch input.tip.type {
         case .group(let group):
-            if let url = group.artworkURL {
-                input.imagePipeline.loadImage(url, into: artworkImageView)
-            }
-            userNameLabel.text = group.name
+            toLabel.text = "Dear: \(group.name)"
         case .live(let live):
-            if let url = live.artworkURL {
-                input.imagePipeline.loadImage(url, into: artworkImageView)
-            }
-            userNameLabel.text = live.title
+            toLabel.text = "Dear: \(live.title)"
         }
+        
         countLabel.text = "\(input.tip.tip)snacks"
         dateLabel.text = input.tip.thrownAt.toFormatString(format: "yyyy/MM/dd")
         textView.text = input.tip.message
+        
+        if input.tip.tip < 1500 {
+            backgroundColor = Brand.color(for: .ranking(.other))
+        } else if input.tip.tip < 5000 {
+            backgroundColor = Brand.color(for: .ranking(.second))
+        } else {
+            backgroundColor = Brand.color(for: .ranking(.first))
+        }
     }
     
     func setup() {
         self.backgroundColor = .clear
+        self.layer.cornerRadius = 20
+        self.layer.borderWidth = 2
+        self.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         
         addSubview(artworkImageView)
         NSLayoutConstraint.activate([
-            artworkImageView.widthAnchor.constraint(equalToConstant: 60),
+            artworkImageView.widthAnchor.constraint(equalToConstant: 50),
             artworkImageView.heightAnchor.constraint(equalTo: artworkImageView.widthAnchor),
-            artworkImageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            artworkImageView.leftAnchor.constraint(equalTo: leftAnchor),
-            artworkImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -16)
+            artworkImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
+            artworkImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 8),
+            artworkImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -8)
         ])
         
         addSubview(stackView)
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: artworkImageView.topAnchor),
             stackView.leftAnchor.constraint(equalTo: artworkImageView.rightAnchor, constant: 8),
-            stackView.rightAnchor.constraint(equalTo: rightAnchor),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -16),
+            stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -8),
+            stackView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -8),
         ])
         
         addTarget(self, action: #selector(cellTapped), for: .touchUpInside)
@@ -186,7 +207,7 @@ class SocialTipCellContent: UIButton {
     
     func prepare() {
         artworkImageView.image = nil
-        userNameLabel.text = nil
+        usernameLabel.text = nil
         countLabel.text = nil
     }
     

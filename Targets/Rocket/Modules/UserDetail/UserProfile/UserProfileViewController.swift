@@ -48,7 +48,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
     }()
     private lazy var recentlyFollowingWrapper: UIView = Self.addPadding(to: self.recentlyFollowingContent)
     
-    private let followingSectionHeader = SummarySectionHeader(title: "好きなアーティスト")
+    public let followingSectionHeader = SummarySectionHeader(title: "好きなアーティスト")
     private lazy var followingContent: TagListView = {
         let content = TagListView()
         content.delegate = self

@@ -61,6 +61,13 @@ final class SocialTipEventDetailViewController: UIViewController, Instantiable {
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
+    private lazy var relatedLinkButton: PrimaryButton = {
+        let button = PrimaryButton(text: "詳細を見る")
+        button.layer.cornerRadius = 24
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(relatedLinkButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
     private lazy var scrollStackView: UIStackView = {
         let postView = UIStackView()
@@ -70,8 +77,12 @@ final class SocialTipEventDetailViewController: UIViewController, Instantiable {
         postView.spacing = 16
         
         postView.addArrangedSubview(eventTitleLabel)
-        postView.addArrangedSubview(textView)
         postView.addArrangedSubview(dateLabel)
+        postView.addArrangedSubview(textView)
+        postView.addArrangedSubview(relatedLinkButton)
+        NSLayoutConstraint.activate([
+            relatedLinkButton.heightAnchor.constraint(equalToConstant: 48),
+        ])
         
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -146,10 +157,20 @@ final class SocialTipEventDetailViewController: UIViewController, Instantiable {
         eventTitleLabel.text = viewModel.state.event.title
         textView.text = viewModel.state.event.description
         dateLabel.text = "\(viewModel.state.event.since.toFormatString(format: "yyyy/MM/dd")) ~ \(viewModel.state.event.until.toFormatString(format: "yyyy/MM/dd"))"
+        relatedLinkButton.isEnabled = viewModel.state.event.relatedLink != nil
     }
     
     @objc private func liveViewTapped() {
         let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: viewModel.state.event.live)
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func relatedLinkButtonTapped() {
+        if let url = viewModel.state.event.relatedLink {
+            let safari = SFSafariViewController(
+                url: url)
+            safari.dismissButtonStyle = .close
+            present(safari, animated: true, completion: nil)
+        }
     }
 }

@@ -10,6 +10,7 @@ import Endpoint
 import Combine
 import SafariServices
 import UIComponent
+import Instructions
 
 final class LiveListViewController: UIViewController, Instantiable {
     typealias Input = LiveListViewModel.Input
@@ -25,6 +26,11 @@ final class LiveListViewController: UIViewController, Instantiable {
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    private let coachMarksController = CoachMarksController()
+    private lazy var coachSteps: [CoachStep] = [
+        CoachStep(view: header, hint: "ここにはsnackがライブ体験に変わるイベントが表示されます！試しにどんなイベントがあるか見てみよう！", next: "ok"),
+    ]
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -50,6 +56,22 @@ final class LiveListViewController: UIViewController, Instantiable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        #if PRODUCTION
+        let userDefaults = UserDefaults.standard
+        let key = "LiveVCPresented_v3.2.0.r"
+        if !userDefaults.bool(forKey: key) {
+            coachMarksController.start(in: .currentWindow(of: self))
+            userDefaults.setValue(true, forKey: key)
+            userDefaults.synchronize()
+        }
+        #else
+        coachMarksController.start(in: .currentWindow(of: self))
+        #endif
     }
 
     private func bind() {
@@ -77,6 +99,8 @@ final class LiveListViewController: UIViewController, Instantiable {
     func setup() {
         view.backgroundColor = Brand.color(for: .background(.primary))
         navigationItem.largeTitleDisplayMode = .never
+        coachMarksController.dataSource = self
+        coachMarksController.delegate = self
         
         liveTableView = UITableView(frame: .zero, style: .grouped)
         liveTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -234,5 +258,25 @@ extension LiveListViewController: PageContent {
     var scrollView: UIScrollView {
         _ = view
         return self.liveTableView
+    }
+}
+
+extension LiveListViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
+    func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {
+        return coachSteps.count
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkAt index: Int) -> CoachMark {
+        return coachMarksController.helper.makeCoachMark(for: coachSteps[index].view)
+    }
+    
+    func coachMarksController(_ coachMarksController: CoachMarksController, coachMarkViewsAt index: Int, madeFrom coachMark: CoachMark) -> (bodyView: (UIView & CoachMarkBodyView), arrowView: (UIView & CoachMarkArrowView)?) {
+        let coachStep = self.coachSteps[index]
+        let coachViews = coachMarksController.helper.makeDefaultCoachViews(withArrow: true, arrowOrientation: coachMark.arrowOrientation)
+        
+        coachViews.bodyView.hintLabel.text = coachStep.hint
+        coachViews.bodyView.nextLabel.text = coachStep.next
+        
+        return (bodyView: coachViews.bodyView, arrowView: coachViews.arrowView)
     }
 }

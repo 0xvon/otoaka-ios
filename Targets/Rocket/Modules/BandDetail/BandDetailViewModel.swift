@@ -23,6 +23,7 @@ class BandDetailViewModel {
     }
     struct State {
         var group: Group
+        var tip: SocialTip? = nil
         var lives: [LiveFeed] = []
         var posts: [PostSummary] = []
         var groupDetail: GetGroup.Response?
@@ -45,6 +46,7 @@ class BandDetailViewModel {
     
     enum Output {
         case didGetGroupDetail(GetGroup.Response, displayType: DisplayType)
+        case getGroupTip(SocialTip?)
         case didGetUserTip([UserTip])
         case updateLiveSummary(LiveFeed?)
         case updatePostSummary(PostSummary?)
@@ -73,8 +75,9 @@ class BandDetailViewModel {
 
     private lazy var inviteGroup = Action(InviteGroup.self, httpClient: self.apiClient)
     private lazy var getGroup = Action(GetGroup.self, httpClient: self.apiClient)
+    private lazy var getGroupsTipAction = Action(GetGroupTips.self, httpClient: apiClient)
     private lazy var getGroupLives = Action(GetGroupLives.self, httpClient: self.apiClient)
-    private lazy var getGroupTipAction = Action(GetGroupTipFromUserRanking.self, httpClient: apiClient)
+    private lazy var getTipRankingAction = Action(GetGroupTipFromUserRanking.self, httpClient: apiClient)
     private lazy var getGroupPost = Action(GetGroupPosts.self, httpClient: self.apiClient)
     private lazy var listChannel = Action(ListChannel.self, httpClient: self.dependencyProvider.youTubeDataApiClient)
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
@@ -93,7 +96,8 @@ class BandDetailViewModel {
         let errors = Publishers.MergeMany(
             inviteGroup.errors,
             getGroup.errors,
-            getGroupTipAction.errors,
+            getGroupsTipAction.errors,
+            getTipRankingAction.errors,
             getGroupLives.errors,
             getGroupPost.errors,
 //            listChannel.errors,
@@ -106,8 +110,9 @@ class BandDetailViewModel {
             getGroup.elements.map { [unowned self] result in
                 .didGetGroupDetail(result, displayType: self.state._displayType(isMember: result.isMember))
             }.eraseToAnyPublisher(),
+            getGroupsTipAction.elements.map { Output.getGroupTip($0.items.first) }.eraseToAnyPublisher(),
             getGroupLives.elements.map { .updateLiveSummary($0.items.first) }.eraseToAnyPublisher(),
-            getGroupTipAction.elements.map {
+            getTipRankingAction.elements.map {
                 Output.didGetUserTip($0.items)
             }.eraseToAnyPublisher(),
             getGroupPost.elements.map { .updatePostSummary($0.items.first) }.eraseToAnyPublisher(),
@@ -122,8 +127,9 @@ class BandDetailViewModel {
         .store(in: &cancellables)
         
         getGroupPost.elements
-            .combineLatest(getGroupLives.elements)
-            .sink(receiveValue: { [unowned self] posts, lives in
+            .combineLatest(getGroupsTipAction.elements, getGroupLives.elements)
+            .sink(receiveValue: { [unowned self] posts, tip, lives in
+                state.tip = tip.items.first
                 state.posts = posts.items
                 state.lives = lives.items
             })
@@ -161,6 +167,7 @@ class BandDetailViewModel {
     
     func refresh() {
         getGroupDetail()
+        getSocialTip()
         getGroupTip()
         getChartSummary()
         getGroupLiveSummary()
@@ -242,12 +249,20 @@ class BandDetailViewModel {
         getGroupLives.input((request: request, uri: uri))
     }
     
+    private func getSocialTip() {
+        var uri = GetGroupTips.URI()
+        uri.groupId = state.group.id
+        uri.page = 1
+        uri.per = 1
+        getGroupsTipAction.input((request: Empty(), uri: uri))
+    }
+    
     private func getGroupTip() {
         var uri = GetGroupTipFromUserRanking.URI()
         uri.groupId = state.group.id
         uri.page = 1
         uri.per = 3
-        getGroupTipAction.input((request: Empty(), uri: uri))
+        getTipRankingAction.input((request: Empty(), uri: uri))
     }
     
     private func getGroupPostSummary() {

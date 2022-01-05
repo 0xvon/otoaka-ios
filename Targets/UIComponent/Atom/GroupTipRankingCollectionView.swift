@@ -149,6 +149,7 @@ public final class GroupTipRankingCellContent: UIButton {
         stackView.addArrangedSubview(tipLabel)
         stackView.addArrangedSubview(thumbnailImageView)
         stackView.addArrangedSubview(groupNameLabel)
+        stackView.addArrangedSubview(fromLabel)
         return stackView
     }()
     private lazy var tipLabel: UILabel = {
@@ -186,6 +187,15 @@ public final class GroupTipRankingCellContent: UIButton {
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
+    private lazy var fromLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isUserInteractionEnabled = false
+        label.font = Brand.font(for: .xsmall)
+        label.textColor = Brand.color(for: .background(.secondary))
+        return label
+    }()
     public override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.5 : 1.0 }
     }
@@ -202,6 +212,7 @@ public final class GroupTipRankingCellContent: UIButton {
     public func inject(input: Input) {
         tipLabel.text = "\(input.tip.tip)pt"
         groupNameLabel.text = input.tip.group.name
+        fromLabel.text = input.tip.from.toFormatString(format: "yyyy/MM/dd")
         if let url = input.tip.group.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailImageView)
         } else {
