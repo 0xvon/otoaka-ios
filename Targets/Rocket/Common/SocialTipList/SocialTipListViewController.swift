@@ -54,7 +54,7 @@ final class SocialTipListViewController: UIViewController, Instantiable {
                 self.tableView.reloadData()
             case .error(let error):
                 print(String(describing: error))
-                self.showAlert()
+//                self.showAlert()
             }
         }
         .store(in: &cancellables)

@@ -84,7 +84,7 @@ final class FilterLiveViewController: UITableViewController {
             case .didToggleLikeLive: break
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
 
@@ -99,6 +99,9 @@ final class FilterLiveViewController: UITableViewController {
 }
 
 extension FilterLiveViewController: UISearchBarDelegate {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel.updateSearchQuery(query: searchController.searchBar.text)
+    }
 }
 
 extension FilterLiveViewController: UISearchControllerDelegate {
@@ -106,7 +109,6 @@ extension FilterLiveViewController: UISearchControllerDelegate {
 
 extension FilterLiveViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.updateSearchQuery(query: searchController.searchBar.text)
     }
 }
 

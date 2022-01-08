@@ -91,7 +91,7 @@ final class MessageRoomViewController: MessagesViewController {
             case .reportError(let err):
                 messageInputBar.sendButton.stopAnimating()
                 print(err)
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)

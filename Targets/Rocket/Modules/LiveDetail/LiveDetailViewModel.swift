@@ -26,7 +26,7 @@ class LiveDetailViewModel {
     enum Output {
         case didGetLiveDetail(LiveDetail)
         case updatePostSummary(PostSummary?)
-        case updatePerformers([Group])
+//        case updatePerformers([Group])
         case didDeletePost
         case didToggleLikeLive
         case pushToGroup(BandDetailViewController.Input)
@@ -80,7 +80,7 @@ class LiveDetailViewModel {
             .sink(receiveValue: { [unowned self] liveDetail, posts in
                 state.liveDetail = liveDetail
                 state.posts = posts.items
-                outputSubject.send(.updatePerformers(liveDetail.live.performers))
+//                outputSubject.send(.updatePerformers(liveDetail.live.performers))
             })
             .store(in: &cancellables)
     }

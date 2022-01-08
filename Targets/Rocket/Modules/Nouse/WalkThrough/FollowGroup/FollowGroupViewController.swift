@@ -79,7 +79,7 @@ final class FollowGroupViewController: UITableViewController {
                 }
             case .error(let err):
                 print(err)
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
 

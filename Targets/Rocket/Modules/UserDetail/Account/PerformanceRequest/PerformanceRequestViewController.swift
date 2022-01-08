@@ -66,7 +66,7 @@ final class PerformanceRequestViewController: UIViewController, Instantiable {
                 requestTableView.reloadData()
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+//                self.showAlert()
             }
         }.store(in: &cancellables)
     }

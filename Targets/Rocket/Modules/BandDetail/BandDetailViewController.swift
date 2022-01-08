@@ -118,11 +118,9 @@ final class BandDetailViewController: UIViewController, Instantiable {
         ])
         return paddingView
     }
-    private let shareButton = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare))
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
         CoachStep(view: followButton, hint: "好きなアーティストをフォローしよう！フォローするといいことがたくさんあります！", next: "ok"),
-        CoachStep(view: shareButton.value(forKey: "view") as! UIView, hint: "オススメのアーティストをTwitterで宣伝しよう！", next: "ok"),
         CoachStep(view: socialTipButton, hint: "アーティストに直接snack(差し入れ)できます！試しにsnackしてみよう！", next: "ok"),
     ]
     
@@ -259,7 +257,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         super.viewDidLoad()
 
         navigationItem.setRightBarButton(
-            shareButton,
+            UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare)),
             animated: false
         )
         setupViews()
@@ -268,6 +266,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
         followingViewModel.viewDidLoad()
         coachMarksController.dataSource = self
         coachMarksController.delegate = self
+        
+        headerView.update(input: (group: viewModel.state.group, groupItem: nil, imagePipeline: dependencyProvider.imagePipeline))
     }
 
     func bind() {
@@ -338,7 +338,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -350,7 +350,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -365,7 +365,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.followButton.isEnabled = isEnabled
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+//                self.showAlert()
             }
         }
         .store(in: &cancellables)
@@ -431,7 +431,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.showInviteCode(invitationCode: invitation.id)
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+//                self.showAlert()
             case .pushToLiveDetail(let input):
                 let vc = LiveDetailViewController(
                     dependencyProvider: self.dependencyProvider, input: input)

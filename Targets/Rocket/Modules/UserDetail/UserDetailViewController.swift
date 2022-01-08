@@ -103,6 +103,30 @@ final class UserDetailViewController: UIViewController, Instantiable {
         bind()
         coachMarksController.dataSource = self
         coachMarksController.delegate = self
+        
+        headerView.update(input: (selfUser: dependencyProvider.user, userDetail: UserDetail(user: viewModel.state.user, followersCount: 0, followingUsersCount: 0, postCount: 0, likePostCount: 0, likeFutureLiveCount: 0, likePastLiveCount: 0, followingGroupsCount: 0, isFollowed: false, isFollowing: false, isBlocked: false, isBlocking: false), imagePipeline: dependencyProvider.imagePipeline))
+        
+        var barButonItems: [UIBarButtonItem] = []
+        let settingItem = UIBarButtonItem(
+            image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+            style: .plain,
+            target: self,
+            action: #selector(settingButtonTapped(_:))
+        )
+        barButonItems.append(settingItem)
+        switch viewModel.state.displayType {
+        case .account:
+            self.title = "マイページ"
+            let shareItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didShareButtonTapped))
+            barButonItems.append(shareItem)
+        case .user:
+            self.title = viewModel.state.user.name
+            navigationItem.setRightBarButton(nil, animated: true)
+        }
+        navigationItem.setRightBarButtonItems(
+            barButonItems,
+            animated: false
+        )
     }
     
     func bind() {
@@ -124,28 +148,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
             case .didRefreshUserDetail(let userDetail):
                 headerView.update(input: (selfUser: dependencyProvider.user, userDetail: userDetail, imagePipeline: dependencyProvider.imagePipeline))
                 tab.update(userDetail: userDetail)
-                var barButonItems: [UIBarButtonItem] = []
-                let settingItem = UIBarButtonItem(
-                    image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
-                    style: .plain,
-                    target: self,
-                    action: #selector(settingButtonTapped(_:))
-                )
-                barButonItems.append(settingItem)
-                switch viewModel.state.displayType {
-                case .account:
-                    dependencyProvider.user = userDetail.user
-                    self.title = "マイページ"
-                    let shareItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didShareButtonTapped))
-                    barButonItems.append(shareItem)
-                case .user:
-                    self.title = userDetail.name
-                    navigationItem.setRightBarButton(nil, animated: true)
-                }
-                navigationItem.setRightBarButtonItems(
-                    barButonItems,
-                    animated: false
-                )
                 refreshControl.endRefreshing()
             case .sendMessageButonTapped:
                 openMessageRoomViewModel.createMessageRoom(partner: viewModel.state.user)
@@ -162,7 +164,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 openUrlInBrowser(url: url)
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+//                self.showAlert()
             case .openImage(let content):
                 let galleryController = GalleryViewController(startIndex: 0, itemsDataSource: content.self, configuration: [.deleteButtonMode(.none), .seeAllCloseButtonMode(.none), .thumbnailsButtonMode(.none)])
                 self.present(galleryController, animated: true, completion: nil)
@@ -236,17 +238,25 @@ final class UserDetailViewController: UIViewController, Instantiable {
     
     func didEditProfileButtonTapped() {
         let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
+        vc.listen { [unowned self] in
+            self.listener()
+        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func didShareButtonTapped() {
-        shareWithTwitter(type: .user(viewModel.state.user)) { [unowned self] isOK in
-            if isOK {
-                pointViewModel.addPoint(point: 100)
-            } else {
-                showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
+        if viewModel.state.user.username != nil {
+            shareWithTwitter(type: .user(viewModel.state.user)) { [unowned self] isOK in
+                if isOK {
+                    pointViewModel.addPoint(point: 100)
+                } else {
+                    showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
+                }
             }
+        } else {
+            showAlert(title: "ユーザーネームを設定してください", message: "プロフィール設定よりユーザーネームを設定するとTwitterでシェアできるようになるよ！")
         }
+        
     }
     
     func didSendMessageButtonTapped() {
@@ -264,6 +274,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 shareUserWithInstagram(user: viewModel.state.user, views: [vc2.scrollStackView])
                 pointViewModel.addPoint(point: 100)
             })
+            let editProfileAction = UIAlertAction(title: "プロフィール編集", style: .default, handler: { [unowned self] _ in
+                let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
+                navigationController?.pushViewController(vc, animated: true)
+            })
             let requestLiveAction = UIAlertAction(title: "ライブ掲載申請", style: .default, handler: { [unowned self] _ in
                 if let url = URL(string: "https://forms.gle/epoBeqdaGeMUcv8o9") {
                     openUrlInBrowser(url: url)
@@ -279,7 +293,14 @@ final class UserDetailViewController: UIViewController, Instantiable {
             let cancelAction = UIAlertAction(
                 title: "キャンセル", style: UIAlertAction.Style.cancel,
                 handler: { _ in })
-            actions = [shareProfileAction, requestLiveAction, myTipAction, logoutAction, cancelAction]
+            actions = [
+                shareProfileAction,
+                editProfileAction,
+                requestLiveAction,
+                myTipAction,
+                logoutAction,
+                cancelAction,
+            ]
         case .user:
             guard let userDetail = viewModel.state.userDetail else { return }
             let blockAction = UIAlertAction(title: userDetail.isBlocking ? "ブロック解除" : "ブロックする", style: UIAlertAction.Style.default, handler: { [unowned self] _ in

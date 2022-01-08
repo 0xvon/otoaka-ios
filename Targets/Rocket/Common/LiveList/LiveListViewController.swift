@@ -85,7 +85,7 @@ final class LiveListViewController: UIViewController, Instantiable {
             case .didToggleLikeLive: break
             case .error(let error):
                 print(String(describing: error))
-                self.showAlert()
+//                self.showAlert()
             }
         }
         .store(in: &cancellables)

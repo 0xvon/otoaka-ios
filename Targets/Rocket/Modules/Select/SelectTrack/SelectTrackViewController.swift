@@ -97,7 +97,7 @@ final class SelectTrackViewController: UITableViewController {
                 selectButton.setTitle("\(viewModel.state.selected.count)曲選択", for: .normal)
             case .reportError(let error):
                 print(error)
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
         

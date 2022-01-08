@@ -67,7 +67,7 @@ final class MessageListViewController: UITableViewController {
                 viewModel.refresh()
             case .reportError(let err):
                 print(err)
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
         

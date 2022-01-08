@@ -53,7 +53,7 @@ final class SearchUserViewController: UITableViewController {
                 self.searchResultController.inject(input)
             case .reportError(let err):
                 print(err)
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
         
@@ -103,16 +103,15 @@ extension SearchUserViewController: UISearchBarDelegate {
 }
 
 extension SearchUserViewController: UISearchControllerDelegate {
-    func willPresentSearchController(_ searchController: UISearchController) {
-    }
-    func willDismissSearchController(_ searchController: UISearchController) {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel.updateSearchQuery(
+            query: searchController.searchBar.text
+        )
     }
 }
 
 extension SearchUserViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-//        viewModel.updateSearchQuery.send(searchController.searchBar.text)
-        viewModel.updateSearchQuery(query: searchController.searchBar.text)
     }
 }
 

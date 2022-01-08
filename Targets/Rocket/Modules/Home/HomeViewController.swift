@@ -142,7 +142,7 @@ final class HomeViewController: UIViewController {
             if let error = error {
                 DispatchQueue.main.async {
                     print(error)
-                    self.showAlert()
+//                    self.showAlert()
                 }
                 return
             }

@@ -90,7 +90,7 @@ final class AccountViewController: UIViewController, Instantiable {
                 self.tableView.reloadData()
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+//                self.showAlert()
             }
         }.store(in: &cancellables)
     }

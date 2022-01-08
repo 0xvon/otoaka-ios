@@ -700,7 +700,7 @@ final class PlayTrackViewController: UIViewController, Instantiable {
                 activityIndicator.stopAnimating()
 //                navigationItem.rightBarButtonItem = UIBarButtonItem(customView: searchTrackButton)
                 print(error)
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -896,14 +896,14 @@ final class PlayTrackViewController: UIViewController, Instantiable {
             cloudServiceController.requestCapabilities { capabilities, error in
                 if let error = error {
                     print(error)
-                    self.showAlert()
+//                    self.showAlert()
                 }
                 if !capabilities.contains(.musicCatalogPlayback) {
                     let cloudServiceSetupViewController = SKCloudServiceSetupViewController()
                     cloudServiceSetupViewController.load(options: [.action: SKCloudServiceSetupAction.subscribe], completionHandler: { result, error in
                         if let error = error {
                             print(error)
-                            self.showAlert()
+//                            self.showAlert()
                         }
                         guard result else {
                             self.dismiss(animated: true, completion: nil)

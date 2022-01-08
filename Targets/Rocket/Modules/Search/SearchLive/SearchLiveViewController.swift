@@ -232,13 +232,15 @@ final class SearchLiveViewController: UIViewController {
 }
 
 extension SearchLiveViewController: UISearchBarDelegate {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel.updateSearchResults(
+            queryText: searchController.searchBar.text
+        )
+    }
 }
 
 extension SearchLiveViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        if let text = searchController.searchBar.text {
-            viewModel.updateSearchResults(queryText: text)
-        }
     }
 }
 

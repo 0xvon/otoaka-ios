@@ -84,7 +84,7 @@ final class FeedViewController: UITableViewController {
                 viewModel.refresh.send(())
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+//                self.showAlert()
             }
         }.store(in: &cancellables)
         
@@ -107,7 +107,7 @@ final class FeedViewController: UITableViewController {
             if let error = error {
                 DispatchQueue.main.async {
                     print(error)
-                    self.showAlert()
+//                    self.showAlert()
                 }
                 return
             }

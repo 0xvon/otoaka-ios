@@ -53,7 +53,7 @@ final class GroupListViewController: UIViewController, Instantiable {
             case .updateFollowing: break
             case .error(let error):
                 print(String(describing: error))
-                self.showAlert()
+//                self.showAlert()
             }
         }
         .store(in: &cancellables)

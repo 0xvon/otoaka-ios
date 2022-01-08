@@ -57,7 +57,7 @@ final class UserListViewController: UIViewController, Instantiable {
                 nav?.pushViewController(vc, animated: true)
             case .error(let err):
                 print(err)
-                self.showAlert()
+//                self.showAlert()
             }
         }
         .store(in: &cancellables)

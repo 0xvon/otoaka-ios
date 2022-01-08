@@ -62,7 +62,7 @@ final class CommentListViewController: UIViewController, Instantiable {
                 viewModel.refresh()
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+//                self.showAlert()
             }
         }.store(in: &cancellables)
     }

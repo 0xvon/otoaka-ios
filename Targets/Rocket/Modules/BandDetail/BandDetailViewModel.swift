@@ -100,7 +100,7 @@ class BandDetailViewModel {
             getTipRankingAction.errors,
             getGroupLives.errors,
             getGroupPost.errors,
-//            listChannel.errors,
+            listChannel.errors,
             likeLiveAction.errors,
             unlikeLiveAction.errors
         )

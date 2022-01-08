@@ -95,7 +95,7 @@ final class SearchFriendsViewController: UITableViewController {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(err)
-                showAlert()
+//                showAlert()
             case .didToggleLikeLive, .didToggleFollowGroup:
                 viewModel.refresh()
             }

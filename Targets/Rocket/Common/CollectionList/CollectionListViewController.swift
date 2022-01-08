@@ -51,7 +51,7 @@ final class CollectionListViewController: UIViewController, Instantiable {
                 collectionView.reloadData()
             case .error(let err):
                 print("[ERR: CollectionListVC]", err)
-                showAlert()
+//                showAlert()
             }
         })
         .store(in: &cancellables)

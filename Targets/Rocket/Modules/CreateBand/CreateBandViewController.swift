@@ -31,16 +31,16 @@ final class CreateBandViewController: UIViewController, Instantiable {
         return stackView
     }()
     private lazy var displayNameInputView: TextFieldView = {
-        let displayNameInputView = TextFieldView(input: (section: "バンド名", text: nil, maxLength: 20))
+        let displayNameInputView = TextFieldView(input: (section: "アーティスト名", text: nil, maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         return displayNameInputView
     }()
-    private lazy var englishNameInputView: TextFieldView = {
-        let englishNameInputView = TextFieldView(input: (section: "English Name(optional)", text: nil, maxLength: 40))
-        englishNameInputView.keyboardType(.alphabet)
-        englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
-        return englishNameInputView
-    }()
+//    private lazy var englishNameInputView: TextFieldView = {
+//        let englishNameInputView = TextFieldView(input: (section: "English Name(optional)", text: nil, maxLength: 40))
+//        englishNameInputView.keyboardType(.alphabet)
+//        englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
+//        return englishNameInputView
+//    }()
     private lazy var biographyInputView: InputTextView = {
         let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)(4000文字以内)", text: nil, maxLength: 4000))
         biographyInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -70,16 +70,16 @@ final class CreateBandViewController: UIViewController, Instantiable {
         hometownPickerView.delegate = self
         return hometownPickerView
     }()
-    private lazy var youTubeIdInputView: TextFieldView = {
-        let youTubeIdInputView = TextFieldView(input: (section: "YouTube Channel ID(任意)",text: nil,  maxLength: 40))
-        youTubeIdInputView.translatesAutoresizingMaskIntoConstraints = false
-        return youTubeIdInputView
-    }()
-    private lazy var twitterIdInputView: TextFieldView = {
-        let twitterIdInputView = TextFieldView(input: (section: "Twitter ID(@を省略)(任意)", text: nil, maxLength: 20))
-        twitterIdInputView.translatesAutoresizingMaskIntoConstraints = false
-        return twitterIdInputView
-    }()
+//    private lazy var youTubeIdInputView: TextFieldView = {
+//        let youTubeIdInputView = TextFieldView(input: (section: "YouTube Channel ID(任意)",text: nil,  maxLength: 40))
+//        youTubeIdInputView.translatesAutoresizingMaskIntoConstraints = false
+//        return youTubeIdInputView
+//    }()
+//    private lazy var twitterIdInputView: TextFieldView = {
+//        let twitterIdInputView = TextFieldView(input: (section: "Twitter ID(@を省略)(任意)", text: nil, maxLength: 20))
+//        twitterIdInputView.translatesAutoresizingMaskIntoConstraints = false
+//        return twitterIdInputView
+//    }()
     private var thumbnailInputView: UIView = {
         let thumbnailInputView = UIView()
         thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
@@ -105,14 +105,14 @@ final class CreateBandViewController: UIViewController, Instantiable {
     private lazy var profileImageTitle: UILabel = {
         let profileImageTitle = UILabel()
         profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
-        profileImageTitle.text = "プロフィール画像"
+        profileImageTitle.text = "サムネイル画像"
         profileImageTitle.textAlignment = .center
         profileImageTitle.font = Brand.font(for: .medium)
         profileImageTitle.textColor = Brand.color(for: .text(.primary))
         return profileImageTitle
     }()
     private lazy var registerButton: PrimaryButton = {
-        let registerButton = PrimaryButton(text: "バンド作成")
+        let registerButton = PrimaryButton(text: "作成する")
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         registerButton.layer.cornerRadius = 25
         registerButton.isEnabled = false
@@ -160,11 +160,11 @@ final class CreateBandViewController: UIViewController, Instantiable {
             switch output {
             case .didCreateGroup(_):
                 self.navigationController?.popViewController(animated: true)
-            case .didValidateYoutubeChannelId(let isValid):
-                if !isValid {
-                    self.showAlert(message: "入力された値が正しくありません。確認してください。")
-                    self.youTubeIdInputView.setText(text: "")
-                }
+//            case .didValidateYoutubeChannelId(let isValid):
+//                if !isValid {
+//                    self.showAlert(message: "入力された値が正しくありません。確認してください。")
+//                    self.youTubeIdInputView.setText(text: "")
+//                }
             case .updateSubmittableState(let state):
                 switch state {
                 case .editting(let submittable):
@@ -185,9 +185,9 @@ final class CreateBandViewController: UIViewController, Instantiable {
             self.didInputValue()
         }
         
-        englishNameInputView.listen { [unowned self] in
-            self.didInputValue()
-        }
+//        englishNameInputView.listen { [unowned self] in
+//            self.didInputValue()
+//        }
         
         biographyInputView.listen { [unowned self] in
             self.didInputValue()
@@ -203,18 +203,18 @@ final class CreateBandViewController: UIViewController, Instantiable {
             self.didInputValue()
         }
         
-        youTubeIdInputView.listen { [unowned self] in
-            self.didInputValue()
-        }
-        
-        twitterIdInputView.listen { [unowned self] in
-            self.didInputValue()
-        }
+//        youTubeIdInputView.listen { [unowned self] in
+//            self.didInputValue()
+//        }
+//
+//        twitterIdInputView.listen { [unowned self] in
+//            self.didInputValue()
+//        }
     }
 
     func setup() {
         self.view.backgroundColor = Brand.color(for: .background(.primary))
-        self.title = "バンド作成"
+        self.title = "アーティスト追加"
         self.navigationItem.largeTitleDisplayMode = .never
         
         self.view.addSubview(verticalScrollView)
@@ -245,10 +245,10 @@ final class CreateBandViewController: UIViewController, Instantiable {
             displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
-        mainView.addArrangedSubview(englishNameInputView)
-        NSLayoutConstraint.activate([
-            englishNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
+//        mainView.addArrangedSubview(englishNameInputView)
+//        NSLayoutConstraint.activate([
+//            englishNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        ])
         
         mainView.addArrangedSubview(biographyInputView)
         NSLayoutConstraint.activate([
@@ -267,15 +267,15 @@ final class CreateBandViewController: UIViewController, Instantiable {
             hometownInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
-        mainView.addArrangedSubview(youTubeIdInputView)
-        NSLayoutConstraint.activate([
-            youTubeIdInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
-        
-        mainView.addArrangedSubview(twitterIdInputView)
-        NSLayoutConstraint.activate([
-            twitterIdInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
+//        mainView.addArrangedSubview(youTubeIdInputView)
+//        NSLayoutConstraint.activate([
+//            youTubeIdInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        ])
+//
+//        mainView.addArrangedSubview(twitterIdInputView)
+//        NSLayoutConstraint.activate([
+//            twitterIdInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+//        ])
         
         mainView.addArrangedSubview(thumbnailInputView)
         NSLayoutConstraint.activate([
@@ -328,7 +328,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
     
     private func didInputValue() {
         let groupName: String? = displayNameInputView.getText()
-        let groupEnglishName: String? = englishNameInputView.getText()
+//        let groupEnglishName: String? = englishNameInputView.getText()
         let biography: String? = biographyInputView.getText()
         let sinceInput = sinceInputView.getText()
         let since: Date? = {
@@ -339,10 +339,18 @@ final class CreateBandViewController: UIViewController, Instantiable {
             return dateFormatter.date(from: sinceInput)
         }()
         let hometown = hometownInputView.getText()
-        let youtubeChannelId = youTubeIdInputView.getText()
-        let twitterId = twitterIdInputView.getText()
+//        let youtubeChannelId = youTubeIdInputView.getText()
+//        let twitterId = twitterIdInputView.getText()
         
-        viewModel.didUpdateInputItems(name: groupName, englishName: groupEnglishName, biography: biography, since: since, youtubeChannelId: youtubeChannelId, twitterId: twitterId, hometown: hometown)
+        viewModel.didUpdateInputItems(
+            name: groupName,
+            englishName: nil,
+            biography: biography,
+            since: since,
+            youtubeChannelId: nil,
+            twitterId: nil,
+            hometown: hometown
+        )
     }
 
     @objc private func selectProfileImage(_ sender: Any) {

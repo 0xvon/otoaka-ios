@@ -75,7 +75,7 @@ final class UserNotificationViewControlelr: UITableViewController {
                 navigationController?.pushViewController(vc, animated: true)
             case .error(let error):
                 print(error)
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
         

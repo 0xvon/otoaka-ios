@@ -79,7 +79,7 @@ final class SearchGroupViewController: UITableViewController {
             case .didToggleFollowGroup: break
             case .reportError(let err):
                 print(err)
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
 
@@ -116,11 +116,15 @@ extension SearchGroupViewController: UISearchBarDelegate {
 }
 
 extension SearchGroupViewController: UISearchControllerDelegate {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel.updateSearchQuery(
+            query: searchController.searchBar.text
+        )
+    }
 }
 
 extension SearchGroupViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.updateSearchQuery(query: searchController.searchBar.text)
     }
 }
 

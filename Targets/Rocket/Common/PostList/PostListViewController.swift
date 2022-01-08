@@ -133,7 +133,7 @@ final class PostListViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -145,7 +145,7 @@ final class PostListViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -159,7 +159,7 @@ final class PostListViewController: UIViewController, Instantiable {
                 header.inject(lives: lives)
             case .error(let err):
                 print(err)
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)

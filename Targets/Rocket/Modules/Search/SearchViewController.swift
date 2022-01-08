@@ -55,11 +55,34 @@ final class SearchViewController: UIViewController {
             userCategoryButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(spacer)
+        NSLayoutConstraint.activate([
+            spacer.heightAnchor.constraint(equalToConstant: 48)
+        ])
+        
+        stackView.addArrangedSubview(addTitle)
+        NSLayoutConstraint.activate([
+            addTitle.heightAnchor.constraint(equalToConstant: 16),
+            addTitle.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        stackView.addArrangedSubview(liveAddButton)
+        NSLayoutConstraint.activate([
+            liveAddButton.heightAnchor.constraint(equalToConstant: 28),
+            liveAddButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        stackView.addArrangedSubview(groupAddButton)
+        NSLayoutConstraint.activate([
+            groupAddButton.heightAnchor.constraint(equalToConstant: 28),
+            groupAddButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
         return stackView
     }()
     private lazy var categoryTitle: UILabel = {
         let label = UILabel()
-        label.text = "カテゴリ"
+        label.text = "カテゴリで探す"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Brand.font(for: .largeStrong)
         label.textColor = Brand.color(for: .text(.primary))
@@ -94,6 +117,34 @@ final class SearchViewController: UIViewController {
         button._setImage(
             image: UIImage(systemName: "person.fill")!
                 .withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal)
+        )
+        return button
+    }()
+    private lazy var addTitle: UILabel = {
+        let label = UILabel()
+        label.text = "追加する"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .largeStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        return label
+    }()
+    private lazy var liveAddButton: CategoryButton = {
+        let button = CategoryButton()
+        button.addTarget(self, action: #selector(liveAddTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("ライブを追加", for: .normal)
+        button._setImage(
+            image: UIImage(named: "selectedTicketIcon")!
+        )
+        return button
+    }()
+    private lazy var groupAddButton: CategoryButton = {
+        let button = CategoryButton()
+        button.addTarget(self, action: #selector(groupAddTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("アーティストを追加", for: .normal)
+        button._setImage(
+            image: UIImage(systemName: "guitars.fill")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal)
         )
         return button
     }()
@@ -183,6 +234,15 @@ final class SearchViewController: UIViewController {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+    @objc private func groupAddTapped() {
+        let vc = CreateBandViewController(dependencyProvider: dependencyProvider, input: ())
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func liveAddTapped() {
+        print("hello")
+    }
+    
     deinit {
         print("SearchVC.deinit")
     }
@@ -194,26 +254,19 @@ extension SearchViewController: UISearchBarDelegate {
             queryText: searchController.searchBar.text,
             scopeIndex: searchController.searchBar.selectedScopeButtonIndex)
     }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel.updateSearchResults(
+            queryText: searchController.searchBar.text,
+            scopeIndex: searchController.searchBar.selectedScopeButtonIndex)
+    }
 }
 
 extension SearchViewController: UISearchControllerDelegate {
-    func willPresentSearchController(_ searchController: UISearchController) {
-        viewModel.updateSearchResults(
-            queryText: searchController.searchBar.text,
-            scopeIndex: searchController.searchBar.selectedScopeButtonIndex)
-    }
-    func willDismissSearchController(_ searchController: UISearchController) {
-        viewModel.updateSearchResults(
-            queryText: searchController.searchBar.text,
-            scopeIndex: searchController.searchBar.selectedScopeButtonIndex)
-    }
 }
 
 extension SearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.updateSearchResults(
-            queryText: searchController.searchBar.text,
-            scopeIndex: searchController.searchBar.selectedScopeButtonIndex)
     }
 }
 

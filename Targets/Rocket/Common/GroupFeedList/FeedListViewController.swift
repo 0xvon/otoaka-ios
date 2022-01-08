@@ -51,7 +51,7 @@ final class FeedListViewController: UIViewController, Instantiable {
                 viewModel.refresh()
             case .error(let err):
                 print(err)
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)

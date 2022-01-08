@@ -246,7 +246,7 @@ final class UserStatsViewController: UIViewController, Instantiable {
                 groupTipContent.inject(tip: tip)
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         })
         .store(in: &cancellables)

@@ -140,6 +140,7 @@ class UserInformationView: UIView {
         }
         if input.userDetail.user.id == input.selfUser.id {
             editProfileButton.isHidden = false
+            editProfileButton.isEnabled = true
             followButton.isHidden = true
             sendMessageButton.isHidden = true
         } else {
@@ -189,7 +190,7 @@ class UserInformationView: UIView {
             editProfileButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             editProfileButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
             editProfileButton.widthAnchor.constraint(equalToConstant: 32),
-            editProfileButton.heightAnchor.constraint(equalTo: followButton.widthAnchor),
+            editProfileButton.heightAnchor.constraint(equalTo: editProfileButton.widthAnchor),
         ])
         
         addSubview(profileSummaryLabel)

@@ -82,7 +82,7 @@ final class SelectGroupViewController: UITableViewController {
                 navigationController?.popViewController(animated: true)
             case .reportError(let error):
                 print(error)
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
         
@@ -110,6 +110,11 @@ final class SelectGroupViewController: UITableViewController {
 }
 
 extension SelectGroupViewController: UISearchBarDelegate {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel.updateSearchQuery(
+            query: searchController.searchBar.text
+        )
+    }
 }
 
 extension SelectGroupViewController: UISearchControllerDelegate {
@@ -117,7 +122,6 @@ extension SelectGroupViewController: UISearchControllerDelegate {
 
 extension SelectGroupViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.updateSearchQuery(query: searchController.searchBar.text)
     }
 }
 

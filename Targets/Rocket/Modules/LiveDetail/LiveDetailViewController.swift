@@ -239,6 +239,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         coachMarksController.dataSource = self
         coachMarksController.delegate = self
+        
+        headerView.update(input: (live: viewModel.state.live, imagePipeline: dependencyProvider.imagePipeline))
+        setupPerformersContents(performers: viewModel.state.live.performers)
     }
     
     func bind() {
@@ -320,7 +323,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -332,7 +335,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -366,8 +369,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 participatingFriendSectionHeader.isHidden = false
                 participatingFriendWrapper.isHidden = false
                 participatingFriendContent.inject(users: liveDetail.participatingFriends)
-            case .updatePerformers(let performers):
-                self.setupPerformersContents(performers: performers)
             case .updatePostSummary(let post):
                 let isHidden = post == nil || !viewModel.isLivePast()
                 self.postSectionHeader.isHidden = isHidden
@@ -385,7 +386,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 viewModel.refresh()
             case .reportError(let error):
                 print(error)
-                self.showAlert()
+//                self.showAlert()
             case .pushToPostList(let input):
                 let vc = PostListViewController(
                     dependencyProvider: dependencyProvider, input: input)

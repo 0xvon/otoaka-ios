@@ -377,7 +377,7 @@ final class PostDetailViewController: UIViewController, Instantiable {
             case .error(let err):
                 refreshControl.endRefreshing()
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         }
         .store(in: &cancellables)

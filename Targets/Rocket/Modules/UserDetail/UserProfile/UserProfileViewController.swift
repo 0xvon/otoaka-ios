@@ -158,7 +158,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 followingWrapper.isHidden = false
                 followingContent.removeAllTags()
                 if groupFeeds.isEmpty {
-                    followingContent.addTag("いません")
+                    followingContent.addTag("フォローしたアーティストが表示されます")
                     followingContent.tagBackgroundColor = .clear
                     followingContent.borderColor = Brand.color(for: .background(.cellSelected))
                     followingContent.borderWidth = 1
@@ -174,7 +174,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 recentlyFollowingWrapper.isHidden = false
                 recentlyFollowingContent.removeAllTags()
                 if groupFeeds.isEmpty {
-                    recentlyFollowingContent.addTag("いません")
+                    recentlyFollowingContent.addTag("プロフィールで設定できます")
                     recentlyFollowingContent.tagBackgroundColor = .clear
                     recentlyFollowingContent.borderColor = Brand.color(for: .background(.cellSelected))
                     recentlyFollowingContent.borderWidth = 1
@@ -191,7 +191,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 liveScheduleTableView.inject(liveFeeds: liveFeeds)
             case .reportError(let err):
                 print(String(describing: err))
-                showAlert()
+//                showAlert()
             }
         })
         .store(in: &cancellables)

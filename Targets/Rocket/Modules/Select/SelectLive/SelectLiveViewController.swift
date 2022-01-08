@@ -80,7 +80,7 @@ final class SelectLiveViewController: UITableViewController {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .reportError(let error):
                 print(error)
-                showAlert()
+//                showAlert()
             }
         }.store(in: &cancellables)
         
@@ -103,6 +103,9 @@ final class SelectLiveViewController: UITableViewController {
 }
 
 extension SelectLiveViewController: UISearchBarDelegate {
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        viewModel.updateSearchQuery(query: searchController.searchBar.text)
+    }
 }
 
 extension SelectLiveViewController: UISearchControllerDelegate {
@@ -110,7 +113,6 @@ extension SelectLiveViewController: UISearchControllerDelegate {
 
 extension SelectLiveViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        viewModel.updateSearchQuery(query: searchController.searchBar.text)
     }
 }
 
