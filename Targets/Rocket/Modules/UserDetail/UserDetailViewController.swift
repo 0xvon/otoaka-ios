@@ -278,11 +278,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
                 navigationController?.pushViewController(vc, animated: true)
             })
-            let requestLiveAction = UIAlertAction(title: "ライブ掲載申請", style: .default, handler: { [unowned self] _ in
-                if let url = URL(string: "https://forms.gle/epoBeqdaGeMUcv8o9") {
-                    openUrlInBrowser(url: url)
-                }
-            })
             let myTipAction = UIAlertAction(title: "snack履歴", style: .default, handler: { [unowned self] _ in
                 let vc = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .myTip(dependencyProvider.user.id))
                 navigationController?.pushViewController(vc, animated: true)
@@ -296,8 +291,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
             actions = [
                 shareProfileAction,
                 editProfileAction,
-                requestLiveAction,
-                myTipAction,
+//                myTipAction,
                 logoutAction,
                 cancelAction,
             ]

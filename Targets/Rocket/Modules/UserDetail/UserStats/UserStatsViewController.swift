@@ -242,8 +242,10 @@ final class UserStatsViewController: UIViewController, Instantiable {
                 frequentlyWatchingGroupContentWrapper.isHidden = false
                 frequentlyWatchingGroupContent.inject(group: groups)
             case .didGetUserTip(let tip):
-                groupTipContentWrapper.isHidden = false
-                groupTipContent.inject(tip: tip)
+//                groupTipContentWrapper.isHidden = false
+//                groupTipContent.inject(tip: tip)
+                groupTipSectionHeader.isHidden = true
+                groupTipContent.isHidden = true
             case .reportError(let err):
                 print(String(describing: err))
 //                showAlert()

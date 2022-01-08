@@ -391,7 +391,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     isFollowing: response.isFollowing,
                     followersCount: response.followersCount
                 )
-                socialTipButton.isHidden = false
+//                socialTipButton.isHidden = false
                 self.setupFloatingItems(displayType: displayType)
                 refreshControl.endRefreshing()
             case .getGroupTip(let tip):

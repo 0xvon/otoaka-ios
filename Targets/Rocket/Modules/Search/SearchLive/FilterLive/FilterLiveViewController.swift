@@ -154,13 +154,10 @@ extension FilterLiveViewController {
     
     func setTableViewBackgroundView(isDisplay: Bool = true) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: "ライブを掲載申請する")
+            let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: "ライブ追加する")
             emptyCollectionView.listen { [unowned self] in
-                if let url = URL(string: "https://forms.gle/epoBeqdaGeMUcv8o9") {
-                    let safari = SFSafariViewController(url: url)
-                    safari.dismissButtonStyle = .close
-                    present(safari, animated: true, completion: nil)
-                }
+                let vc = CreateLiveViewController(dependencyProvider: dependencyProvider, input: ())
+                navigationController?.pushViewController(vc, animated: true)
             }
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView

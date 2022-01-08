@@ -80,8 +80,8 @@ final class LiveListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.setTableViewBackgroundView(tableView: liveTableView)
                 self.liveTableView.reloadData()
-            case .getEvents(let events):
-                header.inject(socialTipEvents: events)
+            case .getEvents(let events): break
+//                header.inject(socialTipEvents: events)
             case .didToggleLikeLive: break
             case .error(let error):
                 print(String(describing: error))
@@ -92,7 +92,8 @@ final class LiveListViewController: UIViewController, Instantiable {
         
         header.listen { [unowned self] socialTipEvent in
             let vc = SocialTipEventDetailViewController(dependencyProvider: dependencyProvider, input: socialTipEvent)
-            navigationController?.pushViewController(vc, animated: true)
+            let nav = self.navigationController ?? presentingViewController?.navigationController
+            nav?.pushViewController(vc, animated: true)
         }
     }
 
@@ -222,26 +223,24 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
         let emptyCollectionView: EmptyCollectionView = {
             switch viewModel.dataSource {
             case .likedLive(_), .likedFutureLive(_):
-                let emptyCollectionView = EmptyCollectionView(emptyType: .likedLiveList, actionButtonTitle: "ライブ掲載申請する")
+                let emptyCollectionView = EmptyCollectionView(emptyType: .likedLiveList, actionButtonTitle: "ライブ追加する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 return emptyCollectionView
             case .groupLive(_):
-                let emptyCollectionView = EmptyCollectionView(emptyType: .groupLiveList, actionButtonTitle: "ライブ掲載申請する")
+                let emptyCollectionView = EmptyCollectionView(emptyType: .groupLiveList, actionButtonTitle: "ライブ追加する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 return emptyCollectionView
             default:
-                let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: "ライブ掲載申請する")
+                let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: "ライブ追加する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 return emptyCollectionView
             }
             
         }()
         emptyCollectionView.listen { [unowned self] in
-            if let url = URL(string: "https://forms.gle/epoBeqdaGeMUcv8o9") {
-                let safari = SFSafariViewController(url: url)
-                safari.dismissButtonStyle = .close
-                present(safari, animated: true, completion: nil)
-            }
+            let vc = CreateLiveViewController(dependencyProvider: dependencyProvider, input: ())
+            let nav = self.navigationController ?? presentingViewController?.navigationController
+            nav?.pushViewController(vc, animated: true)
         }
         tableView.backgroundView = self.viewModel.state.lives.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {

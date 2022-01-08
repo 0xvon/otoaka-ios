@@ -240,7 +240,8 @@ final class SearchViewController: UIViewController {
     }
     
     @objc private func liveAddTapped() {
-        print("hello")
+        let vc = CreateLiveViewController(dependencyProvider: dependencyProvider, input: ())
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     deinit {

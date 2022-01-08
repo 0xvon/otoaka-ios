@@ -137,14 +137,18 @@ final class TextFieldView: UIView {
     }
 
     func selectInputView(inputView: UIView) {
-        self.textField.inputView = inputView
         let toolBar = UIToolbar()
-        toolBar.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44)
-        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
-        let doneButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .done, target: self, action: #selector(donePicker))
-        toolBar.setItems([spacer, doneButtonItem], animated: true)
+        toolBar.isTranslucent = true
+//        toolBar.translatesAutoresizingMaskIntoConstraints = false
+        toolBar.setItems([
+            UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil),
+            UIBarButtonItem(
+                barButtonSystemItem: .done, target: self, action: #selector(donePicker)
+            ),
+        ], animated: true)
+        toolBar.sizeToFit()
         self.textField.inputAccessoryView = toolBar
+        self.textField.inputView = inputView
     }
 
     @objc private func donePicker() {

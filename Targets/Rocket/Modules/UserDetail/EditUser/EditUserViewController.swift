@@ -199,7 +199,6 @@ final class EditUserViewController: UIViewController, Instantiable {
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("更新", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
-        button.isEnabled = true
         return button
     }()
     private lazy var activityIndicator: LoadingCollectionView = {
@@ -310,8 +309,8 @@ final class EditUserViewController: UIViewController, Instantiable {
             case .updateSubmittableState(let state):
                 switch state {
                 case .editting(let submittable):
-                    self.registerButton.isEnabled = submittable
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
+                    self.registerButton.isEnabled = submittable
                     self.activityIndicator.stopAnimating()
                 case .loading:
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)

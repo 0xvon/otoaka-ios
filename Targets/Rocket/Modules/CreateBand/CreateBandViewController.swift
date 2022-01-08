@@ -115,7 +115,6 @@ final class CreateBandViewController: UIViewController, Instantiable {
         let registerButton = PrimaryButton(text: "作成する")
         registerButton.translatesAutoresizingMaskIntoConstraints = false
         registerButton.layer.cornerRadius = 25
-        registerButton.isEnabled = false
         return registerButton
     }()
     private lazy var activityIndicator: LoadingCollectionView = {
