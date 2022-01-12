@@ -36,6 +36,20 @@ final class SelectDateViewController: UIViewController {
         calendar.calendarWeekdayView.weekdayLabels[6].text = "土"
         return calendar
     }()
+    private lazy var leftArrowButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "chevron.left.2")?.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(leftArrowTapped), for: .touchUpInside)
+        return button
+    }()
+    private lazy var rightArrowButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "chevron.right.2")?.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), for: .normal)
+        button.addTarget(self, action: #selector(rightArrowTapped), for: .touchUpInside)
+        return button
+    }()
     
     private lazy var selectButton: PrimaryButton = {
         let button = PrimaryButton(text: "OK")
@@ -68,6 +82,22 @@ final class SelectDateViewController: UIViewController {
             calendar.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width)
         ])
         
+        view.addSubview(leftArrowButton)
+        NSLayoutConstraint.activate([
+            leftArrowButton.widthAnchor.constraint(equalToConstant: 40),
+            leftArrowButton.heightAnchor.constraint(equalTo: leftArrowButton.widthAnchor),
+            leftArrowButton.topAnchor.constraint(equalTo: calendar.topAnchor),
+            leftArrowButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+        ])
+        
+        view.addSubview(rightArrowButton)
+        NSLayoutConstraint.activate([
+            rightArrowButton.widthAnchor.constraint(equalToConstant: 40),
+            rightArrowButton.heightAnchor.constraint(equalTo: rightArrowButton.widthAnchor),
+            rightArrowButton.topAnchor.constraint(equalTo: calendar.topAnchor),
+            rightArrowButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16),
+        ])
+        
         view.addSubview(selectButton)
         NSLayoutConstraint.activate([
             selectButton.topAnchor.constraint(equalTo: calendar.bottomAnchor, constant: 24),
@@ -85,6 +115,14 @@ final class SelectDateViewController: UIViewController {
     @objc private func selectButtonTapped() {
         self.listener((datesRange.first, datesRange.last))
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func leftArrowTapped() {
+        calendar.setCurrentPage(Date(timeInterval: -60*60*24*365, since: calendar.currentPage), animated: true)
+    }
+    
+    @objc private func rightArrowTapped() {
+        calendar.setCurrentPage(Date(timeInterval: 60*60*24*365, since: calendar.currentPage), animated: true)
     }
     
     private var listener: ((Date?, Date?)) -> Void = { _ in }

@@ -278,10 +278,10 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
                 navigationController?.pushViewController(vc, animated: true)
             })
-            let myTipAction = UIAlertAction(title: "snack履歴", style: .default, handler: { [unowned self] _ in
-                let vc = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .myTip(dependencyProvider.user.id))
-                navigationController?.pushViewController(vc, animated: true)
-            })
+//            let myTipAction = UIAlertAction(title: "snack履歴", style: .default, handler: { [unowned self] _ in
+//                let vc = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .myTip(dependencyProvider.user.id))
+//                navigationController?.pushViewController(vc, animated: true)
+//            })
             let logoutAction = UIAlertAction(title: "ログアウト", style: .default, handler: { [unowned self] _ in
                     logout()
             })

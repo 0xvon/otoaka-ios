@@ -85,9 +85,7 @@ class SocialTipCellContent: UIButton {
         
         stackView.addArrangedSubview(usernameLabel)
         stackView.addArrangedSubview(toLabel)
-        stackView.addArrangedSubview(countLabel)
-        stackView.addArrangedSubview(textView)
-        stackView.addArrangedSubview(dateLabel)
+//        stackView.addArrangedSubview(countLabel)
         
         let spacer = UIView()
         spacer.backgroundColor = .clear
@@ -100,24 +98,25 @@ class SocialTipCellContent: UIButton {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
-        label.font = Brand.font(for: .smallStrong)
+        label.font = Brand.font(for: .largeStrong)
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
-    private lazy var countLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.isUserInteractionEnabled = false
-        label.font = Brand.font(for: .smallStrong)
-        label.textColor = Brand.color(for: .text(.primary))
-        return label
-    }()
+//    private lazy var countLabel: UILabel = {
+//        let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.isUserInteractionEnabled = false
+//        label.font = Brand.font(for: .smallStrong)
+//        label.textColor = Brand.color(for: .text(.primary))
+//        return label
+//    }()
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
         label.font = Brand.font(for: .xxsmall)
         label.textColor = Brand.color(for: .text(.primary))
+        label.textAlignment = .right
         return label
     }()
     private lazy var textView: UITextView = {
@@ -154,20 +153,20 @@ class SocialTipCellContent: UIButton {
     }
     
     func inject(input: Input) {
-        usernameLabel.text = input.tip.user.name
+        usernameLabel.text = input.tip.theme
         if let url = input.tip.user.thumbnailURL.flatMap(URL.init(string:)) {
             input.imagePipeline.loadImage(url, into: artworkImageView)
         }
         
         switch input.tip.type {
         case .group(let group):
-            toLabel.text = "Dear: \(group.name)"
+            toLabel.text = "\(group.name)"
         case .live(let live):
-            toLabel.text = "Dear: \(live.title)"
+            toLabel.text = "\(live.title)"
         }
         
-        countLabel.text = "\(input.tip.tip)snacks"
-        dateLabel.text = input.tip.thrownAt.toFormatString(format: "yyyy/MM/dd")
+//        countLabel.text = "\(input.tip.tip)snacks"
+        dateLabel.text = "\(input.tip.tip)snacks・\(input.tip.thrownAt.toFormatString(format: "yyyy/MM/dd"))"
         textView.text = input.tip.message
         
         if input.tip.tip < 1500 {
@@ -189,17 +188,31 @@ class SocialTipCellContent: UIButton {
         NSLayoutConstraint.activate([
             artworkImageView.widthAnchor.constraint(equalToConstant: 50),
             artworkImageView.heightAnchor.constraint(equalTo: artworkImageView.widthAnchor),
-            artworkImageView.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            artworkImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 8),
-            artworkImageView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -8)
+            artworkImageView.topAnchor.constraint(equalTo: topAnchor, constant: 12),
+            artworkImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 12),
         ])
         
         addSubview(stackView)
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: artworkImageView.topAnchor),
             stackView.leftAnchor.constraint(equalTo: artworkImageView.rightAnchor, constant: 8),
-            stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -8),
-            stackView.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -8),
+            stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -12),
+        ])
+        
+        addSubview(textView)
+        NSLayoutConstraint.activate([
+            textView.leftAnchor.constraint(equalTo: artworkImageView.leftAnchor),
+            textView.rightAnchor.constraint(equalTo: stackView.rightAnchor),
+            textView.topAnchor.constraint(greaterThanOrEqualTo: artworkImageView.bottomAnchor, constant: 4),
+            textView.topAnchor.constraint(greaterThanOrEqualTo: stackView.bottomAnchor, constant: 4),
+        ])
+        
+        addSubview(dateLabel)
+        NSLayoutConstraint.activate([
+            dateLabel.leftAnchor.constraint(equalTo: textView.leftAnchor),
+            dateLabel.rightAnchor.constraint(equalTo: textView.rightAnchor),
+            dateLabel.topAnchor.constraint(equalTo: textView.bottomAnchor, constant: 8),
+            dateLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
         ])
         
         addTarget(self, action: #selector(cellTapped), for: .touchUpInside)
@@ -208,7 +221,7 @@ class SocialTipCellContent: UIButton {
     func prepare() {
         artworkImageView.image = nil
         usernameLabel.text = nil
-        countLabel.text = nil
+//        countLabel.text = nil
     }
     
     @objc private func cellTapped() {

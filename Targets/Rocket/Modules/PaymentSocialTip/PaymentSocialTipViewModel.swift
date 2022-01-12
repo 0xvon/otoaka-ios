@@ -16,9 +16,18 @@ class PaymentSocialTipViewModel {
     struct State {
         var type: SocialTipType
         var tip: Int = 0
-        var message: String? = "いつも素敵な音楽をありがとう！"
+        var message: String? = "○○なところ！"
         var isRealMoney: Bool = true
         var products: [SKProduct] = []
+        var theme: String = "大好きな理由は？"
+        var themeItem: [String] = [
+            "大好きな理由は？",
+            "ライブで何着る？",
+            "一番好きな曲は？",
+            "ライブで聴きたい曲は？",
+            "ライブしてほしい場所は？",
+            "セトリ最初の3曲予想！",
+        ]
     }
     
     enum PageState {
@@ -68,6 +77,11 @@ class PaymentSocialTipViewModel {
         getProducts()
     }
     
+    func didUpdateTheme(theme: String) {
+        state.theme = theme
+        didInputValue()
+    }
+    
     func didUpdateMessage(message: String?) {
         state.message = message
         didInputValue()
@@ -93,6 +107,7 @@ class PaymentSocialTipViewModel {
         let request = SendSocialTip.Request(
             tip: state.tip,
             type: state.type,
+            theme: state.theme,
             message: message,
             isRealMoney: state.isRealMoney
         )
@@ -107,10 +122,10 @@ class PaymentSocialTipViewModel {
     
     func getProducts() {
         SwiftyStoreKit.retrieveProductsInfo([
-            "600_yen",
-            "1000_yen",
-            "2000_yen",
-            "10000_yen",
+            "snack_600",
+            "snack_1000",
+            "snack_2000",
+            "snack_10000",
         ]) { [unowned self] result in
             if let error = result.error {
                 outputSubject.send(.reportError(error))

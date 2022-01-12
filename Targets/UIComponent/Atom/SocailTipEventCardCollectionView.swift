@@ -124,6 +124,7 @@ public final class SocialTipEventCardCellContent: UIButton {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.alpha = 0.3
+        imageView.layer.cornerRadius = 16
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         return imageView

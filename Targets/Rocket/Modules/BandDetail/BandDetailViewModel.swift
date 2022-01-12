@@ -168,7 +168,7 @@ class BandDetailViewModel {
     func refresh() {
         getGroupDetail()
         getSocialTip()
-        getGroupTip()
+//        getGroupTip()
         getChartSummary()
         getGroupLiveSummary()
         getGroupPostSummary()

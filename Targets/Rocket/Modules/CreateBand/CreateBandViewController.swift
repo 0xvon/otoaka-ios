@@ -152,7 +152,9 @@ final class CreateBandViewController: UIViewController, Instantiable {
     
     func bind() {
         registerButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: viewModel.didRegisterButtonTapped)
+            .sink(receiveValue: { [viewModel] in
+                viewModel.didRegisterButtonTapped()
+            })
             .store(in: &cancellables)
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
@@ -306,6 +308,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         ])
         
         mainView.addArrangedSubview(registerButton)
+        registerButton.isEnabled = false
         NSLayoutConstraint.activate([
             registerButton.heightAnchor.constraint(equalToConstant: 50),
         ])

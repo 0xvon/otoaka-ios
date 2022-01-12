@@ -96,16 +96,27 @@ final class UserStatsViewController: UIViewController, Instantiable {
     }()
     private lazy var frequentlyWatchingGroupContentWrapper: UIView = Self.addPadding(to: self.frequentlyWatchingGroupContent)
     
-    private let groupTipSectionHeader = SummarySectionHeader(title: "snackしたアーティスト")
-    private lazy var groupTipContent: GroupTipRankingCollectionView = {
-        let content = GroupTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
+    private let groupTipSectionHeader = SummarySectionHeader(title: "snack")
+//    private lazy var groupTipContent: GroupTipRankingCollectionView = {
+//        let content = GroupTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        NSLayoutConstraint.activate([
+//            content.heightAnchor.constraint(equalToConstant: 210)
+//        ])
+//        return content
+//    }()
+    private lazy var socialTipContent: SocialTipCellContent = {
+        let content = SocialTipCellContent()
         content.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 210)
-        ])
         return content
     }()
-    private lazy var groupTipContentWrapper: UIView = Self.addPadding(to: self.groupTipContent)
+    private lazy var groupTipContentWrapper: UIView = Self.addPadding(to: self.socialTipContent)
+    private lazy var socialTipEmptyView: EmptyCollectionView = {
+        let content = EmptyCollectionView(emptyType: .tip, actionButtonTitle: "アーティストを探してsnackしてみよう！")
+        content.translatesAutoresizingMaskIntoConstraints = false
+        return content
+    }()
+    private lazy var socialTipEmptyViewWrapper: UIView = Self.addPadding(to: self.socialTipEmptyView)
     
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
@@ -178,6 +189,8 @@ final class UserStatsViewController: UIViewController, Instantiable {
         ])
         groupTipContentWrapper.isHidden = true
         scrollStackView.addArrangedSubview(groupTipContentWrapper)
+        socialTipEmptyViewWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(socialTipEmptyViewWrapper)
         
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -241,11 +254,16 @@ final class UserStatsViewController: UIViewController, Instantiable {
             case .didGetFrequentlyWathingGroups(let groups):
                 frequentlyWatchingGroupContentWrapper.isHidden = false
                 frequentlyWatchingGroupContent.inject(group: groups)
-            case .didGetUserTip(let tip):
+            case .didGetUserTipRanking(let tip): break
 //                groupTipContentWrapper.isHidden = false
 //                groupTipContent.inject(tip: tip)
-                groupTipSectionHeader.isHidden = true
-                groupTipContent.isHidden = true
+            case .didGetUserTip(let tip):
+                let isHidden = tip == nil
+                groupTipContentWrapper.isHidden = isHidden
+                socialTipEmptyViewWrapper.isHidden = !isHidden
+                if let tip = tip {
+                    socialTipContent.inject(input: (tip: tip, imagePipeline: dependencyProvider.imagePipeline))
+                }
             case .reportError(let err):
                 print(String(describing: err))
 //                showAlert()
@@ -269,13 +287,36 @@ final class UserStatsViewController: UIViewController, Instantiable {
         }
         
         groupTipSectionHeader.listen { [unowned self] in
-            let vc = GroupRankingListViewController(dependencyProvider: dependencyProvider, input: .socialTip(viewModel.state.user.id))
-            self.navigationController?.pushViewController(vc, animated: true)
+            let vc = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .myTip(viewModel.state.user.id))
+            navigationController?.pushViewController(vc, animated: true)
+//            let vc = GroupRankingListViewController(dependencyProvider: dependencyProvider, input: .socialTip(viewModel.state.user.id))
+//            self.navigationController?.pushViewController(vc, animated: true)
         }
         
-        groupTipContent.listen { [unowned self] group in
-            let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
-            self.navigationController?.pushViewController(vc, animated: true)
+//        groupTipContent.listen { [unowned self] group in
+//            let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+//            self.navigationController?.pushViewController(vc, animated: true)
+//        }
+        
+        socialTipEmptyView.listen { [unowned self] in
+            let vc = SearchGroupViewController(dependencyProvider: dependencyProvider)
+            navigationController?.pushViewController(vc, animated: true)
+        }
+        
+        socialTipContent.listen { [unowned self] action in
+            switch action {
+            case .cellTapped:
+                if let tip = viewModel.state.socialTip {
+                    switch tip.type {
+                    case .group(let group):
+                        let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+                        navigationController?.pushViewController(vc, animated: true)
+                    case .live(let live):
+                        let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                        navigationController?.pushViewController(vc, animated: true)
+                    }
+                }
+            }
         }
     }
     

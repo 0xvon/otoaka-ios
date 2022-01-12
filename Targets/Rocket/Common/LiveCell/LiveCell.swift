@@ -227,14 +227,7 @@ class LiveCellContent: UIButton {
             self.bandsLabel.text = groupNames.joined(separator: ", ") + "..."
         }
         
-        if let date = input.live.live.date?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd"),
-           let openAt = input.live.live.openAt {
-            if let endDate = input.live.live.endDate?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd") {
-                dateView.title = "\(date) ~ \(endDate)"
-            } else {
-                dateView.title = "\(date) \(openAt)"
-            }
-        }
+        dateView.title = input.live.live.date?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd") ?? "未定"
         placeView.title = input.live.live.liveHouse ?? "未定"
         if let artworkURL = input.live.live.artworkURL ?? input.live.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: thumbnailView)

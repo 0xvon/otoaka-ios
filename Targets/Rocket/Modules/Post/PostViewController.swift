@@ -231,7 +231,7 @@ final class PostViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didPost(_):
-                pointViewModel.addPoint(point: 1000)
+                pointViewModel.addPoint(point: 100)
             case .updateSubmittableState(let pageState):
                 switch pageState {
                 case .editting(let submittable):
@@ -263,7 +263,7 @@ final class PostViewController: UIViewController, Instantiable {
         pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .addPoint(_):
-                self.showSuccessToGetPoint(1000)
+                self.showSuccessToGetPoint(100)
                 navigationController?.popToRootViewController(animated: true)
             default: break
             }

@@ -65,14 +65,7 @@ class LiveInformationView: UIView {
 */
 
     func update(input: Input) {
-        if let date = input.date?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd"),
-           let openAt = input.openAt {
-            if let endDate = input.endDate?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd") {
-                dateBadgeView.title = "\(date) ~ \(endDate)"
-            } else {
-                dateBadgeView.title = "\(date) \(openAt)"
-            }
-        }
+        dateBadgeView.title = input.date?.toFormatString(from: "yyyyMMdd", to: "yyyy/MM/dd") ?? "未定"
         liveTitleLabel.text = input.title
         mapBadgeView.title = input.liveHouse ?? "不明"
     }

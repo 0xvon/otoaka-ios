@@ -99,13 +99,18 @@ class CreateBandViewModel {
         state.youtubeChannelId = youtubeChannelId
         state.hometown = hometown
         
-        let isSubmittable: Bool = (name != nil)
-        outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
+        submittable()
 //        validateYoutubeChannelId(youtubeChannelId: youtubeChannelId)
     }
     
     func didUpdateArtwork(artwork: UIImage?) {
         self.state.artwork = artwork
+        submittable()
+    }
+    
+    func submittable() {
+        let isSubmittable: Bool = (state.name != nil && state.artwork != nil)
+        outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
     }
 
     func didRegisterButtonTapped() {

@@ -173,11 +173,11 @@ extension UIViewController {
             switch tip.type {
             case .group(let group):
                 let redirectUrl = "band.rocketfor://ios/groups/\(group.id)"
-                shareText = "\(group.name)に応援したよ！！！"
+                shareText = "\(group.name)にsnackしたよ！！！"
                 ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name, redirectUrl: redirectUrl)
             case .live(let live):
                 let redirectUrl = "band.rocketfor://ios/lives/\(live.id)"
-                shareText = "\(live.title)に応援したよ！！！"
+                shareText = "\(live.title)にsnackしたよ！！！"
                 ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title, redirectUrl: redirectUrl)
             }
         }

@@ -128,7 +128,7 @@ extension SocialTipListViewController: UITableViewDelegate, UITableViewDataSourc
     
     func setTableViewBackgroundView(tableView: UITableView) {
         let emptyCollectionView: EmptyCollectionView = {
-            let emptyCollectionView = EmptyCollectionView(emptyType: .userList, actionButtonTitle: nil)
+            let emptyCollectionView = EmptyCollectionView(emptyType: .tip, actionButtonTitle: nil)
             emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
             return emptyCollectionView
         }()

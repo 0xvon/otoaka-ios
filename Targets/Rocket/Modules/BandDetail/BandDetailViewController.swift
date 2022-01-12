@@ -84,13 +84,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
-    private let socialTipSectionHeader = SummarySectionHeader(title: "最近のsnack")
+    private let socialTipSectionHeader = SummarySectionHeader(title: "snack")
     private lazy var socialTipContent: SocialTipCellContent = {
         let content = SocialTipCellContent()
         content.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            content.heightAnchor.constraint(equalToConstant: 200)
-//        ])
         return content
     }()
     private lazy var socialTipContentWrapper: UIView = Self.addPadding(to: self.socialTipContent)
@@ -121,7 +118,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
         CoachStep(view: followButton, hint: "好きなアーティストをフォローしよう！フォローするといいことがたくさんあります！", next: "ok"),
-        CoachStep(view: socialTipButton, hint: "アーティストに直接snack(差し入れ)できます！試しにsnackしてみよう！", next: "ok"),
+        CoachStep(view: socialTipButton, hint: "アーティストにsnackしよう！snackをするとあなたがアーティストを宣伝・応援できます！", next: "ok"),
     ]
     
     private let refreshControl = BrandRefreshControl()
@@ -164,7 +161,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         
         #if PRODUCTION
         let userDefaults = UserDefaults.standard
-        let key = "BandDetailVCPresented_v3.2.0.r"
+        let key = "BandDetailVCPresented_v3.2.0.t"
         if !userDefaults.bool(forKey: key) {
             coachMarksController.start(in: .currentWindow(of: self))
             userDefaults.setValue(true, forKey: key)
@@ -217,6 +214,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
         scrollStackView.addArrangedSubview(socialTipContentWrapper)
         
         scrollStackView.addArrangedSubview(userTipSectionHeader)
+        userTipSectionHeader.isHidden = true
         NSLayoutConstraint.activate([
             userTipSectionHeader.heightAnchor.constraint(equalToConstant: 52),
             userTipSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
@@ -372,7 +370,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
         
         pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .addPoint(_): self.showSuccessToGetPoint(500)
+            case .addPoint(_):
+                self.showSuccessToGetPoint(100)
             default: break
             }
         }
@@ -391,7 +390,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     isFollowing: response.isFollowing,
                     followersCount: response.followersCount
                 )
-//                socialTipButton.isHidden = false
+                socialTipButton.isHidden = false
                 self.setupFloatingItems(displayType: displayType)
                 refreshControl.endRefreshing()
             case .getGroupTip(let tip):
@@ -402,7 +401,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
                     socialTipContent.inject(input: (tip: tip, imagePipeline: dependencyProvider.imagePipeline))
                 }
             case .didGetUserTip(let tips):
-                let isHidden = !viewModel.state.group.isEntried
+                let isHidden = tips.isEmpty
                 userTipSectionHeader.isHidden = isHidden
                 userTipContentWrapper.isHidden = isHidden
                 userTipContent.inject(tip: tips)
@@ -568,8 +567,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     @objc func followButtonTapped() {
         guard let isFollowing = followingViewModel.state.isFollowing else { return }
          isFollowing
-            ? pointViewModel.usePoint(point: 500)
-            : pointViewModel.addPoint(point: 500)
+            ? pointViewModel.usePoint(point: 100)
+            : pointViewModel.addPoint(point: 100)
         followingViewModel.didButtonTapped()
     }
 

@@ -119,6 +119,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
         CoachStep(view: likeButton, hint: "行く/行ったライブをチェックしよう！チェックしたライブはプロフィールに記録されます！", next: "ok"),
+        CoachStep(view: likeCountSummaryView, hint: "ライブに行く予定の友達がひと目で分かるよ！", next: "ok"),
     ]
     private let refreshControl = BrandRefreshControl()
     
@@ -130,6 +131,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     var cancellables: Set<AnyCancellable> = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
+        print(input.id)
         self.dependencyProvider = dependencyProvider
         self.viewModel = LiveDetailViewModel(
             dependencyProvider: dependencyProvider,
@@ -156,7 +158,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         #if PRODUCTION
         let userDefaults = UserDefaults.standard
-        let key = "LiveDetailVCPresented_v3.2.0.r"
+        let key = "LiveDetailVCPresented_v3.2.0.t"
         if !userDefaults.bool(forKey: key) {
             coachMarksController.start(in: .currentWindow(of: self))
             userDefaults.setValue(true, forKey: key)
@@ -411,7 +413,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .addPoint(_): self.showSuccessToGetPoint(500)
+            case .addPoint(_):
+                self.showSuccessToGetPoint(100)
             default: break
             }
         }
@@ -493,8 +496,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     @objc private func likeButtonTapped() {
         guard let isLiked = viewModel.state.liveDetail?.isLiked else { return }
         isLiked
-            ? pointViewModel.usePoint(point: 500)
-            : pointViewModel.addPoint(point: 500)
+            ? pointViewModel.usePoint(point: 100)
+            : pointViewModel.addPoint(point: 100)
         likeButton.isEnabled = false
         viewModel.likeButtonTapped()
     }

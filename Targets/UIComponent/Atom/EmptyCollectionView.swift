@@ -33,6 +33,7 @@ public final class EmptyCollectionView: UIStackView {
         case liveSchedule = "ライブ予定はありません。"
         case notification = "通知はありません。"
         case event = "イベントはまだありません。"
+        case tip = "snackをまだしていません。"
     }
     
     private let titleLabel: UILabel = {
@@ -102,9 +103,9 @@ public final class EmptyCollectionView: UIStackView {
         ])
         
         addArrangedSubview(messageTextView)
-        NSLayoutConstraint.activate([
-            messageTextView.heightAnchor.constraint(equalToConstant: 120),
-        ])
+//        NSLayoutConstraint.activate([
+//            messageTextView.heightAnchor.constraint(equalToConstant: 120),
+//        ])
         
         addArrangedSubview(button)
         NSLayoutConstraint.activate([

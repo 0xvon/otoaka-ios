@@ -15,6 +15,7 @@ import TagListView
 import SCLAlertView
 import StoreKit
 import Instructions
+import SafariServices
 
 final class PaymentSocialTipViewController: UIViewController, Instantiable {
     typealias Input = PaymentSocialTipViewModel.Input
@@ -38,16 +39,24 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         stackView.axis = .vertical
         stackView.spacing = 16
         
+        stackView.addArrangedSubview(themeInputView)
+        themeInputView.selectInputView(inputView: themePickerView)
+        themeInputView.setText(text: viewModel.state.theme)
+        NSLayoutConstraint.activate([
+            themeInputView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            themeInputView.heightAnchor.constraint(equalToConstant: 50),
+        ])
+        
         stackView.addArrangedSubview(textView)
         NSLayoutConstraint.activate([
             textView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
             textView.heightAnchor.constraint(equalToConstant: 120),
         ])
         
-        stackView.addArrangedSubview(templateMessageList)
-        NSLayoutConstraint.activate([
-            templateMessageList.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-        ])
+//        stackView.addArrangedSubview(templateMessageList)
+//        NSLayoutConstraint.activate([
+//            templateMessageList.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//        ])
         
         stackView.addArrangedSubview(tipLabel)
         NSLayoutConstraint.activate([
@@ -66,6 +75,26 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
             pointStackView.heightAnchor.constraint(equalToConstant: 40),
         ])
         
+        let middleSpacer = UIView()
+        middleSpacer.translatesAutoresizingMaskIntoConstraints = false
+        stackView.addArrangedSubview(middleSpacer)
+        NSLayoutConstraint.activate([
+            middleSpacer.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            middleSpacer.heightAnchor.constraint(equalToConstant: 24),
+        ])
+        
+        stackView.addArrangedSubview(tosButton)
+        NSLayoutConstraint.activate([
+            tosButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            tosButton.heightAnchor.constraint(equalToConstant: 15),
+        ])
+        
+        stackView.addArrangedSubview(commercialTransactionButton)
+        NSLayoutConstraint.activate([
+            commercialTransactionButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+            commercialTransactionButton.heightAnchor.constraint(equalToConstant: 15),
+        ])
+        
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(bottomSpacer)
@@ -76,6 +105,18 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         
         return stackView
     }()
+    private lazy var themeInputView: TextFieldView = {
+        let sinceInputView = TextFieldView(input: (section: "テーマ", text: nil, maxLength: 20))
+        sinceInputView.translatesAutoresizingMaskIntoConstraints = false
+        return sinceInputView
+    }()
+    private lazy var themePickerView: UIPickerView = {
+        let sincePickerView = UIPickerView()
+        sincePickerView.translatesAutoresizingMaskIntoConstraints = false
+        sincePickerView.dataSource = self
+        sincePickerView.delegate = self
+        return sincePickerView
+    }()
     private lazy var textView: UITextView = {
         let textView = UITextView()
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -83,8 +124,8 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         textView.isScrollEnabled = true
         textView.backgroundColor = .clear
         textView.delegate = self
-        textView.placeholder = "応援メッセージを贈ろう"
-        textView.text = "いつも素敵な音楽をありがとう！"
+        textView.placeholder = "お題に沿ってアーティストを宣伝しよう！"
+        textView.text = "○○なところ！"
         textView.placeholderTextView.textAlignment = .left
         textView.placeholderColor = Brand.color(for: .background(.secondary))
         textView.font = Brand.font(for: .mediumStrong)
@@ -98,24 +139,24 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         textView.returnKeyType = .done
         return textView
     }()
-    private lazy var templateMessageList: TagListView = {
-        let content = TagListView()
-        content.delegate = self
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.alignment = .left
-        content.cornerRadius = 16
-        content.paddingY = 8
-        content.paddingX = 12
-        content.marginX = 8
-        content.marginY = 8
-        content.removeIconLineColor = Brand.color(for: .text(.primary))
-        content.textFont = Brand.font(for: .medium)
-        content.tagBackgroundColor = .clear
-        content.borderColor = Brand.color(for: .brand(.primary))
-        content.borderWidth = 1
-        content.textColor = Brand.color(for: .brand(.primary))
-        return content
-    }()
+//    private lazy var templateMessageList: TagListView = {
+//        let content = TagListView()
+//        content.delegate = self
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        content.alignment = .left
+//        content.cornerRadius = 16
+//        content.paddingY = 8
+//        content.paddingX = 12
+//        content.marginX = 8
+//        content.marginY = 8
+//        content.removeIconLineColor = Brand.color(for: .text(.primary))
+//        content.textFont = Brand.font(for: .medium)
+//        content.tagBackgroundColor = .clear
+//        content.borderColor = Brand.color(for: .brand(.primary))
+//        content.borderWidth = 1
+//        content.textColor = Brand.color(for: .brand(.primary))
+//        return content
+//    }()
     private lazy var tipLabel: TextFieldView = {
         let view = TextFieldView(input: (
             section: "金額",
@@ -167,6 +208,26 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         switchButton.onTintColor = Brand.color(for: .brand(.primary))
         return switchButton
     }()
+    private lazy var tosButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("利用規約を読む", for: .normal)
+        button.contentHorizontalAlignment = .left
+        button.setTitleColor(Brand.color(for: .background(.secondary)), for: .normal)
+        button.titleLabel?.font = Brand.font(for: .small)
+        button.addTarget(self, action: #selector(tosButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    private lazy var commercialTransactionButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("特定商取引法に基づく表記を読む", for: .normal)
+        button.contentHorizontalAlignment = .left
+        button.setTitleColor(Brand.color(for: .background(.secondary)), for: .normal)
+        button.titleLabel?.font = Brand.font(for: .small)
+        button.addTarget(self, action: #selector(commercialTransactionButtonTapped), for: .touchUpInside)
+        return button
+    }()
     private lazy var registerButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -190,10 +251,11 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
-        CoachStep(view: textView, hint: "snackするときにcardも送ることができるよ！", next: "ok"),
-        CoachStep(view: templateTipList, hint: "snackの金額はここから選択してね！", next: "ok"),
-        CoachStep(view: switchButton, hint: "snackは自分のポイントかApple Payから送ることができるよ！ポイントはアプリの色んなところで貯められるよ！", next: "ok"),
-        CoachStep(view: registerButton, hint: "snackとcardを設定したら送ろう！", next: "ok"),
+        CoachStep(view: themeInputView, hint: "snackのお題を選択しよう！", next: "ok"),
+        CoachStep(view: textView, hint: "お題に合った内容を書こう！", next: "ok"),
+        CoachStep(view: templateTipList, hint: "snackの金額はここから選択してね！金額が多いほどsnackが目立って表示されるよ！", next: "ok"),
+        CoachStep(view: switchButton, hint: "snackは無料ポイントかApple Payから送ることができるよ！無料ポイントはアプリの色んなところで貯められるよ！", next: "ok"),
+        CoachStep(view: registerButton, hint: "ボタンを押して送ろう！", next: "ok"),
     ]
     
     let dependencyProvider: LoggedInDependencyProvider
@@ -229,7 +291,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         
         #if PRODUCTION
         let userDefaults = UserDefaults.standard
-        let key = "PaymentSocialTipVCPresented_v3.2.0.r"
+        let key = "PaymentSocialTipVCPresented_v3.2.0.t"
         if !userDefaults.bool(forKey: key) {
             coachMarksController.start(in: .currentWindow(of: self))
             userDefaults.setValue(true, forKey: key)
@@ -264,7 +326,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
                 tipLabel.setText(text: String(defaultTip))
                 viewModel.didUpdateTip(tip: defaultTip)
             case .didGetMyPoint(let point):
-                pointLabel.text = "ポイントを使う(\(point)pt)"
+                pointLabel.text = "無料ポイントでsnack(\(point)pt)"
             case .updateSubmittableState(let state):
                 switch state {
                 case .loading:
@@ -285,6 +347,12 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
             }
         }
         .store(in: &cancellables)
+        
+        themeInputView.listen { [unowned self] in
+            let theme = self.viewModel.state.themeItem[self.themePickerView.selectedRow(inComponent: 0)]
+            self.themeInputView.setText(text: theme)
+            viewModel.didUpdateTheme(theme: theme)
+        }
         
         tipLabel.listen { [unowned self] in
             guard let text = tipLabel.getText() else { return }
@@ -330,10 +398,10 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
         
-        templateMessageList.addTags([
-            "応援してます！",
-            "大好きです！",
-        ])
+//        templateMessageList.addTags([
+//            "応援してます！",
+//            "大好きです！",
+//        ])
         
         switch viewModel.state.type {
         case .group(let group):
@@ -371,10 +439,26 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     }
     
     private func pay() {
-        guard let product = viewModel.state.products.filter { $0.price.intValue == viewModel.state.tip }.first else { return }
-        showAlert(title: "購入確認", message: "\(viewModel.state.tip)円でsnackを購入しますか？") { [unowned self] in
+        guard let product = viewModel.state.products.filter({ $0.price.intValue == viewModel.state.tip }).first else { return }
+        showAlert(title: "購入確認", message: "\(viewModel.state.tip)円でポイントを購入してsnackしますか？") { [unowned self] in
             viewModel.purchase(product)
         }
+    }
+    
+    @objc private func tosButtonTapped() {
+        guard let url = URL(string: "https://masatojames.notion.site/OTOAKA-57b1f47c538443249baf1db83abdc462") else { return }
+        let safari = SFSafariViewController(
+            url: url)
+        safari.dismissButtonStyle = .close
+        present(safari, animated: true, completion: nil)
+    }
+    
+    @objc private func commercialTransactionButtonTapped() {
+        guard let url = URL(string: "https://masatojames.notion.site/1b29bdaa468c4b18a9ec5be1dd46df49") else { return }
+        let safari = SFSafariViewController(
+            url: url)
+        safari.dismissButtonStyle = .close
+        present(safari, animated: true, completion: nil)
     }
     
     private func showSuccessPopup(tip: SocialTip) {
@@ -408,9 +492,9 @@ extension PaymentSocialTipViewController: UITextViewDelegate {
 extension PaymentSocialTipViewController: TagListViewDelegate {
     func tagPressed(_ title: String, tagView: TagView, sender: TagListView) {
         switch sender {
-        case templateMessageList:
-            textView.text = title
-            viewModel.didUpdateMessage(message: title)
+//        case templateMessageList:
+//            textView.text = title
+//            viewModel.didUpdateMessage(message: title)
         case templateTipList:
             tipLabel.setText(text: title)
             guard let tip = Int(title) else { return }
@@ -440,3 +524,28 @@ extension PaymentSocialTipViewController: CoachMarksControllerDelegate, CoachMar
     }
 }
 
+extension PaymentSocialTipViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
+        -> String?
+    {
+        switch pickerView {
+        case self.themePickerView:
+            return viewModel.state.themeItem[row]
+        default:
+            return "yo"
+        }
+    }
+
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        switch pickerView {
+        case self.themePickerView:
+            return viewModel.state.themeItem.count
+        default:
+            return 1
+        }
+    }
+}

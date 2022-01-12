@@ -29,7 +29,7 @@ final class LiveListViewController: UIViewController, Instantiable {
     
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
-        CoachStep(view: header, hint: "ここにはsnackがライブ体験に変わるイベントが表示されます！試しにどんなイベントがあるか見てみよう！", next: "ok"),
+//        CoachStep(view: header, hint: "ここにはsnackがライブ体験に変わるイベントが表示されます！試しにどんなイベントがあるか見てみよう！", next: "ok"),
     ]
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -61,17 +61,17 @@ final class LiveListViewController: UIViewController, Instantiable {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        #if PRODUCTION
-        let userDefaults = UserDefaults.standard
-        let key = "LiveVCPresented_v3.2.0.r"
-        if !userDefaults.bool(forKey: key) {
-            coachMarksController.start(in: .currentWindow(of: self))
-            userDefaults.setValue(true, forKey: key)
-            userDefaults.synchronize()
-        }
-        #else
-        coachMarksController.start(in: .currentWindow(of: self))
-        #endif
+//        #if PRODUCTION
+//        let userDefaults = UserDefaults.standard
+//        let key = "LiveVCPresented_v3.2.0.r"
+//        if !userDefaults.bool(forKey: key) {
+//            coachMarksController.start(in: .currentWindow(of: self))
+//            userDefaults.setValue(true, forKey: key)
+//            userDefaults.synchronize()
+//        }
+//        #else
+//        coachMarksController.start(in: .currentWindow(of: self))
+//        #endif
     }
 
     private func bind() {
@@ -80,8 +80,8 @@ final class LiveListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.setTableViewBackgroundView(tableView: liveTableView)
                 self.liveTableView.reloadData()
-            case .getEvents(let events): break
-//                header.inject(socialTipEvents: events)
+            case .getEvents(let events):
+                header.inject(socialTipEvents: events)
             case .didToggleLikeLive: break
             case .error(let error):
                 print(String(describing: error))
