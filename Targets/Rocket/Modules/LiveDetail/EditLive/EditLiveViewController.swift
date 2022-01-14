@@ -11,7 +11,7 @@ import SafariServices
 import UIComponent
 import InternalDomain
 import UIKit
-import CropViewController
+import TagListView
 
 final class EditLiveViewController: UIViewController, Instantiable {
     typealias Input = Live
@@ -40,58 +40,69 @@ final class EditLiveViewController: UIViewController, Instantiable {
         livehouseInputView.translatesAutoresizingMaskIntoConstraints = false
         return livehouseInputView
     }()
-    private lazy var livehousePickerView: UIPickerView = {
-        let livehousePickerView = UIPickerView()
-        livehousePickerView.translatesAutoresizingMaskIntoConstraints = false
-        livehousePickerView.dataSource = self
-        livehousePickerView.delegate = self
-        return livehousePickerView
+    private lazy var dateInputView: TextFieldView = {
+        let displayNameInputView = TextFieldView(input: (section: "公演日", text: nil, maxLength: 20))
+        displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
+        return displayNameInputView
     }()
-    private lazy var openTimeInputView: DateInputView = {
-        let dateInputView = DateInputView(section: "オープン時間")
-        dateInputView.translatesAutoresizingMaskIntoConstraints = false
-        return dateInputView
-    }()
-    private lazy var startTimeInputView: DateInputView = {
-        let dateInputView = DateInputView(section: "スタート時間")
-        dateInputView.translatesAutoresizingMaskIntoConstraints = false
-        return dateInputView
-    }()
-    private lazy var endTimeInputView: DateInputView = {
-        let dateInputView = DateInputView(section: "クローズ時間")
-        dateInputView.translatesAutoresizingMaskIntoConstraints = false
-        return dateInputView
-    }()
-    private var thumbnailInputView: UIView = {
-        let thumbnailInputView = UIView()
-        thumbnailInputView.translatesAutoresizingMaskIntoConstraints = false
+    private lazy var datePickerView: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        if #available(iOS 13.4, *) {
+            datePicker.preferredDatePickerStyle = .wheels
+        }
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
+        datePicker.datePickerMode = .date
         
-        return thumbnailInputView
+        datePicker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        
+        return datePicker
     }()
-    private lazy var profileImageView: UIImageView = {
-        let profileImageView = UIImageView()
-        profileImageView.translatesAutoresizingMaskIntoConstraints = false
-        profileImageView.layer.cornerRadius = 16
-        profileImageView.clipsToBounds = true
-        profileImageView.image = UIImage(named: "human")
-        profileImageView.contentMode = .scaleAspectFill
-        return profileImageView
+    private lazy var performersWrapper: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .clear
+        
+        view.addSubview(performersTitle)
+        NSLayoutConstraint.activate([
+            performersTitle.heightAnchor.constraint(equalToConstant: 24),
+            performersTitle.leftAnchor.constraint(equalTo: view.leftAnchor),
+            performersTitle.topAnchor.constraint(equalTo: view.topAnchor),
+            performersTitle.rightAnchor.constraint(equalTo: view.rightAnchor),
+        ])
+        view.addSubview(performersListView)
+        NSLayoutConstraint.activate([
+            performersListView.topAnchor.constraint(equalTo: performersTitle.bottomAnchor, constant: 8),
+            performersListView.leftAnchor.constraint(equalTo: performersTitle.leftAnchor),
+            performersListView.rightAnchor.constraint(equalTo: performersTitle.rightAnchor),
+            performersListView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+        return view
     }()
-    private lazy var changeProfileImageButton: UIButton = {
-        let changeProfileImageButton = UIButton()
-        changeProfileImageButton.translatesAutoresizingMaskIntoConstraints = false
-        changeProfileImageButton.addTarget(
-            self, action: #selector(selectProfileImage(_:)), for: .touchUpInside)
-        return changeProfileImageButton
+    private lazy var performersTitle: UILabel = {
+        let section = UILabel()
+        section.translatesAutoresizingMaskIntoConstraints = false
+        section.text = "出演者"
+        section.font = Brand.font(for: .medium)
+        section.textColor = Brand.color(for: .brand(.primary))
+        return section
     }()
-    private lazy var profileImageTitle: UILabel = {
-        let profileImageTitle = UILabel()
-        profileImageTitle.translatesAutoresizingMaskIntoConstraints = false
-        profileImageTitle.text = "サムネイル画像"
-        profileImageTitle.textAlignment = .center
-        profileImageTitle.font = Brand.font(for: .medium)
-        profileImageTitle.textColor = Brand.color(for: .text(.primary))
-        return profileImageTitle
+    private lazy var performersListView: TagListView = {
+        let content = TagListView()
+        content.delegate = self
+        content.translatesAutoresizingMaskIntoConstraints = false
+        content.alignment = .left
+        content.cornerRadius = 16
+        content.paddingY = 8
+        content.paddingX = 12
+        content.marginX = 8
+        content.marginY = 8
+        content.removeIconLineColor = Brand.color(for: .text(.primary))
+        content.textFont = Brand.font(for: .medium)
+        content.tagBackgroundColor = .clear
+        content.borderColor = Brand.color(for: .brand(.primary))
+        content.borderWidth = 1
+        content.textColor = Brand.color(for: .brand(.primary))
+        return content
     }()
     private lazy var editButton: PrimaryButton = {
         let registerButton = PrimaryButton(text: "ライブ編集")
@@ -145,29 +156,16 @@ final class EditLiveViewController: UIViewController, Instantiable {
             case .didInject:
                 liveTitleInputView.setText(text: viewModel.state.title ?? "")
                 livehouseInputView.setText(text: viewModel.state.livehouse ?? "")
-                if let liveArtworkURL = viewModel.state.live.artworkURL {
-                    dependencyProvider.imagePipeline.loadImage(liveArtworkURL, into: profileImageView)
-                } else {
-                    profileImageView.image = nil
-                }
+                dateInputView.setText(text: viewModel.state.date ?? "")
+                updatePerformerTag()
             case .didEditLive(_):
                 self.navigationController?.popViewController(animated: true)
-            case .didUpdateDatePickers(let pickerType):
-                openTimeInputView.date = viewModel.state.openAt
-                startTimeInputView.date = viewModel.state.startAt
-//                endTimeInputView.date = viewModel.state.endAt
-                switch pickerType {
-                case .openAt(let openAt):
-                    startTimeInputView.maximumDate = openAt
-                    endTimeInputView.maximumDate = openAt
-                case .startAt(let startAt):
-                    endTimeInputView.maximumDate = startAt
-                }
             case .updateSubmittableState(let state):
                 switch state {
                 case .editting(let submittable):
                     self.activityIndicator.stopAnimating()
                     self.editButton.isEnabled = submittable
+                    updatePerformerTag()
                 case .loading:
                     self.editButton.isEnabled = false
                     self.activityIndicator.startAnimating()
@@ -184,21 +182,12 @@ final class EditLiveViewController: UIViewController, Instantiable {
         }
         
         livehouseInputView.listen { [unowned self] in
-            livehouseInputView.setText(text: self.viewModel.state.socialInputs.livehouses[self.livehousePickerView.selectedRow(inComponent: 0)])
             didInputValue()
         }
         
-        openTimeInputView.listen { [unowned self] in
-            viewModel.didUpdateDatePicker(pickerType: .openAt(openTimeInputView.date))
+        dateInputView.listen { [unowned self] in
+            self.didInputValue()
         }
-        
-        startTimeInputView.listen { [unowned self] in
-            viewModel.didUpdateDatePicker(pickerType: .startAt(startTimeInputView.date))
-        }
-        
-//        endTimeInputView.listen { [unowned self] in
-//            viewModel.didUpdateDatePicker(pickerType: .endAt(endTimeInputView.date))
-//        }
     }
 
     func setup() {
@@ -235,54 +224,17 @@ final class EditLiveViewController: UIViewController, Instantiable {
         ])
         
         mainView.addArrangedSubview(livehouseInputView)
-        livehouseInputView.selectInputView(inputView: livehousePickerView)
         NSLayoutConstraint.activate([
             livehouseInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
-        mainView.addArrangedSubview(openTimeInputView)
+        mainView.addArrangedSubview(dateInputView)
+        dateInputView.selectInputView(inputView: datePickerView)
         NSLayoutConstraint.activate([
-            openTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+            dateInputView.heightAnchor.constraint(equalToConstant: 50),
         ])
         
-        mainView.addArrangedSubview(startTimeInputView)
-        NSLayoutConstraint.activate([
-            startTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
-        
-        mainView.addArrangedSubview(endTimeInputView)
-        NSLayoutConstraint.activate([
-            endTimeInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
-        
-        mainView.addArrangedSubview(thumbnailInputView)
-        NSLayoutConstraint.activate([
-            thumbnailInputView.heightAnchor.constraint(equalToConstant: 200),
-        ])
-        
-        thumbnailInputView.addSubview(profileImageView)
-        NSLayoutConstraint.activate([
-            profileImageView.heightAnchor.constraint(equalToConstant: 180),
-            profileImageView.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
-            profileImageView.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
-            profileImageView.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
-        ])
-        
-        thumbnailInputView.addSubview(profileImageTitle)
-        NSLayoutConstraint.activate([
-            profileImageTitle.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
-            profileImageTitle.rightAnchor.constraint(equalTo: thumbnailInputView.rightAnchor),
-            profileImageTitle.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
-        ])
-        
-        thumbnailInputView.addSubview(changeProfileImageButton)
-        NSLayoutConstraint.activate([
-            changeProfileImageButton.topAnchor.constraint(equalTo: thumbnailInputView.topAnchor),
-            changeProfileImageButton.rightAnchor.constraint(
-                equalTo: thumbnailInputView.rightAnchor),
-            changeProfileImageButton.leftAnchor.constraint(equalTo: thumbnailInputView.leftAnchor),
-            changeProfileImageButton.bottomAnchor.constraint(equalTo: thumbnailInputView.bottomAnchor),
-        ])
+        mainView.addArrangedSubview(performersWrapper)
         
         mainView.addArrangedSubview(editButton)
         NSLayoutConstraint.activate([
@@ -307,70 +259,39 @@ final class EditLiveViewController: UIViewController, Instantiable {
     private func didInputValue() {
         let title = liveTitleInputView.getText()
         let livehouse = livehouseInputView.getText()
+        let date = dateInputView.getText()
         
-        viewModel.didUpdateInputItems(title: title, livehouse: livehouse)
+        viewModel.didUpdateInputItems(title: title, livehouse: livehouse, date: date)
     }
-
-    @objc private func selectProfileImage(_ sender: Any) {
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary
-            picker.delegate = self
-            self.present(picker, animated: true, completion: nil)
-        }
-    }
-}
-
-extension EditLiveViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(
-        _ picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
-    ) {
-        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
+    
+    private func updatePerformerTag() {
+        performersListView.removeAllTags()
+        performersListView.addTags(viewModel.state.performers.map { $0.name + " ✗" })
         
-        let cropController = CropViewController(image: image)
-        cropController.delegate = self
-        cropController.customAspectRatio = profileImageView.frame.size
-        cropController.aspectRatioPickerButtonHidden = true
-        cropController.resetAspectRatioEnabled = false
-        cropController.rotateButtonsHidden = true
-        cropController.cropView.cropBoxResizeEnabled = false
-        picker.dismiss(animated: true) {
-            self.present(cropController, animated: true, completion: nil)
-        }
+        let plusTag = performersListView.addTag("追加＋")
+        plusTag.borderColor = Brand.color(for: .background(.secondary))
+        plusTag.textColor = Brand.color(for: .background(.secondary))
+        plusTag.borderWidth = 1
+        plusTag.tagBackgroundColor = .clear
+    }
+    
+    @objc private func datePickerValueChanged() {
+        let date = datePickerView.date.toFormatString(format: "yyyyMMdd")
+        dateInputView.setText(text: date)
+        didInputValue()
     }
 }
 
-extension EditLiveViewController: CropViewControllerDelegate {
-    func cropViewController(_ cropViewController: CropViewController, didCropToImage image: UIImage, withRect cropRect: CGRect, angle: Int) {
-        profileImageView.image = image
-        viewModel.didUpdateArtwork(thumbnail: image)
-        cropViewController.dismiss(animated: true, completion: nil)
-    }
-}
-
-extension EditLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int)
-        -> String?
-    {
-        switch pickerView {
-        case self.livehousePickerView:
-            return viewModel.state.socialInputs.livehouses[row]
-        default:
-            return "yo"
-        }
-    }
-
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        switch pickerView {
-        case self.livehousePickerView:
-            return viewModel.state.socialInputs.livehouses.count
-        default:
-            return 1
+extension EditLiveViewController: TagListViewDelegate {
+    func tagPressed(_ title: String, tagView: TagView, sender: TagListView) {
+        if title == "追加＋" {
+            let vc = SelectGroupViewController(dependencyProvider: dependencyProvider)
+            self.navigationController?.pushViewController(vc, animated: true)
+            vc.listen { [unowned self] group in
+                viewModel.addGroup(group.group)
+            }
+        } else {
+            viewModel.removeGroup(title)
         }
     }
 }

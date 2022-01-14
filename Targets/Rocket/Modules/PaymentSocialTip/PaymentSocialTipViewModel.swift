@@ -15,7 +15,7 @@ class PaymentSocialTipViewModel {
     typealias Input = SocialTipType
     struct State {
         var type: SocialTipType
-        var tip: Int = 0
+        var tip: Product = Product(id: "snack_600", price: 610)
         var message: String? = "○○なところ！"
         var isRealMoney: Bool = true
         var products: [SKProduct] = []
@@ -28,6 +28,17 @@ class PaymentSocialTipViewModel {
             "ライブしてほしい場所は？",
             "セトリ最初の3曲予想！",
         ]
+        var productItem: [Product] = [
+            Product(id: "snack_600", price: 610),
+            Product(id: "snack_1000", price: 1100),
+            Product(id: "snack_2000", price: 2200),
+            Product(id: "snack_10000", price: 10000),
+        ]
+    }
+    
+    struct Product {
+        let id: String
+        let price: Int
     }
     
     enum PageState {
@@ -88,7 +99,8 @@ class PaymentSocialTipViewModel {
     }
     
     func didUpdateTip(tip: Int) {
-        state.tip = tip
+        guard let product = state.productItem.filter({ $0.price == tip }).first else { return }
+        state.tip = product
         didInputValue()
     }
     
@@ -98,14 +110,14 @@ class PaymentSocialTipViewModel {
     }
     
     func didInputValue() {
-        let submittable = state.message != nil && state.tip > 0
+        let submittable = state.message != nil
         outputSubject.send(.updateSubmittableState(.editting(submittable)))
     }
     
     func sendTipButtonTapped() {
         guard let message = state.message else { return }
         let request = SendSocialTip.Request(
-            tip: state.tip,
+            tip: state.tip.price,
             type: state.type,
             theme: state.theme,
             message: message,
@@ -121,12 +133,7 @@ class PaymentSocialTipViewModel {
     }
     
     func getProducts() {
-        SwiftyStoreKit.retrieveProductsInfo([
-            "snack_600",
-            "snack_1000",
-            "snack_2000",
-            "snack_10000",
-        ]) { [unowned self] result in
+        SwiftyStoreKit.retrieveProductsInfo(Set(state.productItem.map { $0.id })) { [unowned self] result in
             if let error = result.error {
                 outputSubject.send(.reportError(error))
             } else {

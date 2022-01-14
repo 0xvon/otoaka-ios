@@ -233,10 +233,15 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationItem.setRightBarButton(
+        navigationItem.setRightBarButtonItems([
+            UIBarButtonItem(
+                image: UIImage(systemName: "ellipsis")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+                style: .plain,
+                target: self,
+                action: #selector(settingButtonTapped(_:))
+            ),
             UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare)),
-            animated: false
-        )
+        ], animated: true)
         bind()
         
         coachMarksController.dataSource = self
@@ -510,6 +515,27 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
             }
         }
+    }
+    
+    @objc private func settingButtonTapped(_ sender: UIBarButtonItem) {
+        let alertController = UIAlertController(
+            title: "設定", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+        let editProfileAction = UIAlertAction(title: "編集", style: .default, handler: { [unowned self] _ in
+            guard let live = viewModel.state.liveDetail?.live else { return }
+            let vc = EditLiveViewController(dependencyProvider: dependencyProvider, input: live)
+            navigationController?.pushViewController(vc, animated: true)
+        })
+        let cancelAction = UIAlertAction(
+            title: "キャンセル", style: UIAlertAction.Style.cancel,
+            handler: { _ in })
+        let actions = [
+            editProfileAction,
+            cancelAction,
+        ]
+        actions.forEach { alertController.addAction($0) }
+        alertController.popoverPresentationController?.sourceView = self.view
+        alertController.popoverPresentationController?.barButtonItem = sender
+        self.present(alertController, animated: true, completion: nil)
     }
     
     private func openUrl(url: URL) {

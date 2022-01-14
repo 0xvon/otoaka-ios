@@ -126,6 +126,12 @@ class BandDetailViewModel {
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
+        getGroup.elements
+            .sink(receiveValue: { [unowned self] groupDetail in
+                state.groupDetail = groupDetail
+            })
+            .store(in: &cancellables)
+        
         getGroupPost.elements
             .combineLatest(getGroupsTipAction.elements, getGroupLives.elements)
             .sink(receiveValue: { [unowned self] posts, tip, lives in

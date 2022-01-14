@@ -46,12 +46,14 @@ extension UIColor {
 
 extension String {
     func toFormatString(from: String, to: String) -> String? {
+        return self.toFormatDate(format: from)?.toFormatString(format: to)
+    }
+    
+    func toFormatDate(format: String) -> Date? {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = from
+        dateFormatter.dateFormat = format
         dateFormatter.locale = Locale(identifier: "ja_JP")
-        let _date = dateFormatter.date(from: self) // format to date
-        dateFormatter.dateFormat = to
-        return _date.map(dateFormatter.string(from:)) // format to string again
+        return dateFormatter.date(from: self)
     }
 }
 

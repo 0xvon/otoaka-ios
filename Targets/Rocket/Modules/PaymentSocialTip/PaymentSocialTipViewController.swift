@@ -320,11 +320,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didGetProducts(let products):
-                guard let defaultTip = products.first?.price.intValue else { return }
-                templateTipList.addTags(products.map { String($0.price.intValue) })
-                tipLabel.setText(text: String(defaultTip))
-                viewModel.didUpdateTip(tip: defaultTip)
+            case .didGetProducts(_): break
             case .didGetMyPoint(let point):
                 pointLabel.text = "無料ポイントでsnack(\(point)pt)"
             case .updateSubmittableState(let state):
@@ -352,11 +348,6 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
             let theme = self.viewModel.state.themeItem[self.themePickerView.selectedRow(inComponent: 0)]
             self.themeInputView.setText(text: theme)
             viewModel.didUpdateTheme(theme: theme)
-        }
-        
-        tipLabel.listen { [unowned self] in
-            guard let text = tipLabel.getText() else { return }
-            viewModel.didUpdateTip(tip: Int(text) ?? 0)
         }
         
         switchButton.addTarget(self, action: #selector(switchButtonTapped), for: .touchUpInside)
@@ -403,6 +394,10 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
 //            "大好きです！",
 //        ])
         
+        guard let defaultTip = viewModel.state.productItem.first else { return }
+        templateTipList.addTags(viewModel.state.productItem.map { String($0.price) })
+        tipLabel.setText(text: String(defaultTip.price))
+        
         switch viewModel.state.type {
         case .group(let group):
             banner.inject(input: (
@@ -432,16 +427,19 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
             } else {
                 viewModel.state.isRealMoney
                     ? pay()
-                    : pointViewModel.usePoint(point: viewModel.state.tip)
+                : pointViewModel.usePoint(point: viewModel.state.tip.price)
             }
         default: break
         }
     }
     
     private func pay() {
-        guard let product = viewModel.state.products.filter({ $0.price.intValue == viewModel.state.tip }).first else { return }
-        showAlert(title: "購入確認", message: "\(viewModel.state.tip)円でポイントを購入してsnackしますか？") { [unowned self] in
-            viewModel.purchase(product)
+        if let product = viewModel.state.products.filter({ $0.productIdentifier == viewModel.state.tip.id }).first {
+            showAlert(title: "購入確認", message: "\(viewModel.state.tip.price)円でポイントを購入してsnackしますか？") { [unowned self] in
+                viewModel.purchase(product)
+            }
+        } else {
+            showAlert(title: "アイテム取得失敗", message: "課金アイテムの取得に失敗しました。しばらく経ってから再度お試し下さい。")
         }
     }
     

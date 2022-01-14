@@ -14,13 +14,9 @@ import UIKit
 class EditLiveViewModel {
     struct State {
         var title: String?
+        var date: String?
         var livehouse: String?
-        var date: Date
-        var endDate: Date?
-        var openAt: Date
-        var startAt: Date
-        var thumbnail: UIImage?
-        let socialInputs: SocialInputs
+        var performers: [Group]
         let live: Live
     }
     
@@ -50,7 +46,6 @@ class EditLiveViewModel {
         case didEditLive(Live)
         case didInject
         case updateSubmittableState(PageState)
-        case didUpdateDatePickers(DatePickerType)
         case reportError(Error)
     }
 
@@ -70,12 +65,9 @@ class EditLiveViewModel {
         self.dependencyProvider = dependencyProvider
         self.state = State(
             title: live.title,
+            date: live.date,
             livehouse: live.liveHouse,
-            date: dateFormatter.date(from: live.date ?? "") ?? Date(),
-            openAt: timeFormatter.date(from: live.openAt ?? "") ?? Date(),
-            startAt: timeFormatter.date(from: live.startAt ?? "") ?? Date(),
-            thumbnail: nil,
-            socialInputs: try! dependencyProvider.masterService.blockingMasterData(),
+            performers: live.performers,
             live: live
         )
         
@@ -93,7 +85,6 @@ class EditLiveViewModel {
     }
     
     func viewDidLoad() {
-        didUpdateDatePicker(pickerType: .openAt(state.openAt))
         inject()
     }
     
@@ -102,74 +93,70 @@ class EditLiveViewModel {
     }
     
     func didUpdateInputItems(
-        title: String?, livehouse: String?
+        title: String?, livehouse: String?, date: String?
     ) {
         state.title = title
         state.livehouse = livehouse
+        state.date = date
         
         let isSubmittable: Bool = (title != nil && livehouse != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
     }
     
-    func didUpdateDatePicker(pickerType: DatePickerType) {
-        switch pickerType {
-        case .openAt(let openAt):
-            state.openAt = openAt
-            state.startAt = openAt > state.startAt ? openAt : state.startAt
-        case .startAt(let startAt):
-            state.startAt = startAt
-        }
-        outputSubject.send(.didUpdateDatePickers(pickerType))
+    func addGroup(_ group: Group) {
+        state.performers.append(group)
+        submittable()
     }
     
-    func didUpdateArtwork(thumbnail: UIImage?) {
-        self.state.thumbnail = thumbnail
+    func removeGroup(_ groupName: String) {
+        state.performers = state.performers.filter { $0.name != groupName.prefix(groupName.count - 2) }
+        submittable()
+    }
+    
+    func submittable() {
+        let isSubmittable: Bool = (
+            state.title != nil &&
+            state.livehouse != nil &&
+            state.date != nil &&
+            !state.performers.isEmpty
+        )
+        outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
     }
 
     func didEditButtonTapped() {
         outputSubject.send(.updateSubmittableState(.loading))
-        if let image = state.thumbnail {
-            dependencyProvider.s3Client.uploadImage(image: image) { [weak self] result in
-                switch result {
-                case .success(let imageUrl):
-                    self?.editLive(imageUrl: URL(string: imageUrl))
-                case .failure(let error):
-                    self?.outputSubject.send(.updateSubmittableState(.editting(true)))
-                    self?.outputSubject.send(.reportError(error))
-                }
-            }
-        } else {
-            editLive(imageUrl: state.live.artworkURL)
-        }
+        let artworkUrl = state.performers.first?.artworkURL
+        editLive(imageUrl: artworkUrl)
     }
     
     private func editLive(imageUrl: URL?) {
         var uri = EditLive.URI()
         uri.id = state.live.id
-        var style: LiveStyleInput;
-        switch state.live.style {
-        case .oneman(let performer):
+        guard let performer = state.performers.first else { return }
+        var style: LiveStyleInput
+        switch state.performers.count {
+        case 1:
             style = .oneman(performer: performer.id)
-        case .battle(let performers):
-            style = .battle(performers: performers.map { $0.id })
-        case .festival(let performers):
-            style = .festival(performers: performers.map { $0.id })
+        case 2, 3, 4:
+            style = .battle(performers: state.performers.map { $0.id })
+        default:
+            style = .festival(performers: state.performers.map { $0.id })
         }
         
         let req = EditLive.Request(
             title: state.title ?? state.live.title,
             style: style,
-            price: state.live.price,
+            price: 5000,
             artworkURL: imageUrl,
-            hostGroupId: state.live.hostGroup.id,
+            hostGroupId: performer.id,
             liveHouse: state.livehouse ?? state.live.liveHouse,
-            date: dateFormatter.string(from: state.date),
-            endDate: state.endDate.map(dateFormatter.string(from:)),
-            openAt: timeFormatter.string(from: state.openAt),
-            startAt: timeFormatter.string(from: state.startAt),
-            piaEventCode: state.live.piaEventCode,
-            piaReleaseUrl: state.live.piaReleaseUrl,
-            piaEventUrl: state.live.piaEventUrl
+            date: state.date,
+            endDate: nil,
+            openAt: "17:00",
+            startAt: "18:00",
+            piaEventCode: nil,
+            piaReleaseUrl: nil,
+            piaEventUrl: nil
         )
         editLiveAction.input((request: req, uri: uri))
     }

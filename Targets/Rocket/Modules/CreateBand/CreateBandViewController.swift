@@ -332,14 +332,7 @@ final class CreateBandViewController: UIViewController, Instantiable {
         let groupName: String? = displayNameInputView.getText()
 //        let groupEnglishName: String? = englishNameInputView.getText()
         let biography: String? = biographyInputView.getText()
-        let sinceInput = sinceInputView.getText()
-        let since: Date? = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy"
-            dateFormatter.locale = Locale(identifier: "ja_JP")
-            guard let sinceInput = sinceInput else { return nil }
-            return dateFormatter.date(from: sinceInput)
-        }()
+        let since = sinceInputView.getText()?.toFormatDate(format: "yyyy")
         let hometown = hometownInputView.getText()
 //        let youtubeChannelId = youTubeIdInputView.getText()
 //        let twitterId = twitterIdInputView.getText()

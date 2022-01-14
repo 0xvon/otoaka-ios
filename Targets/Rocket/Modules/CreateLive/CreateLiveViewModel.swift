@@ -79,11 +79,6 @@ class CreateLiveViewModel {
         submittable()
     }
     
-    func didUpdatePerformers(groups: [Group]) {
-        self.state.performers = groups
-        submittable()
-    }
-    
     func submittable() {
         let isSubmittable: Bool = (
             state.title != nil &&
@@ -107,6 +102,7 @@ class CreateLiveViewModel {
         var type: LiveStyleInput
         switch state.performers.count {
         case 1: type = .oneman(performer: performer.id)
+        case 2, 3, 4: type = .battle(performers: state.performers.map { $0.id })
         default: type = .festival(performers: state.performers.map { $0.id })
         }
         let req = CreateLive.Request(

@@ -30,15 +30,9 @@ final class EditBandViewController: UIViewController, Instantiable {
         return stackView
     }()
     private lazy var displayNameInputView: TextFieldView = {
-        let displayNameInputView = TextFieldView(input: (section: "バンド名", text: nil, maxLength: 20))
+        let displayNameInputView = TextFieldView(input: (section: "アーティスト名", text: nil, maxLength: 20))
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         return displayNameInputView
-    }()
-    private lazy var englishNameInputView: TextFieldView = {
-        let englishNameInputView = TextFieldView(input: (section: "English Name(optional)", text: nil, maxLength: 40))
-        englishNameInputView.keyboardType(.alphabet)
-        englishNameInputView.translatesAutoresizingMaskIntoConstraints = false
-        return englishNameInputView
     }()
     private lazy var biographyInputView: InputTextView = {
         let biographyInputView = InputTextView(input: (section: "自己紹介文(任意)(4000文字以内)", text: nil, maxLength: 4000))
@@ -116,21 +110,6 @@ final class EditBandViewController: UIViewController, Instantiable {
         registerButton.isEnabled = true
         return registerButton
     }()
-    private lazy var deleteBandButton: PrimaryButton = {
-        let deleteButton = PrimaryButton(text: "バンド削除")
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.layer.cornerRadius = 25
-        deleteButton.changeButtonStyle(.delete)
-        deleteButton.addTarget(self, action: #selector(deleteBandButtonTapped), for: .touchUpInside)
-        deleteButton.isEnabled = true
-        return deleteButton
-    }()
-    let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
-        dateFormatter.locale = Locale(identifier: "ja_JP")
-        return dateFormatter
-    }()
     private lazy var activityIndicator: LoadingCollectionView = {
         let activityIndicator = LoadingCollectionView()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -166,7 +145,9 @@ final class EditBandViewController: UIViewController, Instantiable {
     
     func bind() {
         editButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: viewModel.didEditButtonTapped)
+            .sink(receiveValue: { [viewModel] in
+                viewModel.validateYoutubeChannelId()
+            })
             .store(in: &cancellables)
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
@@ -174,8 +155,10 @@ final class EditBandViewController: UIViewController, Instantiable {
             case .didEditGroup(_):
                 self.navigationController?.popViewController(animated: true)
             case .didValidateYoutubeChannelId(let isValid):
-                if !isValid {
-                    self.showAlert(message: "入力された値が正しくありません。確認してください。")
+                if isValid {
+                    viewModel.didEditButtonTapped()
+                } else {
+                    self.showAlert(title: "YouTube Channel IDが正しくありません", message: "YouTube Channel IDにはhttps://youtube.com/channel/の後に続く文字列を入力してください。.../c/や.../user/の後に続く文字列はYouTube Channel IDではありません。")
                 }
             case .updateSubmittableState(let state):
                 switch state {
@@ -186,21 +169,16 @@ final class EditBandViewController: UIViewController, Instantiable {
                     self.editButton.isEnabled = false
                     self.activityIndicator.startAnimating()
                 }
-            case .deleteGroup:
-                guard let vcCount = navigationController?.viewControllers.count else { return }
-                navigationController?.popToViewController((navigationController?.viewControllers[vcCount - 3])!, animated: true)
             case .reportError(let error):
-                print(error)
+                print(String(describing: error))
                 self.showAlert()
+                self.activityIndicator.stopAnimating()
+                self.editButton.isEnabled = true
             }
         }
         .store(in: &cancellables)
         
         displayNameInputView.listen { [unowned self] in
-            self.didInputValue()
-        }
-        
-        englishNameInputView.listen { [unowned self] in
             self.didInputValue()
         }
         
@@ -230,15 +208,8 @@ final class EditBandViewController: UIViewController, Instantiable {
     private func update() {
         let group = viewModel.state.group
         displayNameInputView.setText(text: group.name)
-        englishNameInputView.setText(text: group.englishName ?? "")
         biographyInputView.setText(text: group.biography ?? "")
-        let since: String? = {
-            if let since = group.since {
-                return dateFormatter.string(from: since)
-            } else {
-                return nil
-            }
-        }()
+        let since = group.since?.toFormatString(format: "yyyy")
         sinceInputView.setText(text: since ?? "")
         hometownInputView.setText(text: group.hometown ?? "")
         youTubeIdInputView.setText(text: group.youtubeChannelId ?? "")
@@ -246,7 +217,7 @@ final class EditBandViewController: UIViewController, Instantiable {
         if let artworkURL = group.artworkURL {
             dependencyProvider.imagePipeline.loadImage(artworkURL, into: profileImageView)
         } else {
-            // TODO: Set profile image placeholder
+            profileImageView.image = UIColor.darkGray.image
         }
     }
     
@@ -282,11 +253,6 @@ final class EditBandViewController: UIViewController, Instantiable {
         mainView.addArrangedSubview(displayNameInputView)
         NSLayoutConstraint.activate([
             displayNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-        ])
-        
-        mainView.addArrangedSubview(englishNameInputView)
-        NSLayoutConstraint.activate([
-            englishNameInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
         mainView.addArrangedSubview(biographyInputView)
@@ -350,11 +316,6 @@ final class EditBandViewController: UIViewController, Instantiable {
             editButton.heightAnchor.constraint(equalToConstant: 50),
         ])
         
-        mainView.addArrangedSubview(deleteBandButton)
-        NSLayoutConstraint.activate([
-            deleteBandButton.heightAnchor.constraint(equalToConstant: 50),
-        ])
-        
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer
         NSLayoutConstraint.activate([
@@ -371,18 +332,13 @@ final class EditBandViewController: UIViewController, Instantiable {
     
     private func didInputValue() {
         let groupName: String? = displayNameInputView.getText()
-        let groupEnglishName: String? = englishNameInputView.getText()
         let biography: String? = biographyInputView.getText()
-        let sinceInput = sinceInputView.getText()
-        let since: Date? = {
-            guard let sinceInput = sinceInput else { return nil }
-            return dateFormatter.date(from: sinceInput)
-        }()
+        let since: Date? = sinceInputView.getText()?.toFormatDate(format: "yyyy")
         let hometown = hometownInputView.getText()
         let youtubeChannelId = youTubeIdInputView.getText()
         let twitterId = twitterIdInputView.getText()
         
-        viewModel.didUpdateInputItems(name: groupName, englishName: groupEnglishName, biography: biography, since: since, youtubeChannelId: youtubeChannelId, twitterId: twitterId, hometown: hometown)
+        viewModel.didUpdateInputItems(name: groupName, englishName: nil, biography: biography, since: since, youtubeChannelId: youtubeChannelId, twitterId: twitterId, hometown: hometown)
     }
 
     @objc private func selectProfileImage(_ sender: Any) {
@@ -392,25 +348,6 @@ final class EditBandViewController: UIViewController, Instantiable {
             picker.delegate = self
             self.present(picker, animated: true, completion: nil)
         }
-    }
-    
-    @objc private func deleteBandButtonTapped() {
-        let alertController = UIAlertController(
-            title: "本当に削除しますか？", message: nil, preferredStyle: UIAlertController.Style.actionSheet)
-
-        let acceptAction = UIAlertAction(
-            title: "OK", style: UIAlertAction.Style.default,
-            handler: { [unowned self] action in
-                viewModel.deleteGroup()
-            })
-        let cancelAction = UIAlertAction(
-            title: "キャンセル", style: UIAlertAction.Style.cancel,
-            handler: { action in })
-        alertController.addAction(acceptAction)
-        alertController.addAction(cancelAction)
-        alertController.popoverPresentationController?.sourceView = self.view
-        alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
-        self.present(alertController, animated: true, completion: nil)
     }
 }
 

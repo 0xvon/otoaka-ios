@@ -35,7 +35,6 @@ class EditBandViewModel {
         case didEditGroup(Group)
         case updateSubmittableState(PageState)
         case didValidateYoutubeChannelId(Bool)
-        case deleteGroup
         case reportError(Error)
     }
 
@@ -49,7 +48,6 @@ class EditBandViewModel {
     
     private lazy var listChannelAction = Action(ListChannel.self, httpClient: dependencyProvider.youTubeDataApiClient)
     private lazy var editGroupAction = Action(EditGroup.self, httpClient: apiClient)
-    private lazy var deleteGroupAction = Action(DeleteGroup.self, httpClient: apiClient)
 
     init(
         dependencyProvider: LoggedInDependencyProvider, group: Group
@@ -59,15 +57,13 @@ class EditBandViewModel {
         self.state = State(group: group, name: group.name, englishName: group.englishName, biography: group.biography, since: group.since, artwork: nil, youtubeChannelId: group.youtubeChannelId, twitterId: group.twitterId, hometown: group.hometown, socialInputs: try! dependencyProvider.masterService.blockingMasterData())
         
         let errors = Publishers.MergeMany(
-            editGroupAction.errors,
-            deleteGroupAction.errors
+            editGroupAction.errors
         )
         
         Publishers.MergeMany(
             listChannelAction.elements.map { _ in .didValidateYoutubeChannelId(true) }.eraseToAnyPublisher(),
             editGroupAction.elements.map { _ in .updateSubmittableState(.editting(true)) }.eraseToAnyPublisher(),
             editGroupAction.elements.map(Output.didEditGroup).eraseToAnyPublisher(),
-            deleteGroupAction.elements.map { _ in .deleteGroup }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -75,22 +71,23 @@ class EditBandViewModel {
         
         listChannelAction.errors
             .sink(receiveValue: { [unowned self] _ in
-                state.youtubeChannelId = nil
                 outputSubject.send(.didValidateYoutubeChannelId(false))
             })
             .store(in: &cancellables)
     }
     
-    func validateYoutubeChannelId(youtubeChannelId: String?) {
-        guard let youtubeChannelId = youtubeChannelId else { return }
-        
-        let request = Empty()
-        var uri = ListChannel.URI()
-        uri.channelId = youtubeChannelId
-        uri.part = "snippet"
-        uri.maxResults = 1
-        uri.order = "viewCount"
-        listChannelAction.input((request: request, uri: uri))
+    public func validateYoutubeChannelId() {
+        if let youtubeChannelId = state.youtubeChannelId {
+            let request = Empty()
+            var uri = ListChannel.URI()
+            uri.channelId = youtubeChannelId
+            uri.part = "snippet"
+            uri.maxResults = 1
+            uri.order = "viewCount"
+            listChannelAction.input((request: request, uri: uri))
+        } else {
+            outputSubject.send(.didValidateYoutubeChannelId(true))
+        }
     }
     
     func didUpdateInputItems(
@@ -107,7 +104,6 @@ class EditBandViewModel {
         
         let isSubmittable: Bool = (name != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
-        validateYoutubeChannelId(youtubeChannelId: youtubeChannelId)
     }
     
     func didUpdateArtwork(artwork: UIImage?) {
@@ -137,19 +133,14 @@ class EditBandViewModel {
         uri.id = self.state.group.id
         let req = EditGroup.Request(
             name: name,
-            englishName: self.state.englishName,
-            biography: self.state.biography,
-            since: self.state.since,
+            englishName: state.englishName,
+            biography: state.biography,
+            since: state.since.flatMap { Date(timeInterval: 60*60*12, since: $0) }, // なぜかtimezoneがズレるので応急処置
             artworkURL: imageUrl,
-            twitterId: self.state.twitterId,
-            youtubeChannelId: self.state.youtubeChannelId,
-            hometown: self.state.hometown)
+            twitterId: state.twitterId,
+            youtubeChannelId: state.youtubeChannelId,
+            hometown: state.hometown
+        )
         editGroupAction.input((request: req, uri: uri))
-    }
-    
-    func deleteGroup() {
-        let request = DeleteGroup.Request(id: state.group.id)
-        let uri = DeleteGroup.URI()
-        deleteGroupAction.input((request: request, uri: uri))
     }
 }
