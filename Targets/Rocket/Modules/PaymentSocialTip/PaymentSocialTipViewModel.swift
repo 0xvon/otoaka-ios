@@ -25,8 +25,9 @@ class PaymentSocialTipViewModel {
             "ライブで何着る？",
             "一番好きな曲は？",
             "ライブで聴きたい曲は？",
+            "カバーしてほしい曲は？",
             "ライブしてほしい場所は？",
-            "セトリ最初の3曲予想！",
+            "セトリ最初と最後の曲予想！",
         ]
         var productItem: [Product] = [
             Product(id: "snack_600", price: 610),

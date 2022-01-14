@@ -61,6 +61,13 @@ final class SocialTipEventDetailViewController: UIViewController, Instantiable {
         label.textColor = Brand.color(for: .text(.primary))
         return label
     }()
+    private lazy var liveButton: PrimaryButton = {
+        let button = PrimaryButton(text: "ライブ情報を見る")
+        button.layer.cornerRadius = 24
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(liveButtonTapped), for: .touchUpInside)
+        return button
+    }()
     private lazy var relatedLinkButton: PrimaryButton = {
         let button = PrimaryButton(text: "詳細を見る")
         button.layer.cornerRadius = 24
@@ -79,6 +86,10 @@ final class SocialTipEventDetailViewController: UIViewController, Instantiable {
         postView.addArrangedSubview(eventTitleLabel)
         postView.addArrangedSubview(dateLabel)
         postView.addArrangedSubview(textView)
+        postView.addArrangedSubview(liveButton)
+        NSLayoutConstraint.activate([
+            liveButton.heightAnchor.constraint(equalToConstant: 48),
+        ])
         postView.addArrangedSubview(relatedLinkButton)
         NSLayoutConstraint.activate([
             relatedLinkButton.heightAnchor.constraint(equalToConstant: 48),
@@ -161,6 +172,11 @@ final class SocialTipEventDetailViewController: UIViewController, Instantiable {
     }
     
     @objc private func liveViewTapped() {
+        let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: viewModel.state.event.live)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func liveButtonTapped() {
         let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: viewModel.state.event.live)
         navigationController?.pushViewController(vc, animated: true)
     }

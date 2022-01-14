@@ -333,7 +333,9 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
                     self.activityIndicator.stopAnimating()
                 }
-            case .didSendSocialTip(let tip): showSuccessPopup(tip: tip)
+            case .didSendSocialTip(let tip):
+                showSuccessPopup(tip: tip)
+                navigationController?.popViewController(animated: true)
             case .reportError(let err):
                 print(String(describing: err))
                 showAlert()
