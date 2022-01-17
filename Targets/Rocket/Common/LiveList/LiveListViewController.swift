@@ -230,6 +230,10 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
                 let emptyCollectionView = EmptyCollectionView(emptyType: .groupLiveList, actionButtonTitle: "ライブ追加する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
                 return emptyCollectionView
+            case .followingGroupsLives:
+                let emptyCollectionView = EmptyCollectionView(emptyType: .followingGroupsLives, actionButtonTitle: "アーティストを探す")
+                emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+                return emptyCollectionView
             default:
                 let emptyCollectionView = EmptyCollectionView(emptyType: .liveList, actionButtonTitle: "ライブ追加する")
                 emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -238,14 +242,21 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
             
         }()
         emptyCollectionView.listen { [unowned self] in
-            let vc = CreateLiveViewController(dependencyProvider: dependencyProvider, input: ())
-            let nav = self.navigationController ?? presentingViewController?.navigationController
-            nav?.pushViewController(vc, animated: true)
+            switch viewModel.dataSource {
+            case .followingGroupsLives:
+                let vc = SearchGroupViewController(dependencyProvider: dependencyProvider)
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
+            default:
+                let vc = CreateLiveViewController(dependencyProvider: dependencyProvider, input: ())
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
+            }
         }
         tableView.backgroundView = self.viewModel.state.lives.isEmpty ? emptyCollectionView : nil
         if let backgroundView = tableView.backgroundView {
             NSLayoutConstraint.activate([
-                backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 32),
+                backgroundView.topAnchor.constraint(equalTo: tableView.topAnchor, constant: 232),
                 backgroundView.widthAnchor.constraint(equalTo: tableView.widthAnchor, constant: -32),
                 backgroundView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             ])
