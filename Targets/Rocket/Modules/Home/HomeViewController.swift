@@ -68,7 +68,7 @@ final class HomeViewController: UIViewController {
         pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .addPoint(_):
-                self.showSuccessToGetPoint(2000)
+                self.showSuccessToGetPoint(1000, message: "ログインボーナス1000ポイント受け取りました！お気に入りのアーティストにsnackしよう！")
             default: break
             }
         }
@@ -194,9 +194,10 @@ final class HomeViewController: UIViewController {
     private func presentPoint() {
         #if PRODUCTION
         let userDefaults = UserDefaults.standard
-        let key = "pointPresented_v3.2.0.r"
+        let date = Date().toFormatString(format: "yyyyMMdd")
+        let key = "loginbonus_\(date)"
         if !userDefaults.bool(forKey: key) {
-            pointViewModel.addPoint(point: 2000)
+            pointViewModel.addPoint(point: 1000)
             userDefaults.setValue(true, forKey: key)
             userDefaults.synchronize()
         }

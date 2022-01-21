@@ -140,9 +140,9 @@ extension UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func showSuccessToGetPoint(_ point: Int) {
+    func showSuccessToGetPoint(_ point: Int, message: String? = nil) {
         let alertView = SCLAlertView()
-        alertView.showSuccess("ポイントGET", subTitle: "\(point)ポイント受り取ました！お気に入りのアーティストにsnackしてみよう！")
+        alertView.showSuccess("ポイントGET", subTitle: message ?? "\(point)ポイント受り取ました！お気に入りのアーティストにsnackしてみよう！")
     }
     
     func downloadImage(image: UIImage) {
