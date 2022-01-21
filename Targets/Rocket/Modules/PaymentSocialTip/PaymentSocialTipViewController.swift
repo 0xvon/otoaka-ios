@@ -437,7 +437,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     
     private func pay() {
         if let product = viewModel.state.products.filter({ $0.productIdentifier == viewModel.state.tip.id }).first {
-            showAlert(title: "購入確認", message: "\(viewModel.state.tip.price)円でポイントを購入してsnackしますか？") { [unowned self] in
+            showAlert(title: "購入確認", message: "\(viewModel.state.tip.price)円でポイントを購入してsnackしますか？有料snackはアーティストに還元されます") { [unowned self] in
                 viewModel.purchase(product)
             }
         } else {
