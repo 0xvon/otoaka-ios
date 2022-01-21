@@ -19,9 +19,38 @@ final class LiveListViewController: UIViewController, Instantiable {
     private var liveTableView: UITableView!
 
     let viewModel: LiveListViewModel
+    let pointViewModel: PointViewModel
     private var cancellables: [AnyCancellable] = []
     
-    private lazy var header: SocialTipEventCardCollectionView = {
+    private lazy var header: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            view.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+        ])
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .largeStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        label.text = "開催中のsnack event"
+        view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+        ])
+        
+        view.addSubview(eventContent)
+        NSLayoutConstraint.activate([
+            eventContent.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 4),
+            eventContent.leftAnchor.constraint(equalTo: view.leftAnchor),
+            eventContent.rightAnchor.constraint(equalTo: view.rightAnchor),
+            eventContent.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            eventContent.heightAnchor.constraint(equalToConstant: 192),
+        ])
+        return view
+    }()
+    private lazy var eventContent: SocialTipEventCardCollectionView = {
         let view = SocialTipEventCardCollectionView(socialTipEvents: [], imagePipeline: dependencyProvider.imagePipeline)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -38,6 +67,7 @@ final class LiveListViewController: UIViewController, Instantiable {
             dependencyProvider: dependencyProvider,
             input: input
         )
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -81,7 +111,7 @@ final class LiveListViewController: UIViewController, Instantiable {
                 self.setTableViewBackgroundView(tableView: liveTableView)
                 self.liveTableView.reloadData()
             case .getEvents(let events):
-                header.inject(socialTipEvents: events)
+                eventContent.inject(socialTipEvents: events)
             case .didToggleLikeLive: break
             case .error(let error):
                 print(String(describing: error))
@@ -90,7 +120,16 @@ final class LiveListViewController: UIViewController, Instantiable {
         }
         .store(in: &cancellables)
         
-        header.listen { [unowned self] socialTipEvent in
+        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .addPoint(_):
+                self.showSuccessToGetPoint(100)
+            default: break
+            }
+        }
+        .store(in: &cancellables)
+        
+        eventContent.listen { [unowned self] socialTipEvent in
             let vc = SocialTipEventDetailViewController(dependencyProvider: dependencyProvider, input: socialTipEvent)
             let nav = self.navigationController ?? presentingViewController?.navigationController
             nav?.pushViewController(vc, animated: true)
@@ -152,7 +191,7 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch viewModel.dataSource {
-        case .followingGroupsLives: return 192
+        case .followingGroupsLives: return 210
         default: return 0
         }
     }
@@ -185,6 +224,9 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
                 safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
             case .likeButtonTapped:
+                live.isLiked
+                   ? pointViewModel.usePoint(point: 100)
+                   : pointViewModel.addPoint(point: 100)
                 viewModel.likeLiveButtonTapped(liveFeed: live)
                 live.isLiked.toggle()
                 viewModel.updateLive(live: live)

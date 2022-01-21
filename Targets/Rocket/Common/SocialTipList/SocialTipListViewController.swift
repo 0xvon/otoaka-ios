@@ -30,7 +30,7 @@ final class SocialTipListViewController: UIViewController, Instantiable {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Brand.font(for: .largeStrong)
         label.textColor = Brand.color(for: .text(.primary))
-        label.text = "有料snack可能アーティスト"
+        label.text = "有料で直接snackできるアーティスト"
         view.addSubview(label)
         NSLayoutConstraint.activate([
             label.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),

@@ -16,6 +16,7 @@ final class GroupListViewController: UIViewController, Instantiable {
 
     var tableView: UITableView!
     let viewModel: GroupListViewModel
+    let pointViewModel: PointViewModel
     private var cancellables: [AnyCancellable] = []
 
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
@@ -24,6 +25,7 @@ final class GroupListViewController: UIViewController, Instantiable {
             dependencyProvider: dependencyProvider,
             input: input
         )
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -54,6 +56,15 @@ final class GroupListViewController: UIViewController, Instantiable {
             case .error(let error):
                 print(String(describing: error))
 //                self.showAlert()
+            }
+        }
+        .store(in: &cancellables)
+        
+        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .addPoint(_):
+                self.showSuccessToGetPoint(100)
+            default: break
             }
         }
         .store(in: &cancellables)
@@ -136,6 +147,9 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
                 case .none: break
                 }
             case .likeButtonTapped:
+                group.isFollowing
+                   ? pointViewModel.usePoint(point: 100)
+                   : pointViewModel.addPoint(point: 100)
                 viewModel.followButtonTapped(group: group)
                 group.isFollowing.toggle()
                 viewModel.updateGroup(group: group)

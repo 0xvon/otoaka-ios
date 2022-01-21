@@ -14,6 +14,7 @@ import SafariServices
 final class FilterLiveViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: FilterLiveViewModel
+    let pointViewModel: PointViewModel
     private var cancellables: [AnyCancellable] = []
 
     lazy var searchResultController: SearchResultViewController = {
@@ -35,6 +36,7 @@ final class FilterLiveViewController: UITableViewController {
             groupId: groupId,
             fromDate: fromDate, toDate: toDate
         )
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -87,6 +89,15 @@ final class FilterLiveViewController: UITableViewController {
 //                showAlert()
             }
         }.store(in: &cancellables)
+        
+        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .addPoint(_):
+                self.showSuccessToGetPoint(100)
+            default: break
+            }
+        }
+        .store(in: &cancellables)
 
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
@@ -125,6 +136,9 @@ extension FilterLiveViewController {
                 safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
             case .likeButtonTapped:
+                live.isLiked
+                   ? pointViewModel.usePoint(point: 100)
+                   : pointViewModel.addPoint(point: 100)
                 viewModel.likeLiveButtonTapped(liveFeed: live)
                 live.isLiked.toggle()
                 viewModel.updateLive(live: live)

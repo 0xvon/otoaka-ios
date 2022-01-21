@@ -512,7 +512,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     @objc private func createShare() {
         shareWithTwitter(type: .live(viewModel.state.live)) { [unowned self] isOK in
             if isOK {
-                pointViewModel.addPoint(point: 100)
+                pointViewModel.addPoint(point: 50)
             } else {
                 showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
             }

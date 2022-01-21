@@ -13,6 +13,7 @@ import Combine
 final class SearchGroupViewController: UITableViewController {
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: SearchGroupViewModel
+    let pointViewModel: PointViewModel
     private var cancellables: [AnyCancellable] = []
 
     lazy var searchResultController: SearchResultViewController = {
@@ -30,6 +31,7 @@ final class SearchGroupViewController: UITableViewController {
     init(dependencyProvider: LoggedInDependencyProvider) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = SearchGroupViewModel(dependencyProvider: dependencyProvider)
+        self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -82,6 +84,15 @@ final class SearchGroupViewController: UITableViewController {
 //                showAlert()
             }
         }.store(in: &cancellables)
+        
+        pointViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .addPoint(_):
+                self.showSuccessToGetPoint(100)
+            default: break
+            }
+        }
+        .store(in: &cancellables)
 
         refreshControl?.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
@@ -140,6 +151,9 @@ extension SearchGroupViewController {
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
             case .likeButtonTapped:
+                group.isFollowing
+                   ? pointViewModel.usePoint(point: 100)
+                   : pointViewModel.addPoint(point: 100)
                 viewModel.followButtonTapped(group: group)
                 group.isFollowing.toggle()
                 viewModel.updateGroup(group: group)

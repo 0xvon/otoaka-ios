@@ -602,7 +602,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     @objc func createShare(_ sender: UIBarButtonItem) {
         shareWithTwitter(type: .group(viewModel.state.group)) { [unowned self] isOK in
             if isOK {
-                pointViewModel.addPoint(point: 100)
+                pointViewModel.addPoint(point: 50)
             } else {
                 showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
             }

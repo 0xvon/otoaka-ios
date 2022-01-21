@@ -248,7 +248,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
         if viewModel.state.user.username != nil {
             shareWithTwitter(type: .user(viewModel.state.user)) { [unowned self] isOK in
                 if isOK {
-                    pointViewModel.addPoint(point: 100)
+                    pointViewModel.addPoint(point: 50)
                 } else {
                     showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
                 }
