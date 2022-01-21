@@ -13,6 +13,7 @@ class SocialTipListViewModel {
     typealias Input = DataSource
     enum Output {
         case reloadTableView
+        case getEntriedGroups([Group])
         case error(Error)
     }
     enum DataSource {
@@ -62,6 +63,7 @@ class SocialTipListViewModel {
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     private var cancellables: [AnyCancellable] = []
+    private lazy var getEntriedGroupAction = Action(GetSocialTippableGroups.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, input: DataSource
@@ -72,6 +74,10 @@ class SocialTipListViewModel {
         self.state = State()
 
         subscribe(storage: storage)
+        
+        getEntriedGroupAction.elements.map(Output.getEntriedGroups).eraseToAnyPublisher()
+            .sink(receiveValue: outputSubject.send)
+            .store(in: &cancellables)
     }
     
     private func subscribe(storage: DataSourceStorage) {
@@ -116,12 +122,18 @@ class SocialTipListViewModel {
         switch storage {
         case let .allTip(pagination):
             pagination.refresh()
+            getEntriedGroups()
         case let .myTip(pagination):
             pagination.refresh()
         case let .groupTip(pagination):
             pagination.refresh()
         case .none: break
         }
+    }
+    
+    func getEntriedGroups() {
+        let uri = GetSocialTippableGroups.URI()
+        getEntriedGroupAction.input((request: Empty(), uri: uri))
     }
     
     func willDisplay(rowAt indexPath: IndexPath) {

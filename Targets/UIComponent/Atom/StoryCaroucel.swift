@@ -9,13 +9,13 @@ import Endpoint
 import UIKit
 import ImagePipeline
 
-final class UserCaroucel: UICollectionViewCell, ReusableCell {
-    typealias Input = UserCaroucelContent.Input
-    typealias Output = UserCaroucelContent.Output
-    static var reusableIdentifier: String { "UserCaroucel" }
-    private let _contentView: UserCaroucelContent
+final class StoryCaroucel: UICollectionViewCell, ReusableCell {
+    typealias Input = StoryCaroucelContent.Input
+    typealias Output = StoryCaroucelContent.Output
+    static var reusableIdentifier: String { "StoryCaroucel" }
+    private let _contentView: StoryCaroucelContent
     override init(frame: CGRect) {
-        _contentView = UserCaroucelContent()
+        _contentView = StoryCaroucelContent()
         super.init(frame: frame)
         _contentView.translatesAutoresizingMaskIntoConstraints = false
         _contentView.isUserInteractionEnabled = false
@@ -46,9 +46,9 @@ final class UserCaroucel: UICollectionViewCell, ReusableCell {
     }
 }
 
-public final class UserCaroucelContent: UIButton {
+public final class StoryCaroucelContent: UIButton {
     public typealias Input = (
-        user: User,
+        imageUrl: URL?,
         imagePipeline: ImagePipeline
     )
     enum Output {
@@ -79,7 +79,7 @@ public final class UserCaroucelContent: UIButton {
     }
     
     public func inject(input: Input) {
-        if let url = input.user.thumbnailURL.flatMap(URL.init(string: )) {
+        if let url = input.imageUrl {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
             thumbnailView.image = Brand.color(for: .background(.secondary)).image

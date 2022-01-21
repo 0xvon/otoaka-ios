@@ -76,8 +76,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
     private let participatingFriendSectionHeader = SummarySectionHeader(title: "参戦する友達")
-    private lazy var participatingFriendContent: UserStoryCollectionView = {
-        let content = UserStoryCollectionView(users: [], imagePipeline: dependencyProvider.imagePipeline)
+    private lazy var participatingFriendContent: StoryCollectionView = {
+        let content = StoryCollectionView(dataSource: .users([]), imagePipeline: dependencyProvider.imagePipeline)
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             content.heightAnchor.constraint(equalToConstant: 82),
@@ -375,7 +375,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 
                 participatingFriendSectionHeader.isHidden = false
                 participatingFriendWrapper.isHidden = false
-                participatingFriendContent.inject(users: liveDetail.participatingFriends)
+                participatingFriendContent.inject(dataSource: .users(liveDetail.participatingFriends))
             case .updatePostSummary(let post):
                 let isHidden = post == nil || !viewModel.isLivePast()
                 self.postSectionHeader.isHidden = isHidden
@@ -445,9 +445,11 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
-        participatingFriendContent.listen { [unowned self] user in
-            let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
-            self.navigationController?.pushViewController(vc, animated: true)
+        participatingFriendContent.listen { [unowned self] output in
+            if case let .user(user) = output {
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
         }
         
         likeCountSummaryView.addGestureRecognizer(

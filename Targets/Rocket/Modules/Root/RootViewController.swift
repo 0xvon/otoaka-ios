@@ -103,10 +103,12 @@ final class RootViewController: UITabBarController, Instantiable {
         let loggedInProvider = LoggedInDependencyProvider(provider: dependencyProvider, user: user)
         let homeVC = BrandNavigationController(rootViewController: HomeViewController(dependencyProvider: loggedInProvider))
         homeVC.tabBarItem = UITabBarItem(
-            title: "ホーム",
+            title: "ライブ",
             image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill")
         )
+        let timelineVC = BrandNavigationController(rootViewController: SocialTipListViewController(dependencyProvider: loggedInProvider, input: .allTip))
+        timelineVC.tabBarItem = UITabBarItem(title: "タイムライン", image: UIImage(systemName: "flame"), selectedImage: UIImage(systemName: "flame.fill"))
         let rankingVC = BrandNavigationController(rootViewController: GroupRankingListViewController(dependencyProvider: loggedInProvider, input: .entriedGroup))
         rankingVC.tabBarItem = UITabBarItem(
             title: "ランキング",
@@ -129,6 +131,7 @@ final class RootViewController: UITabBarController, Instantiable {
         }
         return [
             homeVC,
+            timelineVC,
             searchVC,
             rankingVC,
             accountNav,

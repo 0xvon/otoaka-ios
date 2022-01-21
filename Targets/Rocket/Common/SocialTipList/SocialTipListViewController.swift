@@ -8,6 +8,7 @@
 import UIKit
 import Endpoint
 import Combine
+import UIComponent
 
 final class SocialTipListViewController: UIViewController, Instantiable {
     typealias Input = SocialTipListViewModel.Input
@@ -17,6 +18,40 @@ final class SocialTipListViewController: UIViewController, Instantiable {
     var tableView: UITableView!
     let viewModel: SocialTipListViewModel
     private var cancellables: [AnyCancellable] = []
+    
+    private lazy var header: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            view.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+        ])
+        
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .largeStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        label.text = "有料snack可能アーティスト"
+        view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
+            label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
+        ])
+        
+        view.addSubview(entriedGroupContent)
+        NSLayoutConstraint.activate([
+            entriedGroupContent.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 4),
+            entriedGroupContent.leftAnchor.constraint(equalTo: view.leftAnchor),
+            entriedGroupContent.rightAnchor.constraint(equalTo: view.rightAnchor),
+            entriedGroupContent.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            entriedGroupContent.heightAnchor.constraint(equalToConstant: 82),
+        ])
+        return view
+    }()
+    private lazy var entriedGroupContent: StoryCollectionView = {
+        let content = StoryCollectionView(dataSource: .groups([]), imagePipeline: dependencyProvider.imagePipeline)
+        content.translatesAutoresizingMaskIntoConstraints = false
+        return content
+    }()
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
@@ -52,12 +87,22 @@ final class SocialTipListViewController: UIViewController, Instantiable {
             case .reloadTableView:
                 self.setTableViewBackgroundView(tableView: self.tableView)
                 self.tableView.reloadData()
+            case .getEntriedGroups(let groups):
+                entriedGroupContent.inject(dataSource: .groups(groups))
+                self.tableView.reloadData()
             case .error(let error):
                 print(String(describing: error))
 //                self.showAlert()
             }
         }
         .store(in: &cancellables)
+        
+        entriedGroupContent.listen { [unowned self] output in
+            if case let .group(group) = output {
+                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+        }
     }
     
     private func setup() {
@@ -102,7 +147,19 @@ extension SocialTipListViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
+        if case .allTip  = viewModel.dataSource {
+            return 100
+        } else {
+            return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if case .allTip  = viewModel.dataSource {
+            return header
+        } else {
+            return nil
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
