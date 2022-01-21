@@ -125,7 +125,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         textView.backgroundColor = .clear
         textView.delegate = self
         textView.placeholder = "お題に沿ってアーティストを宣伝しよう！"
-        textView.text = "○○なところ！"
+        textView.text = nil
         textView.placeholderTextView.textAlignment = .left
         textView.placeholderColor = Brand.color(for: .background(.secondary))
         textView.font = Brand.font(for: .mediumStrong)
@@ -236,7 +236,6 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("送る", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
-        button.isEnabled = true
         return button
     }()
     private lazy var activityIndicator: LoadingCollectionView = {
@@ -390,6 +389,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         ])
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
+        registerButton.isHidden = true
         
 //        templateMessageList.addTags([
 //            "応援してます！",

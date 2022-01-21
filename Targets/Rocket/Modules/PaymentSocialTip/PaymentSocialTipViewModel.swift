@@ -16,7 +16,7 @@ class PaymentSocialTipViewModel {
     struct State {
         var type: SocialTipType
         var tip: Product = Product(id: "snack_600", price: 610)
-        var message: String? = "○○なところ！"
+        var message: String? = nil
         var isRealMoney: Bool = true
         var products: [SKProduct] = []
         var theme: String = "大好きな理由は？"
