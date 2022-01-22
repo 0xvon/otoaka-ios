@@ -14,6 +14,7 @@ public final class BandDetailHeaderView: UIView {
     public typealias Input = (
         group: Endpoint.Group,
         groupItem: InternalDomain.YouTubeVideo?,
+        isEntried: Bool,
         imagePipeline: ImagePipeline
     )
 
@@ -91,6 +92,7 @@ public final class BandDetailHeaderView: UIView {
         bandInformationView.listen { [unowned self] output in
             switch output {
             case .arrowButtonTapped: self.nextPage()
+            case .officialMarkTapped: listener(.officialMarkTapped)
             }
         }
         trackInformationView.listen { [unowned self] output in
@@ -164,6 +166,7 @@ public final class BandDetailHeaderView: UIView {
     
     public enum Output {
         case track(TrackInformationView.Output)
+        case officialMarkTapped
     }
 }
 

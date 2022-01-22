@@ -61,6 +61,7 @@ class BandDetailViewModel {
         case pushToUserList(UserListViewController.Input)
         case pushToPost(PostViewController.Input)
         case pushToGroupDetail(Group)
+        case showOfficialMarkInfo
         case pushToPlayTrack(PlayTrackViewController.Input)
         case openURLInBrowser(URL)
         
@@ -211,6 +212,8 @@ class BandDetailViewModel {
         case .track(.appleMusicButtonTapped),
              .track(.spotifyButtonTapped):
             break  // TODO
+        case .officialMarkTapped:
+            outputSubject.send(.showOfficialMarkInfo)
         }
     }
     

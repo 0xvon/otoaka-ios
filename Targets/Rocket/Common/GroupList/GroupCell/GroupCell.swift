@@ -90,6 +90,20 @@ class GroupCellContent: UIButton {
     @IBOutlet weak var sinceBadgeView: BadgeView!
     @IBOutlet weak var hometownBadgeView: BadgeView!
     
+    private lazy var officialMark: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(
+            UIImage(systemName: "checkmark.seal.fill")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(equalToConstant: 24),
+            button.widthAnchor.constraint(equalTo: button.heightAnchor),
+        ])
+        return button
+    }()
+    
     private lazy var bigLikeButton: ToggleButton = {
         let button = ToggleButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -122,6 +136,7 @@ class GroupCellContent: UIButton {
         hometownBadgeView.title = input.group.group.hometown.map { "\($0)出身" } ?? "出身不明"
         bigLikeButton.isEnabled = true
         bigLikeButton.isSelected = input.group.isFollowing
+        officialMark.isHidden = !input.group.isEntried
         switch input.type {
         case .normal:
             bigLikeButton.isHidden = false
@@ -156,6 +171,14 @@ class GroupCellContent: UIButton {
         
         sinceBadgeView.image = UIImage(named: "calendar")
         hometownBadgeView.image = UIImage(named: "map")
+        
+        addSubview(officialMark)
+        officialMark.isHidden = true
+        NSLayoutConstraint.activate([
+            officialMark.topAnchor.constraint(equalTo: bandNameLabel.topAnchor),
+            officialMark.leftAnchor.constraint(equalTo: bandNameLabel.rightAnchor, constant: 4),
+            officialMark.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -16),
+        ])
         
         addSubview(bigLikeButton)
         NSLayoutConstraint.activate([

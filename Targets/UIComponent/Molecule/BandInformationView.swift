@@ -31,6 +31,20 @@ class BandInformationView: UIView {
         label.adjustsFontSizeToFitWidth = false
         return label
     }()
+    private lazy var officialMark: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(
+            UIImage(systemName: "checkmark.seal.fill")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+            for: .normal
+        )
+        button.addTarget(self, action: #selector(officialMarkTapped), for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            button.heightAnchor.constraint(equalToConstant: 24),
+            button.widthAnchor.constraint(equalTo: button.heightAnchor),
+        ])
+        return button
+    }()
     private lazy var arrowButton: UIButton = {
         let arrowButton = UIButton()
         arrowButton.translatesAutoresizingMaskIntoConstraints = false
@@ -76,6 +90,7 @@ class BandInformationView: UIView {
 //        let startYear: String = input.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
 //        dateBadgeView.title = startYear
         bandNameLabel.text = input.group.name
+        officialMark.isHidden = !input.isEntried
 //        mapBadgeView.title = input.group.hometown.map { "\($0)出身" } ?? "出身不明"
     }
 
@@ -86,7 +101,15 @@ class BandInformationView: UIView {
         NSLayoutConstraint.activate([
             bandNameLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             bandNameLabel.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
-            rightAnchor.constraint(equalTo: bandNameLabel.rightAnchor, constant: 16),
+//            rightAnchor.constraint(equalTo: bandNameLabel.rightAnchor, constant: 16),
+        ])
+        
+        addSubview(officialMark)
+        officialMark.isHidden = true
+        NSLayoutConstraint.activate([
+            officialMark.topAnchor.constraint(equalTo: bandNameLabel.topAnchor),
+            officialMark.leftAnchor.constraint(equalTo: bandNameLabel.rightAnchor, constant: 4),
+            officialMark.rightAnchor.constraint(lessThanOrEqualTo: rightAnchor, constant: -16),
         ])
 
 //        addSubview(dateBadgeView)
@@ -142,9 +165,13 @@ class BandInformationView: UIView {
 
     public enum Output {
         case arrowButtonTapped
+        case officialMarkTapped
     }
     @objc private func touchUpInsideArrowButton() {
         listener(.arrowButtonTapped)
+    }
+    @objc private func officialMarkTapped() {
+        listener(.officialMarkTapped)
     }
 }
 

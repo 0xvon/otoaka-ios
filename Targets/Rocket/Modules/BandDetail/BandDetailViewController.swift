@@ -264,14 +264,18 @@ final class BandDetailViewController: UIViewController, Instantiable {
             ),
             UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(createShare)),
         ], animated: true)
-        setupViews()
         bind()
 
         followingViewModel.viewDidLoad()
         coachMarksController.dataSource = self
         coachMarksController.delegate = self
         
-        headerView.update(input: (group: viewModel.state.group, groupItem: nil, imagePipeline: dependencyProvider.imagePipeline))
+        headerView.update(input: (
+            group: viewModel.state.group,
+            groupItem: nil,
+            isEntried: false,
+            imagePipeline: dependencyProvider.imagePipeline
+        ))
     }
 
     func bind() {
@@ -412,7 +416,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 userTipContentWrapper.isHidden = isHidden
                 userTipContent.inject(tip: tips)
             case let .didGetChart(group, item):
-                headerView.update(input: (group: group, groupItem: item, imagePipeline: dependencyProvider.imagePipeline))
+                headerView.update(input: (
+                    group: group,
+                    groupItem: item,
+                    isEntried: viewModel.state.groupDetail?.isEntried ?? false,
+                    imagePipeline: dependencyProvider.imagePipeline
+                ))
             case .updateLiveSummary(let liveFeed):
                 let isHidden = liveFeed == nil
                 self.liveSectionHeader.isHidden = isHidden
@@ -434,6 +443,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 self.navigationController?.pushViewController(vc, animated: true)
             case .didCreatedInvitation(let invitation):
                 self.showInviteCode(invitationCode: invitation.id)
+            case .showOfficialMarkInfo:
+                showAlert(title: "公式マーク", message: "公式マークは契約したアーティストに付与されます。公式マークが付いているアーティストには有料snackで直接応援することができます。")
             case .reportError(let error):
                 print(error)
 //                self.showAlert()
@@ -525,10 +536,6 @@ final class BandDetailViewController: UIViewController, Instantiable {
             navigationController?.pushViewController(vc
                                                      , animated: true)
         }
-    }
-
-    func setupViews() {
-        headerView.update(input: (group: viewModel.state.group, groupItem: nil, imagePipeline: dependencyProvider.imagePipeline))
     }
 
     private func setupFloatingItems(displayType: BandDetailViewModel.DisplayType) {
