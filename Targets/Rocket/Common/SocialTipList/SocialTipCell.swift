@@ -169,13 +169,7 @@ class SocialTipCellContent: UIButton {
         dateLabel.text = "\(input.tip.tip)snacks・\(input.tip.thrownAt.toFormatString(format: "yyyy/MM/dd"))"
         textView.text = input.tip.message
         
-        if input.tip.tip < 1500 {
-            backgroundColor = Brand.color(for: .ranking(.other))
-        } else if input.tip.tip < 5000 {
-            backgroundColor = Brand.color(for: .ranking(.second))
-        } else {
-            backgroundColor = Brand.color(for: .ranking(.first))
-        }
+        backgroundColor = input.tip.isRealMoney ? Brand.color(for: .ranking(.first)) : Brand.color(for: .background(.secondary))
     }
     
     func setup() {
