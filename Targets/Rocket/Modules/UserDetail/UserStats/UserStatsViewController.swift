@@ -307,6 +307,11 @@ final class UserStatsViewController: UIViewController, Instantiable {
             switch action {
             case .cellTapped:
                 if let tip = viewModel.state.socialTip {
+                    let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: tip.user)
+                    navigationController?.pushViewController(vc, animated: true)
+                }
+            case .artworkTapped:
+                if let tip = viewModel.state.socialTip {
                     switch tip.type {
                     case .group(let group):
                         let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)

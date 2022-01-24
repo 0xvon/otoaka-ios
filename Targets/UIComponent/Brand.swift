@@ -6,6 +6,7 @@ public enum Brand {
         switch color {
         case .brand(.primary):             return #colorLiteral(red: 0.9019607843, green: 0.3294117647, blue: 0.2235294118, alpha: 1) // #E65439
         case .brand(.secondary):           return #colorLiteral(red: 0.9333333333, green: 0.5333333333, blue: 0.4588235294, alpha: 1) // #EE8875
+        case .brand(.dark):                return #colorLiteral(red: 0.662745098, green: 0.231372549, blue: 0.1529411765, alpha: 1) // #A93B27
         case .brand(.google):              return #colorLiteral(red: 0.9843137255, green: 0.737254902, blue: 0.01960784314, alpha: 1) // #FBBC05
         case .brand(.facebook):            return #colorLiteral(red: 0.231372549, green: 0.3490196078, blue: 0.5960784314, alpha: 1) // #3B5998
         case .brand(.twitter):             return #colorLiteral(red: 0.1137254902, green: 0.631372549, blue: 0.9490196078, alpha: 1) // #1DA1F2
@@ -34,7 +35,7 @@ public enum Brand {
         case ranking(RankingColor)
         
         public enum BrandColor: CaseIterable {
-            case primary, secondary, google, facebook, twitter, apple
+            case primary, secondary, google, facebook, twitter, apple, dark
         }
 
         public enum BackgroundColor: CaseIterable {

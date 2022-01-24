@@ -174,6 +174,15 @@ extension SocialTipListViewController: UITableViewDelegate, UITableViewDataSourc
             case .cellTapped:
                 let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: tip.user)
                 navigationController?.pushViewController(vc, animated: true)
+            case .artworkTapped:
+                switch tip.type {
+                case .group(let group):
+                    let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+                    navigationController?.pushViewController(vc, animated: true)
+                case .live(let live):
+                    let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                    navigationController?.pushViewController(vc, animated: true)
+                }
             }
         }
         return cell
