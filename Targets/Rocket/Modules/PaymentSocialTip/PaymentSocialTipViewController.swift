@@ -423,13 +423,17 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     @objc private func sendButtonTapped() {
         switch viewModel.state.type {
         case .group(let group):
-            // entryしていないgroupにはポイントしか送れない
-            if !group.isEntried && viewModel.state.isRealMoney {
-                showAlert(title: "送金不可能", message: "このアーティストにはポイントしか送れません")
-            } else {
+            
+            if group.isEntried {
+                // entryしてるgroupには有料ポイントしか送れない
                 viewModel.state.isRealMoney
                     ? pay()
-                : pointViewModel.usePoint(point: viewModel.state.tip.price)
+                    : showAlert(title: "ポイント送金不可能", message: "このアーティストにはアプリ内課金で購入したポイントしか送れません")
+            } else {
+                // entryしていないgroupには無料ポイントしか送れない
+                viewModel.state.isRealMoney
+                    ? showAlert(title: "送金不可能", message: "このアーティストにはアプリ内無料ポイントしか送れません")
+                    : pointViewModel.usePoint(point: viewModel.state.tip.price)
             }
         default: break
         }
