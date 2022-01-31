@@ -22,6 +22,7 @@ class PaymentSocialTipViewModel {
         var theme: String
         var themeItem: [String] = []
         var productItem: [Product] = [
+            Product(id: "snack_100", price: 120),
             Product(id: "snack_600", price: 610),
             Product(id: "snack_1000", price: 1100),
             Product(id: "snack_2000", price: 2200),

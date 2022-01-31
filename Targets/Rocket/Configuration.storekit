@@ -83,6 +83,26 @@
       "productID" : "snack_10000",
       "referenceName" : "10000円",
       "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "100",
+      "familyShareable" : false,
+      "internalID" : "27DEA102",
+      "localizations" : [
+        {
+          "description" : "",
+          "displayName" : "",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "アーティストに直接応援メッセージを送信することができます",
+          "displayName" : "120円チップ",
+          "locale" : "ja"
+        }
+      ],
+      "productID" : "snack_100",
+      "referenceName" : "120円",
+      "type" : "Consumable"
     }
   ],
   "settings" : {
