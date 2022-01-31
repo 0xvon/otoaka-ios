@@ -17,4 +17,5 @@ public struct SocialInputs: Codable {
     public let howToEnjoyLives: [String]
     public let liveStyles: [String]
     public let livehouses: [String]
+    public let socialTipThemes: [String]
 }

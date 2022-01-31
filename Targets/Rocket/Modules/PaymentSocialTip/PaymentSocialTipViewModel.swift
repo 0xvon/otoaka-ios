@@ -19,16 +19,8 @@ class PaymentSocialTipViewModel {
         var message: String? = nil
         var isRealMoney: Bool = true
         var products: [SKProduct] = []
-        var theme: String = "大好きな理由は？"
-        var themeItem: [String] = [
-            "大好きな理由は？",
-            "ライブで何着る？",
-            "一番好きな曲は？",
-            "ライブで聴きたい曲は？",
-            "カバーしてほしい曲は？",
-            "ライブしてほしい場所は？",
-            "セトリ最初と最後の曲予想！",
-        ]
+        var theme: String
+        var themeItem: [String] = []
         var productItem: [Product] = [
             Product(id: "snack_600", price: 610),
             Product(id: "snack_1000", price: 1100),
@@ -71,7 +63,12 @@ class PaymentSocialTipViewModel {
         dependencyProvider: LoggedInDependencyProvider, input: Input
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State(type: input)
+        let socialInputs = try! dependencyProvider.masterService.blockingMasterData()
+        self.state = State(
+            type: input,
+            theme: socialInputs.socialTipThemes[0],
+            themeItem: socialInputs.socialTipThemes
+        )
         
         Publishers.MergeMany(
             sendTipAction.elements.map(Output.didSendSocialTip).eraseToAnyPublisher(),
