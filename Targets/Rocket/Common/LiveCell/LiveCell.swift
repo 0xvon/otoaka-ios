@@ -10,6 +10,49 @@ import UIKit
 import ImagePipeline
 import UIComponent
 
+class LiveCollectionCell: UICollectionViewCell, ReusableCell {
+    typealias Input = LiveCellContent.Input
+    typealias Output = LiveCellContent.Output
+    static var reusableIdentifier: String { "LiveCollectionCell" }
+
+    private let _contentView: LiveCellContent
+    override init(frame: CGRect) {
+        _contentView = UINib(nibName: "LiveCellContent", bundle: nil)
+            .instantiate(withOwner: nil, options: nil).first as! LiveCellContent
+        super.init(frame: frame)
+        contentView.addSubview(_contentView)
+        _contentView.translatesAutoresizingMaskIntoConstraints = false
+        _contentView.isUserInteractionEnabled = true
+        backgroundColor = .clear
+        NSLayoutConstraint.activate([
+            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func inject(input: LiveCellContent.Input) {
+        _contentView.inject(input: input)
+    }
+
+    func listen(_ listener: @escaping (Output) -> Void) {
+        _contentView.listen(listener)
+    }
+    
+    override var isHighlighted: Bool {
+        didSet { _contentView.isHighlighted = isHighlighted }
+    }
+    
+    deinit {
+        print("LiveCollectionCell.deinit")
+    }
+}
+
 class LiveCell: UITableViewCell, ReusableCell {
     typealias Input = LiveCellContent.Input
     typealias Output = LiveCellContent.Output

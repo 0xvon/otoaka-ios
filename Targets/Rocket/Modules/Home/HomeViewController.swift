@@ -103,7 +103,9 @@ final class HomeViewController: UIViewController {
     }
     
     private func setPagingViewController() {
-        let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: .followingGroupsLives)
+//        let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: .followingGroupsLives)
+        
+        let vc = PickupViewController(dependencyProvider: dependencyProvider, input: ())
         self.addChild(vc)
         self.view.addSubview(vc.view)
         vc.didMove(toParent: self)

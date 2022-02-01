@@ -107,6 +107,14 @@ final class RootViewController: UITabBarController, Instantiable {
             image: UIImage(systemName: "house"),
             selectedImage: UIImage(systemName: "house.fill")
         )
+        
+//        let xVC = BrandNavigationController(rootViewController: PickupViewController(dependencyProvider: loggedInProvider, input: ()))
+//        xVC.tabBarItem = UITabBarItem(
+//            title: "ピックアップ",
+//            image: UIImage(systemName: "house"),
+//            selectedImage: UIImage(systemName: "house.fill")
+//        )
+        
         let timelineVC = BrandNavigationController(rootViewController: SocialTipListViewController(dependencyProvider: loggedInProvider, input: .allTip))
         timelineVC.tabBarItem = UITabBarItem(title: "タイムライン", image: UIImage(systemName: "flame"), selectedImage: UIImage(systemName: "flame.fill"))
         let rankingVC = BrandNavigationController(rootViewController: GroupRankingListViewController(dependencyProvider: loggedInProvider, input: .entriedGroup))

@@ -73,7 +73,7 @@ public final class GroupTipRankingCollectionView: UIStackView {
             secondRankingContent.inject(input: (tip: tip[1], imagePipeline: imagePipeline, ranking: .second))
             otherRankingContent.isHidden = true
             emptyView.isHidden = true
-        case 3:
+        default:
             firstRankingContent.isHidden = false
             firstRankingContent.inject(input: (tip: tip[0], imagePipeline: imagePipeline, ranking: .first))
             secondRankingContent.isHidden = false
@@ -81,7 +81,6 @@ public final class GroupTipRankingCollectionView: UIStackView {
             otherRankingContent.isHidden = false
             otherRankingContent.inject(input: (tip: tip[2], imagePipeline: imagePipeline, ranking: .other))
             emptyView.isHidden = true
-        default: break
         }
     }
     
