@@ -57,6 +57,13 @@ final class PickupViewController: UIViewController, Instantiable {
         return content
     }()
     
+    private let postSectionHeader = SummarySectionHeader(title: "ライブレポート")
+    private lazy var postCollectionView: PostCollectionView = {
+        let content = PostCollectionView(posts: [], user: dependencyProvider.user, imagePipeline: dependencyProvider.imagePipeline)
+        content.translatesAutoresizingMaskIntoConstraints = false
+        return content
+    }()
+    
     private static func addPadding(to view: UIView) -> UIView {
         let paddingView = UIView()
         paddingView.addSubview(view)
@@ -73,12 +80,16 @@ final class PickupViewController: UIViewController, Instantiable {
     let dependencyProvider: LoggedInDependencyProvider
     let viewModel: PickupViewModel
     let pointViewModel: PointViewModel
+    let postActionViewModel: PostActionViewModel
+    let openMessageViewModel: OpenMessageRoomViewModel
     var cancellables: Set<AnyCancellable> = []
     
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = PickupViewModel(dependencyProvider: dependencyProvider)
         self.pointViewModel = PointViewModel(dependencyProvider: dependencyProvider)
+        self.postActionViewModel = PostActionViewModel(dependencyProvider: dependencyProvider)
+        self.openMessageViewModel = OpenMessageRoomViewModel(dependencyProvider: dependencyProvider)
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -167,6 +178,18 @@ final class PickupViewController: UIViewController, Instantiable {
             upcomingLiveCollectionView.heightAnchor.constraint(equalToConstant: 332),
         ])
         
+        scrollStackView.addArrangedSubview(postSectionHeader)
+        NSLayoutConstraint.activate([
+            postSectionHeader.heightAnchor.constraint(equalToConstant: 52),
+            postSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        postSectionHeader.isHidden = true
+        postCollectionView.isHidden = true
+        scrollStackView.addArrangedSubview(postCollectionView)
+        NSLayoutConstraint.activate([
+            postCollectionView.heightAnchor.constraint(equalToConstant: 442),
+        ])
+        
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
         scrollStackView.addArrangedSubview(bottomSpacer)
@@ -205,8 +228,96 @@ final class PickupViewController: UIViewController, Instantiable {
                 groupRankingSectionHeader.isHidden = false
                 groupRankingCollectionViewWrapper.isHidden = false
                 groupRankingCollectionView.inject(tip: viewModel.state.groupRanking)
+            case .didGetPosts:
+                postSectionHeader.isHidden = false
+                postCollectionView.isHidden = false
+                postCollectionView.inject(posts: viewModel.state.posts)
             case .reportError(let error):
                 print(String(describing: error))
+            }
+        }
+        .store(in: &cancellables)
+        
+        postActionViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didSettingTapped(let post):
+                let alertController = UIAlertController(
+                    title: nil, message: nil, preferredStyle: UIAlertController.Style.actionSheet)
+                let shareTwitterAction = UIAlertAction(
+                    title: "Twitterでシェア", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        shareWithTwitter(type: .post(post.post))
+                    })
+                let shareInstagramAction = UIAlertAction(
+                    title: "インスタでシェア", style: UIAlertAction.Style.default,
+                    handler: { [unowned self] action in
+                        sharePostWithInstagram(post: post.post)
+                    })
+                let postAction = UIAlertAction(title: "このライブのレポートを書く", style: .default, handler: { [unowned self] action in
+                    guard let live = post.live else { return }
+                    let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
+                    self.navigationController?.pushViewController(vc, animated: true)
+                })
+                let cancelAction = UIAlertAction(
+                    title: "キャンセル", style: UIAlertAction.Style.cancel,
+                    handler: { action in })
+                alertController.addAction(shareTwitterAction)
+                alertController.addAction(shareInstagramAction)
+                alertController.addAction(postAction)
+                if post.author.id == dependencyProvider.user.id {
+                    let editPostAction = UIAlertAction(title: "編集", style: .default, handler:  { [unowned self] action in
+                        if let live = post.live {
+                            let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: post.post))
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                    })
+                    let deletePostAction = UIAlertAction(title: "削除", style: .destructive, handler: { [unowned self] action in
+                        postActionViewModel.deletePost(post: post)
+                        viewModel.deletePost(post: post)
+                        postCollectionView
+                    })
+                    alertController.addAction(editPostAction)
+                    alertController.addAction(deletePostAction)
+                }
+                alertController.addAction(cancelAction)
+                alertController.popoverPresentationController?.sourceView = self.view
+                alertController.popoverPresentationController?.sourceRect = CGRect(x: UIScreen.main.bounds.width / 2, y: UIScreen.main.bounds.height / 2, width: 0, height: 0)
+                self.present(alertController, animated: true, completion: nil)
+            case .didDeletePost: break
+            case .didToggleLikePost: break
+            case .pushToCommentList(let input):
+                let vc = CommentListViewController(
+                    dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToDM(let author):
+                openMessageViewModel.createMessageRoom(partner: author)
+            case .pushToPlayTrack(let input):
+                let vc = PlayTrackViewController(dependencyProvider: dependencyProvider, input: input)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostAuthor(let user):
+                let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToPostDetail(let post):
+                let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: post.post)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .pushToLiveDetail(let live):
+                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+//                showAlert()
+            }
+        }
+        .store(in: &cancellables)
+        
+        openMessageViewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
+            switch output {
+            case .didCreateMessageRoom(let room):
+                let vc = MessageRoomViewController(dependencyProvider: dependencyProvider, input: room)
+                self.navigationController?.pushViewController(vc, animated: true)
+            case .reportError(let err):
+                print(String(describing: err))
+//                showAlert()
             }
         }
         .store(in: &cancellables)
@@ -232,17 +343,19 @@ final class PickupViewController: UIViewController, Instantiable {
             nav?.pushViewController(vc, animated: true)
         }
         
-        recommendedGroupCollectionView.listen { [unowned self] output in
+        recommendedGroupCollectionView.listen { [unowned self] output, group in
             switch output {
-            case .groupTapped(let groupFeed):
-                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: groupFeed.group)
+            case .selfTapped:
+                let vc = BandDetailViewController(
+                    dependencyProvider: self.dependencyProvider, input: group.group)
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
-            case .followTapped(let groupFeed):
-                groupFeed.isFollowing
+            case .likeButtonTapped:
+                group.isFollowing
                    ? pointViewModel.usePoint(point: 100)
                    : pointViewModel.addPoint(point: 100)
-                viewModel.followButtonTapped(group: groupFeed)
+                viewModel.followButtonTapped(group: group)
+            case .listenButtonTapped: break
             }
         }
         
@@ -264,36 +377,46 @@ final class PickupViewController: UIViewController, Instantiable {
             nav?.pushViewController(vc, animated: true)
         }
         
-        upcomingLiveCollectionView.listen { [unowned self] output in
+        upcomingLiveCollectionView.listen { [unowned self] output, live in
             switch output {
-            case .liveTapped(let liveFeed):
-                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: liveFeed.live)
-                let nav = self.navigationController ?? presentingViewController?.navigationController
-                nav?.pushViewController(vc, animated: true)
-            case .likeTapped(let liveFeed):
-                liveFeed.isLiked
-                   ? pointViewModel.usePoint(point: 100)
-                   : pointViewModel.addPoint(point: 100)
-                viewModel.likeLiveButtonTapped(liveFeed: liveFeed)
-            case .buyTicketTapped(let liveFeed):
-                guard let url = liveFeed.live.piaEventUrl else { return }
+            case .buyTicketButtonTapped:
+                guard let url = live.live.piaEventUrl else { return }
                 let safari = SFSafariViewController(
                     url: url)
                 safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
-            case .numOfLikeTapped(let liveFeed):
-                let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(liveFeed.live.id))
+            case .likeButtonTapped:
+                live.isLiked
+                   ? pointViewModel.usePoint(point: 100)
+                   : pointViewModel.addPoint(point: 100)
+                viewModel.likeLiveButtonTapped(liveFeed: live)
+            case .numOfLikeTapped:
+                let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
-            case .reportTapped(let liveFeed):
-                let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: liveFeed.live, post: nil))
+            case .reportButtonTapped:
+                let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live.live, post: nil))
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
-            case .numOfReportTapped(let liveFeed):
-                let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(liveFeed.live))
+            case .numOfReportTapped:
+                let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .livePost(live.live))
+                let nav = self.navigationController ?? presentingViewController?.navigationController
+                nav?.pushViewController(vc, animated: true)
+            case .selfTapped:
+                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live.live)
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
             }
+        }
+        
+        postSectionHeader.listen { [unowned self] in
+            let vc = PostListViewController(dependencyProvider: dependencyProvider, input: .trendPost)
+            let nav = self.navigationController ?? presentingViewController?.navigationController
+            nav?.pushViewController(vc, animated: true)
+        }
+        
+        postCollectionView.listen { [unowned self] output, post in
+            postActionViewModel.postCellEvent(post, event: output)
         }
     }
 }

@@ -100,7 +100,7 @@ class LiveCell: UITableViewCell, ReusableCell {
     }
 }
 
-class LiveCellContent: UIButton {
+public class LiveCellContent: UIButton {
     typealias Input = (
         live: LiveFeed,
         imagePipeline: ImagePipeline,
@@ -113,7 +113,7 @@ class LiveCellContent: UIButton {
         case normal
         case review
     }
-    enum Output {
+    public enum Output {
         case likeButtonTapped
         case numOfLikeTapped
         case reportButtonTapped
@@ -241,11 +241,11 @@ class LiveCellContent: UIButton {
         return button
     }()
 
-    override var isHighlighted: Bool {
+    public override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
     }
 
-    override func awakeFromNib() {
+    public override func awakeFromNib() {
         super.awakeFromNib()
         
         buyTicketButtonView.listen { [unowned self] in

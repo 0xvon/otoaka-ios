@@ -12,14 +12,14 @@ import Endpoint
 public final class LiveCollectionView: UICollectionView {
     public var lives: [LiveFeed] = []
     public var imagePipeline: ImagePipeline
-    public enum Output {
-        case liveTapped(LiveFeed)
-        case likeTapped(LiveFeed)
-        case buyTicketTapped(LiveFeed)
-        case numOfLikeTapped(LiveFeed)
-        case reportTapped(LiveFeed)
-        case numOfReportTapped(LiveFeed)
-    }
+//    public enum Output {
+//        case liveTapped(LiveFeed)
+//        case likeTapped(LiveFeed)
+//        case buyTicketTapped(LiveFeed)
+//        case numOfLikeTapped(LiveFeed)
+//        case reportTapped(LiveFeed)
+//        case numOfReportTapped(LiveFeed)
+//    }
     
     public init(lives: [LiveFeed], imagePipeline: ImagePipeline) {
         self.lives = lives
@@ -52,8 +52,8 @@ public final class LiveCollectionView: UICollectionView {
         isPagingEnabled = false
         showsHorizontalScrollIndicator = false
     }
-    private var listener: (Output) -> Void = { _ in }
-    public func listen(_ listener: @escaping (Output) -> Void) {
+    private var listener: (LiveCellContent.Output, LiveFeed) -> Void = { _, _ in }
+    public func listen(_ listener: @escaping (LiveCellContent.Output, LiveFeed) -> Void) {
         self.listener = listener
     }
 }
@@ -67,21 +67,25 @@ extension LiveCollectionView: UICollectionViewDelegate, UICollectionViewDataSour
         var live = self.lives[indexPath.item]
         let cell = collectionView.dequeueReusableCell(LiveCollectionCell.self, input: (live: live, imagePipeline: imagePipeline, type: .normal), for: indexPath)
         cell.listen { [unowned self] output in
-            switch output {
-            case .selfTapped:
-                listener(.liveTapped(live))
-            case .likeButtonTapped:
-                listener(.likeTapped(live))
+            self.listener(output, live)
+            if output == .likeButtonTapped {
                 live.isLiked.toggle()
-            case .reportButtonTapped:
-                listener(.reportTapped(live))
-            case .numOfLikeTapped:
-                listener(.numOfLikeTapped(live))
-            case .numOfReportTapped:
-                listener(.numOfReportTapped(live))
-            case .buyTicketButtonTapped:
-                listener(.buyTicketTapped(live))
             }
+//            switch output {
+//            case .selfTapped:
+//                listener(.liveTapped(live))
+//            case .likeButtonTapped:
+//                listener(.likeTapped(live))
+//                live.isLiked.toggle()
+//            case .reportButtonTapped:
+//                listener(.reportTapped(live))
+//            case .numOfLikeTapped:
+//                listener(.numOfLikeTapped(live))
+//            case .numOfReportTapped:
+//                listener(.numOfReportTapped(live))
+//            case .buyTicketButtonTapped:
+//                listener(.buyTicketTapped(live))
+//            }
         }
         return cell
     }

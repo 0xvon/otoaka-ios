@@ -113,7 +113,7 @@ final class GroupCell: UITableViewCell, ReusableCell {
     }
 }
 
-class GroupCellContent: UIButton {
+public class GroupCellContent: UIButton {
     typealias Input = (
         group: GroupFeed,
         imagePipeline: ImagePipeline,
@@ -122,7 +122,7 @@ class GroupCellContent: UIButton {
     enum GroupCellContentType {
         case normal, select
     }
-    enum Output {
+    public enum Output {
         case listenButtonTapped
         case likeButtonTapped
         case selfTapped
@@ -166,11 +166,11 @@ class GroupCellContent: UIButton {
         return button
     }()
     
-    override var isHighlighted: Bool {
+    public override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
     }
     
-    override func awakeFromNib() {
+    public override func awakeFromNib() {
         super.awakeFromNib()
         
         setup()

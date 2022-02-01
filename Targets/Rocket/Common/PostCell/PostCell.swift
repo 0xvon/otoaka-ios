@@ -11,6 +11,48 @@ import ImagePipeline
 import ImageViewer
 import UIComponent
 
+class PostCollectionCell: UICollectionViewCell, ReusableCell {
+    typealias Input = PostCellContent.Input
+    typealias Output = PostCellContent.Output
+    static var reusableIdentifier: String { "PostCollectionCell" }
+    
+    private let _contentView: PostCellContent
+    override init(frame: CGRect) {
+        _contentView = UINib(nibName: "PostCellContent", bundle: nil).instantiate(withOwner: nil, options: nil).first as! PostCellContent
+        super.init(frame: frame)
+        contentView.addSubview(_contentView)
+        _contentView.translatesAutoresizingMaskIntoConstraints = false
+        _contentView.isUserInteractionEnabled = true
+        backgroundColor = .clear
+        NSLayoutConstraint.activate([
+            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func inject(input: Input) {
+        _contentView.inject(input: input)
+    }
+
+    func listen(_ listener: @escaping (Output) -> Void) {
+        _contentView.listen(listener)
+    }
+    
+    override var isHighlighted: Bool {
+        didSet { _contentView.isHighlighted = isHighlighted }
+    }
+    
+    deinit {
+        print("PostCollectionCell.deinit")
+    }
+}
+
 class PostCell: UITableViewCell, ReusableCell {
     typealias Input = PostCellContent.Input
     typealias Output = PostCellContent.Output
@@ -56,13 +98,13 @@ class PostCell: UITableViewCell, ReusableCell {
     }
 }
 
-class PostCellContent: UIButton {
+public class PostCellContent: UIButton {
     typealias Input = (
         post: PostSummary,
         user: User,
         imagePipeline: ImagePipeline
     )
-    enum Output {
+    public enum Output {
         case selfTapped
         case userTapped
         case liveTapped
@@ -286,11 +328,11 @@ class PostCellContent: UIButton {
         return button
     }()
     
-    override var isHighlighted: Bool {
+    public override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.6 : 1.0 }
     }
     
-    override func awakeFromNib() {
+    public override func awakeFromNib() {
         super.awakeFromNib()
         
         setup()

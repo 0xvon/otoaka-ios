@@ -15,20 +15,14 @@ class PickupViewModel {
         var upcomingLives: [LiveFeed] = []
         var groupRanking: [GroupTip] = []
         var socialTipEvents: [SocialTipEvent] = []
-//        var liveReports: [Post] = []
+        var posts: [PostSummary] = []
     }
     enum Output {
         case didGetRecommendedGroups
         case didGetUpcomingLives
         case didGetGroupRanking
         case didGetSocialTipEvents
-//        case didGetLiveReports([Post])
-//
-//        case pushToGroup(Group)
-//        case pushToLive(Live)
-//        case pushToEvent(SocialTipEvent)
-//        case pushToReport(Post)
-        
+        case didGetPosts
         case reportError(Error)
     }
     
@@ -58,6 +52,7 @@ class PickupViewModel {
         uri.page = 1
         return uri
     }())
+    private lazy var postPagination: PaginationRequest<GetTrendPosts> = PaginationRequest<GetTrendPosts>(apiClient: apiClient, uri: GetTrendPosts.URI())
     
     private lazy var unfollowGroupAction = Action(UnfollowGroup.self, httpClient: self.apiClient)
     private lazy var followGroupAction = Action(FollowGroup.self, httpClient: self.apiClient)
@@ -87,6 +82,10 @@ class PickupViewModel {
         rankingPagination.subscribe { [weak self] in
             self?.updateState(with: $0)
         }
+        
+        postPagination.subscribe { [weak self] in
+            self?.updateState(with: $0)
+        }
     }
     
     func refresh() {
@@ -94,6 +93,7 @@ class PickupViewModel {
         upcomingLivePagination.refresh()
         socialTipEventPagination.refresh()
         rankingPagination.refresh()
+        postPagination.refresh()
     }
     
     func updateState(with result: PaginationEvent<Page<GroupFeed>>) {
@@ -148,6 +148,19 @@ class PickupViewModel {
         }
     }
     
+    func updateState(with result: PaginationEvent<Page<PostSummary>>) {
+        switch result {
+        case .initial(let res):
+            state.posts = res.items
+            outputSubject.send(.didGetPosts)
+        case .next(let res):
+            state.posts += res.items
+            outputSubject.send(.didGetPosts)
+        case .error(let err):
+            outputSubject.send(.reportError(err))
+        }
+    }
+    
     func followButtonTapped(group: GroupFeed) {
         if group.isFollowing {
             let req = UnfollowGroup.Request(groupId: group.group.id)
@@ -168,5 +181,10 @@ class PickupViewModel {
             let uri = LikeLive.URI()
             likeLiveAction.input((request: request, uri: uri))
         }
+    }
+    
+    func deletePost(post: PostSummary) {
+        state.posts = state.posts.filter { $0.post.id != post.post.id }
+        outputSubject.send(.didGetPosts)
     }
 }
