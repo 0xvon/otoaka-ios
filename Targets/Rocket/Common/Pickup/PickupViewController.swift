@@ -365,6 +365,12 @@ final class PickupViewController: UIViewController, Instantiable {
             nav?.pushViewController(vc, animated: true)
         }
         
+        groupRankingSectionHeader.listen { [unowned self] in
+            let vc = GroupRankingTermViewController(dependencyProvider: dependencyProvider)
+            let nav = self.navigationController ?? presentingViewController?.navigationController
+            nav?.pushViewController(vc, animated: true)
+        }
+        
         groupRankingCollectionView.listen { [unowned self] group in
             let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
             let nav = self.navigationController ?? presentingViewController?.navigationController

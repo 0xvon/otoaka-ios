@@ -25,7 +25,11 @@ final class GroupRankingListViewController: UIViewController, Instantiable {
             input: input
         )
         super.init(nibName: nil, bundle: nil)
-        self.title = "ランキング"
+        switch input {
+        case .dailyRanking: title = "デイリー"
+        case .weeklyRanking: title = "ウィークリー"
+        default: title = "総合"
+        }
     }
     
     required init?(coder: NSCoder) {

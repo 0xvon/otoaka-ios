@@ -46,12 +46,7 @@ class PickupViewModel {
         return uri
     }())
     private lazy var socialTipEventPagination: PaginationRequest<GetSocialTipEvent> = PaginationRequest<GetSocialTipEvent>(apiClient: apiClient, uri: GetSocialTipEvent.URI())
-    private lazy var rankingPagination: PaginationRequest<GetEntriedGroups> = PaginationRequest<GetEntriedGroups>(apiClient: apiClient, uri: {
-        var uri = GetEntriedGroups.URI()
-        uri.per = 3
-        uri.page = 1
-        return uri
-    }())
+    private lazy var rankingPagination: PaginationRequest<GetDailyGroupRanking> = PaginationRequest<GetDailyGroupRanking>(apiClient: apiClient, uri: GetDailyGroupRanking.URI())
     private lazy var postPagination: PaginationRequest<GetTrendPosts> = PaginationRequest<GetTrendPosts>(apiClient: apiClient, uri: GetTrendPosts.URI())
     
     private lazy var unfollowGroupAction = Action(UnfollowGroup.self, httpClient: self.apiClient)

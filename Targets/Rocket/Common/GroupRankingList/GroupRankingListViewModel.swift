@@ -19,6 +19,8 @@ class GroupRankingListViewModel {
         case frequentlyWatching(User.ID)
         case socialTip(User.ID)
         case entriedGroup
+        case dailyRanking
+        case weeklyRanking
         case none
     }
     
@@ -38,6 +40,8 @@ class GroupRankingListViewModel {
         case frequentlyWatching(PaginationRequest<FrequentlyWatchingGroups>)
         case socialTip(PaginationRequest<GetUserTipToGroupRanking>)
         case entriedGroup(PaginationRequest<GetEntriedGroups>)
+        case dailyRanking(PaginationRequest<GetDailyGroupRanking>)
+        case weeklyRanking(PaginationRequest<GetWeeklyGroupRanking>)
         case none
         
         init(dataSource: DataSource, apiClient: APIClient) {
@@ -56,6 +60,14 @@ class GroupRankingListViewModel {
                 let uri = GetEntriedGroups.URI()
                 let request = PaginationRequest<GetEntriedGroups>(apiClient: apiClient, uri: uri)
                 self = .entriedGroup(request)
+            case .dailyRanking:
+                let uri = GetDailyGroupRanking.URI()
+                let request = PaginationRequest<GetDailyGroupRanking>(apiClient: apiClient, uri: uri)
+                self = .dailyRanking(request)
+            case .weeklyRanking:
+                let uri = GetWeeklyGroupRanking.URI()
+                let request = PaginationRequest<GetWeeklyGroupRanking>(apiClient: apiClient, uri: uri)
+                self = .weeklyRanking(request)
             case .none:
                 self = .none
             }
@@ -97,6 +109,14 @@ class GroupRankingListViewModel {
                 self?.updateState(with: $0)
             }
         case let .entriedGroup(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .dailyRanking(pagination):
+            pagination.subscribe { [weak self] in
+                self?.updateState(with: $0)
+            }
+        case let .weeklyRanking(pagination):
             pagination.subscribe { [weak self] in
                 self?.updateState(with: $0)
             }
@@ -165,6 +185,10 @@ class GroupRankingListViewModel {
             pagination.refresh()
         case let .entriedGroup(pagination):
             pagination.refresh()
+        case let .dailyRanking(pagination):
+            pagination.refresh()
+        case let .weeklyRanking(pagination):
+            pagination.refresh()
         case .none: break
         }
     }
@@ -177,6 +201,10 @@ class GroupRankingListViewModel {
         case let .socialTip(pagination):
             pagination.next()
         case let .entriedGroup(pagination):
+            pagination.next()
+        case let .dailyRanking(pagination):
+            pagination.next()
+        case let .weeklyRanking(pagination):
             pagination.next()
         case .none: break
         }
