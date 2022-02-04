@@ -1,26 +1,26 @@
 name: Auth0, nameSpecified: 
 body: The MIT License (MIT…
-version: 1.38.0
+version: 1.38.1
 
 name: Auth0, nameSpecified: 
 body: The MIT License (MIT…
-version: 1.38.0
+version: 1.38.1
 
 name: AWSCore, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.26.6
+version: 2.27.1
 
 name: AWSCore, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.26.6
+version: 2.27.1
 
 name: AWSS3, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.26.6
+version: 2.27.1
 
 name: AWSS3, nameSpecified: 
 body: The AWS Mobile SDK f…
-version: 2.26.6
+version: 2.27.1
 
 name: BWWalkthrough, nameSpecified: 
 body: Copyright (c) 2016 Y…
@@ -50,11 +50,11 @@ version: 3.6.0
 
 name: CropViewController, nameSpecified: 
 body: The MIT License (MIT…
-version: 2.6.0
+version: 2.6.1
 
 name: CropViewController, nameSpecified: 
 body: The MIT License (MIT…
-version: 2.6.0
+version: 2.6.1
 
 name: Firebase, nameSpecified: 
 body: 
@@ -143,12 +143,12 @@ version: 8.1.0
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.6.0
+version: 7.7.0
 
 name: GoogleUtilities, nameSpecified: 
 body: 
                    …
-version: 7.6.0
+version: 7.7.0
 
 name: ImageViewer, nameSpecified: 
 body: The MIT License (MIT…
@@ -204,13 +204,25 @@ name: LicensePlist, nameSpecified:
 body: MIT License
 
 Copyrig…
-version: 3.16.0
+version: 3.17.0
 
 name: LicensePlist, nameSpecified: 
 body: MIT License
 
 Copyrig…
-version: 3.16.0
+version: 3.17.0
+
+name: MercariQRScanner, nameSpecified: 
+body: MIT License
+
+Copyrig…
+version: 1.9.0
+
+name: MercariQRScanner, nameSpecified: 
+body: MIT License
+
+Copyrig…
+version: 1.9.0
 
 name: MessageKit, nameSpecified: 
 body: MIT License
@@ -324,4 +336,4 @@ name: StubKit, nameSpecified: StubKit, owner: kateinoigakukun, version: 0.1.7
 
 add-version-numbers: false
 
-LicensePlist Version: 3.16.0
+LicensePlist Version: 3.17.0

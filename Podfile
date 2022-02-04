@@ -44,6 +44,7 @@ target 'Rocket' do
   pod 'Charts'
   pod 'SCLAlertView'
   pod 'SwiftyStoreKit'
+  pod 'MercariQRScanner'
 
   target 'RocketTests' do
     inherit! :search_paths

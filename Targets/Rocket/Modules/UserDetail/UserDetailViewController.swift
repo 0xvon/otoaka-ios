@@ -117,7 +117,12 @@ final class UserDetailViewController: UIViewController, Instantiable {
         switch viewModel.state.displayType {
         case .account:
             self.title = "マイページ"
-            let shareItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didShareButtonTapped))
+            let shareItem = UIBarButtonItem(
+                image: UIImage(systemName: "qrcode")!.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+                style: .plain,
+                target: self,
+                action: #selector(didShareButtonTapped)
+            )
             barButonItems.append(shareItem)
         case .user:
             self.title = viewModel.state.user.name
@@ -246,13 +251,15 @@ final class UserDetailViewController: UIViewController, Instantiable {
     
     @objc private func didShareButtonTapped() {
         if viewModel.state.user.username != nil {
-            shareWithTwitter(type: .user(viewModel.state.user)) { [unowned self] isOK in
-                if isOK {
-                    pointViewModel.addPoint(point: 50)
-                } else {
-                    showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
-                }
-            }
+//            shareWithTwitter(type: .user(viewModel.state.user)) { [unowned self] isOK in
+//                if isOK {
+//                    pointViewModel.addPoint(point: 50)
+//                } else {
+//                    showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
+//                }
+//            }
+            let vc = SocialShareViewController(dependencyProvider: dependencyProvider, input: ())
+            self.navigationController?.pushViewController(vc, animated: true)
         } else {
             showAlert(title: "ユーザーネームを設定してください", message: "プロフィール設定よりユーザーネームを設定するとTwitterでシェアできるようになるよ！")
         }

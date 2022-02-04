@@ -1,16 +1,16 @@
 PODS:
-  - Auth0 (1.38.0):
+  - Auth0 (1.38.1):
     - JWTDecode (~> 2.0)
     - SimpleKeychain
-  - AWSCore (2.26.6)
-  - AWSS3 (2.26.6):
-    - AWSCore (= 2.26.6)
+  - AWSCore (2.27.1)
+  - AWSS3 (2.27.1):
+    - AWSCore (= 2.27.1)
   - BWWalkthrough (4.0.0)
   - CalculateCalendarLogic (0.5.0)
   - Charts (3.6.0):
     - Charts/Core (= 3.6.0)
   - Charts/Core (3.6.0)
-  - CropViewController (2.6.0)
+  - CropViewController (2.6.1)
   - Firebase/Analytics (7.3.0-M1):
     - Firebase/Core
   - Firebase/Core (7.3.0-M1):
@@ -59,24 +59,24 @@ PODS:
     - nanopb (~> 2.30906.0)
   - GoogleDataTransport (8.1.0):
     - nanopb (~> 2.30906.0)
-  - GoogleUtilities/AppDelegateSwizzler (7.6.0):
+  - GoogleUtilities/AppDelegateSwizzler (7.7.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.6.0):
+  - GoogleUtilities/Environment (7.7.0):
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.6.0):
+  - GoogleUtilities/Logger (7.7.0):
     - GoogleUtilities/Environment
-  - GoogleUtilities/MethodSwizzler (7.6.0):
+  - GoogleUtilities/MethodSwizzler (7.7.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/Network (7.6.0):
+  - GoogleUtilities/Network (7.7.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.6.0)"
-  - GoogleUtilities/Reachability (7.6.0):
+  - "GoogleUtilities/NSData+zlib (7.7.0)"
+  - GoogleUtilities/Reachability (7.7.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.6.0):
+  - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
   - ImageViewer (6.0.0)
   - InputBarAccessoryView (5.4.0):
@@ -86,7 +86,8 @@ PODS:
   - JWTDecode (2.6.3)
   - KeyboardGuide (0.2.0)
   - KeychainAccess (4.2.2)
-  - LicensePlist (3.16.0)
+  - LicensePlist (3.17.0)
+  - MercariQRScanner (1.9.0)
   - MessageKit (3.7.0):
     - InputBarAccessoryView (~> 5.4.0)
   - nanopb (2.30906.0):
@@ -120,6 +121,7 @@ DEPENDENCIES:
   - KeyboardGuide (from `./KeyboardGuide.podspec`)
   - KeychainAccess
   - LicensePlist
+  - MercariQRScanner
   - MessageKit
   - Nuke (~> 9.0)
   - Parchment (~> 3.0.1)
@@ -155,6 +157,7 @@ SPEC REPOS:
     - JWTDecode
     - KeychainAccess
     - LicensePlist
+    - MercariQRScanner
     - MessageKit
     - nanopb
     - Nuke
@@ -173,13 +176,13 @@ EXTERNAL SOURCES:
     :podspec: "./KeyboardGuide.podspec"
 
 SPEC CHECKSUMS:
-  Auth0: 56b4b681712d10bcfddae89d4a73158abebdf5a6
-  AWSCore: c60f9d6bd085bf9186d8629ca7ee7df54db1f494
-  AWSS3: 3325e94bc9330580e4f3adb4450add2f18611899
+  Auth0: a8f1f275738bf3d3cf4c752cacc103445a133556
+  AWSCore: f859f6955a8e52dcb3e79fac95fef058639d1049
+  AWSS3: 3389c12e5b0cbfdfb6894c5921c094f58ec84df0
   BWWalkthrough: 9f46edbd1a145c74f3e5287b01cb4a884c840bf2
   CalculateCalendarLogic: d14189787cd47766e64281b2686608afea07ae4d
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
-  CropViewController: 7093b39ec3cb508531b22d35773e06cecd7378d8
+  CropViewController: 58fb440f30dac788b129d2a1f24cffdcb102669c
   Firebase: 3e5e5e556a5ba2c2282e89905e33a300122f4caf
   FirebaseAnalytics: e21b1cc325468620a2dfa1e1653f86472b313ac9
   FirebaseCore: 4d3c72622ce0e2106aaa07bb4b2935ba2c370972
@@ -189,14 +192,15 @@ SPEC CHECKSUMS:
   FSCalendar: e6a2eb9c571bf0719ed797ef807e08426753c241
   GoogleAppMeasurement: ad1f97cb2ba78bb0d7ba878e826d302f1c9e5dd4
   GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
-  GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
+  GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   ImageViewer: cb88ef1c0ba19161bc10702adfdcebc116a7a59d
   InputBarAccessoryView: 74d471ab1fa1736806be50328df79257e52865a9
   Instructions: bde4a699f27e8e43d20efa3508e5bc53215d0879
   JWTDecode: 33e5e26e5ddbd21b2065820894c08fef0cad9509
   KeyboardGuide: 24db03df5ae874e6ece4a01ae3e8ca7648c4cd1a
   KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
-  LicensePlist: f91b2c4bd3379379cdfc0541693c3af031b9bcb3
+  LicensePlist: f7eaf6d1d39746d49415ab30f104b734d5163519
+  MercariQRScanner: e5aea873969af59b09b4cc411fc1c5b6293dba44
   MessageKit: 8e76dd8d65ad44b49e1651c673497146416461e9
   nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
   Nuke: 6f400a4ea957e09149ec335a3c6acdcc814d89e4
@@ -210,6 +214,6 @@ SPEC CHECKSUMS:
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   YoutubePlayer-in-WKWebView: 4fca3b4f6f09940077bfbae7bddb771f2b43aacd
 
-PODFILE CHECKSUM: 30b85ca12abe5e67f684e86cb49aba53e3bbf132
+PODFILE CHECKSUM: f874a43c5c162f8d95d846c0327680d3a160e394
 
 COCOAPODS: 1.10.1

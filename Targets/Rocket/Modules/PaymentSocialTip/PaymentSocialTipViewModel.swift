@@ -15,7 +15,7 @@ class PaymentSocialTipViewModel {
     typealias Input = SocialTipType
     struct State {
         var type: SocialTipType
-        var tip: Product = Product(id: "snack_600", price: 610)
+        var tip: Product = Product(id: "snack_100", price: 120)
         var message: String? = nil
         var isRealMoney: Bool = true
         var products: [SKProduct] = []
