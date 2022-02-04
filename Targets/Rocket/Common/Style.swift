@@ -149,6 +149,47 @@ extension UIViewController {
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.showResultOfSaveImage(_:didFinishSavingWithError:contextInfo:)), nil)
     }
     
+    func share(type: ShareType, callback: (() -> Void)? = nil) {
+        let ogp = "https://rocket-auth-storage.s3-ap-northeast-1.amazonaws.com/assets/public/ogp.png"
+        var shareText: String
+        var ogpUrl: String
+        
+        switch type {
+        case .user(let user):
+            let redirectUrl = "band.rocketfor://ios/users/\(user.username ?? "masatojames")"
+            shareText = "\(user.name)をOTOAKAでフォローしてね！"
+            ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: user.thumbnailURL ?? ogp, title: user.name, redirectUrl: redirectUrl)
+        case .post(let post):
+            let redirectUrl = "band.rocketfor://ios/posts/\(post.id)"
+            shareText = "\(post.text)"
+            ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: post.live?.artworkURL?.absoluteString ?? ogp, title: post.live?.title ?? "OTOAKA", redirectUrl: redirectUrl)
+        case .group(let group):
+            let redirectUrl = "band.rocketfor://ios/groups/\(group.id)"
+            shareText = "\(group.name)好きな人はOTOAKAに集まれ！！！"
+            ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name, redirectUrl: redirectUrl)
+        case .live(let live):
+            let redirectUrl = "band.rocketfor://ios/lives/\(live.id)"
+            shareText = "\(live.title)行く人はOTOAKAに集まれ！！！"
+            ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title, redirectUrl: redirectUrl)
+        case .tip(let tip):
+            switch tip.type {
+            case .group(let group):
+                let redirectUrl = "band.rocketfor://ios/groups/\(group.id)"
+                shareText = "\(group.name)にsnackしたよ！！！"
+                ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: group.artworkURL!.absoluteString, title: group.name, redirectUrl: redirectUrl)
+            case .live(let live):
+                let redirectUrl = "band.rocketfor://ios/lives/\(live.id)"
+                shareText = "\(live.title)にsnackしたよ！！！"
+                ogpUrl = OgpHtmlClient().getOgpUrl(imageUrl: live.artworkURL!.absoluteString, title: live.title, redirectUrl: redirectUrl)
+            }
+        }
+        let activityController = UIActivityViewController(
+            activityItems: ["\(shareText)\n\n\(hashTags.joined(separator: " "))\n\n\(ogpUrl)\n"],
+            applicationActivities: nil
+        )
+        self.present(activityController, animated: true, completion: callback)
+    }
+    
     func shareWithTwitter(type: ShareType, callback: ((Bool) -> Void)? = nil) {
         let ogp = "https://rocket-auth-storage.s3-ap-northeast-1.amazonaws.com/assets/public/ogp.png"
         var shareText: String

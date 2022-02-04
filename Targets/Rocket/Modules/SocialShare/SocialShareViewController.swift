@@ -145,7 +145,7 @@ final class SocialShareViewController: UIViewController, Instantiable {
     }
     
     @objc private func shareButtonTapped() {
-        
+        share(type: .user(dependencyProvider.user))
     }
     
     @objc private func readButtonTapped() {
