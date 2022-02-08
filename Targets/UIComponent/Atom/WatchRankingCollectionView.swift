@@ -206,21 +206,21 @@ public final class WatchRankingCellContent: UIButton {
         if let url = input.group.group.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailImageView)
         } else {
-            thumbnailImageView.image = Brand.color(for: .background(.secondary)).image
+            thumbnailImageView.image = Brand.color(for: .background(.light)).image
         }
         
         switch input.ranking {
         case .first:
-            watchCountLabel.textColor = Brand.color(for: .ranking(.first))
-            thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.first)).cgColor
+            watchCountLabel.textColor = Brand.color(for: .brand(.dark))
+            thumbnailImageView.layer.borderColor = Brand.color(for: .brand(.dark)).cgColor
             thumbnailImageViewHeightConstraint.constant = 144
         case .second:
-            watchCountLabel.textColor = Brand.color(for: .ranking(.second))
-            thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.second)).cgColor
+            watchCountLabel.textColor = Brand.color(for: .brand(.primary))
+            thumbnailImageView.layer.borderColor = Brand.color(for: .brand(.primary)).cgColor
             thumbnailImageViewHeightConstraint.constant = 124
         case .other:
-            watchCountLabel.textColor = Brand.color(for: .ranking(.other))
-            thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.other)).cgColor
+            watchCountLabel.textColor = Brand.color(for: .brand(.light))
+            thumbnailImageView.layer.borderColor = Brand.color(for: .brand(.light)).cgColor
             thumbnailImageViewHeightConstraint.constant = 100
         }
     }

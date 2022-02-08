@@ -110,7 +110,7 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
-        button.setTitleColor(Brand.color(for: .background(.secondary)), for: .disabled)
+        button.setTitleColor(Brand.color(for: .background(.light)), for: .disabled)
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("作成", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
@@ -269,8 +269,8 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         performersListView.addTags(viewModel.state.performers.map { $0.name + " ✗" })
         
         let plusTag = performersListView.addTag("追加＋")
-        plusTag.borderColor = Brand.color(for: .background(.secondary))
-        plusTag.textColor = Brand.color(for: .background(.secondary))
+        plusTag.borderColor = Brand.color(for: .background(.light))
+        plusTag.textColor = Brand.color(for: .background(.light))
         plusTag.borderWidth = 1
         plusTag.tagBackgroundColor = .clear
     }

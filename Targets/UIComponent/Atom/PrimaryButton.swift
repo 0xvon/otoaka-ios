@@ -35,7 +35,7 @@ public final class PrimaryButton: UIButton {
         case .normal:
             setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
         case .delete:
-            setTitleColor(Brand.color(for: .brand(.secondary)), for: .normal)
+            setTitleColor(Brand.color(for: .brand(.light)), for: .normal)
         }
     }
 
@@ -46,8 +46,8 @@ public final class PrimaryButton: UIButton {
 
         titleLabel?.font = Brand.font(for: .largeStrong)
 
-        setBackgroundImage(Brand.color(for: .background(.button)).image(), for: .normal)
-        setBackgroundImage(Brand.color(for: .background(.cellSelected)).image(), for: .highlighted)
+        setBackgroundImage(Brand.color(for: .background(.mild)).image(), for: .normal)
+        setBackgroundImage(Brand.color(for: .background(.light)).image(), for: .highlighted)
         setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
         setTitleColor(Brand.color(for: .text(.primary)).pressed(), for: .highlighted)
         imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)

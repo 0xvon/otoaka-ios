@@ -160,15 +160,15 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 if groupFeeds.isEmpty {
                     followingContent.addTag("フォローしたアーティストが表示されます")
                     followingContent.tagBackgroundColor = .clear
-                    followingContent.borderColor = Brand.color(for: .background(.cellSelected))
+                    followingContent.borderColor = Brand.color(for: .background(.milder))
                     followingContent.borderWidth = 1
-                    followingContent.textColor = Brand.color(for: .background(.cellSelected))
+                    followingContent.textColor = Brand.color(for: .background(.milder))
                 } else {
                     followingContent.addTags(groupFeeds.map { $0.group.name })
                     followingContent.tagBackgroundColor = .clear
-                    followingContent.borderColor = Brand.color(for: .brand(.secondary))
+                    followingContent.borderColor = Brand.color(for: .brand(.light))
                     followingContent.borderWidth = 1
-                    followingContent.textColor = Brand.color(for: .brand(.secondary))
+                    followingContent.textColor = Brand.color(for: .brand(.light))
                 }
             case .didGetRecentlyFollowing(let groupFeeds):
                 recentlyFollowingWrapper.isHidden = false
@@ -176,9 +176,9 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 if groupFeeds.isEmpty {
                     recentlyFollowingContent.addTag("プロフィールで設定できます")
                     recentlyFollowingContent.tagBackgroundColor = .clear
-                    recentlyFollowingContent.borderColor = Brand.color(for: .background(.cellSelected))
+                    recentlyFollowingContent.borderColor = Brand.color(for: .background(.milder))
                     recentlyFollowingContent.borderWidth = 1
-                    recentlyFollowingContent.textColor = Brand.color(for: .background(.cellSelected))
+                    recentlyFollowingContent.textColor = Brand.color(for: .background(.milder))
                 } else {
                     recentlyFollowingContent.addTags(groupFeeds.map { $0.group.name })
                     recentlyFollowingContent.tagBackgroundColor = .clear

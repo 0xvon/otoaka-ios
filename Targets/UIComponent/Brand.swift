@@ -5,25 +5,21 @@ public enum Brand {
     public static func color(for color: Color) -> UIColor {
         switch color {
         case .brand(.primary):             return #colorLiteral(red: 0.9019607843, green: 0.3294117647, blue: 0.2235294118, alpha: 1) // #E65439
-        case .brand(.secondary):           return #colorLiteral(red: 0.9333333333, green: 0.5333333333, blue: 0.4588235294, alpha: 1) // #EE8875
+        case .brand(.light):               return #colorLiteral(red: 0.9333333333, green: 0.5333333333, blue: 0.4588235294, alpha: 1) // #EE8875
         case .brand(.dark):                return #colorLiteral(red: 0.662745098, green: 0.231372549, blue: 0.1529411765, alpha: 1) // #A93B27
+        
         case .brand(.google):              return #colorLiteral(red: 0.9843137255, green: 0.737254902, blue: 0.01960784314, alpha: 1) // #FBBC05
         case .brand(.facebook):            return #colorLiteral(red: 0.231372549, green: 0.3490196078, blue: 0.5960784314, alpha: 1) // #3B5998
         case .brand(.twitter):             return #colorLiteral(red: 0.1137254902, green: 0.631372549, blue: 0.9490196078, alpha: 1) // #1DA1F2
         case .brand(.apple):               return #colorLiteral(red: 1, green: 1, blue: 1, alpha: 1) // #FFFFFF
         
         case .background(.primary):        return #colorLiteral(red: 0.05490196078, green: 0.05490196078, blue: 0.05490196078, alpha: 1) // #0E0E0E
-        case .background(.secondary):      return #colorLiteral(red: 0.5647058824, green: 0.5647058824, blue: 0.5647058824, alpha: 1) // #909090
-        case .background(.button):         return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
-        case .background(.cell):           return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
-        case .background(.cellSelected):   return #colorLiteral(red: 0.3137254902, green: 0.3137254902, blue: 0.3137254902, alpha: 1) // #414045
-        case .background(.navigationBar):  return #colorLiteral(red: 0.1568627451, green: 0.1568627451, blue: 0.1607843137, alpha: 1) // #282829
-        case .background(.searchBar):      return #colorLiteral(red: 0.07058823529, green: 0.07058823529, blue: 0.07058823529, alpha: 1) // #121212
+        case .background(.light):          return #colorLiteral(red: 0.5647058824, green: 0.5647058824, blue: 0.5647058824, alpha: 1) // #909090
+        case .background(.mild):           return #colorLiteral(red: 0.1098039216, green: 0.1098039216, blue: 0.1176470588, alpha: 1) // #1C1C1E
+        case .background(.milder):         return #colorLiteral(red: 0.3137254902, green: 0.3137254902, blue: 0.3137254902, alpha: 1) // #414045
         
         case .text(.primary):              return #colorLiteral(red: 0.9411764706, green: 0.9411764706, blue: 0.9411764706, alpha: 1) // #F0F0F0
-        case .ranking(.first):             return #colorLiteral(red: 0.8235294118, green: 0.2156862745, blue: 0.1019607843, alpha: 1) // #D2371A
-        case .ranking(.second):            return #colorLiteral(red: 0.9176470588, green: 0.431372549, blue: 0.3411764706, alpha: 1) // #EA6E57
-        case .ranking(.other):             return #colorLiteral(red: 0.9529411765, green: 0.6862745098, blue: 0.6352941176, alpha: 1) // #F3AFA2
+        case .text(.light):                return #colorLiteral(red: 0.5647058824, green: 0.5647058824, blue: 0.5647058824, alpha: 1) // #909090
         }
     }
 
@@ -32,22 +28,16 @@ public enum Brand {
         case brand(BrandColor)
         case background(BackgroundColor)
         case text(TextColor)
-        case ranking(RankingColor)
         
         public enum BrandColor: CaseIterable {
-            case primary, secondary, google, facebook, twitter, apple, dark
+            case primary, light, dark, google, facebook, twitter, apple
         }
 
         public enum BackgroundColor: CaseIterable {
-            case primary, secondary, button, cell, cellSelected,
-                 navigationBar, searchBar
+            case primary, light, mild, milder
         }
         public enum TextColor: CaseIterable {
-            case primary
-        }
-        
-        public enum RankingColor: CaseIterable {
-            case first, second, other
+            case primary, light
         }
     }
     

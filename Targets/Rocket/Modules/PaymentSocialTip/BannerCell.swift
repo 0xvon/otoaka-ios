@@ -54,7 +54,7 @@ class BannerCellContent: UIButton {
         if let url = input.artworkURL  {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
-            thumbnailView.image = Brand.color(for: .background(.secondary)).image
+            thumbnailView.image = Brand.color(for: .background(.light)).image
         }
         liveTitleLabel.text = input.title
     }

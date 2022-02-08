@@ -244,11 +244,11 @@ class SocialTipCellContent: UIButton {
         textView.text = input.tip.message
         
         if input.tip.isRealMoney {
-            backgroundColor = Brand.color(for: .ranking(.first))
+            backgroundColor = Brand.color(for: .brand(.dark))
             fromBannerView.backgroundColor = Brand.color(for: .brand(.dark))
         } else {
-            backgroundColor = Brand.color(for: .background(.secondary))
-            fromBannerView.backgroundColor = Brand.color(for: .background(.cellSelected))
+            backgroundColor = Brand.color(for: .background(.light))
+            fromBannerView.backgroundColor = Brand.color(for: .background(.milder))
         }
     }
     

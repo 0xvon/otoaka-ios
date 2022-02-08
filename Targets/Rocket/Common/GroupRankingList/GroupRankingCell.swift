@@ -107,7 +107,7 @@ class GroupRankingCellContent: UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
         label.font = Brand.font(for: .small)
-        label.textColor = Brand.color(for: .background(.secondary))
+        label.textColor = Brand.color(for: .text(.light))
         return label
     }()
     override var isHighlighted: Bool {

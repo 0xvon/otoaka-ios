@@ -230,14 +230,14 @@ class LiveScheduleCellContent: UIButton {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Brand.font(for: .xsmall)
-        label.textColor = Brand.color(for: .background(.secondary))
+        label.textColor = Brand.color(for: .text(.light))
         return label
     }()
     private lazy var livehouseLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Brand.font(for: .xsmall)
-        label.textColor = Brand.color(for: .background(.secondary))
+        label.textColor = Brand.color(for: .text(.light))
         return label
     }()
     override var isHighlighted: Bool {
@@ -269,7 +269,7 @@ class LiveScheduleCellContent: UIButton {
         if let url = input.live.live.artworkURL ?? input.live.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailImageView)
         } else {
-            thumbnailImageView.image = Brand.color(for: .background(.cellSelected)).image
+            thumbnailImageView.image = Brand.color(for: .background(.light)).image
         }
         monthLabel.text = input.live.live.date.map { String($0.suffix(4).prefix(2)) } ?? "??"
         dayLabel.text = input.live.live.date.map { String($0.suffix(2)) } ?? "??"

@@ -33,7 +33,7 @@ final class SelectTrackViewController: UITableViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(selectButtonTapped), for: .touchUpInside)
-        button.titleLabel?.textColor = Brand.color(for: .brand(.secondary))
+        button.titleLabel?.textColor = Brand.color(for: .brand(.light))
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
         
         return button

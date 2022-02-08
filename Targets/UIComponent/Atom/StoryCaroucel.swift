@@ -82,7 +82,7 @@ public final class StoryCaroucelContent: UIButton {
         if let url = input.imageUrl {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
-            thumbnailView.image = Brand.color(for: .background(.secondary)).image
+            thumbnailView.image = Brand.color(for: .background(.light)).image
         }
     }
     

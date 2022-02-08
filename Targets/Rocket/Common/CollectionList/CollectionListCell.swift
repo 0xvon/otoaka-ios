@@ -132,7 +132,7 @@ class CollectionListCellContent: UIButton {
         if let url = input.post.live?.artworkURL ?? input.post.live?.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
-            thumbnailView.image = Brand.color(for: .background(.secondary)).image
+            thumbnailView.image = Brand.color(for: .background(.light)).image
         }
     }
     

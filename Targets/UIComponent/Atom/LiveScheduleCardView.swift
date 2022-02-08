@@ -107,7 +107,7 @@ public final class LiveScheduleCardCellContent: UIButton {
         if let url = input.live.live.artworkURL ?? input.live.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
-            thumbnailView.image = Brand.color(for: .background(.secondary)).image
+            thumbnailView.image = Brand.color(for: .background(.light)).image
         }
         liveTitleLabel.text = input.live.live.title
         switch input.live.live.style {
@@ -140,7 +140,7 @@ public final class LiveScheduleCardCellContent: UIButton {
                 imageView.layer.cornerRadius = 15
                 imageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
                 imageView.layer.borderWidth = 1
-                imageView.image = Brand.color(for: .background(.cellSelected)).image
+                imageView.image = Brand.color(for: .background(.milder)).image
                 participantsView.addArrangedSubview(imageView)
                 NSLayoutConstraint.activate([
                     imageView.heightAnchor.constraint(equalToConstant: 30),

@@ -28,10 +28,10 @@ public final class CountButton: UIButton {
         addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
         
         titleLabel?.font = Brand.font(for: .mediumStrong)
-        titleLabel?.textColor = Brand.color(for: .background(.secondary))
+        titleLabel?.textColor = Brand.color(for: .background(.light))
         contentHorizontalAlignment = .left
-        setTitleColor(Brand.color(for: .background(.secondary)), for: .normal)
-        setTitleColor(Brand.color(for: .background(.secondary)).pressed(), for: .highlighted)
+        setTitleColor(Brand.color(for: .background(.light)), for: .normal)
+        setTitleColor(Brand.color(for: .background(.light)).pressed(), for: .highlighted)
     }
     
     @objc private func touchUpInside() {

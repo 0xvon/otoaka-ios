@@ -99,7 +99,7 @@ public final class LiveCardCellContent: UIButton {
         if let url = input.live.artworkURL ?? input.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
-            thumbnailView.image = Brand.color(for: .background(.secondary)).image
+            thumbnailView.image = Brand.color(for: .background(.light)).image
         }
         liveTitleLabel.text = input.live.title
         switch input.live.style {

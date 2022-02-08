@@ -193,7 +193,7 @@ public final class UserTipRankingCellContent: UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
         label.font = Brand.font(for: .xsmall)
-        label.textColor = Brand.color(for: .background(.secondary))
+        label.textColor = Brand.color(for: .text(.light))
         return label
     }()
     public override var isHighlighted: Bool {
@@ -216,21 +216,21 @@ public final class UserTipRankingCellContent: UIButton {
         if let url = input.tip.user.thumbnailURL.flatMap(URL.init(string:)) {
             input.imagePipeline.loadImage(url, into: thumbnailImageView)
         } else {
-            thumbnailImageView.image = Brand.color(for: .background(.secondary)).image
+            thumbnailImageView.image = Brand.color(for: .background(.light)).image
         }
         
         switch input.ranking {
         case .first:
-            tipLabel.textColor = Brand.color(for: .ranking(.first))
-            thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.first)).cgColor
+            tipLabel.textColor = Brand.color(for: .brand(.dark))
+            thumbnailImageView.layer.borderColor = Brand.color(for: .brand(.dark)).cgColor
             thumbnailImageViewHeightConstraint.constant = 144
         case .second:
-            tipLabel.textColor = Brand.color(for: .ranking(.second))
-            thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.second)).cgColor
+            tipLabel.textColor = Brand.color(for: .brand(.primary))
+            thumbnailImageView.layer.borderColor = Brand.color(for: .brand(.primary)).cgColor
             thumbnailImageViewHeightConstraint.constant = 124
         case .other:
-            tipLabel.textColor = Brand.color(for: .ranking(.other))
-            thumbnailImageView.layer.borderColor = Brand.color(for: .ranking(.other)).cgColor
+            tipLabel.textColor = Brand.color(for: .brand(.light))
+            thumbnailImageView.layer.borderColor = Brand.color(for: .brand(.light)).cgColor
             thumbnailImageViewHeightConstraint.constant = 100
         }
     }

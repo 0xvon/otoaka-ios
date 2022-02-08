@@ -19,6 +19,6 @@ public final class BrandRefreshControl: UIRefreshControl {
     }
 
     func setup() {
-        tintColor = Brand.color(for: .background(.secondary))
+        tintColor = Brand.color(for: .background(.light))
     }
 }

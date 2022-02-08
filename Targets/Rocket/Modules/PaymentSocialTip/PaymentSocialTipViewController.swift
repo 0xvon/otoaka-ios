@@ -127,7 +127,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         textView.placeholder = "お題に沿ってアーティストを宣伝しよう！"
         textView.text = nil
         textView.placeholderTextView.textAlignment = .left
-        textView.placeholderColor = Brand.color(for: .background(.secondary))
+        textView.placeholderColor = Brand.color(for: .background(.light))
         textView.font = Brand.font(for: .mediumStrong)
         textView.textColor = Brand.color(for: .text(.primary))
         textView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
@@ -213,7 +213,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("利用規約を読む", for: .normal)
         button.contentHorizontalAlignment = .left
-        button.setTitleColor(Brand.color(for: .background(.secondary)), for: .normal)
+        button.setTitleColor(Brand.color(for: .background(.light)), for: .normal)
         button.titleLabel?.font = Brand.font(for: .small)
         button.addTarget(self, action: #selector(tosButtonTapped), for: .touchUpInside)
         return button
@@ -223,7 +223,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("特定商取引法に基づく表記を読む", for: .normal)
         button.contentHorizontalAlignment = .left
-        button.setTitleColor(Brand.color(for: .background(.secondary)), for: .normal)
+        button.setTitleColor(Brand.color(for: .background(.light)), for: .normal)
         button.titleLabel?.font = Brand.font(for: .small)
         button.addTarget(self, action: #selector(commercialTransactionButtonTapped), for: .touchUpInside)
         return button
@@ -232,7 +232,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
-        button.setTitleColor(Brand.color(for: .background(.secondary)), for: .disabled)
+        button.setTitleColor(Brand.color(for: .background(.light)), for: .disabled)
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("送る", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)

@@ -144,7 +144,7 @@ public final class SocialTipEventCardCellContent: UIButton {
         label.isUserInteractionEnabled = false
         label.font = Brand.font(for: .small)
         label.lineBreakMode = .byTruncatingTail
-        label.textColor = Brand.color(for: .background(.secondary))
+        label.textColor = Brand.color(for: .background(.light))
         return label
     }()
     public override var isHighlighted: Bool {
@@ -165,7 +165,7 @@ public final class SocialTipEventCardCellContent: UIButton {
         if let url = input.socialTipEvent.live.artworkURL ?? input.socialTipEvent.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
-            thumbnailView.image = Brand.color(for: .background(.secondary)).image
+            thumbnailView.image = Brand.color(for: .background(.light)).image
         }
         eventTitleLabel.text = input.socialTipEvent.title
         liveTitleLabel.text = input.socialTipEvent.live.title

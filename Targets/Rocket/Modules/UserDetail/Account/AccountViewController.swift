@@ -24,7 +24,7 @@ final class AccountViewController: UIViewController, Instantiable {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.separatorColor = Brand.color(for: .background(.cellSelected))
+        tableView.separatorColor = Brand.color(for: .background(.milder))
         tableView.register(
             UINib(nibName: "AccountCell", bundle: nil), forCellReuseIdentifier: "AccountCell")
         return tableView

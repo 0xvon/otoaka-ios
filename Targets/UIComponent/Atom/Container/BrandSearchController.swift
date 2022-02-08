@@ -28,7 +28,7 @@ public class BrandSearchController: UISearchController {
         // Workaround: Force to use dark mode color scheme to change text field color
         searchBar.overrideUserInterfaceStyle = .dark
         let segmentedControl = searchBar.scopeSegmentedControl
-        segmentedControl?.selectedSegmentTintColor = Brand.color(for: .background(.secondary))
+        segmentedControl?.selectedSegmentTintColor = Brand.color(for: .background(.light))
         segmentedControl?.setTitleTextAttributes([.foregroundColor: Brand.color(for: .text(.primary))], for: .normal)
     }
 }

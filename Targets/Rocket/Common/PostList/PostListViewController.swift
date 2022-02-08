@@ -198,7 +198,7 @@ final class PostListViewController: UIViewController, Instantiable {
         postTableView.showsVerticalScrollIndicator = false
         postTableView.tableFooterView = UIView(frame: .zero)
         postTableView.separatorStyle = .singleLine
-        postTableView.separatorColor = Brand.color(for: .background(.secondary))
+        postTableView.separatorColor = Brand.color(for: .background(.light))
         postTableView.separatorInset = .zero
         postTableView.backgroundColor = .clear
         postTableView.delegate = self

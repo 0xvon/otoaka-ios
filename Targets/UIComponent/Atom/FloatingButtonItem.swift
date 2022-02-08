@@ -54,7 +54,7 @@ public final class FloatingButtonItem: UIButton {
 
     func setup() {
         layer.cornerRadius = bounds.width / 2
-        backgroundColor = Brand.color(for: .background(.button))
+        backgroundColor = Brand.color(for: .background(.mild))
 
         contentEdgeInsets = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
         imageView?.contentMode = .scaleAspectFit

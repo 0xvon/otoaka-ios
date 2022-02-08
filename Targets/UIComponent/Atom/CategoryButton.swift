@@ -11,7 +11,7 @@ public final class CategoryButton: UIButton {
     private let arrowButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "chevron.right")?.withTintColor(Brand.color(for: .background(.secondary)), renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "chevron.right")?.withTintColor(Brand.color(for: .background(.light)), renderingMode: .alwaysOriginal), for: .normal)
         button.isUserInteractionEnabled = false
         button.isEnabled = true
         return button

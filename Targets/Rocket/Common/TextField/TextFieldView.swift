@@ -61,7 +61,7 @@ final class TextFieldView: UIView {
         textField.font = Brand.font(for: .medium)
         textField.attributedPlaceholder = NSAttributedString(
             string: "未入力",
-            attributes: [NSAttributedString.Key.foregroundColor: Brand.color(for: .background(.secondary))])
+            attributes: [NSAttributedString.Key.foregroundColor: Brand.color(for: .background(.light))])
         textField.text = input.text
         textField.borderStyle = .none
         textField.addTarget(self, action: #selector(textFieldEditingChanged), for: .editingChanged)
@@ -112,7 +112,7 @@ final class TextFieldView: UIView {
         if textField.keyboardType == .numberPad {
             textField.rightViewMode = .always
             let unitLabel = UILabel()
-            unitLabel.textColor = Brand.color(for: .background(.cellSelected))
+            unitLabel.textColor = Brand.color(for: .background(.milder))
             unitLabel.text = "円"
             textField.rightView = unitLabel
         }

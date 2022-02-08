@@ -113,7 +113,7 @@ class MessageListCellContent: UIButton {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 10
-        view.backgroundColor = Brand.color(for: .brand(.secondary))
+        view.backgroundColor = Brand.color(for: .brand(.light))
         view.isHidden = true
         return view
     }()

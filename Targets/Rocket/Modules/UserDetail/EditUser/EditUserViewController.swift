@@ -195,7 +195,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
-        button.setTitleColor(Brand.color(for: .background(.secondary)), for: .disabled)
+        button.setTitleColor(Brand.color(for: .background(.light)), for: .disabled)
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("更新", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
@@ -290,8 +290,8 @@ final class EditUserViewController: UIViewController, Instantiable {
                 recentlyFollowingListView.addTags(groups.map { $0.name + " ✗" })
                 
                 let plusTag = recentlyFollowingListView.addTag("追加＋")
-                plusTag.borderColor = Brand.color(for: .background(.secondary))
-                plusTag.textColor = Brand.color(for: .background(.secondary))
+                plusTag.borderColor = Brand.color(for: .background(.light))
+                plusTag.textColor = Brand.color(for: .background(.light))
                 plusTag.borderWidth = 1
                 plusTag.tagBackgroundColor = .clear
             case .didUpdateUsername:

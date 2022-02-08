@@ -72,7 +72,7 @@ final class UserListViewController: UIViewController, Instantiable {
         fanTableView.showsVerticalScrollIndicator = false
         fanTableView.tableFooterView = UIView(frame: .zero)
         fanTableView.separatorStyle = .singleLine
-        fanTableView.separatorColor = Brand.color(for: .background(.secondary))
+        fanTableView.separatorColor = Brand.color(for: .background(.light))
         fanTableView.separatorInset = .zero
         fanTableView.backgroundColor = Brand.color(for: .background(.primary))
         fanTableView.delegate = self

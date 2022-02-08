@@ -113,7 +113,7 @@ class FanCellContent: UIButton {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
         label.font = Brand.font(for: .small)
-        label.textColor = Brand.color(for: .background(.secondary))
+        label.textColor = Brand.color(for: .background(.light))
         return label
     }()
     private lazy var profileLabel: UILabel = {

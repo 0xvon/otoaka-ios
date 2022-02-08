@@ -109,7 +109,7 @@ final class PostViewController: UIViewController, Instantiable {
         textView.delegate = self
         textView.placeholder = "セットリスト・MCで言っていたことなどを記録しよう。下から画像や楽曲も選択できるよ。"
         textView.placeholderTextView.textAlignment = .left
-        textView.placeholderColor = Brand.color(for: .background(.secondary))
+        textView.placeholderColor = Brand.color(for: .background(.light))
         textView.font = Brand.font(for: .mediumStrong)
         textView.textColor = Brand.color(for: .text(.primary))
         textView.textContainerInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
