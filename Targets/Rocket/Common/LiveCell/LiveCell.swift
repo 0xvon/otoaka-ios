@@ -190,7 +190,7 @@ public class LiveCellContent: UIButton {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.backgroundColor = .clear
         stackView.axis = .horizontal
-        stackView.spacing = 4
+        stackView.spacing = 8
         
         stackView.addArrangedSubview(buyTicketButtonView)
         NSLayoutConstraint.activate([
