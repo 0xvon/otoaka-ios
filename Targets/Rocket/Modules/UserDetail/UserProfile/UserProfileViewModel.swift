@@ -81,7 +81,7 @@ class UserProfileViewModel {
         var uri = FollowingGroups.URI()
         uri.id = state.user.id
         uri.page = 1
-        uri.per = 15
+        uri.per = 5
         getFollowingGroupsAction.input((request: Empty(), uri: uri))
         
     }

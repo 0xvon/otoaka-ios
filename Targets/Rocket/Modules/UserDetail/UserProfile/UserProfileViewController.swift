@@ -115,6 +115,13 @@ final class UserProfileViewController: UIViewController, Instantiable {
         ])
         
         scrollStackView.addArrangedSubview(recentlyFollowingSectionHeader)
+        if viewModel.state.user.id == dependencyProvider.user.id {
+            recentlyFollowingSectionHeader.seeMoreButton.isHidden = false
+            recentlyFollowingSectionHeader.seeMoreButton.setTitle("+編集する", for: .normal)
+            recentlyFollowingSectionHeader.seeMoreButton.setTitleColor(Brand.color(for: .brand(.light)), for: .normal)
+        } else {
+            recentlyFollowingSectionHeader.seeMoreButton.isHidden = true
+        }
         NSLayoutConstraint.activate([
             recentlyFollowingSectionHeader.heightAnchor.constraint(equalToConstant: 64),
             recentlyFollowingSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
@@ -166,15 +173,15 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 } else {
                     followingContent.addTags(groupFeeds.map { $0.group.name })
                     followingContent.tagBackgroundColor = .clear
-                    followingContent.borderColor = Brand.color(for: .brand(.light))
+                    followingContent.borderColor = Brand.color(for: .brand(.primary))
                     followingContent.borderWidth = 1
-                    followingContent.textColor = Brand.color(for: .brand(.light))
+                    followingContent.textColor = Brand.color(for: .brand(.primary))
                 }
             case .didGetRecentlyFollowing(let groupFeeds):
                 recentlyFollowingWrapper.isHidden = false
                 recentlyFollowingContent.removeAllTags()
                 if groupFeeds.isEmpty {
-                    recentlyFollowingContent.addTag("プロフィールで設定できます")
+                    recentlyFollowingContent.addTag("最近好きなアーティストが表示されます")
                     recentlyFollowingContent.tagBackgroundColor = .clear
                     recentlyFollowingContent.borderColor = Brand.color(for: .background(.milder))
                     recentlyFollowingContent.borderWidth = 1
@@ -182,9 +189,9 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 } else {
                     recentlyFollowingContent.addTags(groupFeeds.map { $0.group.name })
                     recentlyFollowingContent.tagBackgroundColor = .clear
-                    recentlyFollowingContent.borderColor = Brand.color(for: .brand(.primary))
+                    recentlyFollowingContent.borderColor = Brand.color(for: .brand(.light))
                     recentlyFollowingContent.borderWidth = 1
-                    recentlyFollowingContent.textColor = Brand.color(for: .brand(.primary))
+                    recentlyFollowingContent.textColor = Brand.color(for: .brand(.light))
                 }
             case .didGetLiveSchedule(let liveFeeds):
                 liveScheduleTableView.isHidden = false
@@ -197,7 +204,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
         .store(in: &cancellables)
         
         recentlyFollowingSectionHeader.listen { [unowned self] in
-            let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .group(viewModel.state.recentlyFollowingGroups))
+            let vc = OrganizeRecentlyFollowingViewController(dependencyProvider: dependencyProvider, input: viewModel.state.recentlyFollowingGroups)
             self.navigationController?.pushViewController(vc, animated: true)
         }
         

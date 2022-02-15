@@ -225,7 +225,7 @@ final class PostViewController: UIViewController, Instantiable {
     
     func bind() {
         postButton.controlEventPublisher(for: .touchUpInside)
-            .sink(receiveValue: postButtonTapped)
+            .sink(receiveValue: { [unowned self] in postButtonTapped() })
             .store(in: &cancellables)
         
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
