@@ -35,7 +35,7 @@ class LiveInformationView: UIView {
     private let mapBadgeView: BadgeView = {
         let mapBadgeView = BadgeView(
             text: "不明",
-            image: UIImage(systemName: "mappin.and.ellipse")!
+            image: UIImage(systemName: "map.fill")!
                 .withTintColor(.white, renderingMode: .alwaysOriginal)
         )
         mapBadgeView.translatesAutoresizingMaskIntoConstraints = false
@@ -85,7 +85,7 @@ class LiveInformationView: UIView {
             dateBadgeView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
             dateBadgeView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             dateBadgeView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
-            dateBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            dateBadgeView.heightAnchor.constraint(equalToConstant: 20),
         ])
 
         addSubview(mapBadgeView)
@@ -93,7 +93,7 @@ class LiveInformationView: UIView {
             mapBadgeView.bottomAnchor.constraint(equalTo: dateBadgeView.topAnchor, constant: -8),
             mapBadgeView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             mapBadgeView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
-            mapBadgeView.heightAnchor.constraint(equalToConstant: 30),
+            mapBadgeView.heightAnchor.constraint(equalToConstant: 20),
         ])
     }
 

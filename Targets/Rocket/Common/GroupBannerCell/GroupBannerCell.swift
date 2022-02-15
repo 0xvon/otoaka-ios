@@ -17,6 +17,9 @@ class GroupBannerCell: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 30
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
+        
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -54,6 +57,8 @@ class GroupBannerCell: UIView {
     func update(input: Input) {
         if let artworkURL = input.group.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: groupArtworkView)
+        } else {
+            groupArtworkView.image = Brand.color(for: .background(.milder)).image
         }
         groupNameLabel.text = input.group.name
     }
@@ -74,7 +79,7 @@ class GroupBannerCell: UIView {
         NSLayoutConstraint.activate([
             groupNameLabel.topAnchor.constraint(equalTo: groupArtworkView.topAnchor),
             groupNameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -8),
-            groupNameLabel.leftAnchor.constraint(equalTo: groupArtworkView.rightAnchor, constant: 8),
+            groupNameLabel.leftAnchor.constraint(equalTo: groupArtworkView.rightAnchor, constant: 4),
         ])
         
         addSubview(button)

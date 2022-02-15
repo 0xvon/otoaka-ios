@@ -87,13 +87,25 @@ extension StoryCollectionView: UICollectionViewDelegate, UICollectionViewDataSou
         switch items {
         case .users(let users):
             let user = users[indexPath.item]
-            return collectionView.dequeueReusableCell(StoryCaroucel.self, input: (imageUrl: user.thumbnailURL.flatMap(URL.init(string:)), imagePipeline: imagePipeline), for: indexPath)
+            return collectionView.dequeueReusableCell(StoryCaroucel.self, input: (
+                imageUrl: user.thumbnailURL.flatMap(URL.init(string:)),
+                name: user.name,
+                imagePipeline: imagePipeline), for: indexPath
+            )
         case .groups(let groups):
             let group = groups[indexPath.item]
-            return collectionView.dequeueReusableCell(StoryCaroucel.self, input: (imageUrl: group.artworkURL, imagePipeline: imagePipeline), for: indexPath)
+            return collectionView.dequeueReusableCell(StoryCaroucel.self, input: (
+                imageUrl: group.artworkURL,
+                name: group.name,
+                imagePipeline: imagePipeline), for: indexPath
+            )
         case .lives(let lives):
             let live = lives[indexPath.item]
-            return collectionView.dequeueReusableCell(StoryCaroucel.self, input: (imageUrl: live.artworkURL ?? live.hostGroup.artworkURL, imagePipeline: imagePipeline), for: indexPath)
+            return collectionView.dequeueReusableCell(StoryCaroucel.self, input: (
+                imageUrl: live.artworkURL ?? live.hostGroup.artworkURL,
+                name: live.title,
+                imagePipeline: imagePipeline
+            ), for: indexPath)
         }
     }
     
@@ -130,6 +142,6 @@ extension StoryCollectionView: UICollectionViewDelegate, UICollectionViewDataSou
 
 extension StoryCollectionView: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 50, height: 50)
+        return CGSize(width: 74, height: 88)
     }
 }

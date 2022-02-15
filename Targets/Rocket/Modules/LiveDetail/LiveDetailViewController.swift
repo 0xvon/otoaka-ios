@@ -80,7 +80,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         let content = StoryCollectionView(dataSource: .users([]), imagePipeline: dependencyProvider.imagePipeline)
         content.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            content.heightAnchor.constraint(equalToConstant: 82),
+            content.heightAnchor.constraint(equalToConstant: 120),
         ])
         return content
     }()
@@ -97,7 +97,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.distribution = .fillEqually
-        stackView.spacing = 16.0
+        stackView.spacing = 0
         stackView.layoutMargins = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         stackView.isLayoutMarginsRelativeArrangement = true
         return stackView

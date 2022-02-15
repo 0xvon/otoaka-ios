@@ -131,27 +131,27 @@ public class LiveCellContent: UIButton {
         stackView.axis = .vertical
         stackView.backgroundColor = .clear
         
-        stackView.addArrangedSubview(dateView)
-        NSLayoutConstraint.activate([
-            dateView.heightAnchor.constraint(equalToConstant: 20),
-            dateView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-        ])
-        
         stackView.addArrangedSubview(placeView)
         NSLayoutConstraint.activate([
             placeView.heightAnchor.constraint(equalToConstant: 20),
             placeView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
+        stackView.addArrangedSubview(dateView)
+        NSLayoutConstraint.activate([
+            dateView.heightAnchor.constraint(equalToConstant: 20),
+            dateView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+        ])
+        
         stackView.addArrangedSubview(numOfLikeButton)
         NSLayoutConstraint.activate([
-            numOfLikeButton.heightAnchor.constraint(equalToConstant: 20),
+            numOfLikeButton.heightAnchor.constraint(equalToConstant: 16),
             numOfLikeButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
         stackView.addArrangedSubview(numOfReportButton)
         NSLayoutConstraint.activate([
-            numOfReportButton.heightAnchor.constraint(equalToConstant: 20),
+            numOfReportButton.heightAnchor.constraint(equalToConstant: 16),
             numOfReportButton.widthAnchor.constraint(equalTo: stackView.widthAnchor),
         ])
         
@@ -175,14 +175,16 @@ public class LiveCellContent: UIButton {
         let badgeView = BadgeView()
         badgeView.translatesAutoresizingMaskIntoConstraints = false
         badgeView.isUserInteractionEnabled = false
-        badgeView.image = UIImage(named: "calendar")
+        badgeView.image = UIImage(systemName: "calendar")!
+            .withTintColor(.white, renderingMode: .alwaysOriginal)
         return badgeView
     }()
     private lazy var placeView: BadgeView = {
         let badgeView = BadgeView()
         badgeView.translatesAutoresizingMaskIntoConstraints = false
         badgeView.isUserInteractionEnabled = false
-        badgeView.image = UIImage(named: "map")
+        badgeView.image = UIImage(systemName: "map.fill")!
+            .withTintColor(.white, renderingMode: .alwaysOriginal)
         return badgeView
     }()
     private lazy var buyTicketStackView: UIStackView = {
@@ -342,7 +344,7 @@ public class LiveCellContent: UIButton {
         
         addSubview(stackView)
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: bandsLabel.bottomAnchor, constant: 4),
+            stackView.topAnchor.constraint(equalTo: bandsLabel.bottomAnchor, constant: 8),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
             stackView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
             stackView.rightAnchor.constraint(equalTo: rightAnchor, constant: -16)

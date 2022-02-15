@@ -49,6 +49,7 @@ final class StoryCaroucel: UICollectionViewCell, ReusableCell {
 public final class StoryCaroucelContent: UIButton {
     public typealias Input = (
         imageUrl: URL?,
+        name: String,
         imagePipeline: ImagePipeline
     )
     enum Output {
@@ -57,13 +58,23 @@ public final class StoryCaroucelContent: UIButton {
     private lazy var thumbnailView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.layer.cornerRadius = 25
+        imageView.layer.cornerRadius = 37
         imageView.layer.borderWidth = 1
         imageView.layer.borderColor = Brand.color(for: .text(.primary)).cgColor
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
+    private lazy var nameLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = Brand.color(for: .text(.primary))
+        label.font = Brand.font(for: .xxsmallStrong)
+        label.textAlignment = .center
+        label.lineBreakMode = .byTruncatingTail
+        return label
+    }()
+    
     public override var isHighlighted: Bool {
         didSet { alpha = isHighlighted ? 0.5 : 1.0 }
     }
@@ -84,10 +95,12 @@ public final class StoryCaroucelContent: UIButton {
         } else {
             thumbnailView.image = Brand.color(for: .background(.light)).image
         }
+        nameLabel.text = input.name
     }
     
     func prepare() {
         thumbnailView.image = nil
+        nameLabel.text = nil
     }
     
     func setup() {
@@ -98,7 +111,15 @@ public final class StoryCaroucelContent: UIButton {
             thumbnailView.rightAnchor.constraint(equalTo: rightAnchor),
             thumbnailView.leftAnchor.constraint(equalTo: leftAnchor),
             thumbnailView.topAnchor.constraint(equalTo: topAnchor),
-            thumbnailView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            thumbnailView.heightAnchor.constraint(equalTo: thumbnailView.widthAnchor),
+        ])
+        
+        addSubview(nameLabel)
+        NSLayoutConstraint.activate([
+            nameLabel.topAnchor.constraint(equalTo: thumbnailView.bottomAnchor, constant: 4),
+            nameLabel.leftAnchor.constraint(equalTo: leftAnchor),
+            nameLabel.rightAnchor.constraint(equalTo: rightAnchor),
+            nameLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
     }
 }

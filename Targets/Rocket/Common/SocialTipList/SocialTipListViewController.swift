@@ -43,7 +43,7 @@ final class SocialTipListViewController: UIViewController, Instantiable {
             entriedGroupContent.leftAnchor.constraint(equalTo: view.leftAnchor),
             entriedGroupContent.rightAnchor.constraint(equalTo: view.rightAnchor),
             entriedGroupContent.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            entriedGroupContent.heightAnchor.constraint(equalToConstant: 82),
+            entriedGroupContent.heightAnchor.constraint(equalToConstant: 120),
         ])
         return view
     }()
@@ -148,7 +148,7 @@ extension SocialTipListViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if case .allTip  = viewModel.dataSource {
-            return 100
+            return 138
         } else {
             return 0
         }
