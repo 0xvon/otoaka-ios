@@ -48,6 +48,14 @@ class UserInformationView: UIView {
         button.isHidden = true
         return button
     }()
+    private lazy var twitterButton: ToggleButton = {
+        let button = ToggleButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.layer.cornerRadius = 16
+        button.setImage(UIImage(named: "twitter"), for: .normal)
+        button.addTarget(self, action: #selector(twitterButtonTapped), for: .touchUpInside)
+        return button
+    }()
     private let editProfileButton: ToggleButton = {
         let button = ToggleButton()
         button.setImage(
@@ -151,6 +159,7 @@ class UserInformationView: UIView {
             sendMessageButton.isEnabled = true
             followButton.isSelected = input.userDetail.isFollowing
         }
+        twitterButton.isHidden = input.userDetail.user.twitterUrl == nil
     }
     
     private func setup() {
@@ -163,14 +172,7 @@ class UserInformationView: UIView {
             profileImageView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             profileImageView.leftAnchor.constraint(equalTo: leftAnchor, constant: 16),
         ])
-        
-        addSubview(displayNameLabel)
-        NSLayoutConstraint.activate([
-            displayNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
-            displayNameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8),
-            displayNameLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -104),
-        ])
-        
+                
         addSubview(followButton)
         NSLayoutConstraint.activate([
             followButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
@@ -185,12 +187,26 @@ class UserInformationView: UIView {
             sendMessageButton.widthAnchor.constraint(equalToConstant: 32),
             sendMessageButton.heightAnchor.constraint(equalTo: sendMessageButton.widthAnchor),
         ])
+        addSubview(twitterButton)
+        NSLayoutConstraint.activate([
+            twitterButton.topAnchor.constraint(equalTo: followButton.bottomAnchor, constant: 8),
+            twitterButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
+            twitterButton.widthAnchor.constraint(equalToConstant: 32),
+            twitterButton.heightAnchor.constraint(equalTo: twitterButton.widthAnchor),
+        ])
         addSubview(editProfileButton)
         NSLayoutConstraint.activate([
             editProfileButton.topAnchor.constraint(equalTo: topAnchor, constant: 16),
             editProfileButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -16),
             editProfileButton.widthAnchor.constraint(equalToConstant: 32),
             editProfileButton.heightAnchor.constraint(equalTo: editProfileButton.widthAnchor),
+        ])
+        
+        addSubview(displayNameLabel)
+        NSLayoutConstraint.activate([
+            displayNameLabel.topAnchor.constraint(equalTo: profileImageView.topAnchor),
+            displayNameLabel.leftAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 8),
+            displayNameLabel.rightAnchor.constraint(equalTo: sendMessageButton.leftAnchor, constant: -8),
         ])
         
         addSubview(profileSummaryLabel)
@@ -225,6 +241,7 @@ class UserInformationView: UIView {
         case followingUserCountButtonTapped
         case likedPostButtonTapped
         case sendMessageButtonTapped
+        case twitterButtonTapped
         case arrowButtonTapped
         case followButtonTapped
         case editButtonTapped
@@ -248,6 +265,10 @@ class UserInformationView: UIView {
     
     @objc private func likedPostSummaryViewTapped() {
         listener(.likedPostButtonTapped)
+    }
+    
+    @objc private func twitterButtonTapped() {
+        listener(.twitterButtonTapped)
     }
     
     @objc private func followButtonTapped() {

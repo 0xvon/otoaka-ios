@@ -60,6 +60,8 @@ public final class UserDetailHeaderView: UIView, PageHeaderView {
                 self.listener(.likedPostsButtonTapped)
             case .followButtonTapped:
                 self.listener(.followButtonTapped)
+            case .twitterButtonTapped:
+                self.listener(.twitterButtonTapped)
             case .sendMessageButtonTapped:
                 self.listener(.sendMessageButtonTapped)
             case .editButtonTapped:
@@ -91,6 +93,7 @@ public final class UserDetailHeaderView: UIView, PageHeaderView {
         case followingUsersButtonTapped
         case likedPostsButtonTapped
         case followButtonTapped
+        case twitterButtonTapped
         case sendMessageButtonTapped
         case editButtonTapped
     }

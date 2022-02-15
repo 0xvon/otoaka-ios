@@ -196,7 +196,7 @@ class EditUserViewModel {
             instagramUrl: state.instagramUrl
         )
         editUserAction.input((request: req, uri: EditUserInfo.URI()))
-        updateRecentlyFollowing()
+//        updateRecentlyFollowing()
     }
     
     private func updateRecentlyFollowing() {

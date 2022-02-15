@@ -105,6 +105,9 @@ class UserDetailViewModel {
             outputSubject.send(.pushToPostList(.likedPost(state.user)))
         case .followButtonTapped:
             outputSubject.send(.followButtontapped)
+        case .twitterButtonTapped:
+            guard let url = state.user.twitterUrl else { return }
+            outputSubject.send(.openURLInBrowser(url))
         case .sendMessageButtonTapped:
             outputSubject.send(.sendMessageButonTapped)
         case .editButtonTapped:

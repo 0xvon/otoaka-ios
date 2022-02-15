@@ -83,12 +83,12 @@ final class EditUserViewController: UIViewController, Instantiable {
         picketView.delegate = self
         return picketView
     }()
-//    private lazy var twitterUrlTextFieldView: TextFieldView = {
-//        let twitterUrlTextFieldView = TextFieldView(input: (section: "Twitterリンク", text: nil, maxLength: 40))
-//        twitterUrlTextFieldView.translatesAutoresizingMaskIntoConstraints = false
-//        twitterUrlTextFieldView.keyboardType(.alphabet)
-//        return twitterUrlTextFieldView
-//    }()
+    private lazy var twitterUrlTextFieldView: TextFieldView = {
+        let twitterUrlTextFieldView = TextFieldView(input: (section: "Twitterリンク", text: nil, maxLength: 40))
+        twitterUrlTextFieldView.translatesAutoresizingMaskIntoConstraints = false
+        twitterUrlTextFieldView.keyboardType(.alphabet)
+        return twitterUrlTextFieldView
+    }()
 //    private lazy var instagramUrlTextFieldView: TextFieldView = {
 //        let instagramIdTextFieldView = TextFieldView(input: (section: "Instagramリンク", text: nil, maxLength: 40))
 //        instagramIdTextFieldView.translatesAutoresizingMaskIntoConstraints = false
@@ -144,53 +144,53 @@ final class EditUserViewController: UIViewController, Instantiable {
 //        registerButton.isEnabled = false
 //        return registerButton
 //    }()
-    private lazy var recentlyFollowingWrapper: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .clear
-        
-        view.addSubview(recentlyFollowingTitle)
-        NSLayoutConstraint.activate([
-            recentlyFollowingTitle.heightAnchor.constraint(equalToConstant: 24),
-            recentlyFollowingTitle.leftAnchor.constraint(equalTo: view.leftAnchor),
-            recentlyFollowingTitle.topAnchor.constraint(equalTo: view.topAnchor),
-            recentlyFollowingTitle.rightAnchor.constraint(equalTo: view.rightAnchor),
-        ])
-        view.addSubview(recentlyFollowingListView)
-        NSLayoutConstraint.activate([
-            recentlyFollowingListView.topAnchor.constraint(equalTo: recentlyFollowingTitle.bottomAnchor, constant: 8),
-            recentlyFollowingListView.leftAnchor.constraint(equalTo: recentlyFollowingTitle.leftAnchor),
-            recentlyFollowingListView.rightAnchor.constraint(equalTo: recentlyFollowingTitle.rightAnchor),
-            recentlyFollowingListView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
-        return view
-    }()
-    private lazy var recentlyFollowingTitle: UILabel = {
-        let section = UILabel()
-        section.translatesAutoresizingMaskIntoConstraints = false
-        section.text = "最近好きなアーティスト"
-        section.font = Brand.font(for: .medium)
-        section.textColor = Brand.color(for: .brand(.primary))
-        return section
-    }()
-    private lazy var recentlyFollowingListView: TagListView = {
-        let content = TagListView()
-        content.delegate = self
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.alignment = .left
-        content.cornerRadius = 16
-        content.paddingY = 8
-        content.paddingX = 12
-        content.marginX = 8
-        content.marginY = 8
-        content.removeIconLineColor = Brand.color(for: .text(.primary))
-        content.textFont = Brand.font(for: .medium)
-        content.tagBackgroundColor = .clear
-        content.borderColor = Brand.color(for: .brand(.primary))
-        content.borderWidth = 1
-        content.textColor = Brand.color(for: .brand(.primary))
-        return content
-    }()
+//    private lazy var recentlyFollowingWrapper: UIView = {
+//        let view = UIView()
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        view.backgroundColor = .clear
+//
+//        view.addSubview(recentlyFollowingTitle)
+//        NSLayoutConstraint.activate([
+//            recentlyFollowingTitle.heightAnchor.constraint(equalToConstant: 24),
+//            recentlyFollowingTitle.leftAnchor.constraint(equalTo: view.leftAnchor),
+//            recentlyFollowingTitle.topAnchor.constraint(equalTo: view.topAnchor),
+//            recentlyFollowingTitle.rightAnchor.constraint(equalTo: view.rightAnchor),
+//        ])
+//        view.addSubview(recentlyFollowingListView)
+//        NSLayoutConstraint.activate([
+//            recentlyFollowingListView.topAnchor.constraint(equalTo: recentlyFollowingTitle.bottomAnchor, constant: 8),
+//            recentlyFollowingListView.leftAnchor.constraint(equalTo: recentlyFollowingTitle.leftAnchor),
+//            recentlyFollowingListView.rightAnchor.constraint(equalTo: recentlyFollowingTitle.rightAnchor),
+//            recentlyFollowingListView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+//        ])
+//        return view
+//    }()
+//    private lazy var recentlyFollowingTitle: UILabel = {
+//        let section = UILabel()
+//        section.translatesAutoresizingMaskIntoConstraints = false
+//        section.text = "最近好きなアーティスト"
+//        section.font = Brand.font(for: .medium)
+//        section.textColor = Brand.color(for: .brand(.primary))
+//        return section
+//    }()
+//    private lazy var recentlyFollowingListView: TagListView = {
+//        let content = TagListView()
+//        content.delegate = self
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        content.alignment = .left
+//        content.cornerRadius = 16
+//        content.paddingY = 8
+//        content.paddingX = 12
+//        content.marginX = 8
+//        content.marginY = 8
+//        content.removeIconLineColor = Brand.color(for: .text(.primary))
+//        content.textFont = Brand.font(for: .medium)
+//        content.tagBackgroundColor = .clear
+//        content.borderColor = Brand.color(for: .brand(.primary))
+//        content.borderWidth = 1
+//        content.textColor = Brand.color(for: .brand(.primary))
+//        return content
+//    }()
     private lazy var registerButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -251,7 +251,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         ageInputView.setText(text: user.age.map { String($0) } ?? "")
         liveStyleInputView.setText(text: user.liveStyle ?? "")
         residenceInputView.setText(text: user.residence ?? "")
-//        twitterUrlTextFieldView.setText(text: user.twitterUrl?.absoluteString ?? "https://twitter.com/")
+        twitterUrlTextFieldView.setText(text: user.twitterUrl?.absoluteString ?? "https://twitter.com/")
 //        instagramUrlTextFieldView.setText(text: user.instagramUrl?.absoluteString ?? "https://instagram.com/")
         switch user.role {
         case .fan(_):
@@ -285,15 +285,15 @@ final class EditUserViewController: UIViewController, Instantiable {
 //                    partInputView.isHidden = false
 //                    partInputView.setText(text: artist.part)
 //                }
-            case .didGetRecentlyFollowing(let groups):
-                recentlyFollowingListView.removeAllTags()
-                recentlyFollowingListView.addTags(groups.map { $0.name + " ✗" })
-                
-                let plusTag = recentlyFollowingListView.addTag("追加＋")
-                plusTag.borderColor = Brand.color(for: .background(.light))
-                plusTag.textColor = Brand.color(for: .background(.light))
-                plusTag.borderWidth = 1
-                plusTag.tagBackgroundColor = .clear
+            case .didGetRecentlyFollowing(let groups): break
+//                recentlyFollowingListView.removeAllTags()
+//                recentlyFollowingListView.addTags(groups.map { $0.name + " ✗" })
+//
+//                let plusTag = recentlyFollowingListView.addTag("追加＋")
+//                plusTag.borderColor = Brand.color(for: .background(.light))
+//                plusTag.textColor = Brand.color(for: .background(.light))
+//                plusTag.borderWidth = 1
+//                plusTag.tagBackgroundColor = .clear
             case .didUpdateUsername:
                 viewModel.uploadProfileImage()
             case .usernameAlreadyExists:
@@ -350,9 +350,9 @@ final class EditUserViewController: UIViewController, Instantiable {
             self.didInputValue()
         }
         
-//        twitterUrlTextFieldView.listen { [unowned self] in
-//            self.didInputValue()
-//        }
+        twitterUrlTextFieldView.listen { [unowned self] in
+            self.didInputValue()
+        }
 //
 //        instagramUrlTextFieldView.listen { [unowned self] in
 //            self.didInputValue()
@@ -455,13 +455,11 @@ final class EditUserViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             residenceInputView.heightAnchor.constraint(equalToConstant: 50),
         ])
-        
-        mainView.addArrangedSubview(recentlyFollowingWrapper)
-        
-//        mainView.addArrangedSubview(twitterUrlTextFieldView)
-//        NSLayoutConstraint.activate([
-//            twitterUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
-//        ])
+                
+        mainView.addArrangedSubview(twitterUrlTextFieldView)
+        NSLayoutConstraint.activate([
+            twitterUrlTextFieldView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
 //
 //        mainView.addArrangedSubview(instagramUrlTextFieldView)
 //        NSLayoutConstraint.activate([
@@ -495,7 +493,7 @@ final class EditUserViewController: UIViewController, Instantiable {
         let age = ageInputView.getText()
         let liveStyle = liveStyleInputView.getText()
         let residence = residenceInputView.getText()
-//        let twitterUrl = twitterUrlTextFieldView.getText()
+        let twitterUrl = twitterUrlTextFieldView.getText()
 //        let instagramUrl = instagramUrlTextFieldView.getText()
         
         viewModel.didUpdateInputItems(
@@ -505,7 +503,7 @@ final class EditUserViewController: UIViewController, Instantiable {
             age: age,
             liveStyle: liveStyle,
             residence: residence,
-            twitterUrl: nil,
+            twitterUrl: twitterUrl,
             instagramUrl: nil
         )
     }
