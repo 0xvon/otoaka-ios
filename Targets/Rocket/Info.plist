@@ -4,8 +4,6 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>NSCameraUsageDescription</key>
-	<string>QRコードをスキャンするためにOTOAKAにカメラへのアクセスを許可します</string>
 	<key>CFBundleDisplayName</key>
 	<string>OTOAKA</string>
 	<key>CFBundleExecutable</key>
@@ -74,6 +72,8 @@
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>楽曲を選択・再生するためにOTOAKAにミュージックへのアクセスを許可します</string>
+	<key>NSCameraUsageDescription</key>
+	<string>QRコードをスキャンするためにOTOAKAにカメラへのアクセスを許可します</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>プロフィールなどの画像をアップロードするためにOTOAKAにカメラロールへのアクセスを許可します</string>
 	<key>NSUserTrackingUsageDescription</key>
