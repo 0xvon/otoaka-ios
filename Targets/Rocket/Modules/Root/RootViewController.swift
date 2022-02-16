@@ -118,6 +118,10 @@ final class RootViewController: UITabBarController, Instantiable {
 //        )
         let searchVC = BrandNavigationController(rootViewController: SearchViewController(dependencyProvider: loggedInProvider))
         searchVC.tabBarItem = UITabBarItem(title: "探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
+        
+        let nichiTagVC = BrandNavigationController(rootViewController: NichiTagCanvasViewController(dependencyProvider: loggedInProvider, input: ()))
+        nichiTagVC.tabBarItem = UITabBarItem(title: "日タグ", image: UIImage(systemName: "tag"), selectedImage: UIImage(systemName: "tag.fill"))
+        
         let accountVC = UserDetailViewController(dependencyProvider: loggedInProvider, input: loggedInProvider.user)
         let accountNav = BrandNavigationController(
             rootViewController: accountVC
@@ -134,6 +138,7 @@ final class RootViewController: UITabBarController, Instantiable {
             homeVC,
             timelineVC,
             searchVC,
+            nichiTagVC,
             accountNav,
         ]
     }
