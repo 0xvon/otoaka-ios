@@ -54,9 +54,10 @@ final class NichiTagCanvasViewModel {
             .sink(receiveValue: outputSubject.send)
             .store(in: &cancellables)
         
-        getFollowingGroupsAction.elements.combineLatest(getRecentlyFollowingGroupsAction.elements, getLiveScheduleAction.elements)
-            .sink(receiveValue: { [unowned self] followingGroups, recentlyFollowingGroups, liveSchedule in
-                state.followingGroups = followingGroups.items
+//        getFollowingGroupsAction.elements.combineLatest(getRecentlyFollowingGroupsAction.elements, getLiveScheduleAction.elements)
+        getRecentlyFollowingGroupsAction.elements.combineLatest(getLiveScheduleAction.elements)
+            .sink(receiveValue: { [unowned self] recentlyFollowingGroups, liveSchedule in
+//                state.followingGroups = followingGroups.items
                 state.recentlyFollowingGroups = recentlyFollowingGroups
                 state.liveSchedule = liveSchedule.items
                 outputSubject.send(.getLeftItem)
@@ -73,11 +74,11 @@ final class NichiTagCanvasViewModel {
     }
     
     func refresh() {
-        getFollowingGroups()
+//        getFollowingGroups()
         getRecentlyFollowingGroups()
         getLiveSchedule()
-        getLiveTransition()
-        getFrequentlyWatchingGroups()
+//        getLiveTransition()
+//        getFrequentlyWatchingGroups()
     }
     
     func getFollowingGroups() {
