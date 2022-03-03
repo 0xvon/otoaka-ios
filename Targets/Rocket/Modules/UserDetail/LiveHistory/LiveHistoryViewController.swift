@@ -9,7 +9,6 @@ import UIKit
 import Endpoint
 import Combine
 import UIComponent
-import ImageViewer
 
 final class LiveHistoryViewController: UIViewController, Instantiable {
     typealias Input = LiveHistoryViewModel.Input
@@ -24,6 +23,8 @@ final class LiveHistoryViewController: UIViewController, Instantiable {
         self.dependencyProvider = dependencyProvider
         self.viewModel = LiveHistoryViewModel(dependencyProvider: dependencyProvider, input: input)
         super.init(nibName: nil, bundle: nil)
+        
+        title = "ライブ履歴"
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -110,6 +111,7 @@ final class LiveHistoryViewController: UIViewController, Instantiable {
             switch output {
             case .reload:
                 collectionView.reloadData()
+                setBackgroundView(isEmpty: viewModel.state.lives.isEmpty)
             case .error(let error):
                 print(String(describing: error))
             }
@@ -158,6 +160,30 @@ extension LiveHistoryViewController: UICollectionViewDelegate, UICollectionViewD
         ) as! CollectionListHeader
         header.setTitle(sectionTitle)
         return header
+    }
+    
+    func setBackgroundView(isEmpty: Bool = false) {
+        let emptyCollectionView = EmptyCollectionView(emptyType: .pastLive, actionButtonTitle: "ライブを探す")
+        emptyCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        emptyCollectionView.listen { [unowned self] in
+            let vc = SearchLiveViewController(dependencyProvider: dependencyProvider)
+            navigationController?.pushViewController(vc, animated: true)
+        }
+        if isEmpty {
+            let back = UIView()
+            back.translatesAutoresizingMaskIntoConstraints = false
+            collectionView.backgroundView = back
+            collectionView.addSubview(emptyCollectionView)
+        } else {
+            collectionView.backgroundView = nil
+        }
+        if collectionView.backgroundView != nil {
+            NSLayoutConstraint.activate([
+                emptyCollectionView.topAnchor.constraint(equalTo: collectionView.topAnchor, constant: 32),
+                emptyCollectionView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 32),
+                emptyCollectionView.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor),
+            ])
+        }
     }
 }
 

@@ -14,14 +14,12 @@ import UIComponent
 class UserProfileViewModel {
     struct State {
         let user: User
-        var followingGroups: [GroupFeed] = []
-        var recentlyFollowingGroups: [GroupFeed] = []
+        var rankings: [GroupTip] = []
         var liveSchedule: [LiveFeed] = []
     }
     
     enum Output {
-        case didGetRecentlyFollowing([GroupFeed])
-        case didGetFollowing([GroupFeed])
+        case didGetRanking([GroupTip])
         case didGetLiveSchedule([LiveFeed])
         case reportError(Error)
     }
@@ -31,8 +29,8 @@ class UserProfileViewModel {
     private(set) var state: State
     
     private lazy var getFollowingGroupsAction = Action(FollowingGroups.self, httpClient: self.apiClient)
-    private lazy var getRecentlyFollowingGroupsAction = Action(RecentlyFollowingGroups.self, httpClient: self.apiClient)
     private lazy var getLiveScheduleAction = Action(GetLikedFutureLive.self, httpClient: self.apiClient)
+    private lazy var getGroupRankingAction = Action(GetUserTipToGroupRanking.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -43,25 +41,22 @@ class UserProfileViewModel {
         self.state = State(user: input)
         
         let errors = Publishers.MergeMany(
-            getFollowingGroupsAction.errors,
-            getRecentlyFollowingGroupsAction.errors,
+            getGroupRankingAction.errors,
             getLiveScheduleAction.errors
         )
         
         Publishers.MergeMany(
-            getRecentlyFollowingGroupsAction.elements.map { Output.didGetRecentlyFollowing($0) }.eraseToAnyPublisher(),
-            getFollowingGroupsAction.elements.map { Output.didGetFollowing($0.items) }.eraseToAnyPublisher(),
+            getGroupRankingAction.elements.map { Output.didGetRanking($0.items) }.eraseToAnyPublisher(),
             getLiveScheduleAction.elements.map { Output.didGetLiveSchedule($0.items) }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
         
-        getFollowingGroupsAction.elements
-            .combineLatest(getRecentlyFollowingGroupsAction.elements, getLiveScheduleAction.elements)
-            .sink(receiveValue: { [unowned self] followings, recentlyFollowings, liveSchedule in
-                state.followingGroups = followings.items
-                state.recentlyFollowingGroups = recentlyFollowings
+        getGroupRankingAction.elements
+            .combineLatest(getLiveScheduleAction.elements)
+            .sink(receiveValue: { [unowned self] rankings, liveSchedule in
+                state.rankings = rankings.items
                 state.liveSchedule = liveSchedule.items
             })
             .store(in: &cancellables)
@@ -72,24 +67,16 @@ class UserProfileViewModel {
     }
     
     func refresh() {
-        getFollowingGroups()
-        getRecentlyFollowingGroups()
+        getRankings()
         getLiveSchedule()
     }
     
-    func getFollowingGroups() {
-        var uri = FollowingGroups.URI()
-        uri.id = state.user.id
+    func getRankings() {
+        var uri = GetUserTipToGroupRanking.URI()
+        uri.userId = state.user.id
         uri.page = 1
-        uri.per = 5
-        getFollowingGroupsAction.input((request: Empty(), uri: uri))
-        
-    }
-    
-    func getRecentlyFollowingGroups() {
-        var uri = RecentlyFollowingGroups.URI()
-        uri.id = state.user.id
-        getRecentlyFollowingGroupsAction.input((request: Empty(), uri: uri))
+        uri.per = 2
+        getGroupRankingAction.input((request: Empty(), uri: uri))
     }
     
     func getLiveSchedule() {

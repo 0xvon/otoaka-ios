@@ -21,6 +21,7 @@ public final class EmptyCollectionView: UIStackView {
         case postList = "ライブレポートがありません。"
         case liveList = "ライブが見つかりませんでした。追加しよう！"
         case likedLiveList = "「探す」タブから行くライブを探して「行く」を押すとここに表示されます。ライブが見つからなかった場合申請することができます。"
+        case pastLive = "まだ行ったライブがありません。「参戦した」を押したライブがここにコレクションされます。"
         case groupLiveList = "このアーティストのライブが見つかりませんでした。追加しよう！"
         case followingGroupsLives = "ここにはフォローしたアーティストの直近のライブが表示されます。試しに好きなアーティストを探してフォローしてみよう！"
         case messageList = "メッセージがまだありません。ライブ友達を探して好きなアーティストやライブ予定の話をしてみましょう。"

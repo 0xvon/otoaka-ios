@@ -32,37 +32,17 @@ final class UserProfileViewController: UIViewController, Instantiable {
         return stackView
     }()
     
-    private let recentlyFollowingSectionHeader = SummarySectionHeader(title: "最近好きなアーティスト")
-    private lazy var recentlyFollowingContent: TagListView = {
-        let content = TagListView()
-        content.delegate = self
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.alignment = .left
-        content.cornerRadius = 16
-        content.paddingY = 8
-        content.paddingX = 12
-        content.marginX = 8
-        content.marginY = 8
-        content.textFont = Brand.font(for: .medium)
-        return content
+    public let followingSectionHeader = SummarySectionHeader(title: "スキなアーティスト")
+    private lazy var followingCellWrapper: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.spacing = 0
+        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
+        stackView.isLayoutMarginsRelativeArrangement = true
+        return stackView
     }()
-    private lazy var recentlyFollowingWrapper: UIView = Self.addPadding(to: self.recentlyFollowingContent)
-    
-    public let followingSectionHeader = SummarySectionHeader(title: "好きなアーティスト")
-    private lazy var followingContent: TagListView = {
-        let content = TagListView()
-        content.delegate = self
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.alignment = .left
-        content.cornerRadius = 16
-        content.paddingY = 8
-        content.paddingX = 12
-        content.marginX = 8
-        content.marginY = 8
-        content.textFont = Brand.font(for: .medium)
-        return content
-    }()
-    private lazy var followingWrapper: UIView = Self.addPadding(to: self.followingContent)
     
     private let liveScheduleSectionHeader = SummarySectionHeader(title: "参戦予定")
     private lazy var liveScheduleTableView: LiveScheduleTableView = {
@@ -114,28 +94,13 @@ final class UserProfileViewController: UIViewController, Instantiable {
             view.rightAnchor.constraint(equalTo: scrollStackView.rightAnchor),
         ])
         
-        scrollStackView.addArrangedSubview(recentlyFollowingSectionHeader)
-        if viewModel.state.user.id == dependencyProvider.user.id {
-            recentlyFollowingSectionHeader.seeMoreButton.isHidden = false
-            recentlyFollowingSectionHeader.seeMoreButton.setTitle("+編集する", for: .normal)
-            recentlyFollowingSectionHeader.seeMoreButton.setTitleColor(Brand.color(for: .brand(.light)), for: .normal)
-        } else {
-            recentlyFollowingSectionHeader.seeMoreButton.isHidden = true
-        }
-        NSLayoutConstraint.activate([
-            recentlyFollowingSectionHeader.heightAnchor.constraint(equalToConstant: 64),
-            recentlyFollowingSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
-        ])
-        recentlyFollowingWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(recentlyFollowingWrapper)
-        
         scrollStackView.addArrangedSubview(followingSectionHeader)
         NSLayoutConstraint.activate([
             followingSectionHeader.heightAnchor.constraint(equalToConstant: 64),
             followingSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
-        followingWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(followingWrapper)
+        followingCellWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(followingCellWrapper)
         
         scrollStackView.addArrangedSubview(liveScheduleSectionHeader)
         NSLayoutConstraint.activate([
@@ -158,41 +123,48 @@ final class UserProfileViewController: UIViewController, Instantiable {
         bind()
     }
     
+    func setupFollowingContents(rankings: [GroupTip]) {
+        followingCellWrapper.arrangedSubviews.forEach {
+            followingCellWrapper.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
+        
+        rankings.enumerated().forEach { (cellIndex, ranking) in
+            let cellContent = GroupRankingCellContent()
+            cellContent.inject(input: (
+                group: ranking.group,
+                count: ranking.tip,
+                unit: "pts",
+                imagePipeline: dependencyProvider.imagePipeline
+            ))
+            cellContent.listen { [unowned self] _ in
+                groupBannerTapped(cellIndex: cellIndex)
+            }
+            followingCellWrapper.addArrangedSubview(cellContent)
+        }
+        
+        if rankings.isEmpty {
+            let emptyView = EmptyCollectionView(emptyType: .groupList, actionButtonTitle: "スキなアーティストにsnackしよう！！")
+            emptyView.listen { [unowned self] in
+                let vc = SearchGroupViewController(dependencyProvider: dependencyProvider)
+                navigationController?.pushViewController(vc, animated: true)
+            }
+            followingCellWrapper.addArrangedSubview(emptyView)
+        }
+        followingCellWrapper.isHidden = false
+    }
+    
+    func groupBannerTapped(cellIndex: Int) {
+        let group = viewModel.state.rankings[cellIndex]
+        let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink(receiveValue: { [unowned self] output in
             switch output {
-            case .didGetFollowing(let groupFeeds):
-                followingWrapper.isHidden = false
-                followingContent.removeAllTags()
-                if groupFeeds.isEmpty {
-                    followingContent.addTag("フォローしたアーティストが表示されます")
-                    followingContent.tagBackgroundColor = .clear
-                    followingContent.borderColor = Brand.color(for: .background(.milder))
-                    followingContent.borderWidth = 1
-                    followingContent.textColor = Brand.color(for: .background(.milder))
-                } else {
-                    followingContent.addTags(groupFeeds.map { $0.group.name })
-                    followingContent.tagBackgroundColor = .clear
-                    followingContent.borderColor = Brand.color(for: .brand(.primary))
-                    followingContent.borderWidth = 1
-                    followingContent.textColor = Brand.color(for: .brand(.primary))
-                }
-            case .didGetRecentlyFollowing(let groupFeeds):
-                recentlyFollowingWrapper.isHidden = false
-                recentlyFollowingContent.removeAllTags()
-                if groupFeeds.isEmpty {
-                    recentlyFollowingContent.addTag("最近好きなアーティストが表示されます")
-                    recentlyFollowingContent.tagBackgroundColor = .clear
-                    recentlyFollowingContent.borderColor = Brand.color(for: .background(.milder))
-                    recentlyFollowingContent.borderWidth = 1
-                    recentlyFollowingContent.textColor = Brand.color(for: .background(.milder))
-                } else {
-                    recentlyFollowingContent.addTags(groupFeeds.map { $0.group.name })
-                    recentlyFollowingContent.tagBackgroundColor = .clear
-                    recentlyFollowingContent.borderColor = Brand.color(for: .brand(.light))
-                    recentlyFollowingContent.borderWidth = 1
-                    recentlyFollowingContent.textColor = Brand.color(for: .brand(.light))
-                }
+            case .didGetRanking(let rankings):
+                setupFollowingContents(rankings: rankings)
             case .didGetLiveSchedule(let liveFeeds):
                 liveScheduleTableView.isHidden = false
                 liveScheduleTableView.inject(liveFeeds: liveFeeds)
@@ -203,13 +175,8 @@ final class UserProfileViewController: UIViewController, Instantiable {
         })
         .store(in: &cancellables)
         
-        recentlyFollowingSectionHeader.listen { [unowned self] in
-            let vc = OrganizeRecentlyFollowingViewController(dependencyProvider: dependencyProvider, input: viewModel.state.recentlyFollowingGroups)
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
-        
         followingSectionHeader.listen { [unowned self] in
-            let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .followingGroups(viewModel.state.user.id))
+            let vc = GroupRankingListViewController(dependencyProvider: dependencyProvider, input: .socialTip(viewModel.state.user.id))
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
@@ -221,24 +188,6 @@ final class UserProfileViewController: UIViewController, Instantiable {
         liveScheduleTableView.listen { [unowned self] live in
             let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live.live)
             self.navigationController?.pushViewController(vc, animated: true)
-        }
-    }
-}
-
-extension UserProfileViewController: TagListViewDelegate {
-    func tagPressed(_ title: String, tagView: TagView, sender: TagListView) {
-        switch sender {
-        case recentlyFollowingContent:
-            if let group = viewModel.state.recentlyFollowingGroups.filter({ $0.group.name == title }).first {
-                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
-                navigationController?.pushViewController(vc, animated: true)
-            }
-        case followingContent:
-            if let group = viewModel.state.followingGroups.filter({ $0.group.name == title }).first {
-                let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group.group)
-                navigationController?.pushViewController(vc, animated: true)
-            }
-        default: break
         }
     }
 }
