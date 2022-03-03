@@ -105,7 +105,8 @@ extension CollectionListViewController: UICollectionViewDelegate, UICollectionVi
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let post = viewModel.state.posts[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(CollectionListCell.self, input: (post: post, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+        let feed = LiveFeed(live: post.live!, isLiked: false, hasTicket: false, likeCount: 0, participantCount: 0, postCount: 0, participatingFriends: [])
+        let cell = collectionView.dequeueReusableCell(CollectionListCell.self, input: (live: feed, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
         return cell
     }
     

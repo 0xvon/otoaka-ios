@@ -32,6 +32,17 @@ class BrandNavigationController: UINavigationController {
         navigationBar.titleTextAttributes = [
             .foregroundColor: Brand.color(for: .text(.primary))
         ]
+        
+        if #available(iOS 15.0, *) {
+            // disable UINavigation bar transparent
+            let navigationBarAppearance = UINavigationBarAppearance()
+            navigationBarAppearance.titleTextAttributes = [
+                .foregroundColor: Brand.color(for: .text(.primary))
+            ]
+            navigationBarAppearance.backgroundColor = Brand.color(for: .background(.primary))
+            navigationBar.standardAppearance = navigationBarAppearance
+            navigationBar.compactAppearance = navigationBarAppearance
+            navigationBar.scrollEdgeAppearance = navigationBarAppearance
+        }
     }
 }
-

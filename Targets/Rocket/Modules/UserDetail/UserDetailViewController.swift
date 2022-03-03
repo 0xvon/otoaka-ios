@@ -26,8 +26,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
     var cancellables: Set<AnyCancellable> = []
     
     let vc1: UserProfileViewController
-    let vc2: UserStatsViewController
-    let vc3: CollectionListViewController
+    let vc2: LiveHistoryViewController
+    let vc3: SocialTipListViewController
     
     private lazy var headerView: UserDetailHeaderView = {
         let headerView = UserDetailHeaderView()
@@ -57,8 +57,8 @@ final class UserDetailViewController: UIViewController, Instantiable {
         self.pageViewController = PageViewController()
         
         vc1 = UserProfileViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
-        vc2 = UserStatsViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
-        vc3 = CollectionListViewController(dependencyProvider: dependencyProvider, input: .userPost(viewModel.state.user))
+        vc2 = LiveHistoryViewController(dependencyProvider: dependencyProvider, input: viewModel.state.user)
+        vc3 = SocialTipListViewController(dependencyProvider: dependencyProvider, input: .myTip(viewModel.state.user.id))
                 
         super.init(nibName: nil, bundle: nil)
     }
@@ -237,7 +237,11 @@ final class UserDetailViewController: UIViewController, Instantiable {
         pageViewController.embed((
             header: headerView,
             tab: tab,
-            children: [vc1, vc2, vc3]
+            children: [
+                vc1,
+                vc2,
+                vc3,
+            ]
         ))
     }
     
@@ -277,10 +281,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
         var actions: [UIAlertAction] = []
         switch viewModel.state.displayType {
         case .account:
-            let shareProfileAction = UIAlertAction(title: "ライブ参戦数をインスタでシェア", style: .default, handler: { [unowned self] _ in
-                shareUserWithInstagram(user: viewModel.state.user, views: [vc2.scrollStackView])
-                pointViewModel.addPoint(point: 100)
-            })
             let editProfileAction = UIAlertAction(title: "プロフィール編集", style: .default, handler: { [unowned self] _ in
                 let vc = EditUserViewController(dependencyProvider: dependencyProvider, input: ())
                 navigationController?.pushViewController(vc, animated: true)
@@ -296,7 +296,6 @@ final class UserDetailViewController: UIViewController, Instantiable {
                 title: "キャンセル", style: UIAlertAction.Style.cancel,
                 handler: { _ in })
             actions = [
-                shareProfileAction,
                 editProfileAction,
 //                myTipAction,
                 logoutAction,

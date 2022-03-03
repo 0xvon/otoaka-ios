@@ -48,9 +48,52 @@ final class CollectionListCell: UICollectionViewCell, ReusableCell {
     }
 }
 
+class CollectionListHeader: UICollectionReusableView {
+    static var identifier: String { "CollectionListHeader" }
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = Brand.font(for: .xlargeStrong)
+        label.textColor = Brand.color(for: .text(.primary))
+        label.textAlignment = .left
+        return label
+    }()
+    
+//    init() {
+//        super.init(frame: .zero)
+//        setup()
+//    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+    
+    func setup() {
+        backgroundColor = .clear
+        
+        addSubview(titleLabel)
+        NSLayoutConstraint.activate([
+            titleLabel.leftAnchor.constraint(equalTo: leftAnchor),
+            titleLabel.rightAnchor.constraint(equalTo: rightAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+    }
+    
+    func setTitle(_ title: String) {
+        titleLabel.text = title
+    }
+}
+
 class CollectionListCellContent: UIButton {
     typealias Input = (
-        post: PostSummary,
+        live: LiveFeed,
         imagePipeline: ImagePipeline
     )
     enum Output {
@@ -66,24 +109,24 @@ class CollectionListCellContent: UIButton {
         return imageView
     }()
     
-    private lazy var heartView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(systemName: "heart")!
-            .withTintColor(.white, renderingMode: .alwaysOriginal)
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    private lazy var likeCountLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.isUserInteractionEnabled = false
-        label.font = Brand.font(for: .xsmallStrong)
-        label.lineBreakMode = .byTruncatingTail
-        label.textColor = Brand.color(for: .text(.primary))
-        return label
-    }()
+//    private lazy var heartView: UIImageView = {
+//        let imageView = UIImageView()
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        imageView.image = UIImage(systemName: "heart")!
+//            .withTintColor(.white, renderingMode: .alwaysOriginal)
+//        imageView.clipsToBounds = true
+//        imageView.contentMode = .scaleAspectFit
+//        return imageView
+//    }()
+//    private lazy var likeCountLabel: UILabel = {
+//        let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.isUserInteractionEnabled = false
+//        label.font = Brand.font(for: .xsmallStrong)
+//        label.lineBreakMode = .byTruncatingTail
+//        label.textColor = Brand.color(for: .text(.primary))
+//        return label
+//    }()
     private lazy var liveTitleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -117,19 +160,17 @@ class CollectionListCellContent: UIButton {
     }
     
     func inject(input: Input) {
-        liveTitleLabel.text = input.post.live?.title
-        switch input.post.live?.style {
+        liveTitleLabel.text = input.live.live.title
+        switch input.live.live.style {
         case .oneman(let group):
             self.groupNameLabel.text = group.name
         case .battle(let groups):
             self.groupNameLabel.text = groups[0].name + "..."
         case .festival(let groups):
             self.groupNameLabel.text = groups[0].name + "..."
-        case .none:
-            self.groupNameLabel.text = nil
         }
-        likeCountLabel.text = String(input.post.likeCount)
-        if let url = input.post.live?.artworkURL ?? input.post.live?.hostGroup.artworkURL {
+//        likeCountLabel.text = String(input.post.likeCount)
+        if let url = input.live.live.artworkURL ?? input.live.live.hostGroup.artworkURL {
             input.imagePipeline.loadImage(url, into: thumbnailView)
         } else {
             thumbnailView.image = Brand.color(for: .background(.light)).image
@@ -139,7 +180,7 @@ class CollectionListCellContent: UIButton {
     func prepare() {
         liveTitleLabel.text = nil
         groupNameLabel.text = nil
-        likeCountLabel.text = nil
+//        likeCountLabel.text = nil
         thumbnailView.image = nil
     }
     
@@ -170,19 +211,19 @@ class CollectionListCellContent: UIButton {
             groupNameLabel.heightAnchor.constraint(equalToConstant: 13.4)
         ])
         
-        addSubview(heartView)
-        NSLayoutConstraint.activate([
-            heartView.widthAnchor.constraint(equalToConstant: 20),
-            heartView.heightAnchor.constraint(equalTo: heartView.widthAnchor),
-            heartView.bottomAnchor.constraint(equalTo: thumbnailView.bottomAnchor, constant: -8),
-            heartView.leftAnchor.constraint(equalTo: thumbnailView.leftAnchor, constant: 8),
-        ])
-
-        addSubview(likeCountLabel)
-        NSLayoutConstraint.activate([
-            likeCountLabel.centerYAnchor.constraint(equalTo: heartView.centerYAnchor),
-            likeCountLabel.leftAnchor.constraint(equalTo: heartView.rightAnchor, constant: 4),
-            likeCountLabel.rightAnchor.constraint(equalTo: thumbnailView.rightAnchor, constant: -8)
-        ])
+//        addSubview(heartView)
+//        NSLayoutConstraint.activate([
+//            heartView.widthAnchor.constraint(equalToConstant: 20),
+//            heartView.heightAnchor.constraint(equalTo: heartView.widthAnchor),
+//            heartView.bottomAnchor.constraint(equalTo: thumbnailView.bottomAnchor, constant: -8),
+//            heartView.leftAnchor.constraint(equalTo: thumbnailView.leftAnchor, constant: 8),
+//        ])
+//
+//        addSubview(likeCountLabel)
+//        NSLayoutConstraint.activate([
+//            likeCountLabel.centerYAnchor.constraint(equalTo: heartView.centerYAnchor),
+//            likeCountLabel.leftAnchor.constraint(equalTo: heartView.rightAnchor, constant: 4),
+//            likeCountLabel.rightAnchor.constraint(equalTo: thumbnailView.rightAnchor, constant: -8)
+//        ])
     }
 }

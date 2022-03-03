@@ -110,18 +110,8 @@ final class RootViewController: UITabBarController, Instantiable {
         
         let timelineVC = BrandNavigationController(rootViewController: SocialTipListViewController(dependencyProvider: loggedInProvider, input: .allTip))
         timelineVC.tabBarItem = UITabBarItem(title: "snack", image: UIImage(systemName: "flame"), selectedImage: UIImage(systemName: "flame.fill"))
-//        let rankingVC = BrandNavigationController(rootViewController: GroupRankingListViewController(dependencyProvider: loggedInProvider, input: .entriedGroup))
-//        rankingVC.tabBarItem = UITabBarItem(
-//            title: "ランキング",
-//            image: UIImage(systemName: "chart.bar"),
-//            selectedImage: UIImage(systemName: "chart.bar.fill")
-//        )
         let searchVC = BrandNavigationController(rootViewController: SearchViewController(dependencyProvider: loggedInProvider))
         searchVC.tabBarItem = UITabBarItem(title: "探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
-        
-        let nichiTagVC = BrandNavigationController(rootViewController: NichiTagCanvasViewController(dependencyProvider: loggedInProvider, input: ()))
-        nichiTagVC.tabBarItem = UITabBarItem(title: "日タグ", image: UIImage(systemName: "tag"), selectedImage: UIImage(systemName: "tag.fill"))
-        
         let accountVC = UserDetailViewController(dependencyProvider: loggedInProvider, input: loggedInProvider.user)
         let accountNav = BrandNavigationController(
             rootViewController: accountVC
@@ -138,7 +128,6 @@ final class RootViewController: UITabBarController, Instantiable {
             homeVC,
             timelineVC,
             searchVC,
-            nichiTagVC,
             accountNav,
         ]
     }

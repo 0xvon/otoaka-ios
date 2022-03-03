@@ -26,22 +26,22 @@ public final class UserDetailTabView: UIView {
     private lazy var profileButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "person")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "person")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
+        button.setImage(UIImage(systemName: "person.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "person.fill")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
         return button
     }()
     private lazy var statsButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "chart.bar")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "chart.bar")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
+        button.setImage(UIImage(systemName: "music.note.house.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "music.note.house.fill")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
         return button
     }()
     private lazy var myPostButton: TabItemButton = {
         let button = TabItemButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "doc.text")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
-        button.setImage(UIImage(systemName: "doc.text")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
+        button.setImage(UIImage(systemName: "flame.fill")!.withTintColor(.white, renderingMode: .alwaysOriginal), for: .normal)
+        button.setImage(UIImage(systemName: "flame.fill")!.withTintColor(Brand.color(for: .brand(.primary)), renderingMode: .alwaysOriginal), for: .selected)
         return button
     }()
     

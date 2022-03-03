@@ -106,7 +106,7 @@ final class SocialTipListViewController: UIViewController, Instantiable {
     }
     
     private func setup() {
-        view.backgroundColor = Brand.color(for: .background(.primary))
+        view.backgroundColor = .clear
         
         tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -206,5 +206,12 @@ extension SocialTipListViewController: UITableViewDelegate, UITableViewDataSourc
                 backgroundView.centerXAnchor.constraint(equalTo: tableView.centerXAnchor),
             ])
         }
+    }
+}
+
+extension SocialTipListViewController: PageContent {
+    var scrollView: UIScrollView {
+        _ = view
+        return self.tableView
     }
 }
