@@ -125,11 +125,18 @@ class LiveHistoryViewModel {
         }
     }
     
-    func inject(_ sequence: Sequence) {
-        state.sequence = sequence
-        self.storage = DataSourceStorage(sequence: sequence, userId: state.user.id, apiClient: apiClient)
+    func inject() {
+        switch state.sequence {
+        case .group:
+            state.sequence = .year
+        case .year:
+            state.sequence = .group
+        }
+        state.sections = []
+        self.storage = DataSourceStorage(sequence: state.sequence, userId: state.user.id, apiClient: apiClient)
         subscribe(storage: storage)
         refresh()
+        
     }
     
     func refresh() {

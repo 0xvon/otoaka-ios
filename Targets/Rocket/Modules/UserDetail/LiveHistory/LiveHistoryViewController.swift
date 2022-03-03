@@ -42,10 +42,6 @@ final class LiveHistoryViewController: UIViewController, Instantiable {
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
     
-    func inject(_ sequence: LiveHistoryViewModel.Sequence) {
-        viewModel.inject(sequence)
-    }
-    
     func setup() {
         view.backgroundColor = .clear
         
@@ -54,6 +50,7 @@ final class LiveHistoryViewController: UIViewController, Instantiable {
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
         collectionView.registerCellClass(CollectionListCell.self)
+        collectionView.registerCellClass(LiveHistoryHeader.self)
         collectionView.register(CollectionListHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CollectionListHeader.identifier)
         view.addSubview(collectionView)
         collectionView.delegate = self
@@ -66,8 +63,22 @@ final class LiveHistoryViewController: UIViewController, Instantiable {
     
     func createLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { [unowned self] (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
-            return self.section()
+            switch sectionIndex {
+            case 0: return headerSection()
+            default: return section()
+            }
         }
+    }
+    
+    private func headerSection() -> NSCollectionLayoutSection {
+        let verticalRectangleItem = NSCollectionLayoutItem(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        )
+        let verticalRectangleGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(32)),
+            subitem: verticalRectangleItem, count: 1
+        )
+        return NSCollectionLayoutSection(group: verticalRectangleGroup)
     }
     
     private func section() -> NSCollectionLayoutSection {
@@ -122,29 +133,44 @@ final class LiveHistoryViewController: UIViewController, Instantiable {
 
 extension LiveHistoryViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return viewModel.state.sections.count
+        return viewModel.state.sections.count + 1
     }
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let sectionTitle = viewModel.state.sections[section]
-        return viewModel.sectionItems(section: sectionTitle).count
+        switch section {
+        case 0: return 1
+        default:
+            let sectionTitle = viewModel.state.sections[section - 1]
+            return viewModel.sectionItems(section: sectionTitle).count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let sectionTitle = viewModel.state.sections[indexPath.section]
-        let sectionLives = viewModel.sectionItems(section: sectionTitle)
-        let live = sectionLives[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(CollectionListCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
-        return cell
+        switch indexPath.section {
+        case 0:
+            let cell = collectionView.dequeueReusableCell(LiveHistoryHeader.self, input: (), for: indexPath)
+            cell.listen { [unowned self] in
+                viewModel.inject()
+            }
+            return cell
+        default:
+            let sectionTitle = viewModel.state.sections[indexPath.section - 1]
+            let sectionLives = viewModel.sectionItems(section: sectionTitle)
+            let live = sectionLives[indexPath.item]
+            let cell = collectionView.dequeueReusableCell(CollectionListCell.self, input: (live: live, imagePipeline: dependencyProvider.imagePipeline), for: indexPath)
+            return cell
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let sectionTitle = viewModel.state.sections[indexPath.section]
-        let sectionLives = viewModel.sectionItems(section: sectionTitle)
-        let live = sectionLives[indexPath.item]
-        
-        let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live.live)
-        navigationController?.pushViewController(vc, animated: true)
-        collectionView.deselectItem(at: indexPath, animated: true)
+        if indexPath.section > 0 {
+            let sectionTitle = viewModel.state.sections[indexPath.section - 1]
+            let sectionLives = viewModel.sectionItems(section: sectionTitle)
+            let live = sectionLives[indexPath.item]
+            
+            let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live.live)
+            navigationController?.pushViewController(vc, animated: true)
+            collectionView.deselectItem(at: indexPath, animated: true)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -152,7 +178,7 @@ extension LiveHistoryViewController: UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let sectionTitle = viewModel.state.sections[indexPath.section]
+        let sectionTitle = viewModel.state.sections[indexPath.section - 1]
         let header = collectionView.dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: CollectionListHeader.identifier,
@@ -191,5 +217,58 @@ extension LiveHistoryViewController: PageContent {
     var scrollView: UIScrollView {
         _ = view
         return self.collectionView
+    }
+}
+
+class LiveHistoryHeader: UICollectionViewCell, ReusableCell {
+    static var reusableIdentifier: String { "LiveHistoryHeader" }
+    
+    typealias Input = Void
+    typealias Output = Void
+    private let _contentView: SummarySectionHeader
+    public let filterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        button.setTitle("年", for: .normal)
+        button.setTitle("アーティスト", for: .selected)
+        button.setImage(UIImage(systemName: "arrow.left.arrow.right")?.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), for: .normal)
+        button.titleLabel?.font = Brand.font(for: .mediumStrong)
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
+        return button
+    }()
+    override init(frame: CGRect) {
+        _contentView = SummarySectionHeader(title: "ライブ履歴")
+        super.init(frame: frame)
+        _contentView.translatesAutoresizingMaskIntoConstraints = false
+        _contentView.isUserInteractionEnabled = true
+        backgroundColor = .clear
+        contentView.addSubview(_contentView)
+        NSLayoutConstraint.activate([
+            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: -16),
+            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: -16),
+            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+        ])
+        
+        _contentView.seeMoreButton.isHidden = true
+        _contentView.addArrangedSubview(filterButton)
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func inject(input: Input) {
+    }
+    
+    @objc private func filterButtonTapped() {
+        filterButton.isSelected.toggle()
+        self.listener()
+    }
+    
+    private var listener: () -> Void = {}
+    func listen(_ listener: @escaping () -> Void) {
+        self.listener = listener
     }
 }

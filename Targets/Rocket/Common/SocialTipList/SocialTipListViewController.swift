@@ -16,6 +16,29 @@ final class SocialTipListViewController: UIViewController, Instantiable {
     let dependencyProvider: LoggedInDependencyProvider
 
     var tableView: UITableView!
+    private lazy var _contentView: SummarySectionHeader = {
+        let _contentView = SummarySectionHeader(title: "snack履歴")
+        _contentView.translatesAutoresizingMaskIntoConstraints = false
+        _contentView.seeMoreButton.isHidden = true
+        _contentView.addArrangedSubview(filterButton)
+        NSLayoutConstraint.activate([
+            _contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+        ])
+        return _contentView
+    }()
+    public lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
+        button.setTitle("時系列", for: .normal)
+        button.setTitle("アーティスト", for: .selected)
+        button.setImage(UIImage(systemName: "arrow.left.arrow.right")?.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), for: .normal)
+        button.titleLabel?.font = Brand.font(for: .mediumStrong)
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
+        return button
+    }()
+    
     let viewModel: SocialTipListViewModel
     private var cancellables: [AnyCancellable] = []
     
@@ -79,6 +102,10 @@ final class SocialTipListViewController: UIViewController, Instantiable {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
+    }
+    
+    @objc private func filterButtonTapped() {
+        filterButton.isSelected.toggle()
     }
     
     private func bind() {
@@ -147,18 +174,18 @@ extension SocialTipListViewController: UITableViewDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if case .allTip  = viewModel.dataSource {
-            return 138
-        } else {
-            return 0
+        switch viewModel.dataSource {
+        case .allTip: return 138
+        case .myTip: return 32
+        default: return 0
         }
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if case .allTip  = viewModel.dataSource {
-            return header
-        } else {
-            return nil
+        switch viewModel.dataSource {
+        case .allTip: return header
+        case .myTip: return _contentView
+        default: return nil
         }
     }
     

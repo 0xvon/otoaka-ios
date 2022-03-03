@@ -13,6 +13,8 @@ public final class LiveScheduleTableView: UITableView {
     public var liveFeeds: [LiveFeed] = []
     public var imagePipeline: ImagePipeline
     
+    private lazy var transparentView = transparentView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 76))
+    
     public init(liveFeeds: [LiveFeed], imagePipeline: ImagePipeline) {
         self.liveFeeds = liveFeeds
         self.imagePipeline = imagePipeline
@@ -40,6 +42,18 @@ public final class LiveScheduleTableView: UITableView {
         showsHorizontalScrollIndicator = false
     }
     
+    func transparentView(frame: CGRect) -> UIView {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        let gradientLayer = CAGradientLayer()
+        let topColor = UIColor.clear.withAlphaComponent(0.0).cgColor
+        let bottomColor = Brand.color(for: .background(.primary)).withAlphaComponent(1.0).cgColor
+        gradientLayer.colors = [topColor, bottomColor]
+        gradientLayer.frame = frame
+        view.layer.insertSublayer(gradientLayer, at: 0)
+        return view
+    }
+    
     private var listener: (LiveFeed) -> Void = { _ in }
     public func listen(_ listener: @escaping (LiveFeed) -> Void) {
         self.listener = listener
@@ -65,6 +79,9 @@ extension LiveScheduleTableView: UITableViewDelegate, UITableViewDataSource {
         }
         
         let cell = tableView.dequeueReusableCell(LiveScheduleCell.self, input: (live: liveFeed, imagePipeline: imagePipeline, order: order), for: indexPath)
+        if case .last = order {
+            cell.addSubview(transparentView)
+        }
         return cell
     }
     

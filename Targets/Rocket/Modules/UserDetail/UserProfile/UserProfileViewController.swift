@@ -55,19 +55,6 @@ final class UserProfileViewController: UIViewController, Instantiable {
         return content
     }()
     
-    private static func addPadding(to view: UIView) -> UIView {
-        let paddingView = UIView()
-        paddingView.addSubview(view)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            view.leftAnchor.constraint(equalTo: paddingView.leftAnchor, constant: 16),
-            paddingView.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 16),
-            view.topAnchor.constraint(equalTo: paddingView.topAnchor),
-            view.bottomAnchor.constraint(equalTo: paddingView.bottomAnchor),
-        ])
-        return paddingView
-    }
-    
     init(dependencyProvider: LoggedInDependencyProvider, input: Input) {
         self.dependencyProvider = dependencyProvider
         self.viewModel = UserProfileViewModel(dependencyProvider: dependencyProvider, input: input)
@@ -141,6 +128,23 @@ final class UserProfileViewController: UIViewController, Instantiable {
                 groupBannerTapped(cellIndex: cellIndex)
             }
             followingCellWrapper.addArrangedSubview(cellContent)
+            
+            if cellIndex == (rankings.count - 1) {
+                let transparentView = transparentView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 92))
+                cellContent.addSubview(transparentView)
+            }
+        }
+        
+        func transparentView(frame: CGRect) -> UIView {
+            let view = UIView()
+            view.translatesAutoresizingMaskIntoConstraints = false
+            let gradientLayer = CAGradientLayer()
+            let topColor = UIColor.clear.withAlphaComponent(0.0).cgColor
+            let bottomColor = Brand.color(for: .background(.primary)).withAlphaComponent(1.0).cgColor
+            gradientLayer.colors = [topColor, bottomColor]
+            gradientLayer.frame = frame
+            view.layer.insertSublayer(gradientLayer, at: 0)
+            return view
         }
         
         if rankings.isEmpty {
