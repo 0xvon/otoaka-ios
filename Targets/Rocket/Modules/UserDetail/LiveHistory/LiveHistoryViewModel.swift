@@ -34,11 +34,13 @@ class LiveHistoryViewModel {
             case .year:
                 var uri = GetLikedLive.URI()
                 uri.userId = userId
+                uri.sort = "year"
                 let request = PaginationRequest<GetLikedLive>(apiClient: apiClient, uri: uri)
                 self = .year(request)
             case .group:
                 var uri = GetLikedLive.URI()
                 uri.userId = userId
+                uri.sort = "group"
                 let request = PaginationRequest<GetLikedLive>(apiClient: apiClient, uri: uri)
                 self = .group(request)
             }

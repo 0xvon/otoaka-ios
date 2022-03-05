@@ -159,8 +159,8 @@ public class GroupCellContent: UIButton {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 24
         button.isUserInteractionEnabled = true
-        button.setTitle("フォローする", selected: false)
-        button.setTitle("フォロー中", selected: true)
+        button.setTitle("スキ", selected: false)
+        button.setTitle("スキ", selected: true)
         button.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         button.isEnabled = false
         return button

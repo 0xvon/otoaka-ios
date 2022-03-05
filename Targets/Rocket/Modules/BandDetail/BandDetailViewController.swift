@@ -38,8 +38,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private let followersSummaryView = CountSummaryView()
     private let followButton: ToggleButton = {
         let followButton = ToggleButton()
-        followButton.setTitle("フォローする", selected: false)
-        followButton.setTitle("フォロー中", selected: true)
+        followButton.setTitle("スキ", selected: false)
+        followButton.setTitle("スキ", selected: true)
         followButton.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
         return followButton
     }()
@@ -117,8 +117,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }
     private let coachMarksController = CoachMarksController()
     private lazy var coachSteps: [CoachStep] = [
-        CoachStep(view: followButton, hint: "好きなアーティストをフォローしよう！フォローするといいことがたくさんあります！", next: "ok"),
-        CoachStep(view: socialTipButton, hint: "アーティストにsnackしよう！snackをするとあなたがアーティストを宣伝・応援できます！", next: "ok"),
+        CoachStep(view: followButton, hint: "好きなアーティストがいたら「スキ」に登録しよう！", next: "ok"),
+        CoachStep(view: socialTipButton, hint: "大好きなアーティストにsnackしよう！snackをするとあなたがアーティストを宣伝・応援できます！", next: "ok"),
     ]
     
     private let refreshControl = BrandRefreshControl()

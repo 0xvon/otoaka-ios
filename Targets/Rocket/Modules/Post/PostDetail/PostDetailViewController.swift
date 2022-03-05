@@ -54,7 +54,7 @@ final class PostDetailViewController: UIViewController, Instantiable {
         postView.addArrangedSubview(sectionView)
         NSLayoutConstraint.activate([
             sectionView.widthAnchor.constraint(equalTo: postView.widthAnchor),
-            sectionView.heightAnchor.constraint(equalToConstant: 32),
+            sectionView.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         let bottomSpacer = UIView()
@@ -175,16 +175,6 @@ final class PostDetailViewController: UIViewController, Instantiable {
         sectionView.distribution = .fill
         sectionView.axis = .horizontal
         
-        sectionView.addArrangedSubview(commentButtonView)
-        NSLayoutConstraint.activate([
-            commentButtonView.widthAnchor.constraint(equalToConstant: 60),
-        ])
-        
-        sectionView.addArrangedSubview(likeButtonView)
-        NSLayoutConstraint.activate([
-            likeButtonView.widthAnchor.constraint(equalToConstant: 60),
-        ])
-        
         sectionView.addArrangedSubview(dateLabel)
         
         let rightSpacer = UIView()
@@ -195,31 +185,6 @@ final class PostDetailViewController: UIViewController, Instantiable {
         ])
         
         return sectionView
-    }()
-    private lazy var commentButtonView: ReactionIndicatorButton = {
-        let commentButton = ReactionIndicatorButton()
-        commentButton.translatesAutoresizingMaskIntoConstraints = false
-        commentButton.setImage(
-            UIImage(systemName: "message")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
-            for: .normal
-        )
-        commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
-        return commentButton
-    }()
-    private lazy var likeButtonView: ReactionIndicatorButton = {
-        let likeButton = ReactionIndicatorButton()
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-        likeButton.setImage(
-            UIImage(systemName: "heart")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
-            for: .normal)
-        likeButton.setImage(
-            UIImage(systemName: "heart.fill")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
-            for: .selected)
-        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
-        return likeButton
     }()
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
@@ -368,11 +333,6 @@ final class PostDetailViewController: UIViewController, Instantiable {
                 imageGalleryView.inject(images: .url(post.imageUrls.compactMap { URL(string: $0) }))
                 imageGalleryView.isHidden = post.imageUrls.isEmpty
                 
-                commentButtonView.setTitle("DM", for: .normal)
-                commentButtonView.isEnabled = true
-                likeButtonView.setTitle("\(post.likeCount)", for: .normal)
-                likeButtonView.isSelected = post.isLiked
-                likeButtonView.isEnabled = true
                 dateLabel.text = post.createdAt.toFormatString(format: "yyyy/MM/dd")
             case .error(let err):
                 refreshControl.endRefreshing()
@@ -418,17 +378,6 @@ final class PostDetailViewController: UIViewController, Instantiable {
     @objc private func settingTapped() {
         guard let post = viewModel.state.post else { return }
         postActionViewModel.postCellEvent(post, event: .settingTapped)
-    }
-    
-    @objc private func likeButtonTapped() {
-        likeButtonView.isEnabled = false
-        guard let post = viewModel.state.post else { return }
-        postActionViewModel.postCellEvent(post, event: .likeTapped)
-    }
-    
-    @objc private func commentButtonTapped() {
-        guard let post = viewModel.state.post else { return }
-        postActionViewModel.postCellEvent(post, event: .commentTapped)
     }
     
     @objc private func liveTapped() {

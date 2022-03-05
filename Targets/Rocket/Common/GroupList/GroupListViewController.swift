@@ -81,7 +81,7 @@ final class GroupListViewController: UIViewController, Instantiable {
         tableView.backgroundColor = .clear
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.registerCellClass(GroupCell.self)
+        tableView.registerCellClass(GroupBannerCell.self)
         
         tableView.refreshControl = BrandRefreshControl()
         tableView.refreshControl?.addTarget(
@@ -122,16 +122,14 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var group = self.viewModel.state.groups[indexPath.row]
-        let type: GroupCellContent.GroupCellContentType
+        let type: GroupBannerCellContent.GroupBannerCellContentType
         switch viewModel.dataSource {
-        case .allGroup:
-            type = .normal
         case .searchResultsToSelect(_):
             type = .select
         default:
             type = .normal
         }
-        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: type), for: indexPath)
+        let cell = tableView.dequeueReusableCell(GroupBannerCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: type), for: indexPath)
         
         cell.listen { [unowned self] output in
             switch output {
@@ -146,14 +144,13 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
                     nav?.pushViewController(vc, animated: true)
                 case .none: break
                 }
-            case .likeButtonTapped:
+            case .followTapped:
                 group.isFollowing
                    ? pointViewModel.usePoint(point: 100)
                    : pointViewModel.addPoint(point: 100)
                 viewModel.followButtonTapped(group: group)
                 group.isFollowing.toggle()
                 viewModel.updateGroup(group: group)
-            case .listenButtonTapped: break
             }
         }
         return cell

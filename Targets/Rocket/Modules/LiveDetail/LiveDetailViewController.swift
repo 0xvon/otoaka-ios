@@ -36,7 +36,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     }()
     
     private let likeCountSummaryView = CountSummaryView()
-    private let postCountSummaryView = CountSummaryView()
     private let liveActionButton: PrimaryButton = {
         let button = PrimaryButton(text: "")
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -62,7 +61,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         return stackView
     }()
     
-    private let postSectionHeader = SummarySectionHeader(title: "みんなの感想")
+    private let postSectionHeader = SummarySectionHeader(title: "マイレポート")
     // FIXME: Use a safe way to instantiate views from xib
     private lazy var postCellContent: PostCellContent = {
         let content = UINib(nibName: "PostCellContent", bundle: nil)
@@ -74,6 +73,12 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         return content
     }()
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
+    private lazy var postView: PostView = {
+        let postView = PostView()
+        postView.translatesAutoresizingMaskIntoConstraints = false
+        return postView
+    }()
+    private lazy var postViewWrapper: UIView = Self.addPadding(to: postView)
     
     private let participatingFriendSectionHeader = SummarySectionHeader(title: "参戦する友達")
     private lazy var participatingFriendContent: StoryCollectionView = {
@@ -187,7 +192,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         ])
         
         ticketStackView.addArrangedSubview(likeCountSummaryView)
-        ticketStackView.addArrangedSubview(postCountSummaryView)
         ticketStackView.addArrangedSubview(liveActionButton)
         
         NSLayoutConstraint.activate([
@@ -209,13 +213,17 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         performersCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(performersCellWrapper)
         
+        postSectionHeader.seeMoreButton.isHidden = true
         scrollStackView.addArrangedSubview(postSectionHeader)
         NSLayoutConstraint.activate([
             postSectionHeader.heightAnchor.constraint(equalToConstant: 64),
         ])
         postCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(postCellWrapper)
+        postViewWrapper.isHidden = true
+        scrollStackView.addArrangedSubview(postViewWrapper)
         
+        participatingFriendSectionHeader.seeMoreButton.isHidden = true
         scrollStackView.addArrangedSubview(participatingFriendSectionHeader)
         NSLayoutConstraint.activate([
             participatingFriendSectionHeader.heightAnchor.constraint(equalToConstant: 64),
@@ -228,6 +236,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             bottomSpacer.heightAnchor.constraint(equalToConstant: 64),
         ])
+        
+        postView.setText(nil)
     }
     
     override func viewDidLoad() {
@@ -323,8 +333,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 let vc = UserDetailViewController(dependencyProvider: dependencyProvider, input: user)
                 self.navigationController?.pushViewController(vc, animated: true)
             case .pushToPostDetail(let post):
-                let vc = PostDetailViewController(dependencyProvider: dependencyProvider, input: post.post)
-                self.navigationController?.pushViewController(vc, animated: true)
+                postCellWrapper.isHidden = true
+                postViewWrapper.isHidden = false
+                postView.setText(post.text)
             case .pushToLiveDetail(let live):
                 let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live)
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -353,20 +364,15 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 self.title = liveDetail.live.title
                 headerView.update(input: (live: liveDetail.live, imagePipeline: dependencyProvider.imagePipeline))
                 likeCountSummaryView.update(input: (title: "参戦", count: liveDetail.likeCount))
-                postCountSummaryView.update(input: (title: "感想", count: liveDetail.postCount))
                 likeButton.isSelected = liveDetail.isLiked
                 likeButton.isEnabled = true
                 refreshControl.endRefreshing()
+                liveActionButton.isHidden = false
+                liveActionButton.setTitle("チケット申込", for: .normal)
+                liveActionButton.isEnabled = (viewModel.state.live.piaEventUrl != nil)
                 if viewModel.isLivePast() {
-                    liveActionButton.isHidden = false
-                    liveActionButton.setTitle("感想を書く", for: .normal)
                     likeButton.setTitle("行った", for: .normal)
                     likeButton.setTitle("参戦済", for: .selected)
-                } else if viewModel.state.live.piaEventUrl != nil {
-                    liveActionButton.isHidden = false
-                    liveActionButton.setTitle("チケット申込", for: .normal)
-                    likeButton.setTitle("行く", for: .normal)
-                    likeButton.setTitle("参戦予定", for: .selected)
                 } else {
                     liveActionButton.isHidden = true
                     likeButton.setTitle("行く", for: .normal)
@@ -378,8 +384,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 participatingFriendContent.inject(dataSource: .users(liveDetail.participatingFriends))
             case .updatePostSummary(let post):
                 let isHidden = post == nil || !viewModel.isLivePast()
-                self.postSectionHeader.isHidden = isHidden
+                self.postSectionHeader.isHidden = false
                 self.postCellWrapper.isHidden = isHidden
+                self.postViewWrapper.isHidden = !isHidden
                 if let post = post {
                     self.postCellContent.inject(
                         input: (
@@ -389,7 +396,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                         )
                     )
                 }
-            case .didDeletePost:
+            case .didDeletePost, .didCreatePost:
                 viewModel.refresh()
             case .reportError(let error):
                 print(error)
@@ -433,7 +440,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         
         postCellContent.listen { [unowned self] output in
             guard let post = viewModel.state.posts.first else { return }
-            self.postActionViewModel.postCellEvent(post, event: output)
+            postActionViewModel.postCellEvent(post, event: output)
         }
         
         postSectionHeader.listen { [unowned self] in
@@ -456,9 +463,14 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             UITapGestureRecognizer(target: self, action: #selector(likeCountTapped))
         )
         
-        postCountSummaryView.addGestureRecognizer(
-            UITapGestureRecognizer(target: self, action: #selector(postCountTapped))
-        )
+        postView.listen { [unowned self] output in
+            switch output {
+            case .textDidChange(let text):
+                viewModel.updatePostText(text)
+            case .buttonTapped:
+                viewModel.post()
+            }
+        }
     }
     
     func setupPerformersContents(performers: [Group]) {
@@ -468,9 +480,13 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         }
         
         performers.enumerated().forEach { (cellIndex, performer) in
-            let cellContent = GroupBannerCell()
-            cellContent.update(input: (group: performer, imagePipeline: dependencyProvider.imagePipeline))
-            cellContent.listen { [unowned self] in
+            let cellContent = GroupBannerCellContent()
+            cellContent.update(input: (
+                group: GroupFeed(group: performer, isFollowing: false, followersCount: 0, watchingCount: 0, isEntried: performer.isEntried),
+                imagePipeline: dependencyProvider.imagePipeline,
+                type: .select
+            ))
+            cellContent.listen { [unowned self] _ in
                 groupBannerTapped(cellIndex: cellIndex)
             }
             performersCellWrapper.addArrangedSubview(cellContent)
@@ -494,10 +510,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     @objc private func likeCountTapped() {
         viewModel.likeCountTapped()
-    }
-    
-    @objc private func postCountTapped() {
-        viewModel.postCountTapped()
     }
     
     @objc private func likeButtonTapped() {

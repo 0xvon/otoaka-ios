@@ -133,31 +133,20 @@ public class PostCellContent: UIButton {
         textStackView.spacing = 8
         
         textStackView.addArrangedSubview(textView)
-        textStackView.addSubview(seeMoreButton)
-        NSLayoutConstraint.activate([
-            seeMoreButton.bottomAnchor.constraint(equalTo: textView.bottomAnchor),
-            seeMoreButton.leftAnchor.constraint(equalTo: textView.leftAnchor),
-            seeMoreButton.rightAnchor.constraint(equalTo: textView.rightAnchor),
-        ])
-        textStackView.addArrangedSubview(liveCardCell)
-        NSLayoutConstraint.activate([
-            textStackView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 2 / 3),
-            liveCardCell.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3),
-        ])
         
         postView.addArrangedSubview(textStackView)
         NSLayoutConstraint.activate([
             textStackView.widthAnchor.constraint(equalTo: postView.widthAnchor),
         ])
         
-        let spacer = UIView()
-        spacer.translatesAutoresizingMaskIntoConstraints = false
-        postView.addArrangedSubview(spacer)
+//        let spacer = UIView()
+//        spacer.translatesAutoresizingMaskIntoConstraints = false
+//        postView.addArrangedSubview(spacer)
         
         postView.addArrangedSubview(sectionView)
         NSLayoutConstraint.activate([
             sectionView.widthAnchor.constraint(equalTo: postView.widthAnchor),
-            sectionView.heightAnchor.constraint(equalToConstant: 32),
+            sectionView.heightAnchor.constraint(equalToConstant: 20),
         ])
         
         return postView
@@ -178,32 +167,26 @@ public class PostCellContent: UIButton {
         NSLayoutConstraint.activate([
             usernameLabel.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
             usernameLabel.leftAnchor.constraint(equalTo: avatarImageView.rightAnchor, constant: 8),
+            usernameLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
         ])
+//
+//        view.addSubview(settingButton)
+//        NSLayoutConstraint.activate([
+//            settingButton.widthAnchor.constraint(equalToConstant: 24),
+//            settingButton.heightAnchor.constraint(equalTo: settingButton.widthAnchor),
+//            settingButton.topAnchor.constraint(equalTo: usernameLabel.topAnchor),
+//            settingButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
+//            settingButton.leftAnchor.constraint(equalTo: usernameLabel.rightAnchor, constant: 4),
+//        ])
         
-        view.addSubview(settingButton)
-        NSLayoutConstraint.activate([
-            settingButton.widthAnchor.constraint(equalToConstant: 24),
-            settingButton.heightAnchor.constraint(equalTo: settingButton.widthAnchor),
-            settingButton.topAnchor.constraint(equalTo: usernameLabel.topAnchor),
-            settingButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8),
-            settingButton.leftAnchor.constraint(equalTo: usernameLabel.rightAnchor, constant: 4),
-        ])
-        
-        view.addSubview(trackNameLabel)
-        NSLayoutConstraint.activate([
-            trackNameLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor),
-            trackNameLabel.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
-            trackNameLabel.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
-        ])
+//        view.addSubview(trackNameLabel)
+//        NSLayoutConstraint.activate([
+//            trackNameLabel.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor),
+//            trackNameLabel.leftAnchor.constraint(equalTo: usernameLabel.leftAnchor),
+//            trackNameLabel.rightAnchor.constraint(equalTo: usernameLabel.rightAnchor),
+//        ])
         
         return view
-    }()
-    private lazy var liveCardCell: LiveCardCellContent = {
-        let contentView = LiveCardCellContent()
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        contentView.isUserInteractionEnabled = true
-        contentView.addTarget(self, action: #selector(liveTapped), for: .touchUpInside)
-        return contentView
     }()
     private lazy var textView: UITextView = {
         let textView = UITextView()
@@ -212,7 +195,7 @@ public class PostCellContent: UIButton {
         textView.isScrollEnabled = false
         textView.isUserInteractionEnabled = true
         textView.textContainer.lineBreakMode = .byTruncatingTail
-        textView.textContainer.maximumNumberOfLines = 10
+//        textView.textContainer.maximumNumberOfLines = 10
         textView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(selfTapped)))
         textView.backgroundColor = .clear
         textView.isEditable = false
@@ -223,43 +206,22 @@ public class PostCellContent: UIButton {
         textView.textAlignment = .left
         return textView
     }()
-    private lazy var seeMoreButton: UIButton = {
-        let button = UIButton()
-        button.backgroundColor = Brand.color(for: .background(.primary))
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("続きを読む", for: .normal)
-        button.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
-        button.contentHorizontalAlignment = .left
-        button.titleLabel?.font = Brand.font(for: .medium)
-        button.addTarget(self, action: #selector(selfTapped), for: .touchUpInside)
-        return button
-    }()
-    private lazy var settingButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(
-            UIImage(systemName: "ellipsis")!
-                .withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
-            for: .normal
-        )
-        button.addTarget(self, action: #selector(settingTapped), for: .touchUpInside)
-        return button
-    }()
+//    private lazy var settingButton: UIButton = {
+//        let button = UIButton()
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        button.setImage(
+//            UIImage(systemName: "ellipsis")!
+//                .withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal),
+//            for: .normal
+//        )
+//        button.addTarget(self, action: #selector(settingTapped), for: .touchUpInside)
+//        return button
+//    }()
     private lazy var sectionView: UIStackView = {
         let sectionView = UIStackView()
         sectionView.translatesAutoresizingMaskIntoConstraints = false
         sectionView.distribution = .fill
         sectionView.axis = .horizontal
-        
-        sectionView.addArrangedSubview(commentButtonView)
-        NSLayoutConstraint.activate([
-            commentButtonView.widthAnchor.constraint(equalToConstant: 80),
-        ])
-        
-        sectionView.addArrangedSubview(likeButtonView)
-        NSLayoutConstraint.activate([
-            likeButtonView.widthAnchor.constraint(equalToConstant: 60),
-        ])
         
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
@@ -268,31 +230,6 @@ public class PostCellContent: UIButton {
         sectionView.addArrangedSubview(dateLabel)
         
         return sectionView
-    }()
-    private lazy var commentButtonView: ReactionIndicatorButton = {
-        let commentButton = ReactionIndicatorButton()
-        commentButton.translatesAutoresizingMaskIntoConstraints = false
-        commentButton.setImage(
-            UIImage(systemName: "message")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
-            for: .normal
-        )
-        commentButton.addTarget(self, action: #selector(commentButtonTapped), for: .touchUpInside)
-        return commentButton
-    }()
-    private lazy var likeButtonView: ReactionIndicatorButton = {
-        let likeButton = ReactionIndicatorButton()
-        likeButton.translatesAutoresizingMaskIntoConstraints = false
-        likeButton.setImage(
-            UIImage(systemName: "heart")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
-            for: .normal)
-        likeButton.setImage(
-            UIImage(systemName: "heart.fill")!
-                .withTintColor(.white, renderingMode: .alwaysOriginal),
-            for: .selected)
-        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
-        return likeButton
     }()
     private lazy var avatarImageView: UIImageView = {
         let avatarImageView = UIImageView()
@@ -345,15 +282,7 @@ public class PostCellContent: UIButton {
         usernameLabel.text = input.post.author.name
         dateLabel.text = input.post.createdAt.toFormatString(format: "yyyy/MM/dd")
         textView.text = input.post.text
-        trackNameLabel.setTitle(input.post.tracks.first?.trackName, for: .normal)
-        commentButtonView.setTitle("DM", for: .normal)
-        commentButtonView.isEnabled = true
-        likeButtonView.setTitle("\(input.post.likeCount)", for: .normal)
-        likeButtonView.isSelected = input.post.isLiked
-        likeButtonView.isEnabled = true
-        if let live = input.post.live {
-            liveCardCell.inject(input: (live: live, imagePipeline: input.imagePipeline))
-        }
+//        trackNameLabel.setTitle(input.post.tracks.first?.trackName, for: .normal)
     }
     
     func setup() {
@@ -367,7 +296,7 @@ public class PostCellContent: UIButton {
             postView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
         
-        addTarget(self, action: #selector(selfTapped), for: .touchUpInside)
+//        addTarget(self, action: #selector(selfTapped), for: .touchUpInside)
     }
     
     deinit {
@@ -380,15 +309,6 @@ public class PostCellContent: UIButton {
     
     @objc private func liveTapped() {
         self.listener(.liveTapped)
-    }
-    
-    @objc private func commentButtonTapped() {
-        self.listener(.commentTapped)
-    }
-    
-    @objc private func likeButtonTapped() {
-        likeButtonView.isSelected.toggle()
-        self.listener(.likeTapped)
     }
     
     @objc private func settingTapped() {

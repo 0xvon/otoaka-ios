@@ -52,7 +52,7 @@ final class SearchGroupViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
-        tableView.registerCellClass(GroupCell.self)
+        tableView.registerCellClass(GroupBannerCell.self)
         refreshControl = BrandRefreshControl()
         
         bind()
@@ -142,7 +142,7 @@ extension SearchGroupViewController: UISearchResultsUpdating {
 extension SearchGroupViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var group = viewModel.state.groups[indexPath.row]
-        let cell = tableView.dequeueReusableCell(GroupCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
+        let cell = tableView.dequeueReusableCell(GroupBannerCell.self, input: (group: group, imagePipeline: dependencyProvider.imagePipeline, type: .normal), for: indexPath)
         cell.listen { [unowned self] output in
             switch output {
             case .selfTapped:
@@ -150,14 +150,13 @@ extension SearchGroupViewController {
                     dependencyProvider: self.dependencyProvider, input: group.group)
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
-            case .likeButtonTapped:
+            case .followTapped:
                 group.isFollowing
                    ? pointViewModel.usePoint(point: 100)
                    : pointViewModel.addPoint(point: 100)
                 viewModel.followButtonTapped(group: group)
                 group.isFollowing.toggle()
                 viewModel.updateGroup(group: group)
-            case .listenButtonTapped: break
             }
         }
         return cell

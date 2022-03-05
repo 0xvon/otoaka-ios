@@ -21,6 +21,7 @@ class LiveDetailViewModel {
         var liveDetail: LiveDetail?
         var posts: [PostSummary] = []
         let role: RoleProperties
+        var postText: String? = nil
     }
     
     enum Output {
@@ -28,6 +29,7 @@ class LiveDetailViewModel {
         case updatePostSummary(PostSummary?)
 //        case updatePerformers([Group])
         case didDeletePost
+        case didCreatePost
         case didToggleLikeLive
         case pushToGroup(BandDetailViewController.Input)
         case pushToUserList(UserListViewController.Input)
@@ -45,6 +47,8 @@ class LiveDetailViewModel {
     private lazy var getLivePostAction = Action(GetLivePosts.self, httpClient: self.apiClient)
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
     private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
+    private lazy var createPostAction = Action(CreatePost.self, httpClient: self.apiClient)
+    private lazy var editPostAction = Action(EditPost.self, httpClient: self.apiClient)
     
     private let outputSubject = PassthroughSubject<Output, Never>()
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
@@ -60,7 +64,9 @@ class LiveDetailViewModel {
             getLiveAction.errors,
             getLivePostAction.errors,
             likeLiveAction.errors,
-            unlikeLiveAction.errors
+            unlikeLiveAction.errors,
+            createPostAction.errors,
+            editPostAction.errors
         )
         
         Publishers.MergeMany(
@@ -70,6 +76,8 @@ class LiveDetailViewModel {
             }.eraseToAnyPublisher(),
             likeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
             unlikeLiveAction.elements.map { _ in .didToggleLikeLive }.eraseToAnyPublisher(),
+            createPostAction.elements.map { _ in .didCreatePost }.eraseToAnyPublisher(),
+            editPostAction.elements.map { _ in .didCreatePost }.eraseToAnyPublisher(),
             errors.map(Output.reportError).eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
@@ -80,6 +88,7 @@ class LiveDetailViewModel {
             .sink(receiveValue: { [unowned self] liveDetail, posts in
                 state.liveDetail = liveDetail
                 state.posts = posts.items
+                state.postText = posts.items.first?.text
 //                outputSubject.send(.updatePerformers(liveDetail.live.performers))
             })
             .store(in: &cancellables)
@@ -155,6 +164,27 @@ class LiveDetailViewModel {
         let request = UnlikeLive.Request(liveId: state.live.id)
         let uri = UnlikeLive.URI()
         unlikeLiveAction.input((request: request, uri: uri))
+    }
+    
+    func updatePostText(_ text: String?) {
+        state.postText = text
+    }
+    
+    func post() {
+        guard let text = state.postText else { return }
+        let request = CreatePost.Request(
+            author: dependencyProvider.user.id,
+            live: state.live.id,
+            text: text,
+            tracks: [], groups: [], imageUrls: []
+        )
+        if let post = state.posts.first {
+            var uri = EditPost.URI()
+            uri.id = post.id
+            editPostAction.input((request: request, uri: uri))
+        } else {
+            createPostAction.input((request: request, uri: CreatePost.URI()))
+        }
     }
 }
 

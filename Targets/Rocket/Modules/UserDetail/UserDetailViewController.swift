@@ -43,7 +43,7 @@ final class UserDetailViewController: UIViewController, Instantiable {
     private lazy var coachSteps: [CoachStep] = [
         CoachStep(view: headerView, hint: "ここにユーザー情報が表示されます！試しにプロフィールを作成してみよう！", next: "ok"),
         CoachStep(view: tab, hint: "タブを切り替えると色んな記録を見ることができます", next: "ok"),
-        CoachStep(view: vc1.followingSectionHeader, hint: "フォローしたアーティストやライブ参戦はここに記録されます", next: "ok"),
+        CoachStep(view: vc1.followingSectionHeader, hint: "snackを送ったアーティストがここに表示されます", next: "ok"),
     ]
     
     init(
