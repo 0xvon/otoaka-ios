@@ -156,7 +156,7 @@ final class PickupViewController: UIViewController, Instantiable {
         recommendedGroupCollectionView.isHidden = true
         scrollStackView.addArrangedSubview(recommendedGroupCollectionView)
         NSLayoutConstraint.activate([
-            recommendedGroupCollectionView.heightAnchor.constraint(equalToConstant: 232),
+            recommendedGroupCollectionView.heightAnchor.constraint(equalToConstant: (48 + 32) * 3),
         ])
         
         scrollStackView.addArrangedSubview(upcomingLiveSectionHeader)
@@ -255,12 +255,11 @@ final class PickupViewController: UIViewController, Instantiable {
                     dependencyProvider: self.dependencyProvider, input: group.group)
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
-            case .likeButtonTapped:
+            case .followTapped:
 //                group.isFollowing
 //                   ? pointViewModel.usePoint(point: 100)
 //                   : pointViewModel.addPoint(point: 100)
                 viewModel.followButtonTapped(group: group)
-            case .listenButtonTapped: break
             }
         }
         

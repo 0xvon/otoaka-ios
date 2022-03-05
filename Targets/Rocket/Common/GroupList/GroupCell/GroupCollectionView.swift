@@ -19,9 +19,9 @@ public final class GroupCollectionView: UICollectionView {
         
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = 16
-        layout.minimumLineSpacing = 16
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 16, right: 16)
+        layout.minimumInteritemSpacing = 0
+        layout.minimumLineSpacing = 0
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         
         super.init(frame: .zero, collectionViewLayout: layout)
         setup()
@@ -38,14 +38,14 @@ public final class GroupCollectionView: UICollectionView {
     func setup() {
         backgroundColor = .clear
         
-        registerCellClass(GroupCollectionCell.self)
+        registerCellClass(GroupBannerCollectionCell.self)
         delegate = self
         dataSource = self
         isPagingEnabled = false
         showsHorizontalScrollIndicator = false
     }
-    private var listener: (GroupCellContent.Output, GroupFeed) -> Void = { _, _ in }
-    public func listen(_ listener: @escaping (GroupCellContent.Output, GroupFeed) -> Void) {
+    private var listener: (GroupBannerCellContent.Output, GroupFeed) -> Void = { _, _ in }
+    public func listen(_ listener: @escaping (GroupBannerCellContent.Output, GroupFeed) -> Void) {
         self.listener = listener
     }
 }
@@ -57,11 +57,16 @@ extension GroupCollectionView: UICollectionViewDelegate, UICollectionViewDataSou
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         var group = self.groups[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(GroupCollectionCell.self, input: (group: group, imagePipeline: imagePipeline, type: .normal), for: indexPath)
+        let cell = collectionView.dequeueReusableCell(GroupBannerCollectionCell.self, input: (group: group, imagePipeline: imagePipeline, type: .normal), for: indexPath)
         cell.listen { [unowned self] output in
             self.listener(output, group)
-            if output == .likeButtonTapped {
+            if output == .followTapped {
                 group.isFollowing.toggle()
+                cell.inject(input: (
+                    group: group,
+                    imagePipeline: imagePipeline,
+                    type: .normal
+                ))
             }
         }
         return cell
@@ -70,6 +75,6 @@ extension GroupCollectionView: UICollectionViewDelegate, UICollectionViewDataSou
 
 extension GroupCollectionView: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: UIScreen.main.bounds.width - 40, height: 200)
+        return CGSize(width: UIScreen.main.bounds.width - 40, height: 48 + 32)
     }
 }

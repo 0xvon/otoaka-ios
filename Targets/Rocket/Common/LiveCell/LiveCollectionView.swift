@@ -70,6 +70,11 @@ extension LiveCollectionView: UICollectionViewDelegate, UICollectionViewDataSour
             self.listener(output, live)
             if output == .likeButtonTapped {
                 live.isLiked.toggle()
+                cell.inject(input: (
+                    live: live,
+                    imagePipeline: imagePipeline,
+                    type: .normal
+                ))
             }
 //            switch output {
 //            case .selfTapped:

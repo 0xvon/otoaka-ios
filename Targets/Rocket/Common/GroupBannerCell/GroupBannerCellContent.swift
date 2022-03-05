@@ -10,6 +10,46 @@ import UIKit
 import ImagePipeline
 import UIComponent
 
+final class GroupBannerCollectionCell: UICollectionViewCell, ReusableCell {
+    typealias Input = GroupBannerCellContent.Input
+    typealias Output = GroupBannerCellContent.Output
+    static var reusableIdentifier: String { "GroupBannerCollectionCell" }
+    private let _contentView: GroupBannerCellContent
+    override init(frame: CGRect) {
+        _contentView = GroupBannerCellContent()
+        _contentView.translatesAutoresizingMaskIntoConstraints = false
+        super.init(frame: frame)
+        contentView.addSubview(_contentView)
+        _contentView.isUserInteractionEnabled = true
+        backgroundColor = .clear
+        NSLayoutConstraint.activate([
+            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 8),
+            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -8),
+        ])
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func inject(input: Input) {
+        _contentView.update(input: input)
+    }
+    
+    func listen(_ listener: @escaping (Output) -> Void) {
+        _contentView.listen(listener)
+    }
+    
+    override var isHighlighted: Bool {
+        didSet { _contentView.isHighlighted = isHighlighted }
+    }
+    
+    override func prepareForReuse() {
+        _contentView.prepare()
+    }
+}
+
 final class GroupBannerCell: UITableViewCell, ReusableCell {
     typealias Input = GroupBannerCellContent.Input
     typealias Output = GroupBannerCellContent.Output
@@ -53,7 +93,7 @@ final class GroupBannerCell: UITableViewCell, ReusableCell {
     }
 }
 
-class GroupBannerCellContent: UIButton {
+public class GroupBannerCellContent: UIButton {
 
     typealias Input = (
         group: GroupFeed,

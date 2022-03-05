@@ -227,9 +227,29 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
 //                live.isLiked
 //                   ? pointViewModel.usePoint(point: 100)
 //                   : pointViewModel.addPoint(point: 100)
-                viewModel.likeLiveButtonTapped(liveFeed: live)
-                live.isLiked.toggle()
-                viewModel.updateLive(live: live)
+                if live.isLiked {
+                    DispatchQueue.main.async { [unowned self] in
+                        showConfirmAlert(title: "参戦をやめる", message: "本当に参戦履歴から削除しますか？", callback: { [unowned self] in
+                            viewModel.likeLiveButtonTapped(liveFeed: live)
+                            live.isLiked.toggle()
+                            viewModel.updateLive(live: live)
+                            cell.inject(input: (
+                                live: live,
+                                imagePipeline: dependencyProvider.imagePipeline,
+                                type: cellType
+                            ))
+                        })
+                    }
+                } else {
+                    viewModel.likeLiveButtonTapped(liveFeed: live)
+                    live.isLiked.toggle()
+                    viewModel.updateLive(live: live)
+                    cell.inject(input: (
+                        live: live,
+                        imagePipeline: dependencyProvider.imagePipeline,
+                        type: cellType
+                    ))
+                }
             case .numOfLikeTapped:
                 let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))
                 let nav = self.navigationController ?? presentingViewController?.navigationController

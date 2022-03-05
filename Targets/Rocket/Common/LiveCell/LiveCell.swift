@@ -306,11 +306,9 @@ public class LiveCellContent: UIButton {
     func likeButtonStyle() {
         switch self.series {
         case .future:
-            likeButton.setTitle("行く", for: .normal)
-            likeButton.setTitle("参戦予定", for: .selected)
+            likeButton.setTitle("参戦予定", for: .normal)
         case .past:
-            likeButton.setTitle("行った", for: .normal)
-            likeButton.setTitle("参戦済", for: .selected)
+            likeButton.setTitle("参戦済", for: .normal)
         case .all: break
         }
     }
@@ -358,8 +356,9 @@ public class LiveCellContent: UIButton {
     }
     
     @objc private func likeButtonTapped() {
-        likeButton.isSelected.toggle()
-        likeButtonStyle()
+//        likeButton.isSelected.toggle()
+//        likeButtonStyle()
+        likeButton.isEnabled = false
         self.listener(.likeButtonTapped)
     }
     
