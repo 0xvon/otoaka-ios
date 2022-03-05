@@ -151,9 +151,9 @@ extension SearchGroupViewController {
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
             case .followTapped:
-                group.isFollowing
-                   ? pointViewModel.usePoint(point: 100)
-                   : pointViewModel.addPoint(point: 100)
+//                group.isFollowing
+//                   ? pointViewModel.usePoint(point: 100)
+//                   : pointViewModel.addPoint(point: 100)
                 viewModel.followButtonTapped(group: group)
                 group.isFollowing.toggle()
                 viewModel.updateGroup(group: group)

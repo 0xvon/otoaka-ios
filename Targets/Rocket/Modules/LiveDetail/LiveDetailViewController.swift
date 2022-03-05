@@ -371,12 +371,9 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 liveActionButton.setTitle("チケット申込", for: .normal)
                 liveActionButton.isEnabled = (viewModel.state.live.piaEventUrl != nil)
                 if viewModel.isLivePast() {
-                    likeButton.setTitle("行った", for: .normal)
-                    likeButton.setTitle("参戦済", for: .selected)
+                    likeButton.setTitle("参戦済", for: .normal)
                 } else {
-                    liveActionButton.isHidden = true
-                    likeButton.setTitle("行く", for: .normal)
-                    likeButton.setTitle("参戦予定", for: .selected)
+                    likeButton.setTitle("参戦予定", for: .normal)
                 }
                 
                 participatingFriendSectionHeader.isHidden = false
@@ -514,17 +511,23 @@ final class LiveDetailViewController: UIViewController, Instantiable {
     
     @objc private func likeButtonTapped() {
         guard let isLiked = viewModel.state.liveDetail?.isLiked else { return }
-        isLiked
-            ? pointViewModel.usePoint(point: 100)
-            : pointViewModel.addPoint(point: 100)
+//        isLiked
+//            ? pointViewModel.usePoint(point: 100)
+//            : pointViewModel.addPoint(point: 100)
         likeButton.isEnabled = false
-        viewModel.likeButtonTapped()
+        if isLiked {
+            showConfirmAlert(title: "参戦をやめる", message: "本当に参戦履歴から削除しますか？", callback: { [unowned self] in
+                viewModel.likeButtonTapped()
+            })
+        } else {
+            viewModel.likeButtonTapped()
+        }
     }
     
     @objc private func createShare() {
         shareWithTwitter(type: .live(viewModel.state.live)) { [unowned self] isOK in
             if isOK {
-                pointViewModel.addPoint(point: 50)
+//                pointViewModel.addPoint(point: 50)
             } else {
                 showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
             }

@@ -256,9 +256,9 @@ final class PickupViewController: UIViewController, Instantiable {
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
             case .likeButtonTapped:
-                group.isFollowing
-                   ? pointViewModel.usePoint(point: 100)
-                   : pointViewModel.addPoint(point: 100)
+//                group.isFollowing
+//                   ? pointViewModel.usePoint(point: 100)
+//                   : pointViewModel.addPoint(point: 100)
                 viewModel.followButtonTapped(group: group)
             case .listenButtonTapped: break
             }
@@ -297,9 +297,9 @@ final class PickupViewController: UIViewController, Instantiable {
                 safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
             case .likeButtonTapped:
-                live.isLiked
-                   ? pointViewModel.usePoint(point: 100)
-                   : pointViewModel.addPoint(point: 100)
+//                live.isLiked
+//                   ? pointViewModel.usePoint(point: 100)
+//                   : pointViewModel.addPoint(point: 100)
                 viewModel.likeLiveButtonTapped(liveFeed: live)
             case .numOfLikeTapped:
                 let vc = UserListViewController(dependencyProvider: dependencyProvider, input: .liveLikedUsers(live.live.id))

@@ -145,9 +145,9 @@ extension GroupListViewController: UITableViewDelegate, UITableViewDataSource {
                 case .none: break
                 }
             case .followTapped:
-                group.isFollowing
-                   ? pointViewModel.usePoint(point: 100)
-                   : pointViewModel.addPoint(point: 100)
+//                group.isFollowing
+//                   ? pointViewModel.usePoint(point: 100)
+//                   : pointViewModel.addPoint(point: 100)
                 viewModel.followButtonTapped(group: group)
                 group.isFollowing.toggle()
                 viewModel.updateGroup(group: group)

@@ -136,9 +136,9 @@ extension FilterLiveViewController {
                 safari.dismissButtonStyle = .close
                 present(safari, animated: true, completion: nil)
             case .likeButtonTapped:
-                live.isLiked
-                   ? pointViewModel.usePoint(point: 100)
-                   : pointViewModel.addPoint(point: 100)
+//                live.isLiked
+//                   ? pointViewModel.usePoint(point: 100)
+//                   : pointViewModel.addPoint(point: 100)
                 viewModel.likeLiveButtonTapped(liveFeed: live)
                 live.isLiked.toggle()
                 viewModel.updateLive(live: live)

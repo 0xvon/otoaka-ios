@@ -579,10 +579,17 @@ final class BandDetailViewController: UIViewController, Instantiable {
     
     @objc func followButtonTapped() {
         guard let isFollowing = followingViewModel.state.isFollowing else { return }
-         isFollowing
-            ? pointViewModel.usePoint(point: 100)
-            : pointViewModel.addPoint(point: 100)
-        followingViewModel.didButtonTapped()
+//         isFollowing
+//            ? pointViewModel.usePoint(point: 100)
+//            : pointViewModel.addPoint(point: 100)
+        if isFollowing {
+            showConfirmAlert(title: "スキを解除", message: "本当にスキから削除しますか？", callback: { [unowned self] in
+                followingViewModel.didButtonTapped()
+            })
+        } else {
+            followingViewModel.didButtonTapped()
+        }
+
     }
 
     @objc func editGroup() {
@@ -609,7 +616,7 @@ final class BandDetailViewController: UIViewController, Instantiable {
     @objc func createShare(_ sender: UIBarButtonItem) {
         shareWithTwitter(type: .group(viewModel.state.group)) { [unowned self] isOK in
             if isOK {
-                pointViewModel.addPoint(point: 50)
+//                pointViewModel.addPoint(point: 50)
             } else {
                 showAlert(title: "シェアできません", message: "Twitterアプリをインストールするとシェアできるようになります！")
             }

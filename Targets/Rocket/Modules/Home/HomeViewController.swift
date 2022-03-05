@@ -194,18 +194,18 @@ final class HomeViewController: UIViewController {
     }
     
     private func presentPoint() {
-        #if PRODUCTION
-        let userDefaults = UserDefaults.standard
-        let date = Date().toFormatString(format: "yyyyMMdd")
-        let key = "loginbonus_\(date)"
-        if !userDefaults.bool(forKey: key) {
-            pointViewModel.addPoint(point: 1000)
-            userDefaults.setValue(true, forKey: key)
-            userDefaults.synchronize()
-        }
-        #else
-        pointViewModel.addPoint(point: 2000)
-        #endif
+//        #if PRODUCTION
+//        let userDefaults = UserDefaults.standard
+//        let date = Date().toFormatString(format: "yyyyMMdd")
+//        let key = "loginbonus_\(date)"
+//        if !userDefaults.bool(forKey: key) {
+//            pointViewModel.addPoint(point: 1000)
+//            userDefaults.setValue(true, forKey: key)
+//            userDefaults.synchronize()
+//        }
+//        #else
+//        pointViewModel.addPoint(point: 2000)
+//        #endif
     }
     
     private func actForUrlScheme() {
