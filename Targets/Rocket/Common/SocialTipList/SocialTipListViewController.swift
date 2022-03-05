@@ -20,10 +20,10 @@ final class SocialTipListViewController: UIViewController, Instantiable {
         let _contentView = SummarySectionHeader(title: "snack履歴")
         _contentView.translatesAutoresizingMaskIntoConstraints = false
         _contentView.seeMoreButton.isHidden = true
-        _contentView.addArrangedSubview(filterButton)
-        NSLayoutConstraint.activate([
-            _contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
-        ])
+//        _contentView.addArrangedSubview(filterButton)
+//        NSLayoutConstraint.activate([
+//            _contentView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+//        ])
         return _contentView
     }()
     public lazy var filterButton: UIButton = {
