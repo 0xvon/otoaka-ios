@@ -110,6 +110,15 @@ final class EditBandViewController: UIViewController, Instantiable {
         registerButton.isEnabled = true
         return registerButton
     }()
+    private lazy var annotationTitle: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "他者の権利を侵害する行為は規約により禁止しています"
+        label.textAlignment = .center
+        label.font = Brand.font(for: .xsmall)
+        label.textColor = Brand.color(for: .text(.light))
+        return label
+    }()
     private lazy var activityIndicator: LoadingCollectionView = {
         let activityIndicator = LoadingCollectionView()
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -315,6 +324,8 @@ final class EditBandViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             editButton.heightAnchor.constraint(equalToConstant: 50),
         ])
+        
+        mainView.addArrangedSubview(annotationTitle)
         
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer

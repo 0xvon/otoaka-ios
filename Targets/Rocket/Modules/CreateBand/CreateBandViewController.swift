@@ -111,6 +111,15 @@ final class CreateBandViewController: UIViewController, Instantiable {
         profileImageTitle.textColor = Brand.color(for: .text(.primary))
         return profileImageTitle
     }()
+    private lazy var annotationTitle: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "他者の権利を侵害する行為は規約により禁止しています"
+        label.textAlignment = .center
+        label.font = Brand.font(for: .xsmall)
+        label.textColor = Brand.color(for: .text(.light))
+        return label
+    }()
     private lazy var registerButton: PrimaryButton = {
         let registerButton = PrimaryButton(text: "作成する")
         registerButton.translatesAutoresizingMaskIntoConstraints = false
@@ -312,6 +321,8 @@ final class CreateBandViewController: UIViewController, Instantiable {
         NSLayoutConstraint.activate([
             registerButton.heightAnchor.constraint(equalToConstant: 50),
         ])
+        
+        mainView.addArrangedSubview(annotationTitle)
         
         let bottomSpacer = UIView()
         mainView.addArrangedSubview(bottomSpacer) // Spacer

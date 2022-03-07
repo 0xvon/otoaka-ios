@@ -125,6 +125,8 @@ class GroupRankingCellContent: UIButton {
     func inject(input: Input) {
         if let url = input.group.artworkURL {
             input.imagePipeline.loadImage(url, into: artworkImageView)
+        } else {
+            artworkImageView.image = Brand.color(for: .background(.light)).image
         }
         groupNameLabel.text = input.group.name
         countLabel.text = "\(input.count)\(input.unit)"

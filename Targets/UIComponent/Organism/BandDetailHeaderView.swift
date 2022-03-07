@@ -84,6 +84,8 @@ public final class BandDetailHeaderView: UIView {
         trackInformationView.update(input: (track: input.groupItem, imagePipeline: input.imagePipeline))
         if let artworkURL = input.group.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: bandImageView)
+        } else {
+            bandImageView.image = Brand.color(for: .background(.milder)).image
         }
         biographyTextView.text = input.group.biography
     }

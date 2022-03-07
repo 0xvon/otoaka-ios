@@ -180,6 +180,8 @@ public class GroupCellContent: UIButton {
         bandNameLabel.text = input.group.group.name
         if let artworkURL = input.group.group.artworkURL {
             input.imagePipeline.loadImage(artworkURL, into: jacketImageView)
+        } else {
+            jacketImageView.image = Brand.color(for: .background(.light)).image
         }
         let startYear: String = input.group.group.since.map { "\(dateFormatter.string(from: $0))結成" } ?? "結成年不明"
         sinceBadgeView.title = startYear
