@@ -38,8 +38,8 @@ final class BandDetailViewController: UIViewController, Instantiable {
     private let followersSummaryView = CountSummaryView()
     private let followButton: ToggleButton = {
         let followButton = ToggleButton()
-        followButton.setTitle("スキ", selected: false)
-        followButton.setTitle("スキ", selected: true)
+        followButton.setTitle("スキ？", selected: false)
+        followButton.setTitle("スキ！", selected: true)
         followButton.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
         return followButton
     }()

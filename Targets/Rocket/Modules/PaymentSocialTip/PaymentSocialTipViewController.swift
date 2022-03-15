@@ -58,22 +58,22 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
 //            templateMessageList.widthAnchor.constraint(equalTo: stackView.widthAnchor),
 //        ])
         
-        stackView.addArrangedSubview(tipLabel)
-        NSLayoutConstraint.activate([
-            tipLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-            tipLabel.heightAnchor.constraint(equalToConstant: 60),
-        ])
+//        stackView.addArrangedSubview(tipLabel)
+//        NSLayoutConstraint.activate([
+//            tipLabel.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//            tipLabel.heightAnchor.constraint(equalToConstant: 60),
+//        ])
+//
+//        stackView.addArrangedSubview(templateTipList)
+//        NSLayoutConstraint.activate([
+//            templateTipList.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//        ])
         
-        stackView.addArrangedSubview(templateTipList)
-        NSLayoutConstraint.activate([
-            templateTipList.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-        ])
-        
-        stackView.addArrangedSubview(pointStackView)
-        NSLayoutConstraint.activate([
-            pointStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
-            pointStackView.heightAnchor.constraint(equalToConstant: 40),
-        ])
+//        stackView.addArrangedSubview(pointStackView)
+//        NSLayoutConstraint.activate([
+//            pointStackView.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+//            pointStackView.heightAnchor.constraint(equalToConstant: 40),
+//        ])
         
         let middleSpacer = UIView()
         middleSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -157,57 +157,57 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
 //        content.textColor = Brand.color(for: .brand(.primary))
 //        return content
 //    }()
-    private lazy var tipLabel: TextFieldView = {
-        let view = TextFieldView(input: (
-            section: "金額",
-            text: "0",
-            maxLength: 5
-        ))
-        view.isUserInteractionEnabled = false
-        view.keyboardType(.numberPad)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    private lazy var templateTipList: TagListView = {
-        let content = TagListView()
-        content.delegate = self
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.alignment = .left
-        content.cornerRadius = 16
-        content.paddingY = 8
-        content.paddingX = 12
-        content.marginX = 8
-        content.marginY = 8
-        content.removeIconLineColor = Brand.color(for: .text(.primary))
-        content.textFont = Brand.font(for: .medium)
-        content.tagBackgroundColor = .clear
-        content.borderColor = Brand.color(for: .brand(.primary))
-        content.borderWidth = 1
-        content.textColor = Brand.color(for: .brand(.primary))
-        return content
-    }()
-    private lazy var pointStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.spacing = 8
-        
-        stackView.addArrangedSubview(pointLabel)
-        stackView.addArrangedSubview(switchButton)
-        return stackView
-    }()
-    private lazy var pointLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = Brand.color(for: .text(.primary))
-        return label
-    }()
-    private lazy var switchButton: UISwitch = {
-        let switchButton = UISwitch()
-        switchButton.translatesAutoresizingMaskIntoConstraints = false
-        switchButton.onTintColor = Brand.color(for: .brand(.primary))
-        return switchButton
-    }()
+//    private lazy var tipLabel: TextFieldView = {
+//        let view = TextFieldView(input: (
+//            section: "金額",
+//            text: "0",
+//            maxLength: 5
+//        ))
+//        view.isUserInteractionEnabled = false
+//        view.keyboardType(.numberPad)
+//        view.translatesAutoresizingMaskIntoConstraints = false
+//        return view
+//    }()
+//    private lazy var templateTipList: TagListView = {
+//        let content = TagListView()
+//        content.delegate = self
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        content.alignment = .left
+//        content.cornerRadius = 16
+//        content.paddingY = 8
+//        content.paddingX = 12
+//        content.marginX = 8
+//        content.marginY = 8
+//        content.removeIconLineColor = Brand.color(for: .text(.primary))
+//        content.textFont = Brand.font(for: .medium)
+//        content.tagBackgroundColor = .clear
+//        content.borderColor = Brand.color(for: .brand(.primary))
+//        content.borderWidth = 1
+//        content.textColor = Brand.color(for: .brand(.primary))
+//        return content
+//    }()
+//    private lazy var pointStackView: UIStackView = {
+//        let stackView = UIStackView()
+//        stackView.translatesAutoresizingMaskIntoConstraints = false
+//        stackView.axis = .horizontal
+//        stackView.spacing = 8
+//
+//        stackView.addArrangedSubview(pointLabel)
+//        stackView.addArrangedSubview(switchButton)
+//        return stackView
+//    }()
+//    private lazy var pointLabel: UILabel = {
+//        let label = UILabel()
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.textColor = Brand.color(for: .text(.primary))
+//        return label
+//    }()
+//    private lazy var switchButton: UISwitch = {
+//        let switchButton = UISwitch()
+//        switchButton.translatesAutoresizingMaskIntoConstraints = false
+//        switchButton.onTintColor = Brand.color(for: .brand(.primary))
+//        return switchButton
+//    }()
     private lazy var tosButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -233,7 +233,6 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
         button.setTitleColor(Brand.color(for: .background(.light)), for: .disabled)
-        button.setTitleColor(Brand.color(for: .brand(.primary)), for: .highlighted)
         button.setTitle("送る", for: .normal)
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
         return button
@@ -252,8 +251,8 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
     private lazy var coachSteps: [CoachStep] = [
         CoachStep(view: themeInputView, hint: "snackのお題を選択しよう！", next: "ok"),
         CoachStep(view: textView, hint: "お題に合った内容を書こう！", next: "ok"),
-        CoachStep(view: templateTipList, hint: "snackの金額はここから選択してね！金額が多いほどsnackが目立って表示されるよ！", next: "ok"),
-        CoachStep(view: switchButton, hint: "snackは無料ポイントかApple Payから送ることができるよ！無料ポイントはアプリの色んなところで貯められるよ！", next: "ok"),
+//        CoachStep(view: templateTipList, hint: "snackの金額はここから選択してね！金額が多いほどsnackが目立って表示されるよ！", next: "ok"),
+//        CoachStep(view: switchButton, hint: "snackは無料ポイントかApple Payから送ることができるよ！無料ポイントはアプリの色んなところで貯められるよ！", next: "ok"),
         CoachStep(view: registerButton, hint: "ボタンを押して送ろう！", next: "ok"),
     ]
     
@@ -320,15 +319,20 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
             case .didGetProducts(_): break
-            case .didGetMyPoint(let point):
-                pointLabel.text = "無料ポイントでsnack(\(point)pt)"
+//            case .didGetMyPoint(let point):
+//                pointLabel.text = "無料ポイントでsnack(\(point)pt)"
             case .updateSubmittableState(let state):
                 switch state {
                 case .loading:
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: activityIndicator)
                     self.activityIndicator.startAnimating()
                 case .editting(let submittable):
-                    self.registerButton.isHidden = !submittable
+                    self.registerButton.isEnabled = submittable
+                    if submittable {
+                        self.registerButton.setTitleColor(Brand.color(for: .brand(.primary)), for: .normal)
+                    } else {
+                        self.registerButton.setTitleColor(Brand.color(for: .background(.light)), for: .normal)
+                    }
                     self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
                     self.activityIndicator.stopAnimating()
                 }
@@ -336,6 +340,8 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
                 showSuccessPopup(tip: tip)
                 navigationController?.popViewController(animated: true)
             case .reportError(let err):
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
+                self.activityIndicator.stopAnimating()
                 print(String(describing: err))
                 showAlert()
             case .failedToPay(let err):
@@ -351,7 +357,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
             viewModel.didUpdateTheme(theme: theme)
         }
         
-        switchButton.addTarget(self, action: #selector(switchButtonTapped), for: .touchUpInside)
+//        switchButton.addTarget(self, action: #selector(switchButtonTapped), for: .touchUpInside)
         
         registerButton.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
     }
@@ -389,16 +395,16 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         ])
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: registerButton)
-        registerButton.isHidden = true
+        registerButton.isEnabled = false
         
 //        templateMessageList.addTags([
 //            "応援してます！",
 //            "大好きです！",
 //        ])
         
-        guard let defaultTip = viewModel.state.productItem.first else { return }
-        templateTipList.addTags(viewModel.state.productItem.map { String($0.price) })
-        tipLabel.setText(text: String(defaultTip.price))
+//        guard let defaultTip = viewModel.state.productItem.first else { return }
+//        templateTipList.addTags(viewModel.state.productItem.map { String($0.price) })
+//        tipLabel.setText(text: String(defaultTip.price))
         
         switch viewModel.state.type {
         case .group(let group):
@@ -416,38 +422,38 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
         }
     }
     
-    @objc private func switchButtonTapped() {
-        viewModel.didUpdatePaymentMethod(isRealMoney: !switchButton.isOn)
-    }
+//    @objc private func switchButtonTapped() {
+//        viewModel.didUpdatePaymentMethod(isRealMoney: !switchButton.isOn)
+//    }
     
     @objc private func sendButtonTapped() {
-        switch viewModel.state.type {
-        case .group(let group):
-            
-            if group.isEntried {
-                // entryしてるgroupには有料ポイントしか送れない
-                viewModel.state.isRealMoney
-                    ? pay()
-                    : showAlert(title: "ポイント送金不可能", message: "このアーティストにはアプリ内課金で購入したポイントしか送れません")
-            } else {
-                // entryしていないgroupには無料ポイントしか送れない
-                viewModel.state.isRealMoney
-                    ? showAlert(title: "送金不可能", message: "このアーティストにはアプリ内無料ポイントしか送れません")
-                    : pointViewModel.usePoint(point: viewModel.state.tip.price)
-            }
-        default: break
-        }
+        viewModel.sendTipButtonTapped()
+//        switch viewModel.state.type {
+//        case .group(let group):
+//            if group.isEntried {
+//                // entryしてるgroupには有料ポイントしか送れない
+//                viewModel.state.isRealMoney
+//                    ? pay()
+//                    : showAlert(title: "ポイント送金不可能", message: "このアーティストにはアプリ内課金で購入したポイントしか送れません")
+//            } else {
+//                // entryしていないgroupには無料ポイントしか送れない
+//                viewModel.state.isRealMoney
+//                    ? showAlert(title: "送金不可能", message: "このアーティストにはアプリ内無料ポイントしか送れません")
+//                    : pointViewModel.usePoint(point: viewModel.state.tip.price)
+//            }
+//        default: break
+//        }
     }
     
-    private func pay() {
-        if let product = viewModel.state.products.filter({ $0.productIdentifier == viewModel.state.tip.id }).first {
-            showAlert(title: "購入確認", message: "\(viewModel.state.tip.price)円でポイントを購入してsnackしますか？有料snackはアーティストに還元されます") { [unowned self] in
-                viewModel.purchase(product)
-            }
-        } else {
-            showAlert(title: "アイテム取得失敗", message: "課金アイテムの取得に失敗しました。しばらく経ってから再度お試し下さい。")
-        }
-    }
+//    private func pay() {
+//        if let product = viewModel.state.products.filter({ $0.productIdentifier == viewModel.state.tip.id }).first {
+//            showAlert(title: "購入確認", message: "\(viewModel.state.tip.price)円でポイントを購入してsnackしますか？有料snackはアーティストに還元されます") { [unowned self] in
+//                viewModel.purchase(product)
+//            }
+//        } else {
+//            showAlert(title: "アイテム取得失敗", message: "課金アイテムの取得に失敗しました。しばらく経ってから再度お試し下さい。")
+//        }
+//    }
     
     @objc private func tosButtonTapped() {
         guard let url = URL(string: "https://masatojames.notion.site/OTOAKA-57b1f47c538443249baf1db83abdc462") else { return }
@@ -480,7 +486,7 @@ final class PaymentSocialTipViewController: UIViewController, Instantiable {
 
 extension PaymentSocialTipViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-        let message: String? = textView.text.isEmpty ? nil : textView.text
+        let message: String? = textView.text == "" ? nil : textView.text
         viewModel.didUpdateMessage(message: message)
     }
     
@@ -493,20 +499,20 @@ extension PaymentSocialTipViewController: UITextViewDelegate {
     }
 }
 
-extension PaymentSocialTipViewController: TagListViewDelegate {
-    func tagPressed(_ title: String, tagView: TagView, sender: TagListView) {
-        switch sender {
+//extension PaymentSocialTipViewController: TagListViewDelegate {
+//    func tagPressed(_ title: String, tagView: TagView, sender: TagListView) {
+//        switch sender {
 //        case templateMessageList:
 //            textView.text = title
 //            viewModel.didUpdateMessage(message: title)
-        case templateTipList:
-            tipLabel.setText(text: title)
-            guard let tip = Int(title) else { return }
-            viewModel.didUpdateTip(tip: tip)
-        default: break
-        }
-    }
-}
+//        case templateTipList:
+//            tipLabel.setText(text: title)
+//            guard let tip = Int(title) else { return }
+//            viewModel.didUpdateTip(tip: tip)
+//        default: break
+//        }
+//    }
+//}
 
 extension PaymentSocialTipViewController: CoachMarksControllerDelegate, CoachMarksControllerDataSource {
     func numberOfCoachMarks(for coachMarksController: CoachMarksController) -> Int {

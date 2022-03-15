@@ -67,9 +67,6 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         let content = UINib(nibName: "PostCellContent", bundle: nil)
             .instantiate(withOwner: nil, options: nil).first as! PostCellContent
         content.translatesAutoresizingMaskIntoConstraints = false
-//        NSLayoutConstraint.activate([
-//            content.heightAnchor.constraint(equalToConstant: 300),
-//        ])
         return content
     }()
     private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
@@ -213,7 +210,7 @@ final class LiveDetailViewController: UIViewController, Instantiable {
         performersCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(performersCellWrapper)
         
-        postSectionHeader.seeMoreButton.isHidden = true
+//        postSectionHeader.seeMoreButton.isHidden = true
         scrollStackView.addArrangedSubview(postSectionHeader)
         NSLayoutConstraint.activate([
             postSectionHeader.heightAnchor.constraint(equalToConstant: 64),
@@ -371,9 +368,17 @@ final class LiveDetailViewController: UIViewController, Instantiable {
                 liveActionButton.setTitle("チケット申込", for: .normal)
                 liveActionButton.isEnabled = (viewModel.state.live.piaEventUrl != nil)
                 if viewModel.isLivePast() {
-                    likeButton.setTitle("参戦済", for: .normal)
+                    if liveDetail.isLiked {
+                        likeButton.setTitle("参戦済！", for: .normal)
+                    } else {
+                        likeButton.setTitle("参戦した？", for: .normal)
+                    }
                 } else {
-                    likeButton.setTitle("参戦予定", for: .normal)
+                    if liveDetail.isLiked {
+                        likeButton.setTitle("参戦予定！", for: .normal)
+                    } else {
+                        likeButton.setTitle("参戦する？", for: .normal)
+                    }
                 }
                 
                 participatingFriendSectionHeader.isHidden = false
@@ -464,6 +469,8 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             switch output {
             case .textDidChange(let text):
                 viewModel.updatePostText(text)
+            case .toggleIsPrivate(let isPrivate):
+                viewModel.updatePostIsPrivate(isPrivate)
             case .buttonTapped:
                 viewModel.post()
             }

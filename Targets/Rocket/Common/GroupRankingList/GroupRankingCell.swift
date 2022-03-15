@@ -129,7 +129,7 @@ class GroupRankingCellContent: UIButton {
             artworkImageView.image = Brand.color(for: .background(.light)).image
         }
         groupNameLabel.text = input.group.name
-        countLabel.text = "\(input.count)\(input.unit)"
+//        countLabel.text = "\(input.count)\(input.unit)"
     }
     
     func setup() {

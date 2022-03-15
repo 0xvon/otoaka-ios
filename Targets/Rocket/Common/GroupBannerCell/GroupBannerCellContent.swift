@@ -146,8 +146,8 @@ public class GroupBannerCellContent: UIButton {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.cornerRadius = 16
         button.isUserInteractionEnabled = true
-        button.setTitle("スキ", selected: false)
-        button.setTitle("スキ", selected: true)
+        button.setTitle("スキ？", selected: false)
+        button.setTitle("スキ！", selected: true)
         button.addTarget(self, action: #selector(followTapped), for: .touchUpInside)
         button.isEnabled = false
         return button

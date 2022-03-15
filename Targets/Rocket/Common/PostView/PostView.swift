@@ -7,10 +7,12 @@
 
 import UIKit
 import UITextView_Placeholder
+import UIComponent
 
 final class PostView: UIStackView {
     enum Output {
         case textDidChange(String?)
+        case toggleIsPrivate(Bool)
         case buttonTapped
     }
     
@@ -35,19 +37,33 @@ final class PostView: UIStackView {
         ])
         return textView
     }()
+    private lazy var toggleSwitch: ToggleSwitch = {
+        let toggleSwitch = ToggleSwitch(title: "公開")
+        toggleSwitch.listen { [unowned self] isOn in
+            self.listener(.toggleIsPrivate(!isOn))
+        }
+        toggleSwitch.translatesAutoresizingMaskIntoConstraints = false
+        return toggleSwitch
+    }()
     private lazy var bottomStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = .fill
         stackView.axis = .horizontal
+        stackView.spacing = 8
         
         let spacer = UIView()
         spacer.translatesAutoresizingMaskIntoConstraints = false
         stackView.addArrangedSubview(spacer)
         
+        stackView.addArrangedSubview(toggleSwitch)
+        NSLayoutConstraint.activate([
+            toggleSwitch.widthAnchor.constraint(equalToConstant: 80),
+        ])
+        
         stackView.addArrangedSubview(postButton)
         NSLayoutConstraint.activate([
-            postButton.heightAnchor.constraint(equalToConstant: 24),
+//            postButton.heightAnchor.constraint(equalToConstant: 24),
             postButton.widthAnchor.constraint(equalToConstant: 120),
         ])
         

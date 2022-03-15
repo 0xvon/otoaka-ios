@@ -239,7 +239,7 @@ class SocialTipCellContent: UIButton {
         }
         
         fromLabel.text = input.tip.user.name
-        countLabel.text = "\(input.tip.tip) snacks"
+//        countLabel.text = "\(input.tip.tip) snacks"
         dateLabel.text = "\(input.tip.thrownAt.toFormatString(format: "yyyy/MM/dd"))"
         textView.text = input.tip.message
         

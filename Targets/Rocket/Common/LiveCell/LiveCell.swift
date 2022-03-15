@@ -306,9 +306,19 @@ public class LiveCellContent: UIButton {
     func likeButtonStyle() {
         switch self.series {
         case .future:
-            likeButton.setTitle("参戦予定", for: .normal)
+            if likeButton.isSelected {
+                likeButton.setTitle("参戦予定！", for: .normal)
+            } else {
+                likeButton.setTitle("参戦する？", for: .normal)
+            }
+            
         case .past:
-            likeButton.setTitle("参戦済", for: .normal)
+            if likeButton.isSelected {
+                likeButton.setTitle("参戦済！", for: .normal)
+            } else {
+                likeButton.setTitle("参戦した？", for: .normal)
+            }
+            
         case .all: break
         }
     }

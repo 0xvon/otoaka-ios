@@ -15,19 +15,19 @@ class PaymentSocialTipViewModel {
     typealias Input = SocialTipType
     struct State {
         var type: SocialTipType
-        var tip: Product = Product(id: "snack_100", price: 120)
+//        var tip: Product = Product(id: "snack_100", price: 120)
         var message: String? = nil
         var isRealMoney: Bool = true
         var products: [SKProduct] = []
         var theme: String
         var themeItem: [String] = []
-        var productItem: [Product] = [
-            Product(id: "snack_100", price: 120),
-            Product(id: "snack_600", price: 610),
-            Product(id: "snack_1000", price: 1100),
-            Product(id: "snack_2000", price: 2200),
-            Product(id: "snack_10000", price: 10000),
-        ]
+//        var productItem: [Product] = [
+//            Product(id: "snack_100", price: 120),
+//            Product(id: "snack_600", price: 610),
+//            Product(id: "snack_1000", price: 1100),
+//            Product(id: "snack_2000", price: 2200),
+//            Product(id: "snack_10000", price: 10000),
+//        ]
     }
     
     struct Product {
@@ -42,7 +42,7 @@ class PaymentSocialTipViewModel {
     
     enum Output {
         case didGetProducts([SKProduct])
-        case didGetMyPoint(Int)
+//        case didGetMyPoint(Int)
         case didSendSocialTip(SocialTip)
         case updateSubmittableState(PageState)
         case reportError(Error)
@@ -58,7 +58,7 @@ class PaymentSocialTipViewModel {
     var output: AnyPublisher<Output, Never> { outputSubject.eraseToAnyPublisher() }
     
     private lazy var sendTipAction = Action(SendSocialTip.self, httpClient: apiClient)
-    private lazy var getMyPointAction = Action(GetMyPoint.self, httpClient: apiClient)
+//    private lazy var getMyPointAction = Action(GetMyPoint.self, httpClient: apiClient)
     
     init(
         dependencyProvider: LoggedInDependencyProvider, input: Input
@@ -73,18 +73,18 @@ class PaymentSocialTipViewModel {
         
         Publishers.MergeMany(
             sendTipAction.elements.map(Output.didSendSocialTip).eraseToAnyPublisher(),
-            getMyPointAction.elements.map(Output.didGetMyPoint).eraseToAnyPublisher(),
-            sendTipAction.errors.map(Output.reportError).eraseToAnyPublisher(),
-            getMyPointAction.errors.map(Output.reportError)
-                .eraseToAnyPublisher()
+//            getMyPointAction.elements.map(Output.didGetMyPoint).eraseToAnyPublisher(),
+            sendTipAction.errors.map(Output.reportError).eraseToAnyPublisher()
+//            getMyPointAction.errors.map(Output.reportError)
+//                .eraseToAnyPublisher()
         )
         .sink(receiveValue: outputSubject.send)
         .store(in: &cancellables)
     }
     
     func viewDidLoad() {
-        getMyPoint()
-        getProducts()
+//        getMyPoint()
+//        getProducts()
     }
     
     func didUpdateTheme(theme: String) {
@@ -97,11 +97,11 @@ class PaymentSocialTipViewModel {
         didInputValue()
     }
     
-    func didUpdateTip(tip: Int) {
-        guard let product = state.productItem.filter({ $0.price == tip }).first else { return }
-        state.tip = product
-        didInputValue()
-    }
+//    func didUpdateTip(tip: Int) {
+//        guard let product = state.productItem.filter({ $0.price == tip }).first else { return }
+//        state.tip = product
+//        didInputValue()
+//    }
     
     func didUpdatePaymentMethod(isRealMoney: Bool) {
         state.isRealMoney = isRealMoney
@@ -114,9 +114,10 @@ class PaymentSocialTipViewModel {
     }
     
     func sendTipButtonTapped() {
+        outputSubject.send(.updateSubmittableState(.loading))
         guard let message = state.message else { return }
         let request = SendSocialTip.Request(
-            tip: state.tip.price,
+            tip: 10,
             type: state.type,
             theme: state.theme,
             message: message,
@@ -126,34 +127,34 @@ class PaymentSocialTipViewModel {
         sendTipAction.input((request: request, uri: uri))
     }
     
-    func getMyPoint() {
-        let uri = GetMyPoint.URI()
-        getMyPointAction.input((request: Empty(), uri: uri))
-    }
+//    func getMyPoint() {
+//        let uri = GetMyPoint.URI()
+//        getMyPointAction.input((request: Empty(), uri: uri))
+//    }
     
-    func getProducts() {
-        SwiftyStoreKit.retrieveProductsInfo(Set(state.productItem.map { $0.id })) { [unowned self] result in
-            if let error = result.error {
-                outputSubject.send(.reportError(error))
-            } else {
-                let products = Array(result.retrievedProducts).sorted {
-                    $0.price.intValue < $1.price.intValue
-                }
-                state.products = products
-                outputSubject.send(.didGetProducts(products))
-            }
-        }
-    }
+//    func getProducts() {
+//        SwiftyStoreKit.retrieveProductsInfo(Set(state.productItem.map { $0.id })) { [unowned self] result in
+//            if let error = result.error {
+//                outputSubject.send(.reportError(error))
+//            } else {
+//                let products = Array(result.retrievedProducts).sorted {
+//                    $0.price.intValue < $1.price.intValue
+//                }
+//                state.products = products
+//                outputSubject.send(.didGetProducts(products))
+//            }
+//        }
+//    }
     
-    func purchase(_ product: SKProduct) {
-        SwiftyStoreKit.purchaseProduct(product, quantity: 1, atomically: true) { [unowned self] result in
-            switch result {
-            case .success(_):
-                sendTipButtonTapped()
-            case .error(let error):
-                outputSubject.send(.failedToPay(error))
-            }
-        }
-        
-    }
+//    func purchase(_ product: SKProduct) {
+//        SwiftyStoreKit.purchaseProduct(product, quantity: 1, atomically: true) { [unowned self] result in
+//            switch result {
+//            case .success(_):
+//                sendTipButtonTapped()
+//            case .error(let error):
+//                outputSubject.send(.failedToPay(error))
+//            }
+//        }
+//
+//    }
 }

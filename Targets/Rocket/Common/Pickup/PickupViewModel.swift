@@ -13,14 +13,14 @@ class PickupViewModel {
     struct State {
         var recommendedGroups: [GroupFeed] = []
         var upcomingLives: [LiveFeed] = []
-        var groupRanking: [GroupTip] = []
-        var socialTipEvents: [SocialTipEvent] = []
+//        var groupRanking: [GroupTip] = []
+//        var socialTipEvents: [SocialTipEvent] = []
     }
     enum Output {
         case didGetRecommendedGroups
         case didGetUpcomingLives
-        case didGetGroupRanking
-        case didGetSocialTipEvents
+//        case didGetGroupRanking
+//        case didGetSocialTipEvents
         case reportError(Error)
     }
     
@@ -67,20 +67,20 @@ class PickupViewModel {
             self?.updateState(with: $0)
         }
         
-        socialTipEventPagination.subscribe { [weak self] in
-            self?.updateState(with: $0)
-        }
-        
-        rankingPagination.subscribe { [weak self] in
-            self?.updateState(with: $0)
-        }
+//        socialTipEventPagination.subscribe { [weak self] in
+//            self?.updateState(with: $0)
+//        }
+//
+//        rankingPagination.subscribe { [weak self] in
+//            self?.updateState(with: $0)
+//        }
     }
     
     func refresh() {
         allGroupPagination.refresh()
         upcomingLivePagination.refresh()
-        socialTipEventPagination.refresh()
-        rankingPagination.refresh()
+//        socialTipEventPagination.refresh()
+//        rankingPagination.refresh()
     }
     
     func updateState(with result: PaginationEvent<Page<GroupFeed>>) {
@@ -109,31 +109,31 @@ class PickupViewModel {
         }
     }
     
-    func updateState(with result: PaginationEvent<Page<SocialTipEvent>>) {
-        switch result {
-        case .initial(let res):
-            state.socialTipEvents = res.items
-            outputSubject.send(.didGetSocialTipEvents)
-        case .next(let res):
-            state.socialTipEvents += res.items
-            outputSubject.send(.didGetSocialTipEvents)
-        case .error(let err):
-            outputSubject.send(.reportError(err))
-        }
-    }
-    
-    func updateState(with result: PaginationEvent<Page<GroupTip>>) {
-        switch result {
-        case .initial(let res):
-            state.groupRanking = res.items
-            outputSubject.send(.didGetGroupRanking)
-        case .next(let res):
-            state.groupRanking += res.items
-            outputSubject.send(.didGetGroupRanking)
-        case .error(let err):
-            outputSubject.send(.reportError(err))
-        }
-    }
+//    func updateState(with result: PaginationEvent<Page<SocialTipEvent>>) {
+//        switch result {
+//        case .initial(let res):
+//            state.socialTipEvents = res.items
+//            outputSubject.send(.didGetSocialTipEvents)
+//        case .next(let res):
+//            state.socialTipEvents += res.items
+//            outputSubject.send(.didGetSocialTipEvents)
+//        case .error(let err):
+//            outputSubject.send(.reportError(err))
+//        }
+//    }
+//
+//    func updateState(with result: PaginationEvent<Page<GroupTip>>) {
+//        switch result {
+//        case .initial(let res):
+//            state.groupRanking = res.items
+//            outputSubject.send(.didGetGroupRanking)
+//        case .next(let res):
+//            state.groupRanking += res.items
+//            outputSubject.send(.didGetGroupRanking)
+//        case .error(let err):
+//            outputSubject.send(.reportError(err))
+//        }
+//    }
     
     func followButtonTapped(group: GroupFeed) {
         if group.isFollowing {

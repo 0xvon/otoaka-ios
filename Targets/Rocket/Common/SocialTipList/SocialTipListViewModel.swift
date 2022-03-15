@@ -13,7 +13,7 @@ class SocialTipListViewModel {
     typealias Input = DataSource
     enum Output {
         case reloadTableView
-        case getEntriedGroups([Group])
+//        case getEntriedGroups([Group])
         case error(Error)
     }
     enum DataSource {
@@ -75,9 +75,9 @@ class SocialTipListViewModel {
 
         subscribe(storage: storage)
         
-        getEntriedGroupAction.elements.map(Output.getEntriedGroups).eraseToAnyPublisher()
-            .sink(receiveValue: outputSubject.send)
-            .store(in: &cancellables)
+//        getEntriedGroupAction.elements.map(Output.getEntriedGroups).eraseToAnyPublisher()
+//            .sink(receiveValue: outputSubject.send)
+//            .store(in: &cancellables)
     }
     
     private func subscribe(storage: DataSourceStorage) {
@@ -122,7 +122,7 @@ class SocialTipListViewModel {
         switch storage {
         case let .allTip(pagination):
             pagination.refresh()
-            getEntriedGroups()
+//            getEntriedGroups()
         case let .myTip(pagination):
             pagination.refresh()
         case let .groupTip(pagination):
@@ -131,10 +131,10 @@ class SocialTipListViewModel {
         }
     }
     
-    func getEntriedGroups() {
-        let uri = GetSocialTippableGroups.URI()
-        getEntriedGroupAction.input((request: Empty(), uri: uri))
-    }
+//    func getEntriedGroups() {
+//        let uri = GetSocialTippableGroups.URI()
+//        getEntriedGroupAction.input((request: Empty(), uri: uri))
+//    }
     
     func willDisplay(rowAt indexPath: IndexPath) {
         guard indexPath.row + 25 > state.tips.count else { return }

@@ -95,7 +95,7 @@ class UserInformationView: UIView {
         
         stackView.addArrangedSubview(followerCountSumamryView)
         stackView.addArrangedSubview(followingUserCountSummaryView)
-        stackView.addArrangedSubview(pointSummaryView)
+//        stackView.addArrangedSubview(pointSummaryView)
         
         return stackView
     }()
@@ -115,15 +115,12 @@ class UserInformationView: UIView {
         )
         return summaryView
     }()
-    private lazy var pointSummaryView: CountSummaryView = {
-        let summaryView = CountSummaryView()
-        summaryView.translatesAutoresizingMaskIntoConstraints = false
-//        summaryView.addGestureRecognizer(
-//            UITapGestureRecognizer(target: self, action: #selector(followingUserSummaryViewTapped))
-//        )
-        summaryView.isHidden = true
-        return summaryView
-    }()
+//    private lazy var pointSummaryView: CountSummaryView = {
+//        let summaryView = CountSummaryView()
+//        summaryView.translatesAutoresizingMaskIntoConstraints = false
+//        summaryView.isHidden = true
+//        return summaryView
+//    }()
     
     init() {
         super.init(frame: .zero)
@@ -141,8 +138,8 @@ class UserInformationView: UIView {
         liveStyleLabel.text = input.userDetail.user.liveStyle.map { "    \($0)    "}
         followerCountSumamryView.update(input: (title: "フォロワー", count: input.userDetail.followersCount))
         followingUserCountSummaryView.update(input: (title: "フォロー", count: input.userDetail.followingUsersCount))
-        pointSummaryView.isHidden = input.userDetail.user.id != input.selfUser.id
-        pointSummaryView.update(input: (title: "ポイント", count: input.userDetail.user.point))
+//        pointSummaryView.isHidden = input.userDetail.user.id != input.selfUser.id
+//        pointSummaryView.update(input: (title: "ポイント", count: input.userDetail.user.point))
         if let thumbnail = input.userDetail.thumbnailURL, let url = URL(string: thumbnail) {
             input.imagePipeline.loadImage(url, into: profileImageView)
         }

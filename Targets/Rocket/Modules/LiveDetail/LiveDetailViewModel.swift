@@ -22,6 +22,7 @@ class LiveDetailViewModel {
         var posts: [PostSummary] = []
         let role: RoleProperties
         var postText: String? = nil
+        var postIsPrivate: Bool = false
     }
     
     enum Output {
@@ -44,7 +45,7 @@ class LiveDetailViewModel {
     private(set) var state: State
     
     private lazy var getLiveAction = Action(GetLive.self, httpClient: self.apiClient)
-    private lazy var getLivePostAction = Action(GetLivePosts.self, httpClient: self.apiClient)
+    private lazy var getLivePostAction = Action(GetMyLivePosts.self, httpClient: self.apiClient)
     private lazy var likeLiveAction = Action(LikeLive.self, httpClient: apiClient)
     private lazy var unlikeLiveAction = Action(UnlikeLive.self, httpClient: apiClient)
     private lazy var createPostAction = Action(CreatePost.self, httpClient: self.apiClient)
@@ -133,7 +134,7 @@ class LiveDetailViewModel {
     }
     
     func getLivePostSummary() {
-        var uri = GetLivePosts.URI()
+        var uri = GetMyLivePosts.URI()
         uri.liveId = state.live.id
         uri.per = 1
         uri.page = 1
@@ -170,11 +171,16 @@ class LiveDetailViewModel {
         state.postText = text
     }
     
+    func updatePostIsPrivate(_ isPrivate: Bool) {
+        state.postIsPrivate = isPrivate
+    }
+    
     func post() {
         guard let text = state.postText else { return }
         let request = CreatePost.Request(
             author: dependencyProvider.user.id,
             live: state.live.id,
+            isPrivate: state.postIsPrivate,
             text: text,
             tracks: [], groups: [], imageUrls: []
         )

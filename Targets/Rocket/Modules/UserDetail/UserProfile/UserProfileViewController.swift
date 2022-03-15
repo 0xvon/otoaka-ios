@@ -180,7 +180,7 @@ final class UserProfileViewController: UIViewController, Instantiable {
         .store(in: &cancellables)
         
         followingSectionHeader.listen { [unowned self] in
-            let vc = GroupRankingListViewController(dependencyProvider: dependencyProvider, input: .socialTip(viewModel.state.user.id))
+            let vc = GroupListViewController(dependencyProvider: dependencyProvider, input: .followingGroups(viewModel.state.user.id))
             self.navigationController?.pushViewController(vc, animated: true)
         }
         

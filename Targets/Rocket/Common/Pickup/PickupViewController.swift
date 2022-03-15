@@ -28,12 +28,12 @@ final class PickupViewController: UIViewController, Instantiable {
         return stackView
     }()
 
-    private let socialTipEventSectionHeader = SummarySectionHeader(title: "snack event")
-    private lazy var socialTipEventContent: SocialTipEventCardCollectionView = {
-        let content = SocialTipEventCardCollectionView(socialTipEvents: [], imagePipeline: dependencyProvider.imagePipeline)
-        content.translatesAutoresizingMaskIntoConstraints = false
-        return content
-    }()
+//    private let socialTipEventSectionHeader = SummarySectionHeader(title: "snack event")
+//    private lazy var socialTipEventContent: SocialTipEventCardCollectionView = {
+//        let content = SocialTipEventCardCollectionView(socialTipEvents: [], imagePipeline: dependencyProvider.imagePipeline)
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        return content
+//    }()
     
     private let recommendedGroupSectionHeader = SummarySectionHeader(title: "おすすめアーティスト")
     private lazy var recommendedGroupCollectionView: GroupCollectionView = {
@@ -42,13 +42,13 @@ final class PickupViewController: UIViewController, Instantiable {
         return content
     }()
     
-    private let groupRankingSectionHeader = SummarySectionHeader(title: "デイリーランキング")
-    private lazy var groupRankingCollectionView: GroupTipRankingCollectionView = {
-        let content = GroupTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
-        content.translatesAutoresizingMaskIntoConstraints = false
-        return content
-    }()
-    private lazy var groupRankingCollectionViewWrapper: UIView = Self.addPadding(to: groupRankingCollectionView)
+//    private let groupRankingSectionHeader = SummarySectionHeader(title: "デイリーランキング")
+//    private lazy var groupRankingCollectionView: GroupTipRankingCollectionView = {
+//        let content = GroupTipRankingCollectionView(tip: [], imagePipeline: dependencyProvider.imagePipeline)
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        return content
+//    }()
+//    private lazy var groupRankingCollectionViewWrapper: UIView = Self.addPadding(to: groupRankingCollectionView)
     
     private let upcomingLiveSectionHeader = SummarySectionHeader(title: "直近のライブ")
     private lazy var upcomingLiveCollectionView: LiveCollectionView = {
@@ -115,49 +115,30 @@ final class PickupViewController: UIViewController, Instantiable {
             verticalScrollView.rightAnchor.constraint(equalTo: scrollStackView.rightAnchor),
         ])
         
-        scrollStackView.addArrangedSubview(socialTipEventSectionHeader)
-        NSLayoutConstraint.activate([
-            socialTipEventSectionHeader.heightAnchor.constraint(equalToConstant: 52),
-            socialTipEventSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
-        ])
-        socialTipEventSectionHeader.isHidden = true
-        socialTipEventSectionHeader.seeMoreButton.isHidden = true
-        socialTipEventContent.isHidden = true
-        scrollStackView.addArrangedSubview(socialTipEventContent)
-        NSLayoutConstraint.activate([
-            socialTipEventContent.heightAnchor.constraint(equalToConstant: 192),
-        ])
+//        scrollStackView.addArrangedSubview(socialTipEventSectionHeader)
+//        NSLayoutConstraint.activate([
+//            socialTipEventSectionHeader.heightAnchor.constraint(equalToConstant: 52),
+//            socialTipEventSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+//        ])
+//        socialTipEventSectionHeader.isHidden = true
+//        socialTipEventSectionHeader.seeMoreButton.isHidden = true
+//        socialTipEventContent.isHidden = true
+//        scrollStackView.addArrangedSubview(socialTipEventContent)
+//        NSLayoutConstraint.activate([
+//            socialTipEventContent.heightAnchor.constraint(equalToConstant: 192),
+//        ])
         
-        scrollStackView.addArrangedSubview(groupRankingSectionHeader)
-        NSLayoutConstraint.activate([
-            groupRankingSectionHeader.heightAnchor.constraint(equalToConstant: 52),
-            groupRankingSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
-        ])
-        groupRankingSectionHeader.isHidden = true
-        groupRankingCollectionViewWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(groupRankingCollectionViewWrapper)
-        NSLayoutConstraint.activate([
-            groupRankingCollectionView.heightAnchor.constraint(equalToConstant: 213),
-        ])
-        
-        let middleSpacer = UIView()
-        middleSpacer.translatesAutoresizingMaskIntoConstraints = false
-        scrollStackView.addArrangedSubview(middleSpacer)
-        NSLayoutConstraint.activate([
-            middleSpacer.heightAnchor.constraint(equalToConstant: 24),
-        ])
-        
-        scrollStackView.addArrangedSubview(recommendedGroupSectionHeader)
-        NSLayoutConstraint.activate([
-            recommendedGroupSectionHeader.heightAnchor.constraint(equalToConstant: 52),
-            recommendedGroupSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
-        ])
-        recommendedGroupSectionHeader.isHidden = true
-        recommendedGroupCollectionView.isHidden = true
-        scrollStackView.addArrangedSubview(recommendedGroupCollectionView)
-        NSLayoutConstraint.activate([
-            recommendedGroupCollectionView.heightAnchor.constraint(equalToConstant: (48 + 32) * 3),
-        ])
+//        scrollStackView.addArrangedSubview(groupRankingSectionHeader)
+//        NSLayoutConstraint.activate([
+//            groupRankingSectionHeader.heightAnchor.constraint(equalToConstant: 52),
+//            groupRankingSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+//        ])
+//        groupRankingSectionHeader.isHidden = true
+//        groupRankingCollectionViewWrapper.isHidden = true
+//        scrollStackView.addArrangedSubview(groupRankingCollectionViewWrapper)
+//        NSLayoutConstraint.activate([
+//            groupRankingCollectionView.heightAnchor.constraint(equalToConstant: 213),
+//        ])
         
         scrollStackView.addArrangedSubview(upcomingLiveSectionHeader)
         NSLayoutConstraint.activate([
@@ -169,6 +150,25 @@ final class PickupViewController: UIViewController, Instantiable {
         scrollStackView.addArrangedSubview(upcomingLiveCollectionView)
         NSLayoutConstraint.activate([
             upcomingLiveCollectionView.heightAnchor.constraint(equalToConstant: 332),
+        ])
+        
+//        let middleSpacer = UIView()
+//        middleSpacer.translatesAutoresizingMaskIntoConstraints = false
+//        scrollStackView.addArrangedSubview(middleSpacer)
+//        NSLayoutConstraint.activate([
+//            middleSpacer.heightAnchor.constraint(equalToConstant: 24),
+//        ])
+        
+        scrollStackView.addArrangedSubview(recommendedGroupSectionHeader)
+        NSLayoutConstraint.activate([
+            recommendedGroupSectionHeader.heightAnchor.constraint(equalToConstant: 52),
+            recommendedGroupSectionHeader.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
+        recommendedGroupSectionHeader.isHidden = true
+        recommendedGroupCollectionView.isHidden = true
+        scrollStackView.addArrangedSubview(recommendedGroupCollectionView)
+        NSLayoutConstraint.activate([
+            recommendedGroupCollectionView.heightAnchor.constraint(equalToConstant: (48 + 32) * 3),
         ])
         
         let bottomSpacer = UIView()
@@ -189,11 +189,11 @@ final class PickupViewController: UIViewController, Instantiable {
     func bind() {
         viewModel.output.receive(on: DispatchQueue.main).sink { [unowned self] output in
             switch output {
-            case .didGetSocialTipEvents:
-                refreshControl.endRefreshing()
-                socialTipEventSectionHeader.isHidden = false
-                socialTipEventContent.isHidden = false
-                socialTipEventContent.inject(socialTipEvents: viewModel.state.socialTipEvents)
+//            case .didGetSocialTipEvents:
+//                refreshControl.endRefreshing()
+//                socialTipEventSectionHeader.isHidden = false
+//                socialTipEventContent.isHidden = false
+//                socialTipEventContent.inject(socialTipEvents: viewModel.state.socialTipEvents)
             case .didGetRecommendedGroups:
                 refreshControl.endRefreshing()
                 recommendedGroupSectionHeader.isHidden = false
@@ -204,11 +204,11 @@ final class PickupViewController: UIViewController, Instantiable {
                 upcomingLiveSectionHeader.isHidden = false
                 upcomingLiveCollectionView.isHidden = false
                 upcomingLiveCollectionView.inject(lives: viewModel.state.upcomingLives)
-            case .didGetGroupRanking:
-                refreshControl.endRefreshing()
-                groupRankingSectionHeader.isHidden = false
-                groupRankingCollectionViewWrapper.isHidden = false
-                groupRankingCollectionView.inject(tip: viewModel.state.groupRanking)
+//            case .didGetGroupRanking:
+//                refreshControl.endRefreshing()
+//                groupRankingSectionHeader.isHidden = false
+//                groupRankingCollectionViewWrapper.isHidden = false
+//                groupRankingCollectionView.inject(tip: viewModel.state.groupRanking)
             case .reportError(let error):
                 print(String(describing: error))
             }
@@ -263,23 +263,23 @@ final class PickupViewController: UIViewController, Instantiable {
             }
         }
         
-        socialTipEventContent.listen { [unowned self] event in
-            let vc = SocialTipEventDetailViewController(dependencyProvider: dependencyProvider, input: event)
-            let nav = self.navigationController ?? presentingViewController?.navigationController
-            nav?.pushViewController(vc, animated: true)
-        }
-        
-        groupRankingSectionHeader.listen { [unowned self] in
-            let vc = GroupRankingTermViewController(dependencyProvider: dependencyProvider)
-            let nav = self.navigationController ?? presentingViewController?.navigationController
-            nav?.pushViewController(vc, animated: true)
-        }
-        
-        groupRankingCollectionView.listen { [unowned self] group in
-            let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
-            let nav = self.navigationController ?? presentingViewController?.navigationController
-            nav?.pushViewController(vc, animated: true)
-        }
+//        socialTipEventContent.listen { [unowned self] event in
+//            let vc = SocialTipEventDetailViewController(dependencyProvider: dependencyProvider, input: event)
+//            let nav = self.navigationController ?? presentingViewController?.navigationController
+//            nav?.pushViewController(vc, animated: true)
+//        }
+//
+//        groupRankingSectionHeader.listen { [unowned self] in
+//            let vc = GroupRankingTermViewController(dependencyProvider: dependencyProvider)
+//            let nav = self.navigationController ?? presentingViewController?.navigationController
+//            nav?.pushViewController(vc, animated: true)
+//        }
+//
+//        groupRankingCollectionView.listen { [unowned self] group in
+//            let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
+//            let nav = self.navigationController ?? presentingViewController?.navigationController
+//            nav?.pushViewController(vc, animated: true)
+//        }
         
         upcomingLiveSectionHeader.listen { [unowned self] in
             let vc = LiveListViewController(dependencyProvider: dependencyProvider, input: .upcoming(dependencyProvider.user))

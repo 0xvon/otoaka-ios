@@ -155,6 +155,7 @@ class PostViewModel {
         let request = CreatePost.Request(
             author: dependencyProvider.user.id,
             live: state.live.id,
+            isPrivate: false,
             text: text,
             tracks: state.tracks,
             groups: state.groups,
