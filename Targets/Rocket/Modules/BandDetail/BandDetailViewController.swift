@@ -75,14 +75,14 @@ final class BandDetailViewController: UIViewController, Instantiable {
     }()
     private lazy var liveCellWrapper: UIView = Self.addPadding(to: self.liveCellContent)
 
-    private let postSectionHeader = SummarySectionHeader(title: "ライブレポート")
-    private lazy var postCellContent: PostCellContent = {
-        let content = UINib(nibName: "PostCellContent", bundle: nil)
-            .instantiate(withOwner: nil, options: nil).first as! PostCellContent
-        content.translatesAutoresizingMaskIntoConstraints = false
-        return content
-    }()
-    private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
+//    private let postSectionHeader = SummarySectionHeader(title: "ライブレポート")
+//    private lazy var postCellContent: PostCellContent = {
+//        let content = UINib(nibName: "PostCellContent", bundle: nil)
+//            .instantiate(withOwner: nil, options: nil).first as! PostCellContent
+//        content.translatesAutoresizingMaskIntoConstraints = false
+//        return content
+//    }()
+//    private lazy var postCellWrapper: UIView = Self.addPadding(to: self.postCellContent)
     
     private let socialTipSectionHeader = SummarySectionHeader(title: "snack")
     private lazy var socialTipContent: SocialTipCellContent = {
@@ -237,12 +237,12 @@ final class BandDetailViewController: UIViewController, Instantiable {
         liveCellWrapper.isHidden = true
         scrollStackView.addArrangedSubview(liveCellWrapper)
 
-        scrollStackView.addArrangedSubview(postSectionHeader)
-        NSLayoutConstraint.activate([
-            postSectionHeader.heightAnchor.constraint(equalToConstant: 64),
-        ])
-        postCellWrapper.isHidden = true
-        scrollStackView.addArrangedSubview(postCellWrapper)
+//        scrollStackView.addArrangedSubview(postSectionHeader)
+//        NSLayoutConstraint.activate([
+//            postSectionHeader.heightAnchor.constraint(equalToConstant: 64),
+//        ])
+//        postCellWrapper.isHidden = true
+//        scrollStackView.addArrangedSubview(postCellWrapper)
 
         let bottomSpacer = UIView()
         bottomSpacer.translatesAutoresizingMaskIntoConstraints = false
@@ -429,15 +429,15 @@ final class BandDetailViewController: UIViewController, Instantiable {
                 if let liveFeed = liveFeed {
                     liveCellContent.inject(input: (live: liveFeed, imagePipeline: dependencyProvider.imagePipeline, type: .normal))
                 }
-            case .updatePostSummary(let post):
-                let isHidden = post == nil
-                self.postSectionHeader.isHidden = isHidden
-                self.postCellWrapper.isHidden = isHidden
-                if let post = post {
-                    self.postCellContent.inject(input: (
-                        post: post, user: dependencyProvider.user,  imagePipeline: dependencyProvider.imagePipeline
-                    ))
-                }
+//            case .updatePostSummary(let post):
+//                let isHidden = post == nil
+//                self.postSectionHeader.isHidden = isHidden
+//                self.postCellWrapper.isHidden = isHidden
+//                if let post = post {
+//                    self.postCellContent.inject(input: (
+//                        post: post, user: dependencyProvider.user,  imagePipeline: dependencyProvider.imagePipeline
+//                    ))
+//                }
             case .pushToGroupDetail(let group):
                 let vc = BandDetailViewController(dependencyProvider: dependencyProvider, input: group)
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -505,10 +505,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
             navigationController?.pushViewController(vc, animated: true)
         }
 
-        postCellContent.listen { [unowned self] output in
-            guard let post = viewModel.state.posts.first else { return }
-            postActionViewModel.postCellEvent(post, event: output)
-        }
+//        postCellContent.listen { [unowned self] output in
+//            guard let post = viewModel.state.posts.first else { return }
+//            postActionViewModel.postCellEvent(post, event: output)
+//        }
 
         liveSectionHeader.listen { [unowned self] in
             self.viewModel.didTapSeeMore(at: .live)
@@ -517,10 +517,10 @@ final class BandDetailViewController: UIViewController, Instantiable {
             viewModel.liveCellEvent(event: output)
         }
         
-        postSectionHeader.listen { [unowned self] in
-            self.viewModel.didTapSeeMore(at: .post)
-        }
-        postCellContent.addTarget(self, action: #selector(postCellTaped), for: .touchUpInside)
+//        postSectionHeader.listen { [unowned self] in
+//            self.viewModel.didTapSeeMore(at: .post)
+//        }
+//        postCellContent.addTarget(self, action: #selector(postCellTaped), for: .touchUpInside)
 
         followersSummaryView.addGestureRecognizer(
             UITapGestureRecognizer(target: self, action: #selector(followerSummaryTapped))

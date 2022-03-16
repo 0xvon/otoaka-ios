@@ -108,7 +108,7 @@ final class RootViewController: UITabBarController, Instantiable {
             selectedImage: UIImage(systemName: "house.fill")
         )
         
-        let timelineVC = BrandNavigationController(rootViewController: SocialTipListViewController(dependencyProvider: loggedInProvider, input: .allTip))
+        let timelineVC = BrandNavigationController(rootViewController: GroupCollectionListViewController(dependencyProvider: loggedInProvider, input: .all))
         timelineVC.tabBarItem = UITabBarItem(title: "snack", image: UIImage(systemName: "flame"), selectedImage: UIImage(systemName: "flame.fill"))
         let searchVC = BrandNavigationController(rootViewController: SearchViewController(dependencyProvider: loggedInProvider))
         searchVC.tabBarItem = UITabBarItem(title: "探す", image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))

@@ -25,7 +25,7 @@ class BandDetailViewModel {
         var group: Group
         var tip: SocialTip? = nil
         var lives: [LiveFeed] = []
-        var posts: [PostSummary] = []
+//        var posts: [PostSummary] = []
         var groupDetail: GetGroup.Response?
         var channelItem: InternalDomain.YouTubeVideo?
         let role: RoleProperties
@@ -49,7 +49,7 @@ class BandDetailViewModel {
         case getGroupTip(SocialTip?)
         case didGetUserTip([UserTip])
         case updateLiveSummary(LiveFeed?)
-        case updatePostSummary(PostSummary?)
+//        case updatePostSummary(PostSummary?)
         case didGetChart(Group, InternalDomain.YouTubeVideo?)
         case didCreatedInvitation(InviteGroup.Invitation)
         case pushToLiveDetail(LiveDetailViewController.Input)
@@ -116,7 +116,7 @@ class BandDetailViewModel {
             getTipRankingAction.elements.map {
                 Output.didGetUserTip($0.items)
             }.eraseToAnyPublisher(),
-            getGroupPost.elements.map { .updatePostSummary($0.items.first) }.eraseToAnyPublisher(),
+//            getGroupPost.elements.map { .updatePostSummary($0.items.first) }.eraseToAnyPublisher(),
             listChannel.elements.map { [unowned self] in
                 .didGetChart(self.state.group, $0.items.first)
             }.eraseToAnyPublisher(),
@@ -133,11 +133,11 @@ class BandDetailViewModel {
             })
             .store(in: &cancellables)
         
-        getGroupPost.elements
-            .combineLatest(getGroupsTipAction.elements, getGroupLives.elements)
-            .sink(receiveValue: { [unowned self] posts, tip, lives in
+        getGroupsTipAction.elements
+            .combineLatest(getGroupLives.elements)
+            .sink(receiveValue: { [unowned self] tip, lives in
                 state.tip = tip.items.first
-                state.posts = posts.items
+//                state.posts = posts.items
                 state.lives = lives.items
             })
             .store(in: &cancellables)
@@ -178,7 +178,7 @@ class BandDetailViewModel {
 //        getGroupTip()
         getChartSummary()
         getGroupLiveSummary()
-        getGroupPostSummary()
+//        getGroupPostSummary()
     }
     
     func headerEvent(event: BandDetailHeaderView.Output) {
@@ -274,14 +274,14 @@ class BandDetailViewModel {
         getTipRankingAction.input((request: Empty(), uri: uri))
     }
     
-    private func getGroupPostSummary() {
-        var uri = GetGroupPosts.URI()
-        uri.groupId = state.group.id
-        uri.per = 1
-        uri.page = 1
-        let request = Empty()
-        getGroupPost.input((request: request, uri: uri))
-    }
+//    private func getGroupPostSummary() {
+//        var uri = GetGroupPosts.URI()
+//        uri.groupId = state.group.id
+//        uri.per = 1
+//        uri.page = 1
+//        let request = Empty()
+//        getGroupPost.input((request: request, uri: uri))
+//    }
     
     private func getChartSummary() {
         guard let youtubeChannelId = state.group.youtubeChannelId else { return }

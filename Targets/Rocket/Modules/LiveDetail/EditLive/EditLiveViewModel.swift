@@ -17,7 +17,36 @@ class EditLiveViewModel {
         var date: String?
         var livehouse: String?
         var performers: [Group]
+        var style: LiveStyle
         let live: Live
+        let socialInputs: SocialInputs
+    }
+    
+    public enum LiveStyle: String {
+        case oneman = "ワンマン"
+        case battle = "対バン"
+        case festival = "フェス"
+        
+        public init(_ style: LiveStyleOutput) {
+            switch style {
+            case .oneman(_): self = .oneman
+            case .battle(_): self = .battle
+            case .festival(_): self = .festival
+            }
+        }
+        
+        public init(_ style: String) {
+            switch style {
+            case "ワンマン":
+                self = .oneman
+            case "対バン":
+                self = .battle
+            case "フェス":
+                self = .festival
+            default:
+                self = .festival
+            }
+        }
     }
     
     let dateFormatter: DateFormatter = {
@@ -63,12 +92,15 @@ class EditLiveViewModel {
         dependencyProvider: LoggedInDependencyProvider, live: Live
     ) {
         self.dependencyProvider = dependencyProvider
+        
         self.state = State(
             title: live.title,
             date: live.date,
             livehouse: live.liveHouse,
             performers: live.performers,
-            live: live
+            style: LiveStyle.init(live.style),
+            live: live,
+            socialInputs: try! dependencyProvider.masterService.blockingMasterData()
         )
         
         editLiveAction.elements
@@ -93,11 +125,12 @@ class EditLiveViewModel {
     }
     
     func didUpdateInputItems(
-        title: String?, livehouse: String?, date: String?
+        title: String?, style: String?, livehouse: String?, date: String?
     ) {
         state.title = title
         state.livehouse = livehouse
         state.date = date
+        state.style = LiveStyle.init(style ?? "ワンマン")
         
         let isSubmittable: Bool = (title != nil && livehouse != nil)
         outputSubject.send(.updateSubmittableState(.editting(isSubmittable)))
@@ -133,13 +166,13 @@ class EditLiveViewModel {
         var uri = EditLive.URI()
         uri.id = state.live.id
         guard let performer = state.performers.first else { return }
-        var style: LiveStyleInput
-        switch state.performers.count {
-        case 1:
+        let style: LiveStyleInput
+        switch state.style {
+        case .oneman:
             style = .oneman(performer: performer.id)
-        case 2, 3, 4:
+        case .battle:
             style = .battle(performers: state.performers.map { $0.id })
-        default:
+        case .festival:
             style = .festival(performers: state.performers.map { $0.id })
         }
         

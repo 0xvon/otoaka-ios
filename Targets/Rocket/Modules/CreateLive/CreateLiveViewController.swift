@@ -37,6 +37,18 @@ final class CreateLiveViewController: UIViewController, Instantiable {
         displayNameInputView.translatesAutoresizingMaskIntoConstraints = false
         return displayNameInputView
     }()
+    private lazy var liveStyleInputView: TextFieldView = {
+        let inputView = TextFieldView(input: (section: "形式", text: nil, maxLength: 32))
+        inputView.translatesAutoresizingMaskIntoConstraints = false
+        return inputView
+    }()
+    private lazy var liveStylePickerView: UIPickerView = {
+        let sincePickerView = UIPickerView()
+        sincePickerView.translatesAutoresizingMaskIntoConstraints = false
+        sincePickerView.dataSource = self
+        sincePickerView.delegate = self
+        return sincePickerView
+    }()
     private lazy var livehouseInputView: TextFieldView = {
         let inputView = TextFieldView(input: (section: "会場", text: nil, maxLength: 20))
         inputView.translatesAutoresizingMaskIntoConstraints = false
@@ -189,6 +201,11 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             self.didInputValue()
         }
         
+        liveStyleInputView.listen { [unowned self] in
+            liveStyleInputView.setText(text: viewModel.state.socialInputs.liveStyles[liveStylePickerView.selectedRow(inComponent: 0)])
+            didInputValue()
+        }
+        
         livehouseInputView.listen { [ unowned self] in
             self.didInputValue()
         }
@@ -234,6 +251,12 @@ final class CreateLiveViewController: UIViewController, Instantiable {
             titleInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
         ])
         
+        mainView.addArrangedSubview(liveStyleInputView)
+        liveStyleInputView.selectInputView(inputView: liveStylePickerView)
+        NSLayoutConstraint.activate([
+            liveStyleInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
+        ])
+        
         mainView.addArrangedSubview(livehouseInputView)
         NSLayoutConstraint.activate([
             livehouseInputView.heightAnchor.constraint(equalToConstant: textFieldHeight),
@@ -258,10 +281,11 @@ final class CreateLiveViewController: UIViewController, Instantiable {
 
     private func didInputValue() {
         let title = titleInputView.getText()
+        let style = liveStyleInputView.getText()
         let livehouse =  livehouseInputView.getText()
         let date = dateInputView.getText()
         
-        viewModel.didUpdateInputItems(title: title, livehouse: livehouse, date: date)
+        viewModel.didUpdateInputItems(title: title, style: style, livehouse: livehouse, date: date)
     }
     
     private func updatePerformerTag() {
@@ -293,5 +317,19 @@ extension CreateLiveViewController: TagListViewDelegate {
         } else {
             viewModel.removeGroup(title)
         }
+    }
+}
+
+extension CreateLiveViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return viewModel.state.socialInputs.liveStyles[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return viewModel.state.socialInputs.liveStyles.count
     }
 }

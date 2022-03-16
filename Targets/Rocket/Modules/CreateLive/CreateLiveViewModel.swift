@@ -16,8 +16,10 @@ class CreateLiveViewModel {
     struct State {
         var title: String?
         var performers: [Group] = []
+        var style: EditLiveViewModel.LiveStyle = .oneman
         var livehouse: String?
         var date: String?
+        let socialInputs: SocialInputs
     }
     
     enum PageState {
@@ -45,7 +47,7 @@ class CreateLiveViewModel {
         dependencyProvider: LoggedInDependencyProvider
     ) {
         self.dependencyProvider = dependencyProvider
-        self.state = State()
+        self.state = State(socialInputs: try! dependencyProvider.masterService.blockingMasterData())
         
         let errors = Publishers.MergeMany(
             createLiveAction.errors
@@ -61,10 +63,13 @@ class CreateLiveViewModel {
     }
     
     func didUpdateInputItems(
-        title: String?, livehouse: String?, date: String?
+        title: String?,
+        style: String?,
+        livehouse: String?, date: String?
     ) {
         state.title = title
         state.livehouse = livehouse
+        state.style = EditLiveViewModel.LiveStyle.init(style ?? "ワンマン")
         state.date = date
         submittable()
     }
@@ -99,15 +104,18 @@ class CreateLiveViewModel {
         guard let livehouse = state.livehouse else { return }
         guard let date = state.date else { return }
         guard let performer = state.performers.first else { return }
-        var type: LiveStyleInput
-        switch state.performers.count {
-        case 1: type = .oneman(performer: performer.id)
-        case 2, 3, 4: type = .battle(performers: state.performers.map { $0.id })
-        default: type = .festival(performers: state.performers.map { $0.id })
+        var style: LiveStyleInput
+        switch state.style {
+        case .oneman:
+            style = .oneman(performer: performer.id)
+        case .battle:
+            style = .battle(performers: state.performers.map { $0.id })
+        case .festival:
+            style = .festival(performers: state.performers.map { $0.id })
         }
         let req = CreateLive.Request(
             title: title,
-            style: type,
+            style: style,
             price: 5000,
             artworkURL: performer.artworkURL,
             hostGroupId: performer.id,

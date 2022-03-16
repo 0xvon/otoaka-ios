@@ -9,55 +9,55 @@ import Endpoint
 import UIKit
 import ImagePipeline
 
-final class GroupCollectionCell: UICollectionViewCell, ReusableCell {
-    typealias Input = GroupCellContent.Input
-    typealias Output = GroupCellContent.Output
-    static var reusableIdentifier: String { "GroupCollectionCell" }
-    
-    private let _contentView: GroupCellContent
-    override init(frame: CGRect) {
-        _contentView = UINib(nibName: "GroupCellContent", bundle: nil).instantiate(withOwner: nil, options: nil).first as! GroupCellContent
-        super.init(frame: frame)
-        contentView.addSubview(_contentView)
-        _contentView.translatesAutoresizingMaskIntoConstraints = false
-        _contentView.isUserInteractionEnabled = true
-        backgroundColor = .clear
-        NSLayoutConstraint.activate([
-            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
-            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-        ])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func inject(input: Input) {
-        _contentView.inject(input: input)
-    }
-
-    func listen(_ listener: @escaping (Output) -> Void) {
-        _contentView.listen(listener)
-    }
-    
-    override var isHighlighted: Bool {
-        didSet { _contentView.isHighlighted = isHighlighted }
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        _contentView.bandNameLabel.text = nil
-        _contentView.jacketImageView.image = nil
-        _contentView.productionBadgeView.title = nil
-        _contentView.hometownBadgeView.title = nil
-    }
-    
-    deinit {
-        print("GroupCollectionCell.deinit")
-    }
-}
+//final class GroupCollectionCell: UICollectionViewCell, ReusableCell {
+//    typealias Input = GroupCellContent.Input
+//    typealias Output = GroupCellContent.Output
+//    static var reusableIdentifier: String { "GroupCollectionCell" }
+//
+//    private let _contentView: GroupCellContent
+//    override init(frame: CGRect) {
+//        _contentView = UINib(nibName: "GroupCellContent", bundle: nil).instantiate(withOwner: nil, options: nil).first as! GroupCellContent
+//        super.init(frame: frame)
+//        contentView.addSubview(_contentView)
+//        _contentView.translatesAutoresizingMaskIntoConstraints = false
+//        _contentView.isUserInteractionEnabled = true
+//        backgroundColor = .clear
+//        NSLayoutConstraint.activate([
+//            _contentView.topAnchor.constraint(equalTo: contentView.topAnchor),
+//            _contentView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+//            _contentView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
+//            _contentView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
+//        ])
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+//
+//    func inject(input: Input) {
+//        _contentView.inject(input: input)
+//    }
+//
+//    func listen(_ listener: @escaping (Output) -> Void) {
+//        _contentView.listen(listener)
+//    }
+//
+//    override var isHighlighted: Bool {
+//        didSet { _contentView.isHighlighted = isHighlighted }
+//    }
+//
+//    override func prepareForReuse() {
+//        super.prepareForReuse()
+//        _contentView.bandNameLabel.text = nil
+//        _contentView.jacketImageView.image = nil
+//        _contentView.productionBadgeView.title = nil
+//        _contentView.hometownBadgeView.title = nil
+//    }
+//
+//    deinit {
+//        print("GroupCollectionCell.deinit")
+//    }
+//}
 
 final class GroupCell: UITableViewCell, ReusableCell {
     typealias Input = GroupCellContent.Input
