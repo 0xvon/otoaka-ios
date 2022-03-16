@@ -20,6 +20,7 @@ class LiveHistoryViewModel {
         var sections: [String] = []
         var user: User
         var sequence: Sequence = .year
+        var filter: LiveHistoryHeader.LiveStyleFilter = .all
     }
     enum Sequence {
         case year, group
@@ -89,11 +90,11 @@ class LiveHistoryViewModel {
         case .initial(let res):
             updateSections(with: res.items)
             state.lives = res.items
-            self.outputSubject.send(.reload)
+            outputSubject.send(.reload)
         case .next(let res):
             updateSections(with: res.items)
             state.lives += res.items
-            self.outputSubject.send(.reload)
+            outputSubject.send(.reload)
         case .error(let err):
             self.outputSubject.send(.error(err))
         }
@@ -121,13 +122,15 @@ class LiveHistoryViewModel {
     func sectionItems(section: String) -> [LiveFeed] {
         switch state.sequence {
         case .year:
-            return state.lives.filter { String($0.live.date?.prefix(4) ?? "未定") == section }
+            let lives = state.lives.filter { String($0.live.date?.prefix(4) ?? "未定") == section }
+            return filter(lives)
         case .group:
-            return state.lives.filter { $0.live.hostGroup.name == section }
+            let lives = state.lives.filter { $0.live.hostGroup.name == section }
+            return filter(lives)
         }
     }
     
-    func inject() {
+    func injectSequence() {
         switch state.sequence {
         case .group:
             state.sequence = .year
@@ -139,6 +142,24 @@ class LiveHistoryViewModel {
         subscribe(storage: storage)
         refresh()
         
+    }
+    
+    func liveStyleFilter(filter: LiveHistoryHeader.LiveStyleFilter) {
+        state.filter = filter
+        outputSubject.send(.reload)
+    }
+    
+    func filter(_ lives: [LiveFeed]) -> [LiveFeed] {
+        switch state.filter {
+        case .all:
+            return lives
+        case .oneman:
+            return lives.filter { $0.live.style == .oneman(performer: $0.live.style.performers[0]) }
+        case .battle:
+            return lives.filter { $0.live.style == .battle(performers: $0.live.performers) }
+        case .festival:
+            return lives.filter { $0.live.style == .festival(performers: $0.live.performers) }
+        }
     }
     
     func refresh() {

@@ -123,7 +123,9 @@ final class LiveHistoryViewController: UIViewController, Instantiable {
             case .reload:
                 collectionView.reloadData()
                 setBackgroundView(isEmpty: viewModel.state.lives.isEmpty)
+                collectionView.refreshControl?.endRefreshing()
             case .error(let error):
+                collectionView.refreshControl?.endRefreshing()
                 print(String(describing: error))
             }
         }
@@ -148,8 +150,14 @@ extension LiveHistoryViewController: UICollectionViewDelegate, UICollectionViewD
         switch indexPath.section {
         case 0:
             let cell = collectionView.dequeueReusableCell(LiveHistoryHeader.self, input: (), for: indexPath)
-            cell.listen { [unowned self] in
-                viewModel.inject()
+            cell.listen { [unowned self] output in
+                switch output {
+                case .filterButtonTapped:
+                    collectionView.refreshControl?.beginRefreshing()
+                    viewModel.injectSequence()
+                case .liveStyleFilterChanged(let filter):
+                    viewModel.liveStyleFilter(filter: filter)
+                }
             }
             return cell
         default:
@@ -224,8 +232,29 @@ class LiveHistoryHeader: UICollectionViewCell, ReusableCell {
     static var reusableIdentifier: String { "LiveHistoryHeader" }
     
     typealias Input = Void
-    typealias Output = Void
+    enum Output {
+        case filterButtonTapped
+        case liveStyleFilterChanged(LiveStyleFilter)
+    }
+    
+    enum LiveStyleFilter {
+        case all, oneman, battle, festival
+    }
+    private var liveStyleFilter: LiveStyleFilter = .all
     private let _contentView: SummarySectionHeader
+    public let liveStyleFilterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(liveStyleFilterButtonTapped), for: .touchUpInside)
+        button.setTitle("全て", for: .normal)
+        button.setImage(UIImage(systemName: "chevron.down")?.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), for: .normal)
+        button.imageView?.widthAnchor.constraint(equalToConstant: 12).isActive = true
+        button.imageView?.heightAnchor.constraint(equalToConstant: 12).isActive = true
+        button.titleLabel?.font = Brand.font(for: .mediumStrong)
+        button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
+        return button
+    }()
     public let filterButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -233,9 +262,11 @@ class LiveHistoryHeader: UICollectionViewCell, ReusableCell {
         button.setTitle("年", for: .normal)
         button.setTitle("アーティスト", for: .selected)
         button.setImage(UIImage(systemName: "arrow.left.arrow.right")?.withTintColor(Brand.color(for: .text(.primary)), renderingMode: .alwaysOriginal), for: .normal)
+        button.imageView?.widthAnchor.constraint(equalToConstant: 12).isActive = true
+        button.imageView?.heightAnchor.constraint(equalToConstant: 12).isActive = true
         button.titleLabel?.font = Brand.font(for: .mediumStrong)
         button.setTitleColor(Brand.color(for: .text(.primary)), for: .normal)
-        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 16)
+        button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
         return button
     }()
     override init(frame: CGRect) {
@@ -253,6 +284,15 @@ class LiveHistoryHeader: UICollectionViewCell, ReusableCell {
         ])
         
         _contentView.seeMoreButton.isHidden = true
+        _contentView.addArrangedSubview(liveStyleFilterButton)
+        
+        let spacer = UIView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        _contentView.addArrangedSubview(spacer)
+        NSLayoutConstraint.activate([
+            spacer.widthAnchor.constraint(equalToConstant: 24),
+        ])
+        
         _contentView.addArrangedSubview(filterButton)
     }
     required init?(coder: NSCoder) {
@@ -262,13 +302,41 @@ class LiveHistoryHeader: UICollectionViewCell, ReusableCell {
     func inject(input: Input) {
     }
     
-    @objc private func filterButtonTapped() {
-        filterButton.isSelected.toggle()
-        self.listener()
+    func liveStyle() {
+        switch liveStyleFilter {
+        case .all:
+            liveStyleFilterButton.setTitle("全て", for: .normal)
+        case .oneman:
+            liveStyleFilterButton.setTitle("ワンマン", for: .normal)
+        case .battle:
+            liveStyleFilterButton.setTitle("対バン", for: .normal)
+        case .festival:
+            liveStyleFilterButton.setTitle("フェス", for: .normal)
+        }
     }
     
-    private var listener: () -> Void = {}
-    func listen(_ listener: @escaping () -> Void) {
+    @objc private func liveStyleFilterButtonTapped() {
+        switch liveStyleFilter {
+        case .all:
+            liveStyleFilter = .oneman
+        case .oneman:
+            liveStyleFilter = .battle
+        case .battle:
+            liveStyleFilter = .festival
+        case .festival:
+            liveStyleFilter = .all
+        }
+        liveStyle()
+        self.listener(.liveStyleFilterChanged(liveStyleFilter))
+    }
+    
+    @objc private func filterButtonTapped() {
+        filterButton.isSelected.toggle()
+        self.listener(.filterButtonTapped)
+    }
+    
+    private var listener: (Output) -> Void = { _ in }
+    func listen(_ listener: @escaping (Output) -> Void) {
         self.listener = listener
     }
 }
