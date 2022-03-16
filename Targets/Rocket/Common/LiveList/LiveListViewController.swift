@@ -263,9 +263,14 @@ extension LiveListViewController: UITableViewDelegate, UITableViewDataSource {
                 let nav = self.navigationController ?? presentingViewController?.navigationController
                 nav?.pushViewController(vc, animated: true)
             case .selfTapped:
-                let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live.live)
-                let nav = self.navigationController ?? presentingViewController?.navigationController
-                nav?.pushViewController(vc, animated: true)
+                switch viewModel.dataSource {
+                case .searchResultToSelect(_):
+                    self.listener(live)
+                default:
+                    let vc = LiveDetailViewController(dependencyProvider: dependencyProvider, input: live.live)
+                    let nav = self.navigationController ?? presentingViewController?.navigationController
+                    nav?.pushViewController(vc, animated: true)
+                }
             }
         }
         return cell

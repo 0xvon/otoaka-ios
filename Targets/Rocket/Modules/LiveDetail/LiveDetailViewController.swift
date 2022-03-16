@@ -549,11 +549,17 @@ final class LiveDetailViewController: UIViewController, Instantiable {
             let vc = EditLiveViewController(dependencyProvider: dependencyProvider, input: live)
             navigationController?.pushViewController(vc, animated: true)
         })
+        let mergeAction = UIAlertAction(title: "他のライブと統合", style: .default, handler: { [unowned self] _ in
+            guard let live = viewModel.state.liveDetail?.live else { return }
+            let vc = MergeLiveViewController(dependencyProvider: dependencyProvider, input: live)
+            navigationController?.pushViewController(vc, animated: true)
+        })
         let cancelAction = UIAlertAction(
             title: "キャンセル", style: UIAlertAction.Style.cancel,
             handler: { _ in })
         let actions = [
             editProfileAction,
+            mergeAction,
             cancelAction,
         ]
         actions.forEach { alertController.addAction($0) }

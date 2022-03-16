@@ -23,6 +23,7 @@ final class SelectLiveViewController: UITableViewController {
         controller.searchResultsUpdater = self
         controller.delegate = self
         controller.searchBar.delegate = self
+        controller.searchBar.showsScopeBar = false
         return controller
     }()
     
@@ -40,7 +41,8 @@ final class SelectLiveViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "レポートを書くライブを選択"
+        extendedLayoutIncludesOpaqueBars = true
+        title = "ライブを選択"
         navigationItem.largeTitleDisplayMode = .never
         
         view.backgroundColor = Brand.color(for: .background(.primary))
@@ -58,6 +60,7 @@ final class SelectLiveViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        searchController.searchBar.showsScopeBar = false
         dependencyProvider.viewHierarchy.activateFloatingOverlay(isActive: false)
     }
     
@@ -76,8 +79,10 @@ final class SelectLiveViewController: UITableViewController {
                     self.refreshControl?.endRefreshing()
                 }
             case .selectLive(let live):
-                let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
-                self.navigationController?.pushViewController(vc, animated: true)
+//                let vc = PostViewController(dependencyProvider: dependencyProvider, input: (live: live, post: nil))
+//                self.navigationController?.pushViewController(vc, animated: true)
+                self.listener(live)
+                self.navigationController?.popViewController(animated: true)
             case .reportError(let error):
                 print(error)
 //                showAlert()
@@ -99,6 +104,11 @@ final class SelectLiveViewController: UITableViewController {
         guard let refreshControl = refreshControl, refreshControl.isRefreshing else { return }
         self.refreshControl?.beginRefreshing()
         viewModel.refresh()
+    }
+    
+    private var listener: (Live) -> Void = { _ in }
+    func listen(_ listener: @escaping (Live) -> Void) {
+        self.listener = listener
     }
 }
 
